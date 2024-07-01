@@ -3,7 +3,6 @@
   "description": "A deterministic server-side for developing frontend clients",
   "type": "module",
   "version": "0.0.1",
-  "private": true,
   "main": "index.js",
   "types": "index.d.ts",
   "scripts": {

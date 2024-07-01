@@ -1,0 +1,7 @@
+This is a plain text response for (/api/user). 
+
+In this case, it’s for mocking up a 501 - Internal Server Error.
+
+This file could have been empty, or some JSON if it had a `.json` extension.
+
+By the way, on initialization an 501 is auto-generated for routes that don’t have a 501.

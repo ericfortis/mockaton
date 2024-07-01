@@ -1,0 +1,13 @@
+{
+  "_": "This file has two comments: `(entirely verified)` and `(another comment)`. i.e. the route is /api/user/videos",
+  "videos": [
+    {
+      "url": "https://example.com/1",
+      "verified": true
+    },
+    {
+      "url": "https://example.com/2",
+      "verified": true
+    }
+  ]
+}

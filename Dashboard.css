@@ -1,0 +1,206 @@
+:root {
+	--colorAccent: #0069d0;
+	--colorHover: #dfefff;
+	--colorRed: #da0f00;
+	--colorLightRed: #ffe4ee;
+	--colorLightOrange: #ffedd1;
+	--colorLightGrey: rgba(0, 0, 0, 0.02);
+}
+html, body {
+	margin: 0;
+	font-size: 13px;
+}
+body {
+	padding: 16px;
+}
+* {
+	border: 0;
+	margin: 0;
+	font-family: system-ui, sans-serif;
+	font-size: 100%;
+}
+
+h1 {
+	padding: 12px 0;
+	margin: 0;
+	font-size: 2rem;
+}
+
+
+select {
+	padding: 3px 0;
+	border: 1px solid #444;
+}
+
+fieldset {
+	width: 120px;
+	border: 1px solid #ccc;
+
+	label {
+		display: flex;
+		align-items: center;
+		padding: 4px 0;
+
+		input {
+			margin-right: 6px;
+		}
+	}
+}
+
+.CookieSelector {
+	display: flex;
+	align-items: center;
+	margin-left: 20px;
+
+	select {
+		margin-left: 5px;
+	}
+}
+
+main {
+	display: flex;
+	align-items: flex-start;
+
+	> table {
+		border-collapse: collapse;
+
+		th {
+			padding-top: 20px;
+			padding-bottom: 2px;
+			text-align: left;
+		}
+	}
+}
+
+.TitleWrap {
+	display: flex;
+	align-items: center;
+
+	button {
+		padding: 3px 12px;
+		border: 1px solid var(--colorRed);
+		margin-left: 20px;
+		background: transparent;
+		color: var(--colorRed);
+		border-radius: 50px;
+		cursor: pointer;
+
+		&:hover {
+			background: var(--colorRed);
+			color: white;
+		}
+	}
+}
+
+.PayloadViewer {
+	position: sticky;
+	top: 0;
+	width: 50%;
+	margin-left: 16px;
+
+	pre {
+		&:not(:empty) {
+			overflow: auto;
+			max-height: calc(100vh - 160px);
+			padding: 12px;
+			margin-top: 6px;
+			background: var(--colorLightGrey);
+			font-family: monospace;
+		}
+
+		&.Documentation {
+			margin-bottom: 12px;
+		}
+	}
+}
+
+.PreviewLink {
+	position: relative;
+	left: -6px;
+	display: inline-block;
+	width: 280px;
+	padding: 8px 6px;
+	color: var(--colorAccent);
+	text-decoration: none;
+
+	&:hover {
+		background: var(--colorHover);
+	}
+	&.chosen {
+		color: white;
+		background: var(--colorAccent);
+	}
+}
+
+.BulkSelectSection {
+	margin: 20px 0;
+}
+.TransformsSection {
+	padding-top: 30px;
+	border-top: 1px solid #ccc;
+	margin: 30px 0;
+}
+
+.BulkSelectSection select {
+	margin-top: 5px;
+}
+
+.TransformSelector,
+.MockSelector {
+	width: 300px;
+	padding: 8px 1px;
+	border: 0;
+	background: #eee;
+	text-align: right;
+	direction: rtl;
+	text-overflow: ellipsis;
+
+	&:disabled {
+		background: transparent;
+		color: #222;
+		cursor: not-allowed
+	}
+	&:enabled:hover {
+		cursor: pointer;
+		background: var(--colorHover);
+	}
+	&.status4xx {
+		background: var(--colorLightOrange);
+	}
+	&.status5xx {
+		background: var(--colorLightRed);
+	}
+}
+
+.DelayCheckbox {
+	display: flex;
+	margin-left: 6px;
+	cursor: pointer;
+
+	> input {
+		display: none;
+
+		&:checked ~ svg {
+			border-color: white;
+			filter: invert();
+		}
+	}
+
+	> svg {
+		width: 14px;
+		height: 14px;
+		border: 1px solid #000;
+		vertical-align: bottom;
+		fill: #000;
+		border-radius: 50%;
+		background: white;
+
+		&:hover {
+			background: #ddd
+		}
+	}
+}
+
+.bold {
+	font-weight: bold;
+}

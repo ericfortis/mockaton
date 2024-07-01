@@ -1,0 +1,13 @@
+{
+  "_": "This file has a comment: `(assorted)`. i.e. the route is /api/user/videos",
+  "videos": [
+    {
+      "url": "https://example.com/1",
+      "verified": true
+    },
+    {
+      "url": "https://example.com/2",
+      "verified": false
+    }
+  ]
+}

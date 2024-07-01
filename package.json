@@ -1,5 +1,5 @@
 {
-  "name": "@ericfortis/mockaton",
+  "name": "mockaton",
   "description": "A deterministic server-side for developing frontend clients",
   "type": "module",
   "version": "0.0.1",

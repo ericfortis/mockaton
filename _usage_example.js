@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 
 import { resolve } from 'node:path'
-import { Mockaton } from './index.js' // from '@ericfortis/mockaton'
+import { Mockaton } from './index.js' // from 'mockaton'
 
 Mockaton({
 	port: 2345,

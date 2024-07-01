@@ -10,6 +10,11 @@ api/user/
 api/user/[user-id].GET.200.json
 ```
 
+By the way this [browser
+extension](https://github.com/ericfortis/devtools-ext-tar-http-requests) can
+be used for downloading a tar of your XHR requests following that convention.
+
+
 ### Mock Variants
 Each route can have different mocks and those variants could either be: 
 - a different response status code, (e.g. 200, 401), 

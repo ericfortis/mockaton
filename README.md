@@ -52,12 +52,12 @@ way, the milliseconds for the delay is globally configurable via `Config.delay`.
 
 ## Basic Usage (see [_usage_example.js](./_usage_example.js))
 ```
-npm install @ericfortis/mockaton
+npm install mockaton
 ```
 Create a `my-mockaton.js` file
 ```js
 import { resolve } from 'node:path'
-import { Mockaton } from '@ericfortis/mockaton'
+import { Mockaton } from 'mockaton'
 
 Mockaton({ // Config options
   port: 2345,

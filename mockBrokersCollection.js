@@ -47,8 +47,8 @@ export const getBrokerByFilename = file => {
 
 
 // Searching the routes in reverse order so dynamic params (e.g.
-// /user/<id>) don’t take precedence over exact paths (e.g.
-// /user/name). That’s because "<" chars are lower than alphanumeric ones.
+// /user/[id]) don’t take precedence over exact paths (e.g.
+// /user/name). That’s because "[]" chars are lower than alphanumeric ones.
 // BTW, `urlMasks` always start with "/", so there’s no need to
 // worry about the primacy of array-like keys when iterating.
 export function findMatchingBroker(method, url) {

@@ -67,7 +67,7 @@ export class Route {
 }
 
 
-// Stars out (for regex) all the paths that are in angle brackets
+// Stars out (for regex) all the paths that are in square brackets
 function disregardVariables(str) {
 	return str.replace(/\[.*?]/g, '[^/]*')
 }

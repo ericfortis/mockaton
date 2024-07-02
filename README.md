@@ -194,7 +194,7 @@ with `.mjs` will process the mock before serving it.
 For example, this handler will uppercase the mock body.
 ```js
 export default function capitalizeAllText(mockAsText, requestBody, Config) {
-	Config.database.myCount ??= 1
+	Config.database.myCount ??= 0
 	Config.database.myCount += 1
   return mockAsText.toUpperCase()
 }

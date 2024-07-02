@@ -89,7 +89,7 @@ export class MockBroker {
 	}
 
 	#has501() {
-		return this.mocks.some(mock => 
+		return this.mocks.some(mock =>
 			Route.parseFilename(mock).status === 501)
 	}
 

@@ -1,4 +1,4 @@
 {
-  "_": "An example response of a user without friends. Uses HTTP Status: 204 - No Content",
-  "friends": []
+	"_": "An example response of a user without friends. Uses HTTP Status: 204 - No Content",
+	"friends": []
 }

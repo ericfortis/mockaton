@@ -17,13 +17,13 @@ export function Mockaton(options) {
 		const { url, method } = req
 		if (method === 'GET' && apiGetRequests.has(url))
 			apiGetRequests.get(url)(req, response)
-			
+
 		else if (method === 'PATCH' && apiPatchRequests.has(url))
 			await apiPatchRequests.get(url)(req, response)
-			
+
 		else if (isStatic(req))
 			await dispatchStatic(req, response)
-			
+
 		else
 			await dispatchMock(req, response)
 	})

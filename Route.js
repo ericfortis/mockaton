@@ -44,19 +44,19 @@ export class Route {
 
 	static parseFilename(file) {
 		const tokens = file.replace(Route.reComments, '').split('.')
-		
+
 		let error = ''
 		if (tokens.length < 4)
 			error = 'Invalid Filename Convention'
-		
+
 		const method = tokens.at(-3)
 		if (!httpMethods.includes(method))
 			error = `Unrecognized HTTP Method: "${method}"`
-		
+
 		const status = Number(tokens.at(-2))
 		if (!responseStatusIsValid(status))
 			error = `Invalid HTTP Response Status: "${status}"`
-		
+
 		return {
 			error,
 			urlMask: '/' + removeTrailingSlash(tokens.at(-4)),
@@ -84,7 +84,7 @@ function removeTrailingSlash(url = '') {
 }
 
 function responseStatusIsValid(status) {
-	return Number.isInteger(status) 
-		&& status >= 100 
+	return Number.isInteger(status)
+		&& status >= 100
 		&& status <= 599
 }

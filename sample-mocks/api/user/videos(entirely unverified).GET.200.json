@@ -1,13 +1,13 @@
 {
-  "_": "This file has a comment: `(entirely unverified)`. i.e. the route is /api/user/videos",
-  "videos": [
-    {
-      "url": "https://example.com/1",
-      "verified": false
-    },
-    {
-      "url": "https://example.com/2",
-      "verified": false
-    }
-  ]
+	"_": "This file has a comment: `(entirely unverified)`. i.e. the route is /api/user/videos",
+	"videos": [
+		{
+			"url": "https://example.com/1",
+			"verified": false
+		},
+		{
+			"url": "https://example.com/2",
+			"verified": false
+		}
+	]
 }

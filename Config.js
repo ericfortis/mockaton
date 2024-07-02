@@ -9,7 +9,7 @@ export const Config = {
 	port: 0, // auto-assigned
 	delay: 1200, // milliseconds
 	cookies: {}, // defaults to the first kv
-	database: {},
+	database: {}, // for mjs transforms
 	skipOpen: false, // Prevents opening the dashboard in a browser
 	allowedExt: /\.(json|txt|md|mjs)$/ // Just for excluding temporary editor files (e.g. JetBrains appends a ~)
 }

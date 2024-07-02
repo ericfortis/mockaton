@@ -78,17 +78,15 @@ node my-mockaton.js
 ## Config Options
 ```ts
 interface Config {
-  mocksDir: string
-  staticDir?: string
-  host?: string,
-  port?: number
-
-  cookies?(): object
-
-  skipOpen?: boolean
-  allowedExt?: RegExp
-  delayMilliseconds?: number
-  database?: object
+	mocksDir: string
+	staticDir?: string
+	host?: string,
+	port?: number
+	delay?: number
+	cookies?(): object
+	database?: object
+	skipOpen?: boolean
+	allowedExt?: RegExp
 }
 ```
 
@@ -154,8 +152,6 @@ api/foo/.GET.200.json
 api/foo/?bar=[bar].GET.200.json
 api/foo/(my comment).GET.200.json
 ```
-
----
 
 
 ---

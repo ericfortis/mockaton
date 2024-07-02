@@ -195,7 +195,7 @@ For example, this handler will uppercase the mock body.
 ```js
 export default function capitalizeAllText(mockAsText, requestBody, Config) {
 	Config.database.myCount ??= 0
-	Config.database.myCount += 1
+	Config.database.myCount++
   return mockAsText.toUpperCase()
 }
 ```

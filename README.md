@@ -208,7 +208,23 @@ other words, only one transform per route is supported in demo mode.
 
 ---
 
-## Bulk Selecting Mocks by Matching comments
+## API
+
+### Changing a mock for one route
+```
+PATCH http://localhost:2345/mockaton/edit
+{ 
+	"file": "api/foo.200.GET.json"
+	"delayed": true // optional
+}
+```
+
+### Bulk Selecting Mocks by Matching comments
+```
+PATCH http://localhost:2345/mockaton/bulk-select
+{ "comment": "demo-a" }
+```
+
 Many mocks can be changed at once. We do that by searching the
 comments on the filename. For example, `api/foo(demo-a).GET.200.json`
 
@@ -218,5 +234,6 @@ particular API there is only `demo-a` and `demo-b`, changing to
 
 Similarly, if there’s no demo mock at all for
 a route, the first dev mock (a-z) will be served.
+
 
 

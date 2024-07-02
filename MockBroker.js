@@ -24,7 +24,7 @@ export class MockBroker {
 			delay: 0
 		}
 
-		this.transforms = [] // *.js
+		this.transforms = [] // *.mjs
 		this.currentTransform = ''
 
 		this.register(file)

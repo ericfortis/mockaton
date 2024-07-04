@@ -102,7 +102,7 @@ Config.cookies = {
 ```
 
 That `jwtCookie` has a hardcoded header and signature. In other
-words, it’s useful iff you care about its payload in frontend.
+words, it’s useful iff you care about its payload in the frontend.
 
 ---
 

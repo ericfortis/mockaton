@@ -208,7 +208,7 @@ other words, only one transform per route is supported in demo mode.
 
 ## API
 
-### Changing a mock for one route
+### `/mockaton/edit` Select a mock for a route
 ```
 PATCH http://localhost:2345/mockaton/edit
 { 
@@ -216,15 +216,9 @@ PATCH http://localhost:2345/mockaton/edit
   "delayed": true // optional
 }
 ```
+---
 
-### Bulk Selecting Mocks by Matching comments
-```
-PATCH http://localhost:2345/mockaton/bulk-select
-{
-  "comment": "demo-a"
-}
-```
-
+### `/mockaton/bulk-select` Select all mocks that have a particular comment
 Many mocks can be changed at once. We do that by searching the
 comments on the filename. For example, `api/foo(demo-a).GET.200.json`
 
@@ -235,8 +229,33 @@ particular API there is only `demo-a` and `demo-b`, changing to
 Similarly, if there’s no demo mock at all for
 a route, the first dev mock (a-z) will be served.
 
+```
+PATCH http://localhost:2345/mockaton/bulk-select
+{
+  "comment": "demo-a"
+}
+```
+---
 
-### Reset
+### `/mockaton/reset` Reset
+Re-Initialize the collection and its states (selected mocks and cookies, delays, etc.).
 ```
 PATCH http://localhost:2345/mockaton/reset
+```
+---
+
+### `/mockaton/cookies` Select a cookie
+In `Config.cookies`, each key is a label used to change them.
+```
+PATCH http://localhost:2345/mockaton/cookies
+{
+  "current_cookie_key": "My Normal User"
+}
+```
+
+### List Cookies
+Sends a list of the cookie labels (keys) and
+along with a flag indicated if it’s the selected.
+```
+GET http://localhost:2345/mockaton/cookies
 ```

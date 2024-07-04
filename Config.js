@@ -1,5 +1,5 @@
 import { existsSync, lstatSync } from 'node:fs'
-import { validate } from './utils/validate.js'
+import { validate, is, optional } from './utils/validate.js'
 
 
 export const Config = {
@@ -19,19 +19,14 @@ export function setup(options) {
 	validate(Config, {
 		mocksDir: isDirectory,
 		staticDir: optional(isDirectory),
-		host: String,
+		host: is(String),
 		port: port => Number.isInteger(port) && port >= 0 && port < 2 ** 16,
 		delay: ms => Number.isInteger(ms) && ms > 0,
-		cookies: Object,
-		database: Object,
-		skipOpen: Boolean,
-		allowedExt: RegExp
+		cookies: is(Object),
+		database: is(Object),
+		skipOpen: is(Boolean),
+		allowedExt: is(RegExp)
 	})
-}
-
-
-function optional(tester) {
-	return val => !val || tester(val)
 }
 
 function isDirectory(dir) {

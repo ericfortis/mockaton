@@ -75,15 +75,15 @@ node my-mockaton.js
 ## Config Options
 ```ts
 interface Config {
-	mocksDir: string
-	staticDir?: string
-	host?: string,
-	port?: number
-	delay?: number
-	cookies?(): object
-	database?: object
-	skipOpen?: boolean
-	allowedExt?: RegExp
+  mocksDir: string
+  staticDir?: string 
+  host?: string, // 'localhost'
+  port?: number // 0 auto-assigned
+  delay?: number // 1200 ms
+  cookies?(): object 
+  database?: object // for "Transforms"
+  skipOpen?: boolean // Prevents opening the dashboard in a browser
+  allowedExt?: RegExp // /\.(json|txt|md|mjs)$/ Just for excluding temporary editor files (e.g. JetBrains appends a ~)
 }
 ```
 
@@ -94,7 +94,10 @@ import { jwtCookie } from 'mockaton'
 Config.cookies = {
   'My Admin User':  'my-cookie=1;Path=/;SameSite=strict',
   'My Normal User': 'my-cookie=0;Path=/;SameSite=strict',
-  'My JWT': jwtCookie('my-cookie', { foo: 'bar' })
+  'My JWT': jwtCookie('my-cookie', {
+    email: 'john.doe@example.com',
+    picture: 'https://cdn.auth0.com/avatars/jd.png'
+  })
 }
 ```
 

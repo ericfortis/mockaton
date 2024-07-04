@@ -16,7 +16,7 @@ export class Route {
 	constructor(file) {
 		const { urlMask, method } = Route.parseFilename(file)
 		this.method = method
-		this.#urlRegex = new RegExp(`^${disregardVariables(removeQueryStringAndFragment(urlMask))}/*$`)
+		this.#urlRegex = new RegExp('^' + disregardVariables(removeQueryStringAndFragment(urlMask)) + '/*$')
 	}
 
 	urlMaskMatches(url) {

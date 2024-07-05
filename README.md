@@ -185,7 +185,7 @@ export default function capitalizeAllText(mockAsText, requestBody, Config) {
 
 ### `/mockaton/edit` Select a mock for a route
 ```
-PATCH http://localhost:2345/mockaton/edit
+PATCH /mockaton/edit
 { 
   "file": "api/foo.200.GET.json"
   "delayed": true // optional
@@ -205,7 +205,7 @@ Similarly, if there’s no demo mock at all for
 a route, the first dev mock (a-z) will be served.
 
 ```
-PATCH http://localhost:2345/mockaton/bulk-select
+PATCH /mockaton/bulk-select
 {
   "comment": "demo-a"
 }
@@ -215,14 +215,14 @@ PATCH http://localhost:2345/mockaton/bulk-select
 ### `/mockaton/reset` Reset
 Re-Initialize the collection and its states (selected mocks and cookies, delays, etc.).
 ```
-PATCH http://localhost:2345/mockaton/reset
+PATCH /mockaton/reset
 ```
 ---
 
 ### `/mockaton/cookies` Select a cookie
 In `Config.cookies`, each key is a label used to change them.
 ```
-PATCH http://localhost:2345/mockaton/cookies
+PATCH /mockaton/cookies
 {
   "current_cookie_key": "My Normal User"
 }
@@ -232,5 +232,18 @@ PATCH http://localhost:2345/mockaton/cookies
 Sends a list of the cookie labels (keys) and
 along with a flag indicated if it’s the selected.
 ```
-GET http://localhost:2345/mockaton/cookies
+GET /mockaton/cookies
 ```
+
+---
+
+### `/mockaton/transform` Select a Transform
+```
+PATCH /mockaton/transform
+{
+  "file": "api/video/list(concat newly uploaded).GET.200.mjs",
+  "method": "GET"
+  "url_mask": "/api/video/list"
+}
+```
+---

@@ -18,35 +18,37 @@ export async function dispatchMock(req, response) {
 	}
 
 	const mockBroker = MockBrokerCollection.findMatchingBroker(req.method, req.url)
-	if (!mockBroker)
+	if (!mockBroker) {
 		sendNotFound(response)
-	else
-		try {
-			const { file, status, delay, currentTransform } = mockBroker
-			console.log(decodeURIComponent(req.url), '->', file)
+		return
+	}
+	
+	try {
+		const { file, status, delay, currentTransform } = mockBroker
+		console.log(decodeURIComponent(req.url), '->', file)
 
-			response.statusCode = status
-			response.setHeader('content-type', mimeFor(file))
-			if (cookie.getCurrent())
-				response.setHeader('set-cookie', cookie.getCurrent())
+		response.statusCode = status
+		response.setHeader('content-type', mimeFor(file))
+		if (cookie.getCurrent())
+			response.setHeader('set-cookie', cookie.getCurrent())
 
-			let mockAsText = readMock(file)
-			if (mockBroker.currentTransform) {
-				const body = await requestBodyForTransform(req, mockAsText)
-				const transformFunc = await importTransformFunc(currentTransform)
-				mockAsText = transformFunc(mockAsText, body, Config)
-			}
-			setTimeout(() => response.end(mockAsText), delay)
+		let mockAsText = readMock(file)
+		if (mockBroker.currentTransform) {
+			const body = await requestBodyForTransform(req, mockAsText)
+			const transformFunc = await importTransformFunc(currentTransform)
+			mockAsText = transformFunc(mockAsText, body, Config)
 		}
-		catch (error) {
-			console.error(error)
-			if (error instanceof JsonBodyParserError)
-				sendBadRequest(response)
-			else if (error.code === 'ENOENT')
-				sendNotFound(response) // file has been deleted
-			else
-				sendInternalServerError(response)
-		}
+		setTimeout(() => response.end(mockAsText), delay)
+	}
+	catch (error) {
+		console.error(error)
+		if (error instanceof JsonBodyParserError)
+			sendBadRequest(response)
+		else if (error.code === 'ENOENT')
+			sendNotFound(response) // file has been deleted
+		else
+			sendInternalServerError(response)
+	}
 }
 
 const nonSafeMethods = ['PATCH', 'POST', 'PUT', 'DELETE', 'CONNECT']

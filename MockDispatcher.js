@@ -10,13 +10,10 @@ import { parseJSON, JsonBodyParserError } from './utils/http-request.js'
 import { sendInternalServerError, sendNotFound, sendFile, sendBadRequest } from './utils/http-response.js'
 
 
-function serveDocumentation(req, response) {
-	sendFile(response, join(Config.mocksDir, decodeURIComponent(req.url)))
-}
-
 export async function dispatchMock(req, response) {
+	/* Serve Documentation */
 	if (req.method === 'GET' && req.url.endsWith('.md')) {
-		serveDocumentation(req, response)
+		sendFile(response, join(Config.mocksDir, decodeURIComponent(req.url)))
 		return
 	}
 

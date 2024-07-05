@@ -241,9 +241,7 @@ GET /mockaton/cookies
 ```
 PATCH /mockaton/transform
 {
-  "file": "api/video/list(concat newly uploaded).GET.200.mjs",
-  "method": "GET"
-  "url_mask": "/api/video/list"
+  "file": "api/video/list(concat newly uploaded).GET.200.mjs"
 }
 ```
 ---

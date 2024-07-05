@@ -306,8 +306,6 @@ export default function (mock, reqBody, config) {
 		await request(DP.transform, {
 			method: 'PATCH',
 			body: JSON.stringify({
-				[DF.method]: 'POST',
-				[DF.urlMask]: '/api/transform',
 				[DF.file]: 'api/transform.POST.200.mjs'
 			})
 		})

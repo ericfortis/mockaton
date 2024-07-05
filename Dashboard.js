@@ -257,15 +257,13 @@ function Transforms({ brokersByMethod }) {
 			r('tr', null,
 				r('td', null, r(PreviewLink, { method: broker.method, urlMask })),
 				r('td', null, r(TransformSelector, {
-					urlMask,
-					method: broker.method,
 					items: ['', ...broker.transforms],
 					selected: broker.currentTransform
 				})))
 		)))
 }
 
-function TransformSelector({ method, urlMask, items, selected }) {
+function TransformSelector({ items, selected }) {
 	const className = defaultIsSelected => cssClass(
 		CSS.TransformSelector,
 		!defaultIsSelected && CSS.bold)
@@ -273,16 +271,10 @@ function TransformSelector({ method, urlMask, items, selected }) {
 		r('select', {
 			className: className(selected === items[0]),
 			autocomplete: 'off',
-			'data-urlMask': urlMask,
-			'data-method': method,
 			onChange() {
 				fetch(DP.transform, {
 					method: 'PATCH',
-					body: JSON.stringify({
-						[DF.file]: this.value,
-						[DF.urlMask]: this.getAttribute('data-urlMask'),
-						[DF.method]: this.getAttribute('data-method')
-					})
+					body: JSON.stringify({ [DF.file]: this.value })
 				}).then(() => {
 					this.closest('tr').querySelector('a').click()
 					this.className = className(this.value === this.options[0].value)

@@ -15,7 +15,5 @@ export const DF = { // Dashboard Fields (XHR)
 	delayed: 'delayed',
 	file: 'file',
 	currentCookieKey: 'current_cookie_key',
-	isForDashboard: 'mock_request_payload',
-	method: 'method',
-	urlMask: 'url_mask'
+	isForDashboard: 'mock_request_payload'
 }

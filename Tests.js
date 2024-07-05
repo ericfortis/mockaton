@@ -331,13 +331,18 @@ async function testStaticFileServing() {
 }
 
 async function testInvalidFilenamesAreIgnored() {
-	await it('Invalid filenames get skipped, so they don’t crash the server', async () => {
+	await it('Invalid filenames get skipped, so they don’t crash the server', async (t) => {
+		const consoleErrorSpy = t.mock.method(console, 'error')
+		consoleErrorSpy.mock.mockImplementation(() => {}) // so they don’t render in the test report
+		
 		// An extension is needed for testing because of `Config.allowedExt`
-		write('api/_INVALID_FILENAME_CONVENTION_.json', '') 
-		write('api/bad-filename._INVALID_METHOD_.200.json', '')
+		write('api/_INVALID_FILENAME_CONVENTION_.json', '')
 		write('api/bad-filename.GET._INVALID_STATUS_.json', '')
-		// TODO test console.error hasBeenCalledWith
+		write('api/bad-filename._INVALID_METHOD_.200.json', '')
 		await reset()
+		equal(consoleErrorSpy.mock.calls[0].arguments[0], 'Invalid Filename Convention')
+		equal(consoleErrorSpy.mock.calls[1].arguments[0], 'Invalid HTTP Response Status: "NaN"')
+		equal(consoleErrorSpy.mock.calls[2].arguments[0], 'Unrecognized HTTP Method: "_INVALID_METHOD_"')
 	})
 }
 

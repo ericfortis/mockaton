@@ -22,6 +22,8 @@ Each route can have many mocks, which could either be:
 Those alternatives can be manually selected in the dashboard
 UI, or programmatically, for instance, for setting up tests.
 
+About the mock precedence, the first file in **alphabetical order** wins.
+
 
 ## Getting Started
 The best way to learn _Mockaton_ is by checking out this repo and
@@ -153,28 +155,6 @@ api/foo/?bar=[bar].GET.200.json
 api/foo/(my comment).GET.200.json
 ```
 
-
----
-## Mock Precedence
-The first file in **alphabetical order** wins when a particular route has many files.
-
-### Why do we have many mocks per Route+Method?
-Each route has mocks for many status codes, and also different
-mocks (by having comments) for testing particular scenarios.
-For example, different 422 validation error messages.
-
----
-
-## Reset the Dashboard UI after insert or delete
-When deleting the currently selected option, without refreshing the dashboard, the
-served mock will be an alternative mock if it exists. That is, the dashboard won't show
-a 404 after deleting the current mock if there’s another mock for that particular route.
-
-Similarly, inserting a file that goes first in alphabetical order will
-send a different mock from the one stated in the dashboard dropdown.
-
----
-
 ## Documenting Contracts (.md)
 This is handy for documenting request payload parameters. The dashboard will
 print the markdown document (as plain text) above the actual payload content.
@@ -183,15 +163,14 @@ Create a markdown file following the same filename convention.
 The status code can be any number. For example,
 ```text
 api/foo/[user-id].POST.201.md
+api/foo/[user-id].POST.201.json
 ```
 
----
-
-## Non-Deterministic Mocks (.mjs handlers)
+## Transforms (.mjs)
 Using the same filename convention, files ending
 with `.mjs` will process the mock before serving it.
 
-For example, this handler will uppercase the mock body.
+For example, this handler will capitalize the mock body and increment a counter.
 ```js
 export default function capitalizeAllText(mockAsText, requestBody, Config) {
   Config.database.myCount ??= 0
@@ -199,10 +178,6 @@ export default function capitalizeAllText(mockAsText, requestBody, Config) {
   return mockAsText.toUpperCase()
 }
 ```
-
-In demo mode, transforms tagged with the string `demo` within a filename
-comment get activated. Mock sets tags e.g. `demo-a` have no effect. In
-other words, only one transform per route is supported in demo mode.
 
 ---
 
@@ -253,7 +228,7 @@ PATCH http://localhost:2345/mockaton/cookies
 }
 ```
 
-### List Cookies
+### `/mockaton/cookies` List Cookies
 Sends a list of the cookie labels (keys) and
 along with a flag indicated if it’s the selected.
 ```

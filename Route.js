@@ -45,20 +45,18 @@ export class Route {
 	static parseFilename(file) {
 		const tokens = file.replace(Route.reComments, '').split('.')
 
-		let error = ''
 		if (tokens.length < 4)
-			error = 'Invalid Filename Convention'
-
-		const method = tokens.at(-3)
-		if (!httpMethods.includes(method))
-			error = `Unrecognized HTTP Method: "${method}"`
+			return { error: 'Invalid Filename Convention' }
 
 		const status = Number(tokens.at(-2))
 		if (!responseStatusIsValid(status))
-			error = `Invalid HTTP Response Status: "${status}"`
+			return { error: `Invalid HTTP Response Status: "${status}"` }
+
+		const method = tokens.at(-3)
+		if (!httpMethods.includes(method))
+			return { error: `Unrecognized HTTP Method: "${method}"` }
 
 		return {
-			error,
 			urlMask: '/' + removeTrailingSlash(tokens.at(-4)),
 			method,
 			status

@@ -39,10 +39,9 @@ export function init() {
 }
 
 export const getAll = () => collection
-export const getBroker = (method, urlMask) => collection[method][urlMask]
 export const getBrokerByFilename = file => {
 	const { method, urlMask } = Route.parseFilename(file)
-	return getBroker(method, urlMask)
+	return collection[method][urlMask]
 }
 
 

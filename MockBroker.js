@@ -20,7 +20,6 @@ export class MockBroker {
 		this.mocks = [] // *.json,txt
 		this.currentMock = {
 			file: '',
-			get status() { return Route.parseFilename(this.file).status },
 			delay: 0
 		}
 
@@ -45,8 +44,8 @@ export class MockBroker {
 	urlMaskMatches(url) { return this.#route.urlMaskMatches(url) }
 
 	get file() { return this.currentMock.file }
-	get status() { return this.currentMock.status }
 	get delay() { return this.currentMock.delay }
+	get status() { return Route.parseFilename(this.currentMock.file).status }
 
 	updateFile(filename) {
 		this.currentMock.file = filename

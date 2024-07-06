@@ -1,8 +1,9 @@
 # Mockaton 
 _Mockaton_ is a mock server for developing and testing frontends.
 
-It scans `Config.mocksDir` for files following a specific file name convention, which is
-similar to the URLs. For example, the following file will be served for `/api/user/1234`
+It scans `Config.mocksDir` for files following a specific
+file name convention, which is similar to the URL paths. For
+example, the following file will be served for `/api/user/1234`
 ```
 api/
 api/user/
@@ -27,7 +28,7 @@ About the default mock file, the first file in **alphabetical order** wins.
 
 ## Getting Started
 The best way to learn _Mockaton_ is by checking out this repo and
-exploring its [sample-mocks/](./sample-mocks) directory. Then run
+exploring its [sample-mocks/](./sample-mocks) directory. Then, run
 [`./_usage_example.js`](./_usage_example.js) and you’ll see this dashboard:
 
 ![](./README-dashboard.png)

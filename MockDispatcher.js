@@ -25,7 +25,7 @@ export async function dispatchMock(req, response) {
 	
 	try {
 		const { file, status, delay, currentTransform } = mockBroker
-		console.log('\n', req.url, '->\n ', file)
+		console.log('\n', req.url, '→\n ', file)
 
 		response.statusCode = status
 		response.setHeader('content-type', mimeFor(file))

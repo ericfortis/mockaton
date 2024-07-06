@@ -118,7 +118,8 @@ async function runTests() {
 
 	await testItUpdatesDelayAndFile(
 		'/api/alternative',
-		'api/alternative(comment-1).GET.200.json')
+		'api/alternative(comment-2).GET.200.json',
+		JSON.stringify({ comment: 2 }))
 
 	await testAutogenerates500(
 		'/api/company-e/123?limit=9',
@@ -200,7 +201,7 @@ async function testItUpdatesTheCurrentSelectedMock(url, file, expectedStatus, ex
 	})
 }
 
-async function testItUpdatesDelayAndFile(url, file) {
+async function testItUpdatesDelayAndFile(url, file, expectedBody) {
 	await request(DP.edit, {
 		method: 'PATCH',
 		body: JSON.stringify({
@@ -209,9 +210,12 @@ async function testItUpdatesDelayAndFile(url, file) {
 		})
 	})
 	const now = new Date()
-	await request(url)
-	await describe('url: ' + url, () =>
-		it('delay is over 1 sec', () => equal((new Date()).getTime() - now.getTime() > 1000, true)))
+	const res = await request(url)
+	const body = await res.text()
+	await describe('url: ' + url, () => {
+		it('body is: ' + expectedBody, () => equal(body, expectedBody))
+		it('delay is over 1 sec', () => equal((new Date()).getTime() - now.getTime() > 1000, true))
+	})
 }
 
 

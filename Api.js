@@ -72,8 +72,7 @@ async function updateBroker(req, response) {
 		const broker = mockBrokersCollection.getBrokerByFilename(body[DF.file])
 		if (DF.delayed in body)
 			broker.updateDelay(body[DF.delayed])
-		else
-			broker.updateFile(body[DF.file])
+		broker.updateFile(body[DF.file])
 		sendOK(response)
 	}
 	catch (error) {

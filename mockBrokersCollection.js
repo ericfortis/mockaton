@@ -35,7 +35,7 @@ export function init() {
 				collection[method][urlMask].register(file)
 		}
 	}
-	forEachBroker(broker => broker.ensureItHas501())
+	forEachBroker(broker => broker.ensureItHas500())
 }
 
 export const getAll = () => collection

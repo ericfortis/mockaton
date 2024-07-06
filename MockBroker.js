@@ -80,24 +80,24 @@ export class MockBroker {
 		return comments
 	}
 
-	ensureItHas501() {
-		if (!this.#has501())
-			this.#write501()
+	ensureItHas500() {
+		if (!this.#has500())
+			this.#write500()
 	}
 
-	#has501() {
+	#has500() {
 		return this.mocks.some(mock =>
-			Route.parseFilename(mock).status === 501)
+			Route.parseFilename(mock).status === 500)
 	}
 
-	#write501() {
+	#write500() {
 		// TODO handle route with transforms but without mocks
 		const { urlMask, method } = Route.parseFilename(this.mocks[0])
 		let mask = urlMask
 		const t = join(Config.mocksDir, urlMask)
 		if (existsSync(t) && lstatSync(t).isDirectory())
 			mask = urlMask + '/'
-		const file = `${mask}.${method}.501.txt`
+		const file = `${mask}.${method}.500.txt`
 		writeFileSync(join(Config.mocksDir, file), '')
 		this.register(file)
 	}

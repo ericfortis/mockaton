@@ -20,7 +20,7 @@ export class MockBroker {
 		this.mocks = [] // *.json,txt
 		this.currentMock = {
 			file: '',
-			status: 200,
+			get status() { return Route.parseFilename(this.file).status },
 			delay: 0
 		}
 
@@ -36,10 +36,8 @@ export class MockBroker {
 		else if (file.endsWith('.mjs'))
 			this.transforms.push(file)
 		else {
-			if (!this.mocks.length) {
+			if (!this.mocks.length)
 				this.currentMock.file = file // The first mock file option for a particular route becomes the default
-				this.currentMock.status = Route.parseFilename(file).status
-			}
 			this.mocks.push(file)
 		}
 	}
@@ -52,7 +50,6 @@ export class MockBroker {
 
 	updateFile(filename) {
 		this.currentMock.file = filename
-		this.currentMock.status = Route.parseFilename(filename).status
 	}
 
 	updateDelay(delayed) {

@@ -22,7 +22,7 @@ Each route can have many mocks, which could either be:
 Those alternatives can be manually selected in the dashboard
 UI, or programmatically, for instance, for setting up tests.
 
-About the mock precedence, the first file in **alphabetical order** wins.
+About the default mock file, the first file in **alphabetical order** wins.
 
 
 ## Getting Started
@@ -136,13 +136,13 @@ api/foo.GET.200.json
 ```
 api/video?limit=[limit].GET.200.json
 ```
-The query string behaves like comments in the sense it’s
-only used for documenting the URL API contract.
+The query string behaves like comments in the sense it’s only used for documenting
+the URL API contract. In other words, the query string is ignored when routing to it.
 
-In other words, the query string is ignored when routing to it. BTW, in Windows,
-filenames containing "?" are not permitted, but they are ignored anyway.
+BTW, in Windows, filenames containing "?" are [not
+permitted](https://learn.microsoft.com/en-us/windows/win32/fileio/naming-a-file),
+but since that’s part of the query string, it’s ignored anyway.
 
-https://learn.microsoft.com/en-us/windows/win32/fileio/naming-a-file
 
 
 ### Default (index-like) file
@@ -194,15 +194,6 @@ PATCH /mockaton/edit
 ---
 
 ### `/mockaton/bulk-select` Select all mocks that have a particular comment
-Many mocks can be changed at once. We do that by searching the
-comments on the filename. For example, `api/foo(demo-a).GET.200.json`
-
-Non-matching mocks are ignored. For instance, if for a
-particular API there is only `demo-a` and `demo-b`, changing to
-`demo-c` will preserve the last one that was successfully set.
-
-Similarly, if there’s no demo mock at all for
-a route, the first dev mock (a-z) will be served.
 
 ```
 PATCH /mockaton/bulk-select
@@ -220,7 +211,8 @@ PATCH /mockaton/reset
 ---
 
 ### `/mockaton/cookies` Select a cookie
-In `Config.cookies`, each key is a label used to change them.
+In `Config.cookies`, each key is the label used
+for changing it. Only one cookie can be set.
 ```
 PATCH /mockaton/cookies
 {
@@ -229,8 +221,7 @@ PATCH /mockaton/cookies
 ```
 
 ### `/mockaton/cookies` List Cookies
-Sends a list of the cookie labels (keys) and
-along with a flag indicated if it’s the selected.
+Sends a list of the available cookies along with a flag indicated if it’s the selected.
 ```
 GET /mockaton/cookies
 ```

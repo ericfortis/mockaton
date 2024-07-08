@@ -17,7 +17,7 @@ export async function dispatchMock(req, response) {
 		return
 	}
 
-	const mockBroker = MockBrokerCollection.findMatchingBroker(req.method, req.url)
+	const mockBroker = MockBrokerCollection.getBrokerForUrl(req.method, req.url)
 	if (!mockBroker) {
 		sendNotFound(response)
 		return

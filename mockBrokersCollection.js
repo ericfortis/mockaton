@@ -38,24 +38,26 @@ export function init() {
 	forEachBroker(broker => broker.ensureItHas500())
 }
 
+
 export const getAll = () => collection
+
 export const getBrokerByFilename = file => {
 	const { method, urlMask } = Route.parseFilename(file)
 	return collection[method][urlMask]
 }
-
 
 // Searching the routes in reverse order so dynamic params (e.g.
 // /user/[id]) don’t take precedence over exact paths (e.g.
 // /user/name). That’s because "[]" chars are lower than alphanumeric ones.
 // BTW, `urlMasks` always start with "/", so there’s no need to
 // worry about the primacy of array-like keys when iterating.
-export function findMatchingBroker(method, url) {
+export function getBrokerForUrl(method, url) {
 	const brokers = Object.values(collection[method])
 	for (let i = brokers.length - 1; i >= 0; i--)
 		if (brokers[i].urlMaskMatches(url))
 			return brokers[i]
 }
+
 
 export function extractAllComments() {
 	const comments = new Set()
@@ -69,6 +71,7 @@ export function extractAllComments() {
 export function setMocksMatchingComment(comment) {
 	forEachBroker(broker => broker.setByMatchingComment(comment))
 }
+
 
 function listMocksDirRecursively() {
 	return readdirSync(Config.mocksDir, { recursive: true })

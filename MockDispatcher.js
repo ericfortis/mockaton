@@ -17,14 +17,14 @@ export async function dispatchMock(req, response) {
 		return
 	}
 
-	const mockBroker = MockBrokerCollection.getBrokerForUrl(req.method, req.url)
-	if (!mockBroker) {
+	const broker = MockBrokerCollection.getBrokerForUrl(req.method, req.url)
+	if (!broker) {
 		sendNotFound(response)
 		return
 	}
 	
 	try {
-		const { file, status, delay, currentTransform } = mockBroker
+		const { file, status, delay, currentTransform } = broker
 		console.log('\n', req.url, '→\n ', file)
 
 		response.statusCode = status
@@ -33,7 +33,7 @@ export async function dispatchMock(req, response) {
 			response.setHeader('set-cookie', cookie.getCurrent())
 
 		let mockAsText = readMock(file)
-		if (mockBroker.currentTransform) {
+		if (broker.currentTransform) {
 			const body = await requestBodyForTransform(req, mockAsText)
 			const transformFunc = await importTransformFunc(currentTransform)
 			mockAsText = transformFunc(mockAsText, body, Config)

@@ -20,10 +20,14 @@ import { MockBroker } from './MockBroker.js'
 let collection = {}
 
 export function init() {
+	collection = {}
 	cookie.init(Config.cookies)
 
-	collection = {}
-	for (const file of listMocksDirRecursively()) {
+	const files = readdirSync(Config.mocksDir, { recursive: true })
+		.filter(f => Config.allowedExt.test(f) && lstatSync(join(Config.mocksDir, f)).isFile())
+		.sort()
+
+	for (const file of files) {
 		const { error, method, urlMask } = Route.parseFilename(file)
 		if (error) // skip
 			console.error(error, file)
@@ -36,6 +40,11 @@ export function init() {
 		}
 	}
 	forEachBroker(broker => broker.ensureItHas500())
+}
+
+function forEachBroker(fn) {
+	for (const brokers of Object.values(collection))
+		Object.values(brokers).forEach(fn)
 }
 
 
@@ -72,15 +81,4 @@ export function setMocksMatchingComment(comment) {
 	forEachBroker(broker => broker.setByMatchingComment(comment))
 }
 
-
-function listMocksDirRecursively() {
-	return readdirSync(Config.mocksDir, { recursive: true })
-		.filter(f => Config.allowedExt.test(f) && lstatSync(join(Config.mocksDir, f)).isFile())
-		.sort()
-}
-
-function forEachBroker(fn) {
-	for (const brokers of Object.values(collection))
-		Object.values(brokers).forEach(fn)
-}
 

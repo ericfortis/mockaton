@@ -137,8 +137,8 @@ api/foo.GET.200.json
 ```
 api/video?limit=[limit].GET.200.json
 ```
-The query string behaves like comments in the sense it’s only used for documenting
-the URL API contract. In other words, the query string is ignored when routing to it.
+The query string is only used for documenting the URL API
+contract. In other words, it’s ignored when routing to it.
 
 BTW, in Windows, filenames containing "?" are [not
 permitted](https://learn.microsoft.com/en-us/windows/win32/fileio/naming-a-file),

@@ -4,14 +4,14 @@ import { createServer } from 'node:http'
 import { DP } from './ApiConstants.js'
 import { Config, setup } from './Config.js'
 import { dispatchMock } from './MockDispatcher.js'
-import * as MockBrokerCollection from './mockBrokersCollection.js'
+import * as mockBrokerCollection from './mockBrokersCollection.js'
 import { dispatchStatic, isStatic } from './StaticDispatcher.js'
 import { apiPatchRequests, apiGetRequests } from './Api.js'
 
 
 export function Mockaton(options) {
 	setup(options)
-	MockBrokerCollection.init()
+	mockBrokerCollection.init()
 
 	return createServer(async (req, response) => {
 		const { url, method } = req

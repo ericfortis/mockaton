@@ -199,7 +199,7 @@ PATCH /mockaton/edit
 ```
 PATCH /mockaton/bulk-select
 {
-  "comment": "demo-a"
+  "comment": "(demo-a)"
 }
 ```
 ---

@@ -5,7 +5,7 @@ import { DF } from './ApiConstants.js'
 import { cookie } from './cookie.js'
 import { Config } from './Config.js'
 import { mimeFor } from './utils/mime.js'
-import * as MockBrokerCollection from './mockBrokersCollection.js'
+import * as mockBrokerCollection from './mockBrokersCollection.js'
 import { parseJSON, JsonBodyParserError } from './utils/http-request.js'
 import { sendInternalServerError, sendNotFound, sendFile, sendBadRequest } from './utils/http-response.js'
 
@@ -17,7 +17,7 @@ export async function dispatchMock(req, response) {
 		return
 	}
 
-	const broker = MockBrokerCollection.getBrokerForUrl(req.method, req.url)
+	const broker = mockBrokerCollection.getBrokerForUrl(req.method, req.url)
 	if (!broker) {
 		sendNotFound(response)
 		return

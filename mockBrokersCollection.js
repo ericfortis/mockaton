@@ -29,15 +29,15 @@ export function init() {
 
 	for (const file of files) {
 		const { error, method, urlMask } = Route.parseFilename(file)
-		if (error) // skip
+		if (error) {
 			console.error(error, file)
-		else {
-			collection[method] ??= {}
-			if (!(urlMask in collection[method]))
-				collection[method][urlMask] = new MockBroker(file)
-			else
-				collection[method][urlMask].register(file)
+			continue
 		}
+		collection[method] ??= {}
+		if (!(urlMask in collection[method]))
+			collection[method][urlMask] = new MockBroker(file)
+		else
+			collection[method][urlMask].register(file)
 	}
 	forEachBroker(broker => broker.ensureItHas500())
 }

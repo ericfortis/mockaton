@@ -1,13 +1,13 @@
 # Mockaton 
 _Mockaton_ is a mock server for developing and testing frontends.
 
-It scans `Config.mocksDir` for files following a specific
-file name convention, which is similar to the URL paths. For
+It scans `Config.mocksDir` for files following a specific directory
+and file name convention, which is similar to the URL paths. For
 example, the following file will be served for `/api/user/1234`
 ```
-api/
-api/user/
-api/user/[user-id].GET.200.json
+-- api/
+   |-- user/
+       |-- [user-id].GET.200.json
 ```
 
 By the way, [this browser
@@ -122,21 +122,25 @@ The `Config.allowedExt` regex defaults to: `/\.(json|txt|md|mjs)$/`
 
 
 ### Dynamic Parameters
-Anything within square brackets. For example, `api/user/[id]/[age].GET.200.json`
+Anything within square brackets. For example, 
+<pre>
+api/user/<b>[id]</b>/<b>[age]</b>.GET.200.json
+</pre>
 
 ### Comments
-Comments are anything within parentheses, including them, and they are
-ignored for URL purposes. In other words, comments have no effect on the
-URL mask. For example, these two are for `/api/foo`
-```
-api/foo(my comment).GET.200.json(foo)
+Comments are anything within parentheses, including them.
+They are ignored for URL purposes, so they have no effect
+on the URL mask. For example, these two are for `/api/foo`
+<pre>
+api/foo<b>(my comment)</b>.GET.200.json<b>(foo)</b>
 api/foo.GET.200.json
-```
+</pre>
 
 ### Query String Params
-```
-api/video?limit=[limit].GET.200.json
-```
+<pre>
+api/video<b>?limit=[limit].GET.200.json</b>
+</pre>
+
 The query string is ignored when routing to it. It’s
 only used for documenting the URL API contract.
 

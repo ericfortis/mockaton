@@ -138,7 +138,7 @@ api/foo.GET.200.json
 
 ### Query String Params
 <pre>
-api/video<b>?limit=[limit].GET.200.json</b>
+api/video<b>?limit=[limit]</b>.GET.200.json
 </pre>
 
 The query string is ignored when routing to it. It’s

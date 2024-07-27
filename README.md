@@ -5,9 +5,7 @@ It scans `Config.mocksDir` for files following a specific directory
 and file name convention, which is similar to the URL paths. For
 example, the following file will be served for `/api/user/1234`
 ```
--- api/
-   |-- user/
-       |-- [user-id].GET.200.json
+my-mocks-dir/api/user/[user-id].GET.200.json
 ```
 
 By the way, [this browser

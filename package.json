@@ -9,6 +9,6 @@
 	"repository": "https://github.com/ericfortis/mockaton",
 	"scripts": {
 		"test": "./Tests.js",
-		"demo": "_usage_example.js"
+		"demo": "./_usage_example.js"
 	}
 }

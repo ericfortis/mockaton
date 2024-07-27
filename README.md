@@ -63,10 +63,9 @@ Create a `my-mockaton.js` file
 import { resolve } from 'node:path'
 import { Mockaton } from 'src/Mockaton'
 
-
 Mockaton({ // Config options
-	port: 2345,
-	mocksDir: resolve('my-mocks-dir')
+  port: 2345,
+  mocksDir: resolve('my-mocks-dir')
 })
 ```
 
@@ -93,14 +92,13 @@ interface Config {
 ```js
 import { jwtCookie } from 'src/Mockaton'
 
-
 Config.cookies = {
-	'My Admin User': 'my-cookie=1;Path=/;SameSite=strict',
-	'My Normal User': 'my-cookie=0;Path=/;SameSite=strict',
-	'My JWT': jwtCookie('my-cookie', {
-		email: 'john.doe@example.com',
-		picture: 'https://cdn.auth0.com/avatars/jd.png'
-	})
+  'My Admin User': 'my-cookie=1;Path=/;SameSite=strict',
+  'My Normal User': 'my-cookie=0;Path=/;SameSite=strict',
+  'My JWT': jwtCookie('my-cookie', {
+    email: 'john.doe@example.com',
+    picture: 'https://cdn.auth0.com/avatars/jd.png'
+  })
 }
 ```
 
@@ -177,9 +175,9 @@ with `.mjs` will process the mock before serving it.
 
 For example, this handler will capitalize the mock body and increment a counter.
 ```js
-export default function capitalizeAllText(mockAsText, requestBody, Config) {
-  Config.database.myCount ??= 0
-  Config.database.myCount++
+export default function capitalizeAllText(mockAsText, requestBody, config) {
+  config.database.myCount ??= 0
+  config.database.myCount++
   return mockAsText.toUpperCase()
 }
 ```

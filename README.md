@@ -63,11 +63,12 @@ npm install mockaton
 Create a `my-mockaton.js` file
 ```js
 import { resolve } from 'node:path'
-import { Mockaton } from 'mockaton'
+import { Mockaton } from 'src/Mockaton'
+
 
 Mockaton({ // Config options
-  port: 2345,
-  mocksDir: resolve('my-mocks-dir')
+	port: 2345,
+	mocksDir: resolve('my-mocks-dir')
 })
 ```
 
@@ -92,15 +93,16 @@ interface Config {
 
 ## Cookies
 ```js
-import { jwtCookie } from 'mockaton'
+import { jwtCookie } from 'src/Mockaton'
+
 
 Config.cookies = {
-  'My Admin User':  'my-cookie=1;Path=/;SameSite=strict',
-  'My Normal User': 'my-cookie=0;Path=/;SameSite=strict',
-  'My JWT': jwtCookie('my-cookie', {
-    email: 'john.doe@example.com',
-    picture: 'https://cdn.auth0.com/avatars/jd.png'
-  })
+	'My Admin User': 'my-cookie=1;Path=/;SameSite=strict',
+	'My Normal User': 'my-cookie=0;Path=/;SameSite=strict',
+	'My JWT': jwtCookie('my-cookie', {
+		email: 'john.doe@example.com',
+		picture: 'https://cdn.auth0.com/avatars/jd.png'
+	})
 }
 ```
 

@@ -6,10 +6,10 @@ import { describe, it } from 'node:test'
 import { equal, deepEqual, match } from 'node:assert/strict'
 import { writeFileSync, mkdtempSync, mkdirSync } from 'node:fs'
 
-import { Route } from './Route.js'
-import { mimeFor } from './utils/mime.js'
-import { DP, DF } from './ApiConstants.js'
-import { Mockaton } from './Mockaton.js'
+import { Route } from './src/Route.js'
+import { mimeFor } from './src/utils/mime.js'
+import { Mockaton } from './src/Mockaton.js'
+import { DP, DF } from './src/ApiConstants.js'
 
 
 const tmpDir = mkdtempSync(tmpdir()) + '/'

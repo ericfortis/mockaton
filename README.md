@@ -23,6 +23,10 @@ UI, or programmatically, for instance, for setting up tests.
 
 About the default mock file, the first file in **alphabetical order** wins.
 
+### Proxying Routes
+`Config.proxyFallback` lets you specify a target
+server for serving routes you don’t have mocks for.
+
 
 ## Getting Started
 The best way to learn _Mockaton_ is by checking out this repo and

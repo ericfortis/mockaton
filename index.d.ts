@@ -11,6 +11,7 @@ interface Config {
 
 	database?: object
 	skipOpen?: boolean
+	proxyFallback?: string
 	allowedExt?: RegExp
 }
 

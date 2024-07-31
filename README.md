@@ -84,6 +84,7 @@ interface Config {
   cookies?(): object 
   database?: object // for "Transforms"
   skipOpen?: boolean // Prevents opening the dashboard in a browser
+	proxyFallback?: string // e.g. http://localhost:9999 For relaying routes without mocks
   allowedExt?: RegExp // /\.(json|txt|md|mjs)$/ Just for excluding temporary editor files (e.g. JetBrains appends a ~)
 }
 ```

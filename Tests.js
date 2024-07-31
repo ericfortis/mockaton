@@ -3,6 +3,7 @@
 import { tmpdir } from 'node:os'
 import { dirname } from 'node:path'
 import { describe, it } from 'node:test'
+import { createServer } from 'node:http'
 import { equal, deepEqual, match } from 'node:assert/strict'
 import { writeFileSync, mkdtempSync, mkdirSync } from 'node:fs'
 
@@ -98,17 +99,22 @@ writeStatic('index.html', '<h1>Static</h1>')
 writeStatic('assets/app.js', 'const app = 1')
 writeStatic('another-entry/index.html', '<h1>Another</h1>')
 
-
-const server = Mockaton({
-	mocksDir: tmpDir,
-	staticDir: staticTmpDir,
-	skipOpen: true,
-	cookies: {
-		userA: 'CookieA',
-		userB: 'CookieB'
-	}
+let server
+const fallbackServer = createServer((_, response) => {
+	response.end('From_Fallback_Server')
+}).listen(0, 'localhost', function () {
+	server = Mockaton({
+		mocksDir: tmpDir,
+		staticDir: staticTmpDir,
+		skipOpen: true,
+		cookies: {
+			userA: 'CookieA',
+			userB: 'CookieB'
+		},
+		proxyFallback: `http://localhost:${fallbackServer.address().port}`
+	})
+	server.on('listening', runTests)
 })
-server.on('listening', runTests)
 
 async function runTests() {
 	await testItRendersDashboard()
@@ -157,7 +163,9 @@ async function runTests() {
 	await testTransforms()
 	await testStaticFileServing()
 	await testInvalidFilenamesAreIgnored()
+	await testRouteWithoutMocksRelaysGetsProxied()
 	server.close()
+	fallbackServer.close()
 }
 
 async function reset() {
@@ -350,6 +358,12 @@ async function testInvalidFilenamesAreIgnored() {
 	})
 }
 
+async function testRouteWithoutMocksRelaysGetsProxied() {
+	await it('Fallback relay', async () => {
+		const res = await request('/non-existing-mock')
+		equal(await res.text(), 'From_Fallback_Server')
+	})
+}
 
 // Utils
 

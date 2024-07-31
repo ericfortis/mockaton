@@ -11,6 +11,7 @@ export const Config = {
 	cookies: {}, // defaults to the first kv
 	database: {},
 	skipOpen: false,
+	proxyFallback: '', // e.g. http://localhost:9999
 	allowedExt: /\.(json|txt|md|mjs)$/ // Just for excluding temporary editor files (e.g. JetBrains appends a ~)
 }
 
@@ -25,6 +26,7 @@ export function setup(options) {
 		cookies: is(Object),
 		database: is(Object),
 		skipOpen: is(Boolean),
+		proxyFallback: is(String),
 		allowedExt: is(RegExp)
 	})
 }

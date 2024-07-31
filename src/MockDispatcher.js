@@ -2,6 +2,7 @@ import { join } from 'node:path'
 import { readFileSync } from 'node:fs'
 
 import { DF } from './ApiConstants.js'
+import { proxy } from './ProxyRelay.js'
 import { cookie } from './cookie.js'
 import { Config } from './Config.js'
 import { mimeFor } from './utils/mime.js'
@@ -19,10 +20,13 @@ export async function dispatchMock(req, response) {
 
 	const broker = mockBrokerCollection.getBrokerForUrl(req.method, req.url)
 	if (!broker) {
-		sendNotFound(response)
+		if (Config.proxyFallback)
+			await proxy(req, response)
+		else
+			sendNotFound(response) // TESTME
 		return
 	}
-	
+
 	try {
 		const { file, status, delay, currentTransform } = broker
 		console.log('\n', req.url, '→\n ', file)

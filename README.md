@@ -102,6 +102,7 @@ Config.cookies = {
   })
 }
 ```
+The key is just a label used in dashboard for selecting the desired cookie.
 
 That `jwtCookie` has a hardcoded header and signature. In other
 words, it’s useful iff you care about its payload in the frontend.

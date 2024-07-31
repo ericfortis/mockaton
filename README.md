@@ -81,7 +81,7 @@ interface Config {
   host?: string, // 'localhost'
   port?: number // 0 auto-assigned
   delay?: number // 1200 ms
-  cookies?(): object 
+  cookies?: object 
   database?: object // for "Transforms"
   skipOpen?: boolean // Prevents opening the dashboard in a browser
   proxyFallback?: string // e.g. http://localhost:9999 Target for relaying routes without mocks

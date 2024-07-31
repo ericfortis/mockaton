@@ -6,9 +6,7 @@ interface Config {
 	host?: string,
 	port?: number
 	delay?: number
-
-	cookies?(): object
-
+	cookies?: object
 	database?: object
 	skipOpen?: boolean
 	proxyFallback?: string

@@ -24,7 +24,7 @@ Each route can have many mocks, which could either be:
 Those alternatives can be manually selected in the dashboard
 UI, or programmatically, for instance, for setting up tests.
 
-About the default mock file, the first file in **alphabetical order** wins.
+The first file in **alphabetical order** becomes the default mock.
 
 ### Proxying Routes
 `Config.proxyFallback` lets you specify a target
@@ -43,7 +43,7 @@ exploring its [sample-mocks/](./sample-mocks) directory. Then, run
 The clock icon next to the mock selector is a checkbox for delaying a
 particular response. They are handy for testing spinners.
 
-The milliseconds for the delay is globally configurable via `Config.delay = 1200`
+The delay is globally configurable via `Config.delay = 1200` (milliseconds).
 
 ---
 
@@ -57,8 +57,8 @@ import { resolve } from 'node:path'
 import { Mockaton } from 'mockaton'
 
 Mockaton({
-  mocksDir: resolve('my-mocks-dir'),
-	port: 2345
+  mocksDir: resolve('my-mocks-dir'), 
+  port: 2345
 })
 ```
 
@@ -84,7 +84,7 @@ interface Config {
 
 ## Cookies
 ```js
-import { jwtCookie } from 'src/Mockaton'
+import { jwtCookie } from 'mockaton'
 
 Config.cookies = {
   'My Admin User': 'my-cookie=1;Path=/;SameSite=strict',

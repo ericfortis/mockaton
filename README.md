@@ -71,9 +71,9 @@ node my-mockaton.js
 interface Config {
   mocksDir: string
   staticDir?: string 
-  host?: string, // 'localhost'
-  port?: number // 0 auto-assigned
-  delay?: number // 1200 ms
+  host?: string, // defaults to 'localhost'
+  port?: number // defaults to 0, which means auto-assigned
+  delay?: number // defaults to 1200 (ms)
   cookies?: object 
   database?: object // for "Transforms"
   skipOpen?: boolean // Prevents opening the dashboard in a browser
@@ -155,7 +155,7 @@ api/foo/(my comment).GET.200.json
 
 ## Documenting Contracts (.md)
 This is handy for documenting request payload parameters. The dashboard will
-print the markdown document (as plain text) above the actual payload content.
+print the Markdown document (as plain text) above the actual payload content.
 
 Create a markdown file following the same filename convention.
 The status code can be any number. For example,

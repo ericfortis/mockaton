@@ -341,7 +341,5 @@ function createSvgElement(tagName, props, ...children) {
 }
 
 function useRef() {
-	return {
-		currentMock: null
-	}
+	return { current: null }
 }

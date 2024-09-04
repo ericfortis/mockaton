@@ -6,29 +6,29 @@
 import { join } from 'node:path'
 import { cookie } from './cookie.js'
 import { Config } from './Config.js'
-import { DF, DP } from './ApiConstants.js'
+import { DF, API } from './ApiConstants.js'
 import { parseJSON } from './utils/http-request.js'
 import * as mockBrokersCollection from './mockBrokersCollection.js'
 import { sendOK, sendBadRequest, sendJSON, sendFile } from './utils/http-response.js'
 
 
 export const apiGetRequests = new Map([
-	[DP.dashboard, serveDashboard],
+	[API.dashboard, serveDashboard],
 	['/Route.js', serveDashboardAsset],
 	['/Dashboard.js', serveDashboardAsset],
 	['/Dashboard.css', serveDashboardAsset],
 	['/ApiConstants.js', serveDashboardAsset],
-	[DP.mocks, listMockBrokers],
-	[DP.cookies, listCookies],
-	[DP.comments, listComments]
+	[API.mocks, listMockBrokers],
+	[API.cookies, listCookies],
+	[API.comments, listComments]
 ])
 
 export const apiPatchRequests = new Map([
-	[DP.bulkSelect, bulkUpdateBrokersByCommentTag],
-	[DP.edit, updateBroker],
-	[DP.reset, reinitialize],
-	[DP.cookies, selectCookie],
-	[DP.transform, updateBrokerTransform]
+	[API.bulkSelect, bulkUpdateBrokersByCommentTag],
+	[API.edit, updateBroker],
+	[API.reset, reinitialize],
+	[API.cookies, selectCookie],
+	[API.transform, updateBrokerTransform]
 ])
 
 function serveDashboard(_, response) {

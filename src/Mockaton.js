@@ -1,7 +1,7 @@
 import { exec } from 'node:child_process'
 import { createServer } from 'node:http'
 
-import { DP } from './ApiConstants.js'
+import { API } from './ApiConstants.js'
 import { Config, setup } from './Config.js'
 import { dispatchMock } from './MockDispatcher.js'
 import * as mockBrokerCollection from './mockBrokersCollection.js'
@@ -31,9 +31,10 @@ export function Mockaton(options) {
 			const { address, port } = this.address()
 			const url = `http://${address}:${port}`
 			console.log('Listening on', url)
+			console.log('Dashboard', url + API.dashboard)
 			if (error)
 				console.error(error)
 			else if (!Config.skipOpen)
-				exec(`open ${url + DP.dashboard}`)
+				exec(`open ${url + API.dashboard}`)
 		})
 }

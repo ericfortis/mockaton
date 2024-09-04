@@ -10,7 +10,7 @@ import { writeFileSync, mkdtempSync, mkdirSync } from 'node:fs'
 import { Route } from './src/Route.js'
 import { mimeFor } from './src/utils/mime.js'
 import { Mockaton } from './src/Mockaton.js'
-import { DP, DF } from './src/ApiConstants.js'
+import { API, DF } from './src/ApiConstants.js'
 
 
 const tmpDir = mkdtempSync(tmpdir()) + '/'
@@ -169,11 +169,11 @@ async function runTests() {
 }
 
 async function reset() {
-	await request(DP.reset, { method: 'PATCH' })
+	await request(API.reset, { method: 'PATCH' })
 }
 
 async function testItRendersDashboard() {
-	const res = await request(DP.dashboard)
+	const res = await request(API.dashboard)
 	const body = await res.text()
 	await describe('Dashboard', () =>
 		it('Renders HTML', () => match(body, new RegExp('<!DOCTYPE html>'))))
@@ -197,7 +197,7 @@ async function testMockDispatching(url, file, expectedBody, reqBody = void 0) {
 }
 
 async function testItUpdatesTheCurrentSelectedMock(url, file, expectedStatus, expectedBody) {
-	await request(DP.edit, {
+	await request(API.edit, {
 		method: 'PATCH',
 		body: JSON.stringify({ [DF.file]: file })
 	})
@@ -210,7 +210,7 @@ async function testItUpdatesTheCurrentSelectedMock(url, file, expectedStatus, ex
 }
 
 async function testItUpdatesDelayAndFile(url, file, expectedBody) {
-	await request(DP.edit, {
+	await request(API.edit, {
 		method: 'PATCH',
 		body: JSON.stringify({
 			[DF.file]: file,
@@ -228,7 +228,7 @@ async function testItUpdatesDelayAndFile(url, file, expectedBody) {
 
 
 async function testAutogenerates500(url, file) {
-	await request(DP.edit, {
+	await request(API.edit, {
 		method: 'PATCH',
 		body: JSON.stringify({ [DF.file]: file })
 	})
@@ -241,7 +241,7 @@ async function testAutogenerates500(url, file) {
 }
 
 async function testPreservesExiting500(url, file, expectedBody) {
-	await request(DP.edit, {
+	await request(API.edit, {
 		method: 'PATCH',
 		body: JSON.stringify({ [DF.file]: file })
 	})
@@ -254,14 +254,14 @@ async function testPreservesExiting500(url, file, expectedBody) {
 }
 
 async function testExtractsAllComments(expected) {
-	const res = await request(DP.comments)
+	const res = await request(API.comments)
 	const body = await res.json()
 	await it('Extracts all comments without duplicates', () =>
 		deepEqual(body, expected))
 }
 
 async function testItBulkSelectsByComment(comment, tests) {
-	await request(DP.bulkSelect, {
+	await request(API.bulkSelect, {
 		method: 'PATCH',
 		body: JSON.stringify({ [DF.comment]: comment })
 	})
@@ -273,7 +273,7 @@ async function testItBulkSelectsByComment(comment, tests) {
 async function testItUpdatesUserRole() {
 	await describe('Cookie', () => {
 		it('Defaults to the first key:value', async () => {
-			const res = await request(DP.cookies)
+			const res = await request(API.cookies)
 			deepEqual(await res.json(), [
 				['userA', true],
 				['userB', false]
@@ -281,11 +281,11 @@ async function testItUpdatesUserRole() {
 		})
 
 		it('Update the selected cookie', async () => {
-			await request(DP.cookies, {
+			await request(API.cookies, {
 				method: 'PATCH',
 				body: JSON.stringify({ [DF.currentCookieKey]: 'userB' })
 			})
-			const res = await request(DP.cookies)
+			const res = await request(API.cookies)
 			deepEqual(await res.json(), [
 				['userA', false],
 				['userB', true]
@@ -305,7 +305,7 @@ export default function (mock, reqBody, config) {
   return JSON.stringify(body);
 }`)
 		await reset() // for registering the files
-		await request(DP.transform, {
+		await request(API.transform, {
 			method: 'PATCH',
 			body: JSON.stringify({ [DF.file]: 'api/transform.POST.200.mjs' })
 		})

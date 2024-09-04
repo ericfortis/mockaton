@@ -1,5 +1,5 @@
 const MOUNT = '/mockaton'
-export const DP = { // Dashboard Paths
+export const API = {
 	dashboard: MOUNT,
 	bulkSelect: MOUNT + '/bulk-select',
 	comments: MOUNT + '/comments',

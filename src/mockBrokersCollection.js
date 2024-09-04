@@ -1,5 +1,5 @@
 import { join } from 'node:path'
-import { readdirSync, lstatSync } from 'node:fs'
+import { readdirSync as readDir, lstatSync } from 'node:fs'
 
 import { Route } from './Route.js'
 import { Config } from './Config.js'
@@ -23,7 +23,7 @@ export function init() {
 	collection = {}
 	cookie.init(Config.cookies)
 
-	const files = readdirSync(Config.mocksDir, { recursive: true })
+	const files = readDir(Config.mocksDir, { recursive: true })
 		.filter(f => Config.allowedExt.test(f) && lstatSync(join(Config.mocksDir, f)).isFile())
 		.sort()
 

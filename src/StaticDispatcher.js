@@ -1,13 +1,12 @@
 import { join } from 'node:path'
-import { existsSync, lstatSync } from 'node:fs'
+import { existsSync as exists, lstatSync as lstat } from 'node:fs'
 
 import { Config } from './Config.js'
 import { sendFile, sendPartialContent } from './utils/http-response.js'
 
 
 export function isStatic(req) {
-	return Config.staticDir &&
-		existsSync(resolvePath(req))
+	return Config.staticDir && exists(resolvePath(req))
 }
 
 export async function dispatchStatic(req, response) {
@@ -20,8 +19,8 @@ export async function dispatchStatic(req, response) {
 
 function resolvePath(req) {
 	const candidate = join(Config.staticDir, req.url)
-	if (existsSync(candidate))
-		return lstatSync(candidate).isDirectory()
+	if (exists(candidate))
+		return lstat(candidate).isDirectory()
 			? candidate + '/index.html'
 			: candidate
 }

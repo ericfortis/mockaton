@@ -30,7 +30,7 @@ export function Mockaton(options) {
 		.listen(Config.port, Config.host, function (error) {
 			const { address, port } = this.address()
 			const url = `http://${address}:${port}`
-			console.log('Listening on', url)
+			console.log('Listening', url)
 			console.log('Dashboard', url + API.dashboard)
 			if (error)
 				console.error(error)

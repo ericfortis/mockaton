@@ -1,5 +1,5 @@
 import { Route } from '../Route.js'
-import { DP, DF } from '../ApiConstants.js'
+import { API, DF } from '../ApiConstants.js'
 
 
 const Strings = {
@@ -42,9 +42,9 @@ const refPayloadFile = useRef()
 
 function init() {
 	Promise.all([
-		DP.mocks,
-		DP.cookies,
-		DP.comments
+		API.mocks,
+		API.cookies,
+		API.comments
 	].map(api => fetch(api).then(res => res.ok && res.json())))
 		.then(App)
 		.catch(console.error)
@@ -85,7 +85,7 @@ function ResetButton() {
 	return (
 		r('button', {
 			onClick() {
-				fetch(DP.reset, { method: 'PATCH' })
+				fetch(API.reset, { method: 'PATCH' })
 					.then(init)
 					.catch(console.error)
 			}
@@ -101,7 +101,7 @@ function CookieSelector({ list }) {
 				autocomplete: 'off',
 				disabled: list.length <= 1,
 				onChange() {
-					fetch(DP.cookies, {
+					fetch(API.cookies, {
 						method: 'PATCH',
 						body: JSON.stringify({ [DF.currentCookieKey]: this.value })
 					})
@@ -122,7 +122,7 @@ function BulkSelector({ comments }) {
 			autocomplete: 'off',
 			disabled: comments.length <= 1,
 			onChange() {
-				fetch(DP.bulkSelect, {
+				fetch(API.bulkSelect, {
 					method: 'PATCH',
 					body: JSON.stringify({ [DF.comment]: this.value })
 				})
@@ -200,7 +200,7 @@ function MockSelector({ items, selected }) {
 				this.style.fontWeight = this.value === this.options[0].value // default is selected
 					? 'normal'
 					: 'bold'
-				fetch(DP.edit, {
+				fetch(API.edit, {
 					method: 'PATCH',
 					body: JSON.stringify({ [DF.file]: this.value })
 				}).then(() => {
@@ -227,7 +227,7 @@ function DelayToggler({ name, checked }) {
 				name,
 				checked,
 				onChange(event) {
-					fetch(DP.edit, {
+					fetch(API.edit, {
 						method: 'PATCH',
 						body: JSON.stringify({
 							[DF.file]: this.name,
@@ -272,7 +272,7 @@ function TransformSelector({ items, selected }) {
 			className: className(selected === items[0]),
 			autocomplete: 'off',
 			onChange() {
-				fetch(DP.transform, {
+				fetch(API.transform, {
 					method: 'PATCH',
 					body: JSON.stringify({ [DF.file]: this.value })
 				}).then(() => {

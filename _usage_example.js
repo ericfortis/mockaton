@@ -1,12 +1,12 @@
 #!/usr/bin/env node
 
-import { resolve } from 'node:path'
+import { join } from 'node:path'
 import { Mockaton, jwtCookie } from './index.js' // from 'mockaton'
 
 Mockaton({
 	port: 2345,
-	mocksDir: resolve('sample-mocks'),
-	staticDir: resolve('sample-static'),
+	mocksDir: join(import.meta.dirname, 'sample-mocks'),
+	staticDir: join(import.meta.dirname, 'sample-static'),
 	cookies: {
 		'My Admin User': 'my-cookie=1;Path=/;SameSite=strict',
 		'My Normal User': 'my-cookie=0;Path=/;SameSite=strict',

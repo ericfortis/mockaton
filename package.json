@@ -2,7 +2,7 @@
 	"name": "mockaton",
 	"description": "A deterministic server-side for developing and testing frontend clients",
 	"type": "module",
-	"version": "0.10.4",
+	"version": "0.10.5",
 	"main": "index.js",
 	"types": "index.d.ts",
 	"license": "MIT",

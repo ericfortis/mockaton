@@ -211,17 +211,17 @@ PATCH /mockaton/reset
 ### `/mockaton/cookies` Select a cookie
 In `Config.cookies`, each key is the label used
 for changing it. Only one cookie can be set.
-```
-PATCH /mockaton/cookies
-{
-  "current_cookie_key": "My Normal User"
-}
+```js
+fetch(addr + '/mockaton/cookies', {
+  method: 'PATCH',
+  body: JSON.stringify('My Normal User')
+})
 ```
 
 ### `/mockaton/cookies` List Cookies
 Sends a list of the available cookies along with a flag indicated if it’s the selected.
-```
-GET /mockaton/cookies
+```js
+fetch(addr + '/mockaton/cookies')
 ```
 
 ---
@@ -230,7 +230,7 @@ GET /mockaton/cookies
 ```js
 fetch(addr + '/mockaton/transform', {
   method: 'PATCH',
-  body: JSON.stringify("api/video/list(concat newly uploaded).GET.200.mjs")
+  body: JSON.stringify('api/video/list(concat newly uploaded).GET.200.mjs')
 })
 ```
 ---

@@ -289,7 +289,7 @@ async function testItUpdatesUserRole() {
 		it('Update the selected cookie', async () => {
 			await request(API.cookies, {
 				method: 'PATCH',
-				body: JSON.stringify({ [DF.currentCookieKey]: 'userB' })
+				body: JSON.stringify('userB')
 			})
 			const res = await request(API.cookies)
 			deepEqual(await res.json(), [

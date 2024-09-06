@@ -103,7 +103,7 @@ function CookieSelector({ list }) {
 				onChange() {
 					fetch(API.cookies, {
 						method: 'PATCH',
-						body: JSON.stringify({ [DF.currentCookieKey]: this.value })
+						body: JSON.stringify(this.value)
 					})
 						.then(init)
 						.catch(console.error)

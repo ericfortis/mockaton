@@ -51,8 +51,7 @@ function listMockBrokers(_, response) {
 
 async function selectCookie(req, response) {
 	try {
-		const body = await parseJSON(req)
-		cookie.setCurrent(body[DF.currentCookieKey])
+		cookie.setCurrent(await parseJSON(req))
 		sendOK(response)
 	}
 	catch (error) {

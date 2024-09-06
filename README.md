@@ -127,10 +127,9 @@ words, it’s useful if you only care about its payload.
 ### Extension
 `.Method.HttpResponseStatusCode.FileExt`
 
-The **file extension** can anything, but `.md` and `.mjs` are reserved
-for documentation, and mock processors (more on that later).
+The **file extension** can be anything, but `.md` is reserved for documentation.
 
-The `Config.allowedExt` regex defaults to: `/\.(json|txt|md|mjs)$/`
+The `Config.allowedExt` regex defaults to: `/\.(json|txt|md|js)$/`
 
 
 ### Dynamic Parameters

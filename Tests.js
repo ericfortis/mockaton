@@ -313,7 +313,7 @@ export default function (mock, reqBody, config) {
 		await reset() // for registering the files
 		await request(API.transform, {
 			method: 'PATCH',
-			body: JSON.stringify({ [DF.file]: 'api/transform.POST.200.mjs' })
+			body: JSON.stringify('api/transform.POST.200.mjs')
 		})
 		await testMockDispatching('/api/transform',
 			'api/transform.POST.200.json',

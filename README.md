@@ -226,16 +226,16 @@ GET /mockaton/cookies
 
 ---
 
-### `/mockaton/transform` Select a Transform
-```
-PATCH /mockaton/transform
-{
-  "file": "api/video/list(concat newly uploaded).GET.200.mjs"
-}
+### Select a Transform
+```js
+fetch(addr + '/mockaton/transform', {
+  method: 'PATCH',
+  body: JSON.stringify("api/video/list(concat newly uploaded).GET.200.mjs")
+})
 ```
 ---
 
-### `/mockaton/fallback` Select a Transform
+### Update Fallback Proxy
 ```js
 fetch(addr + '/mockaton/fallback', {
   method: 'PATCH',

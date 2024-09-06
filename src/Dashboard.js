@@ -274,7 +274,7 @@ function TransformSelector({ items, selected }) {
 			onChange() {
 				fetch(API.transform, {
 					method: 'PATCH',
-					body: JSON.stringify({ [DF.file]: this.value })
+					body: JSON.stringify(this.value)
 				}).then(() => {
 					this.closest('tr').querySelector('a').click()
 					this.className = className(this.value === this.options[0].value)

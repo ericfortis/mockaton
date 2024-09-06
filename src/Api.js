@@ -96,9 +96,9 @@ async function bulkUpdateBrokersByCommentTag(req, response) {
 
 async function updateBrokerTransform(req, response) {
 	try {
-		const body = await parseJSON(req)
-		const broker = mockBrokersCollection.getBrokerByFilename(body[DF.file])
-		broker.updateTransform(body[DF.file])
+		const file = await parseJSON(req)
+		const broker = mockBrokersCollection.getBrokerByFilename(file)
+		broker.updateTransform(file)
 		sendOK(response)
 	}
 	catch (error) {

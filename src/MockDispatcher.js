@@ -31,10 +31,6 @@ export async function dispatchMock(req, response) {
 		const { file, status, delay } = broker
 		console.log('\n', req.url, '→\n ', file)
 
-		response.statusCode = status
-		if (cookie.getCurrent())
-			response.setHeader('set-cookie', cookie.getCurrent())
-
 		let mockText
 		if (file.endsWith('.js')) {
 			response.setHeader('content-type', mimeFor('.json'))
@@ -47,6 +43,11 @@ export async function dispatchMock(req, response) {
 			response.setHeader('content-type', mimeFor(file))
 			mockText = readMock(file)
 		}
+		
+		if (cookie.getCurrent())
+			response.setHeader('set-cookie', cookie.getCurrent())
+		
+		response.writeHead(status, Config.extraHeaders)
 		setTimeout(() => response.end(mockText), delay)
 	}
 	catch (error) {

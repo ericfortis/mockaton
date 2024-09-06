@@ -111,7 +111,8 @@ const server = Mockaton({
 		userA: 'CookieA',
 		userB: 'CookieB'
 	},
-	generate500: true
+	generate500: true,
+	extraHeaders: ['Server', 'MockatonTester']
 })
 server.on('listening', runTests)
 
@@ -158,7 +159,7 @@ async function runTests() {
 	await reset()
 	for (const [url, file, body] of fixtures)
 		await testMockDispatching(url, file, body)
-	
+
 	await testMockDispatching('/api/object', 'api/object.GET.200.js', { JSON_FROM_JS: true }, mimeFor('.json'))
 	await testJsFunctionMocks()
 
@@ -205,6 +206,7 @@ async function testMockDispatching(url, file, expectedBody, forcedMime = void 0)
 		it('status: ' + status, () => equal(res.status, status))
 		it('cookie: ' + mime, () => equal(res.headers.get('set-cookie'), 'CookieA'))
 		it('delay is under 1 sec', () => equal((new Date()).getTime() - now.getTime() < 1000, true))
+		it('extra header', () => equal(res.headers.get('server'), 'MockatonTester'))
 	})
 }
 

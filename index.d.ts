@@ -10,7 +10,8 @@ interface Config {
 	skipOpen?: boolean
 	proxyFallback?: string
 	allowedExt?: RegExp
-	generate500?: boolean
+	generate500?: boolean,
+	extraHeaders?: [string, string][] 
 }
 
 export function Mockaton(options: Config): Server

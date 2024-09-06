@@ -12,7 +12,8 @@ export const Config = {
 	skipOpen: false,
 	proxyFallback: '', // e.g. http://localhost:9999
 	allowedExt: /\.(json|txt|md|js)$/, // Just for excluding temporary editor files (e.g. JetBrains appends a ~)
-	generate500: false
+	generate500: false,
+	extraHeaders: []
 }
 
 export function setup(options) {
@@ -27,7 +28,8 @@ export function setup(options) {
 		skipOpen: is(Boolean),
 		proxyFallback: is(String),
 		allowedExt: is(RegExp),
-		generate500: is(Boolean)
+		generate500: is(Boolean),
+		extraHeaders: Array.isArray
 	})
 }
 

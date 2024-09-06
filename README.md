@@ -98,27 +98,9 @@ interface Config {
   proxyFallback?: string // e.g. http://localhost:9999 Target for relaying routes without mocks
   allowedExt?: RegExp // /\.(json|txt|md|js)$/ Just for excluding temporary editor files (e.g. JetBrains appends a ~)
   generate500?: boolean // autogenerates an Internal Server Error empty mock for routes that have no 500
+  extraHeaders?: []
 }
 ```
-
-## Cookies
-```js
-import { jwtCookie } from 'mockaton'
-
-Config.cookies = {
-  'My Admin User': 'my-cookie=1;Path=/;SameSite=strict',
-  'My Normal User': 'my-cookie=0;Path=/;SameSite=strict',
-  'My JWT': jwtCookie('my-cookie', {
-    email: 'john.doe@example.com',
-    picture: 'https://cdn.auth0.com/avatars/jd.png'
-  })
-}
-```
-The key is just a label used for selecting a particular cookie in the dashboard.
-
-`jwtCookie` has a hardcoded header and signature. In other
-words, it’s useful if you only care about its payload.
-
 ---
 
 ## File Name Convention
@@ -169,6 +151,40 @@ to `api/foo` because comments and the query string are ignored.
 api/foo/.GET.200.json
 api/foo/?bar=[bar].GET.200.json
 api/foo/(my comment).GET.200.json
+```
+
+
+## `Config.cookies`
+The selected cookie is sent in every response in the `Set-Cookie` header.
+```js
+import { jwtCookie } from 'mockaton'
+
+Config.cookies = {
+  'My Admin User': 'my-cookie=1;Path=/;SameSite=strict',
+  'My Normal User': 'my-cookie=0;Path=/;SameSite=strict',
+  'My JWT': jwtCookie('my-cookie', {
+    email: 'john.doe@example.com',
+    picture: 'https://cdn.auth0.com/avatars/jd.png'
+  })
+}
+```
+The key is just a label used for selecting a particular cookie in the dashboard.
+
+`jwtCookie` has a hardcoded header and signature. In other
+words, it’s useful if you only care about its payload.
+
+
+## `Config.extraHeaders`
+They are applied last, right before ending the response. In
+other words, they can overwrite the `Content-Type`. They are
+not tuples, the header name goes in even-numbered indices.
+
+```js
+Config.extraHeaders = [
+  'Server', 'Mockaton',
+  'Set-Cookie', 'another-cookie=FOO;Path=/;SameSite=strict',
+  'Set-Cookie', 'another-cookie=BAR;Path=/;SameSite=strict'
+]
 ```
 
 ## Documenting Contracts (.md)

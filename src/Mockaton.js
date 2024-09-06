@@ -14,6 +14,8 @@ export function Mockaton(options) {
 	mockBrokerCollection.init()
 
 	return createServer(async (req, response) => {
+		response.setHeader('Server', 'Mockaton')
+
 		const { url, method } = req
 		if (method === 'GET' && apiGetRequests.has(url))
 			apiGetRequests.get(url)(req, response)

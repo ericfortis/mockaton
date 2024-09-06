@@ -83,8 +83,7 @@ async function updateBroker(req, response) {
 
 async function bulkUpdateBrokersByCommentTag(req, response) {
 	try {
-		const body = await parseJSON(req)
-		mockBrokersCollection.setMocksMatchingComment(body[DF.comment])
+		mockBrokersCollection.setMocksMatchingComment(await parseJSON(req))
 		sendOK(response)
 	}
 	catch (error) {

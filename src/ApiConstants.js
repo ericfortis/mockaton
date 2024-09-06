@@ -1,7 +1,7 @@
 const MOUNT = '/mockaton'
 export const API = {
 	dashboard: MOUNT,
-	bulkSelect: MOUNT + '/bulk-select',
+	bulkSelect: MOUNT + '/bulk-select-by-comment',
 	comments: MOUNT + '/comments',
 	edit: MOUNT + '/edit',
 	mocks: MOUNT + '/mocks',
@@ -12,7 +12,6 @@ export const API = {
 }
 
 export const DF = { // Dashboard Fields (XHR)
-	comment: 'comment',
 	delayed: 'delayed',
 	file: 'file',
 	isForDashboard: 'mock_request_payload'

@@ -124,7 +124,7 @@ function BulkSelector({ comments }) {
 			onChange() {
 				fetch(API.bulkSelect, {
 					method: 'PATCH',
-					body: JSON.stringify({ [DF.comment]: this.value })
+					body: JSON.stringify(this.value)
 				})
 					.then(init)
 					.catch(console.error)

@@ -177,38 +177,37 @@ export default function capitalizeAllText(mockAsText, requestBody, config) {
 }
 ```
 
----
 
 ## API
 
-### `/mockaton/edit` Select a mock for a route
+### Select a mock for a route
+```js
+fetch(addr + '/mockaton/edit', {
+  method: 'PATCH',
+  body: JSON.stringify({
+    file: 'api/foo.200.GET.json',
+    delayed: true // optional
+  })
+})
 ```
-PATCH /mockaton/edit
-{ 
-  "file": "api/foo.200.GET.json"
-  "delayed": true // optional
-}
-```
----
 
-### `/mockaton/bulk-select` Select all mocks that have a particular comment
-
+### Select all mocks that have a particular comment
+```js
+fetch(addr + '/mockaton/bulk-select-by-comment', {
+  method: 'PATCH',
+  body: JSON.stringify('(demo-a)')
+})
 ```
-PATCH /mockaton/bulk-select
-{
-  "comment": "(demo-a)"
-}
-```
----
 
-### `/mockaton/reset` Reset
+### Reset
 Re-Initialize the collection and its states (selected mocks and cookies, delays, etc.).
+```js
+fetch(add + '/mockaton/reset', {
+  method: 'PATCH'
+})
 ```
-PATCH /mockaton/reset
-```
----
 
-### `/mockaton/cookies` Select a cookie
+### Select a cookie
 In `Config.cookies`, each key is the label used
 for changing it. Only one cookie can be set.
 ```js
@@ -218,13 +217,11 @@ fetch(addr + '/mockaton/cookies', {
 })
 ```
 
-### `/mockaton/cookies` List Cookies
+### List Cookies
 Sends a list of the available cookies along with a flag indicated if it’s the selected.
 ```js
 fetch(addr + '/mockaton/cookies')
 ```
-
----
 
 ### Select a Transform
 ```js
@@ -233,7 +230,6 @@ fetch(addr + '/mockaton/transform', {
   body: JSON.stringify('api/video/list(concat newly uploaded).GET.200.mjs')
 })
 ```
----
 
 ### Update Fallback Proxy
 ```js

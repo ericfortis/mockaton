@@ -269,7 +269,7 @@ async function testExtractsAllComments(expected) {
 async function testItBulkSelectsByComment(comment, tests) {
 	await request(API.bulkSelect, {
 		method: 'PATCH',
-		body: JSON.stringify({ [DF.comment]: comment })
+		body: JSON.stringify(comment)
 	})
 	for (const [url, file, body] of tests)
 		await testMockDispatching(url, file, body)

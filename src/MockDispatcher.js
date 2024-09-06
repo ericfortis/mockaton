@@ -32,7 +32,6 @@ export async function dispatchMock(req, response) {
 		console.log('\n', req.url, '→\n ', file)
 
 		response.statusCode = status
-		response.setHeader('content-type', mimeFor(file))
 		if (cookie.getCurrent())
 			response.setHeader('set-cookie', cookie.getCurrent())
 
@@ -44,8 +43,10 @@ export async function dispatchMock(req, response) {
 				? jsExport(req, response)
 				: JSON.stringify(jsExport)
 		}
-		else
+		else {
+			response.setHeader('content-type', mimeFor(file))
 			mockText = readMock(file)
+		}
 		setTimeout(() => response.end(mockText), delay)
 	}
 	catch (error) {

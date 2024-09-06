@@ -34,7 +34,7 @@ export function init() {
 			continue
 		}
 		collection[method] ??= {}
-		if (!(urlMask in collection[method]))
+		if (!collection[method][urlMask])
 			collection[method][urlMask] = new MockBroker(file)
 		else
 			collection[method][urlMask].register(file)

@@ -179,6 +179,10 @@ async function test404() {
 		const res = await request('/api/non-existing')
 		equal(res.status, 404)
 	})
+	await it('Sends 404 when there’s no mock at all for a method', async () => {
+		const res = await request('/api/non-existing-too', { method: 'DELETE' })
+		equal(res.status, 404)
+	})
 }
 
 async function testMockDispatching(url, file, expectedBody, reqBody = void 0) {

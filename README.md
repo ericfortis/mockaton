@@ -28,7 +28,7 @@ The first file in **alphabetical order** becomes the default mock.
 ### Optionally, you can write mocks in JavaScript
 An Object, Array, or String is sent as JSON.
 
-`api/user/likes.GET.200.js`
+`api/foo.GET.200.js`
 ```js
 export default [
   { id: 0 }

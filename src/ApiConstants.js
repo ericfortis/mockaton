@@ -7,7 +7,8 @@ export const API = {
 	mocks: MOUNT + '/mocks',
 	reset: MOUNT + '/reset',
 	transform: MOUNT + '/transform',
-	cookies: MOUNT + '/cookies'
+	cookies: MOUNT + '/cookies',
+	fallback: MOUNT + '/fallback'
 }
 
 export const DF = { // Dashboard Fields (XHR)

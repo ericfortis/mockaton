@@ -61,6 +61,8 @@ export const getBrokerByFilename = file => {
 // BTW, `urlMasks` always start with "/", so there’s no need to
 // worry about the primacy of array-like keys when iterating.
 export function getBrokerForUrl(method, url) {
+	if (!method in collection)
+		return
 	const brokers = Object.values(collection[method])
 	for (let i = brokers.length - 1; i >= 0; i--)
 		if (brokers[i].urlMaskMatches(url))

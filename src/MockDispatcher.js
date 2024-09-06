@@ -23,7 +23,7 @@ export async function dispatchMock(req, response) {
 		if (Config.proxyFallback)
 			await proxy(req, response)
 		else
-			sendNotFound(response) // TODO unit TESTME
+			sendNotFound(response)
 		return
 	}
 

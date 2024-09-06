@@ -2,6 +2,7 @@
 
 import { tmpdir } from 'node:os'
 import { dirname } from 'node:path'
+import { promisify } from 'node:util'
 import { describe, it } from 'node:test'
 import { createServer } from 'node:http'
 import { equal, deepEqual, match } from 'node:assert/strict'
@@ -99,25 +100,20 @@ writeStatic('index.html', '<h1>Static</h1>')
 writeStatic('assets/app.js', 'const app = 1')
 writeStatic('another-entry/index.html', '<h1>Another</h1>')
 
-let server
-const fallbackServer = createServer((_, response) => {
-	response.end('From_Fallback_Server')
-}).listen(0, 'localhost', function () {
-	server = Mockaton({
-		mocksDir: tmpDir,
-		staticDir: staticTmpDir,
-		skipOpen: true,
-		cookies: {
-			userA: 'CookieA',
-			userB: 'CookieB'
-		},
-		proxyFallback: `http://localhost:${fallbackServer.address().port}`
-	})
-	server.on('listening', runTests)
+const server = Mockaton({
+	mocksDir: tmpDir,
+	staticDir: staticTmpDir,
+	skipOpen: true,
+	cookies: {
+		userA: 'CookieA',
+		userB: 'CookieB'
+	}
 })
+server.on('listening', runTests)
 
 async function runTests() {
 	await testItRendersDashboard()
+	await test404()
 
 	for (const [url, file, body] of fixtures)
 		await testMockDispatching(url, file, body)
@@ -163,9 +159,8 @@ async function runTests() {
 	await testTransforms()
 	await testStaticFileServing()
 	await testInvalidFilenamesAreIgnored()
-	await testRouteWithoutMocksRelaysGetsProxied()
+	await testEnableFallbackSoRoutesWithoutMocksGetRelayed()
 	server.close()
-	fallbackServer.close()
 }
 
 async function reset() {
@@ -177,6 +172,13 @@ async function testItRendersDashboard() {
 	const body = await res.text()
 	await describe('Dashboard', () =>
 		it('Renders HTML', () => match(body, new RegExp('<!DOCTYPE html>'))))
+}
+
+async function test404() {
+	await it('Sends 404 when there is no mock', async () => {
+		const res = await request('/api/non-existing')
+		equal(res.status, 404)
+	})
 }
 
 async function testMockDispatching(url, file, expectedBody, reqBody = void 0) {
@@ -346,7 +348,7 @@ async function testInvalidFilenamesAreIgnored() {
 	await it('Invalid filenames get skipped, so they don’t crash the server', async (t) => {
 		const consoleErrorSpy = t.mock.method(console, 'error')
 		consoleErrorSpy.mock.mockImplementation(() => {}) // so they don’t render in the test report
-		
+
 		// An extension is needed for testing because of `Config.allowedExt`
 		write('api/_INVALID_FILENAME_CONVENTION_.json', '')
 		write('api/bad-filename.GET._INVALID_STATUS_.json', '')
@@ -358,10 +360,24 @@ async function testInvalidFilenamesAreIgnored() {
 	})
 }
 
-async function testRouteWithoutMocksRelaysGetsProxied() {
-	await it('Fallback relay', async () => {
-		const res = await request('/non-existing-mock')
-		equal(await res.text(), 'From_Fallback_Server')
+async function testEnableFallbackSoRoutesWithoutMocksGetRelayed() {
+	await describe('Fallback', async () => {
+		const fallbackServer = createServer((_, response) => {
+			response.statusCode = 423
+			response.end('From_Fallback_Server')
+		})
+		await promisify(fallbackServer.listen).bind(fallbackServer, 3330, '127.0.0.1')()
+
+		await request(API.fallback, { // Enable fallback
+			method: 'PATCH',
+			body: JSON.stringify(`http://localhost:${fallbackServer.address().port}`)
+		})
+		await it('Relays to fallback server', async () => {
+			const res = await request('/non-existing-mock')
+			equal(res.status, 423)
+			equal(await res.text(), 'From_Fallback_Server')
+			fallbackServer.close()
+		})
 	})
 }
 

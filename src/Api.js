@@ -28,7 +28,8 @@ export const apiPatchRequests = new Map([
 	[API.edit, updateBroker],
 	[API.reset, reinitialize],
 	[API.cookies, selectCookie],
-	[API.transform, updateBrokerTransform]
+	[API.transform, updateBrokerTransform],
+	[API.fallback, updateProxyFallback]
 ])
 
 function serveDashboard(_, response) {
@@ -98,6 +99,17 @@ async function updateBrokerTransform(req, response) {
 		const body = await parseJSON(req)
 		const broker = mockBrokersCollection.getBrokerByFilename(body[DF.file])
 		broker.updateTransform(body[DF.file])
+		sendOK(response)
+	}
+	catch (error) {
+		console.error(error)
+		sendBadRequest(response)
+	}
+}
+
+async function updateProxyFallback(req, response) {
+	try {
+		Config.proxyFallback = await parseJSON(req)
 		sendOK(response)
 	}
 	catch (error) {

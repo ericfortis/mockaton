@@ -370,7 +370,7 @@ async function testEnableFallbackSoRoutesWithoutMocksGetRelayed() {
 			response.statusCode = 423
 			response.end('From_Fallback_Server')
 		})
-		await promisify(fallbackServer.listen).bind(fallbackServer, 3330, '127.0.0.1')()
+		await promisify(fallbackServer.listen).bind(fallbackServer, 0, '127.0.0.1')()
 
 		await request(API.fallback, { // Enable fallback
 			method: 'PATCH',

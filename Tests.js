@@ -110,7 +110,8 @@ const server = Mockaton({
 	cookies: {
 		userA: 'CookieA',
 		userB: 'CookieB'
-	}
+	},
+	generate500: true
 })
 server.on('listening', runTests)
 

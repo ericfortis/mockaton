@@ -7,10 +7,10 @@ interface Config {
 	port?: number
 	delay?: number
 	cookies?: object
-	database?: object
 	skipOpen?: boolean
 	proxyFallback?: string
 	allowedExt?: RegExp
+	generate500?: boolean
 }
 
 export function Mockaton(options: Config): Server

@@ -39,7 +39,9 @@ export function init() {
 		else
 			collection[method][urlMask].register(file)
 	}
-	forEachBroker(broker => broker.ensureItHas500())
+
+	if (Config.generate500)
+		forEachBroker(broker => broker.ensureItHas500())
 }
 
 function forEachBroker(fn) {

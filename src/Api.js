@@ -60,7 +60,6 @@ async function selectCookie(req, response) {
 }
 
 function reinitialize(_, response) {
-	Config.database = {}
 	mockBrokersCollection.init()
 	sendOK(response)
 }

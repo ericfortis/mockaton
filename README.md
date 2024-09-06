@@ -234,3 +234,11 @@ PATCH /mockaton/transform
 }
 ```
 ---
+
+### `/mockaton/fallback` Select a Transform
+```js
+fetch(addr + '/mockaton/fallback', {
+  method: 'PATCH',
+  body: JSON.stringify('http://example.com')
+})
+```

@@ -367,6 +367,7 @@ async function testInvalidFilenamesAreIgnored() {
 async function testEnableFallbackSoRoutesWithoutMocksGetRelayed() {
 	await describe('Fallback', async () => {
 		const fallbackServer = createServer((_, response) => {
+			response.setHeader('custom_header', 'my_custom_header')
 			response.statusCode = 423
 			response.end('From_Fallback_Server')
 		})
@@ -378,6 +379,7 @@ async function testEnableFallbackSoRoutesWithoutMocksGetRelayed() {
 		})
 		await it('Relays to fallback server', async () => {
 			const res = await request('/non-existing-mock')
+			equal(res.headers.get('custom_header'), 'my_custom_header')
 			equal(res.status, 423)
 			equal(await res.text(), 'From_Fallback_Server')
 			fallbackServer.close()

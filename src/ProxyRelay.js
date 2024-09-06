@@ -6,6 +6,6 @@ export async function proxy(req, response) {
 		method: req.method,
 		headers: req.headers
 	})
-	response.writeHead(proxyResponse.status, proxyResponse.headers)
+	response.writeHead(proxyResponse.status, Object.fromEntries(proxyResponse.headers))
 	response.end(await proxyResponse.text())
 }

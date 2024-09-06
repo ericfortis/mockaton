@@ -31,15 +31,19 @@ export async function dispatchMock(req, response) {
 		const { file, status, delay, currentTransform } = broker
 		console.log('\n', req.url, '→\n ', file)
 
+		const shouldJavaScriptToJSON = file.endsWith('.js')
 		response.statusCode = status
-		response.setHeader('content-type', mimeFor(file))
+		response.setHeader('content-type', mimeFor(shouldJavaScriptToJSON ? '.json' : file))
 		if (cookie.getCurrent())
 			response.setHeader('set-cookie', cookie.getCurrent())
 
-		let mockAsText = readMock(file)
+		let mockAsText = shouldJavaScriptToJSON
+			? JSON.stringify(await importDefault(file))
+			: readMock(file)
+
 		if (broker.currentTransform) {
 			const body = await requestBodyForTransform(req, mockAsText)
-			const transformFunc = await importTransformFunc(currentTransform)
+			const transformFunc = await importDefault(currentTransform)
 			mockAsText = transformFunc(mockAsText, body, Config)
 		}
 		setTimeout(() => response.end(mockAsText), delay)
@@ -69,7 +73,7 @@ function readMock(file) {
 	return readFileSync(join(Config.mocksDir, file), 'utf8')
 }
 
-async function importTransformFunc(file) {
+async function importDefault(file) {
 	// The date param is just for cache busting
 	return (await import(join(Config.mocksDir, file) + '?' + Date.now())).default
 }

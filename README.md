@@ -26,6 +26,17 @@ UI, or programmatically, for instance, for setting up tests.
 
 The first file in **alphabetical order** becomes the default mock.
 
+### Optionally, you can write mocks in JavaScript
+An Object, Array, or String is sent as JSON.
+
+`api/user/likes.GET.200.js`
+```js
+export default [
+  { id: 0 }
+]
+```
+
+
 ### Proxying Routes
 `Config.proxyFallback` lets you specify a target
 server for serving routes you don’t have mocks for.
@@ -78,7 +89,7 @@ interface Config {
   database?: object // for "Transforms"
   skipOpen?: boolean // Prevents opening the dashboard in a browser
   proxyFallback?: string // e.g. http://localhost:9999 Target for relaying routes without mocks
-  allowedExt?: RegExp // /\.(json|txt|md|mjs)$/ Just for excluding temporary editor files (e.g. JetBrains appends a ~)
+  allowedExt?: RegExp // /\.(json|txt|md|js|mjs)$/ Just for excluding temporary editor files (e.g. JetBrains appends a ~)
 }
 ```
 

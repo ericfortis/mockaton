@@ -1,4 +1,4 @@
-import { existsSync, lstatSync } from 'node:fs'
+import { existsSync as exists, lstatSync } from 'node:fs'
 import { validate, is, optional } from './utils/validate.js'
 
 
@@ -12,7 +12,7 @@ export const Config = {
 	database: {},
 	skipOpen: false,
 	proxyFallback: '', // e.g. http://localhost:9999
-	allowedExt: /\.(json|txt|md|mjs)$/ // Just for excluding temporary editor files (e.g. JetBrains appends a ~)
+	allowedExt: /\.(json|txt|md|js|mjs)$/ // Just for excluding temporary editor files (e.g. JetBrains appends a ~)
 }
 
 export function setup(options) {
@@ -32,7 +32,7 @@ export function setup(options) {
 }
 
 function isDirectory(dir) {
-	return existsSync(dir) && lstatSync(dir).isDirectory()
+	return exists(dir) && lstatSync(dir).isDirectory()
 }
 
 

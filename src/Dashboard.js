@@ -10,11 +10,9 @@ const Strings = {
 	empty_response_body: '/* Empty Response Body */',
 	fetching: '⌚ Fetching…',
 	mock: 'Mock',
-	none: 'None',
 	reset: 'Reset',
 	select_one: 'Select One',
-	title: 'Mockaton',
-	transforms: 'Transforms'
+	title: 'Mockaton'
 }
 
 const CSS = {
@@ -26,8 +24,6 @@ const CSS = {
 	PayloadViewer: 'PayloadViewer',
 	PreviewLink: 'PreviewLink',
 	TitleWrap: 'TitleWrap',
-	TransformSelector: 'TransformSelector',
-	TransformsSection: 'TransformsSection',
 
 	bold: 'bold',
 	chosen: 'chosen',
@@ -74,10 +70,7 @@ function DevPanel(brokersByMethod, cookies, comments) {
 				r('div', { className: CSS.PayloadViewer },
 					r('pre', { ref: refDocumentation, className: CSS.Documentation }),
 					r('h2', { ref: refPayloadFile }, Strings.mock),
-					r('pre', { ref: refPayloadViewer }, Strings.click_link_to_preview))),
-			r('div', { className: CSS.TransformsSection },
-				r('h2', null, Strings.transforms),
-				r(Transforms, { brokersByMethod }))))
+					r('pre', { ref: refPayloadViewer }, Strings.click_link_to_preview)))))
 }
 
 
@@ -142,7 +135,7 @@ function SectionByMethod({ method, brokers }) {
 			r('th', null, method),
 			Object.entries(brokers)
 				.sort((a, b) => a[0].localeCompare(b[0]))
-				.filter(([, broker]) => broker.mocks.length) // handles Markdown doc or js transform without mocks
+				.filter(([, broker]) => broker.mocks.length) // handles Markdown doc
 				.map(([urlMask, broker]) =>
 					r('tr', null,
 						r('td', null, r(PreviewLink, { method, urlMask, documentation: broker.documentation })),
@@ -168,8 +161,7 @@ function PreviewLink({ method, urlMask, documentation }) {
 
 					const spinner = setTimeout(() => refPayloadViewer.current.innerText = Strings.fetching, 180)
 					const res = await fetch(this.href, {
-						method: this.getAttribute('data-method'),
-						headers: { [DF.isForDashboard]: '1' }
+						method: this.getAttribute('data-method')
 					})
 					document.querySelector(`.${CSS.PreviewLink}.${CSS.chosen}`)?.classList.remove(CSS.chosen)
 					this.classList.add(CSS.chosen)
@@ -245,47 +237,6 @@ function TimerIcon() {
 			r('path', { d: 'M12 7H11v6l5 3.2.75-1.23-4.5-3z' })))
 }
 
-
-function Transforms({ brokersByMethod }) {
-	const brokersWithTransforms = []
-	for (const brokers of Object.values(brokersByMethod))
-		for (const [urlMask, broker] of Object.entries(brokers))
-			if (broker.transforms.length)
-				brokersWithTransforms.push([urlMask, broker])
-	return (
-		r('table', null, brokersWithTransforms.map(([urlMask, broker]) =>
-			r('tr', null,
-				r('td', null, r(PreviewLink, { method: broker.method, urlMask })),
-				r('td', null, r(TransformSelector, {
-					items: ['', ...broker.transforms],
-					selected: broker.currentTransform
-				})))
-		)))
-}
-
-function TransformSelector({ items, selected }) {
-	const className = defaultIsSelected => cssClass(
-		CSS.TransformSelector,
-		!defaultIsSelected && CSS.bold)
-	return (
-		r('select', {
-			className: className(selected === items[0]),
-			autocomplete: 'off',
-			onChange() {
-				fetch(API.transform, {
-					method: 'PATCH',
-					body: JSON.stringify(this.value)
-				}).then(() => {
-					this.closest('tr').querySelector('a').click()
-					this.className = className(this.value === this.options[0].value)
-				})
-			}
-		}, items.map(item =>
-			r('option', {
-				value: item,
-				selected: item === selected
-			}, item || Strings.none))))
-}
 
 
 /* === Utils === */

@@ -121,8 +121,6 @@ async function runTests() {
 	for (const [url, file, body] of fixtures)
 		await testMockDispatching(url, file, body)
 
-	await testMockDispatching('/api/object', 'api/object.GET.200.js', { JSON_FROM_JS: true }, undefined, mimeFor('.json'))
-
 	await testItUpdatesDelayAndFile(
 		'/api/alternative',
 		'api/alternative(comment-2).GET.200.json',
@@ -159,9 +157,11 @@ async function runTests() {
 	await reset()
 	for (const [url, file, body] of fixtures)
 		await testMockDispatching(url, file, body)
+	
+	await testMockDispatching('/api/object', 'api/object.GET.200.js', { JSON_FROM_JS: true }, mimeFor('.json'))
+	await testJsFunctionMocks()
 
 	await testItUpdatesUserRole()
-	await testTransforms()
 	await testStaticFileServing()
 	await testInvalidFilenamesAreIgnored()
 	await testEnableFallbackSoRoutesWithoutMocksGetRelayed()
@@ -190,11 +190,11 @@ async function test404() {
 	})
 }
 
-async function testMockDispatching(url, file, expectedBody, reqBody = void 0, forcedMime = void 0) {
+async function testMockDispatching(url, file, expectedBody, forcedMime = void 0) {
 	const { urlMask, method, status } = Route.parseFilename(file)
 	const mime = forcedMime || mimeFor(file)
 	const now = new Date()
-	const res = await request(url, { method, body: reqBody })
+	const res = await request(url, { method })
 	const body = mime === 'application/json'
 		? await res.json()
 		: await res.text()
@@ -305,25 +305,18 @@ async function testItUpdatesUserRole() {
 	})
 }
 
-async function testTransforms() {
-	await describe('Applies transform', async () => {
-		write('api/transform.POST.200.json', JSON.stringify(['initial']))
-		write('api/transform.POST.200.mjs', `
-export default function (mock, reqBody, config) {
-  const body = JSON.parse(mock);
-  body.push(reqBody[0]);
-  body.push(config.mocksDir);
-  return JSON.stringify(body);
+async function testJsFunctionMocks() {
+	await describe('JS Function Mocks', async () => {
+		write('api/js-func.POST.200.js', `
+export default function (req, response) {
+  response.setHeader('content-type', 'custom-mime')
+  return 'SOME_STRING'
 }`)
-		await reset() // for registering the files
-		await request(API.transform, {
-			method: 'PATCH',
-			body: JSON.stringify('api/transform.POST.200.mjs')
-		})
-		await testMockDispatching('/api/transform',
-			'api/transform.POST.200.json',
-			['initial', 'another', tmpDir],
-			JSON.stringify(['another']))
+		await reset() // for registering the file
+		await testMockDispatching('/api/js-func',
+			'api/js-func.POST.200.js',
+			'SOME_STRING',
+			'custom-mime')
 	})
 }
 

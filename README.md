@@ -36,6 +36,15 @@ export default [
 ]
 ```
 
+Or, export default a function. There, you
+can override the response status and the default JSON content
+type. But don’t call `response.end()`, just return a string.
+```js
+export default function (req, response) {
+  return JSON.stringify({ a: 1 })
+}
+```
+
 
 ### Proxying Routes
 `Config.proxyFallback` lets you specify a target
@@ -86,10 +95,9 @@ interface Config {
   port?: number // defaults to 0, which means auto-assigned
   delay?: number // defaults to 1200 (ms)
   cookies?: object 
-  database?: object // for "Transforms"
   skipOpen?: boolean // Prevents opening the dashboard in a browser
   proxyFallback?: string // e.g. http://localhost:9999 Target for relaying routes without mocks
-  allowedExt?: RegExp // /\.(json|txt|md|js|mjs)$/ Just for excluding temporary editor files (e.g. JetBrains appends a ~)
+  allowedExt?: RegExp // /\.(json|txt|md|js)$/ Just for excluding temporary editor files (e.g. JetBrains appends a ~)
 }
 ```
 
@@ -175,19 +183,6 @@ api/foo/[user-id].POST.201.md
 api/foo/[user-id].POST.201.json
 ```
 
-## Transforms (.mjs)
-Using the same filename convention, files ending
-with `.mjs` will process the mock before serving it.
-
-For example, this handler will capitalize the mock body and increment a counter.
-```js
-export default function capitalizeAllText(mockAsText, requestBody, config) {
-  config.database.myCount ??= 0
-  config.database.myCount++
-  return mockAsText.toUpperCase()
-}
-```
-
 
 ## API
 
@@ -232,14 +227,6 @@ fetch(addr + '/mockaton/cookies', {
 Sends a list of the available cookies along with a flag indicated if it’s the selected.
 ```js
 fetch(addr + '/mockaton/cookies')
-```
-
-### Select a Transform
-```js
-fetch(addr + '/mockaton/transform', {
-  method: 'PATCH',
-  body: JSON.stringify('api/video/list(concat newly uploaded).GET.200.mjs')
-})
 ```
 
 ### Update Fallback Proxy

@@ -28,25 +28,25 @@ export async function dispatchMock(req, response) {
 	}
 
 	try {
-		const { file, status, delay, currentTransform } = broker
+		const { file, status, delay } = broker
 		console.log('\n', req.url, '→\n ', file)
 
-		const shouldJavaScriptToJSON = file.endsWith('.js')
 		response.statusCode = status
-		response.setHeader('content-type', mimeFor(shouldJavaScriptToJSON ? '.json' : file))
+		response.setHeader('content-type', mimeFor(file))
 		if (cookie.getCurrent())
 			response.setHeader('set-cookie', cookie.getCurrent())
 
-		let mockAsText = shouldJavaScriptToJSON
-			? JSON.stringify(await importDefault(file))
-			: readMock(file)
-
-		if (broker.currentTransform) {
-			const body = await requestBodyForTransform(req, mockAsText)
-			const transformFunc = await importDefault(currentTransform)
-			mockAsText = transformFunc(mockAsText, body, Config)
+		let mockText
+		if (file.endsWith('.js')) {
+			response.setHeader('content-type', mimeFor('.json'))
+			const jsExport = await importDefault(file)
+			mockText = typeof jsExport === 'function'
+				? jsExport(req, response)
+				: JSON.stringify(jsExport)
 		}
-		setTimeout(() => response.end(mockAsText), delay)
+		else
+			mockText = readMock(file)
+		setTimeout(() => response.end(mockText), delay)
 	}
 	catch (error) {
 		console.error(error)
@@ -57,16 +57,6 @@ export async function dispatchMock(req, response) {
 		else
 			sendInternalServerError(response)
 	}
-}
-
-const nonSafeMethods = ['PATCH', 'POST', 'PUT', 'DELETE', 'CONNECT']
-
-async function requestBodyForTransform(req, mockAsText) {
-	if (nonSafeMethods.includes(req.method))
-		return req.headers[DF.isForDashboard] // TODO unit TESTME
-			? JSON.parse(mockAsText)
-			: await parseJSON(req)
-	return ''
 }
 
 function readMock(file) {

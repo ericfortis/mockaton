@@ -28,7 +28,6 @@ export const apiPatchRequests = new Map([
 	[API.edit, updateBroker],
 	[API.reset, reinitialize],
 	[API.cookies, selectCookie],
-	[API.transform, updateBrokerTransform],
 	[API.fallback, updateProxyFallback]
 ])
 
@@ -84,19 +83,6 @@ async function updateBroker(req, response) {
 async function bulkUpdateBrokersByCommentTag(req, response) {
 	try {
 		mockBrokersCollection.setMocksMatchingComment(await parseJSON(req))
-		sendOK(response)
-	}
-	catch (error) {
-		console.error(error)
-		sendBadRequest(response)
-	}
-}
-
-async function updateBrokerTransform(req, response) {
-	try {
-		const file = await parseJSON(req)
-		const broker = mockBrokersCollection.getBrokerByFilename(file)
-		broker.updateTransform(file)
 		sendOK(response)
 	}
 	catch (error) {

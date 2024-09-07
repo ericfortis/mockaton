@@ -54,7 +54,8 @@ export const getAll = () => collection
 
 export const getBrokerByFilename = file => {
 	const { method, urlMask } = Route.parseFilename(file)
-	return collection[method][urlMask]
+	if (collection[method])
+		return collection[method][urlMask]
 }
 
 // Searching the routes in reverse order so dynamic params (e.g.

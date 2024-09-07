@@ -24,11 +24,11 @@ export const apiGetRequests = new Map([
 ])
 
 export const apiPatchRequests = new Map([
-	[API.bulkSelect, bulkUpdateBrokersByCommentTag],
 	[API.edit, updateBroker],
 	[API.reset, reinitialize],
 	[API.cookies, selectCookie],
-	[API.fallback, updateProxyFallback]
+	[API.fallback, updateProxyFallback],
+	[API.bulkSelect, bulkUpdateBrokersByCommentTag]
 ])
 
 function serveDashboard(_, response) {
@@ -48,6 +48,11 @@ function listMockBrokers(_, response) {
 }
 
 
+function reinitialize(_, response) {
+	mockBrokersCollection.init()
+	sendOK(response)
+}
+
 async function selectCookie(req, response) {
 	try {
 		cookie.setCurrent(await parseJSON(req))
@@ -59,15 +64,14 @@ async function selectCookie(req, response) {
 	}
 }
 
-function reinitialize(_, response) {
-	mockBrokersCollection.init()
-	sendOK(response)
-}
-
 async function updateBroker(req, response) {
 	try {
 		const body = await parseJSON(req)
 		const broker = mockBrokersCollection.getBrokerByFilename(body[DF.file])
+		if (!broker) {
+			sendBadRequest(response)
+			return
+		}
 		if (DF.delayed in body)
 			broker.updateDelay(body[DF.delayed])
 		broker.updateFile(body[DF.file])
@@ -79,9 +83,9 @@ async function updateBroker(req, response) {
 	}
 }
 
-async function bulkUpdateBrokersByCommentTag(req, response) {
+async function updateProxyFallback(req, response) {
 	try {
-		mockBrokersCollection.setMocksMatchingComment(await parseJSON(req))
+		Config.proxyFallback = await parseJSON(req)
 		sendOK(response)
 	}
 	catch (error) {
@@ -90,9 +94,9 @@ async function bulkUpdateBrokersByCommentTag(req, response) {
 	}
 }
 
-async function updateProxyFallback(req, response) {
+async function bulkUpdateBrokersByCommentTag(req, response) {
 	try {
-		Config.proxyFallback = await parseJSON(req)
+		mockBrokersCollection.setMocksMatchingComment(await parseJSON(req))
 		sendOK(response)
 	}
 	catch (error) {

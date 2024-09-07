@@ -44,17 +44,17 @@ node my-mockaton.js
 ## Config Options
 ```ts
 interface Config {
-	mocksDir: string
-	staticDir?: string
-	host?: string, // defaults to 'localhost'
-	port?: number // defaults to 0, which means auto-assigned
-	delay?: number // defaults to 1200 (ms)
+  mocksDir: string
+  staticDir?: string
+  host?: string, // defaults to 'localhost'
+  port?: number // defaults to 0, which means auto-assigned
+  delay?: number // defaults to 1200 (ms)
   open?: (dashboardUrl: string) => void // pass a noop to prevent opening the dashboard
-	cookies?: object
-	proxyFallback?: string // e.g. http://localhost:9999 Target for relaying routes without mocks
-	allowedExt?: RegExp // /\.(json|txt|md|js)$/ Just for excluding temporary editor files (e.g. JetBrains appends a ~)
-	generate500?: boolean // autogenerates an Internal Server Error empty mock for routes that have no 500
-	extraHeaders?: []
+  cookies?: object
+  proxyFallback?: string // e.g. http://localhost:9999 Target for relaying routes without mocks
+  allowedExt?: RegExp // /\.(json|txt|md|js)$/ Just for excluding temporary editor files (e.g. JetBrains appends a ~)
+  generate500?: boolean // autogenerates an Internal Server Error empty mock for routes that have no 500
+  extraHeaders?: []
 }
 ```
 

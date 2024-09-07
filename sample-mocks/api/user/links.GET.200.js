@@ -3,6 +3,7 @@
 
 export default function (req, response) {
 	return JSON.stringify([
-		{ id: 0 }
+		'http://example.com/foo',
+		'http://example.com/bar',
 	])
 }

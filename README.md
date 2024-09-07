@@ -175,15 +175,14 @@ words, it’s useful if you only care about its payload.
 
 
 ## `Config.extraHeaders`
-They are applied last, right before ending the response. In
-other words, they can overwrite the `Content-Type`. They are
-not tuples, the header name goes in even-numbered indices.
+They are applied last, right before ending the response. In other words, they
+can overwrite the `Content-Type`. The header name goes in even-numbered indices.
 
 ```js
 Config.extraHeaders = [
   'Server', 'Mockaton',
-  'Set-Cookie', 'another-cookie=FOO;Path=/;SameSite=strict',
-  'Set-Cookie', 'another-cookie=BAR;Path=/;SameSite=strict'
+  'Set-Cookie', 'foo=FOO;Path=/;SameSite=strict',
+  'Set-Cookie', 'bar=BAR;Path=/;SameSite=strict'
 ]
 ```
 

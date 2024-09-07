@@ -16,14 +16,11 @@ const Strings = {
 }
 
 const CSS = {
-	BulkSelectSection: 'BulkSelectSection',
-	CookieSelector: 'CookieSelector',
 	DelayCheckbox: 'DelayCheckbox',
 	Documentation: 'Documentation',
 	MockSelector: 'MockSelector',
 	PayloadViewer: 'PayloadViewer',
 	PreviewLink: 'PreviewLink',
-	TitleWrap: 'TitleWrap',
 
 	bold: 'bold',
 	chosen: 'chosen',
@@ -57,13 +54,11 @@ function DevPanel(brokersByMethod, cookies, comments) {
 	document.title = Strings.title
 	return (
 		r('div', null,
-			r('div', { className: CSS.TitleWrap },
+			r('menu', null,
 				r('h1', null, Strings.title),
-				r(ResetButton),
-				r(CookieSelector, { list: cookies })),
-			r('div', { className: CSS.BulkSelectSection },
-				r('h2', null, Strings.bulk_select_by_comment),
-				r(BulkSelector, { comments })),
+				r(CookieSelector, { list: cookies }),
+				r(BulkSelector, { comments }),
+				r(ResetButton)),
 			r('main', null,
 				r('table', null, Object.entries(brokersByMethod).map(([method, brokers]) =>
 					r(SectionByMethod, { method, brokers }))),
@@ -88,8 +83,8 @@ function ResetButton() {
 
 function CookieSelector({ list }) {
 	return (
-		r('label', { className: CSS.CookieSelector },
-			Strings.cookie,
+		r('label', null,
+			r('span', null, Strings.cookie),
 			r('select', {
 				autocomplete: 'off',
 				disabled: list.length <= 1,
@@ -111,21 +106,23 @@ function CookieSelector({ list }) {
 
 function BulkSelector({ comments }) {
 	return (
-		r('select', {
-			autocomplete: 'off',
-			disabled: comments.length <= 1,
-			onChange() {
-				fetch(API.bulkSelect, {
-					method: 'PATCH',
-					body: JSON.stringify(this.value)
-				})
-					.then(init)
-					.catch(console.error)
-			}
-		}, [Strings.select_one].concat(comments).map(item =>
-			r('option', {
-				value: item
-			}, item))))
+		r('label', null,
+			r('span', null, Strings.bulk_select_by_comment),
+			r('select', {
+				autocomplete: 'off',
+				disabled: comments.length <= 1,
+				onChange() {
+					fetch(API.bulkSelect, {
+						method: 'PATCH',
+						body: JSON.stringify(this.value)
+					})
+						.then(init)
+						.catch(console.error)
+				}
+			}, [Strings.select_one].concat(comments).map(item =>
+				r('option', {
+					value: item
+				}, item)))))
 }
 
 

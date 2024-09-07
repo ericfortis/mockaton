@@ -14,23 +14,13 @@ body {
 	padding: 16px;
 }
 * {
+	padding: 0;
 	border: 0;
 	margin: 0;
 	font-family: system-ui, sans-serif;
 	font-size: 100%;
 }
 
-h1 {
-	padding: 12px 0;
-	margin: 0;
-	font-size: 2rem;
-}
-
-
-select {
-	padding: 3px 0;
-	border: 1px solid #444;
-}
 
 fieldset {
 	width: 120px;
@@ -47,15 +37,6 @@ fieldset {
 	}
 }
 
-.CookieSelector {
-	display: flex;
-	align-items: center;
-	margin-left: 20px;
-
-	select {
-		margin-left: 5px;
-	}
-}
 
 main {
 	display: flex;
@@ -72,14 +53,39 @@ main {
 	}
 }
 
-.TitleWrap {
+menu {
 	display: flex;
-	align-items: center;
+	margin-bottom: 12px;
+	gap: 14px;
+	align-items: flex-end;
+
+	h1 {
+		margin: 0;
+		margin-right: 14px;
+		font-size: 2rem;
+	}
+
+	label {
+		span {
+			display: block;
+			color: #555;
+			font-size: .85rem;
+		}
+
+		select {
+			width: 143px;
+			padding: 3px 0;
+			border: 1px solid #bbb;
+			margin-top: 1px;
+			cursor: pointer;
+			border-radius: 4px;
+			font-size: 0.9rem;
+		}
+	}
 
 	button {
-		padding: 3px 12px;
+		padding: 4px 12px;
 		border: 1px solid var(--colorRed);
-		margin-left: 20px;
 		background: transparent;
 		color: var(--colorRed);
 		border-radius: 50px;
@@ -132,18 +138,11 @@ main {
 	}
 }
 
-.BulkSelectSection {
-	margin: 20px 0;
-}
-
-.BulkSelectSection select {
-	margin-top: 5px;
-}
-
 .MockSelector {
 	width: 300px;
 	padding: 8px 1px;
 	border: 0;
+	border-radius: 4px;
 	background: #eee;
 	text-align: right;
 	direction: rtl;

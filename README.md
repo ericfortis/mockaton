@@ -125,7 +125,7 @@ Comments are anything within parentheses, including them.
 They are ignored for URL purposes, so they have no effect
 on the URL mask. For example, these two are for `/api/foo`
 <pre>
-api/foo<b>(my comment)</b>.GET.200.json<b>(foo)</b>
+api/foo<b>(my comment)</b>.GET.200.json<b>(bar)</b>
 api/foo.GET.200.json
 </pre>
 
@@ -143,10 +143,10 @@ but since that’s part of the query string, it’s ignored anyway.
 
 
 
-### Default (index-like) file
-For the default route of a directory, omit the name (just use
-the extension). For example, the following files will be routed
-to `api/foo` because comments and the query string are ignored.
+### Default (index-like) route
+For the default route of a directory, omit the mock filename name
+(<b>just use the extension</b>). For example, the following files will be
+routed to `api/foo` because comments and the query string are ignored.
 ```text
 api/foo/.GET.200.json
 api/foo/?bar=[bar].GET.200.json

@@ -1,4 +1,3 @@
-import { exec } from 'node:child_process'
 import { createServer } from 'node:http'
 
 import { API } from './ApiConstants.js'
@@ -37,6 +36,6 @@ export function Mockaton(options) {
 			if (error)
 				console.error(error)
 			else
-				Config.open(url + API.dashboard)
+				Config.onReady(url + API.dashboard)
 		})
 }

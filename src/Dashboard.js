@@ -1,5 +1,5 @@
 import { Route } from '../Route.js'
-import { API, DF } from '../ApiConstants.js'
+import { API, DF, DEFAULT_500_COMMENT } from '../ApiConstants.js'
 
 
 const Strings = {
@@ -9,6 +9,7 @@ const Strings = {
 	delay: 'Delay',
 	empty_response_body: '/* Empty Response Body */',
 	fetching: '⌚ Fetching…',
+	internal_server_error: 'Internal Server Error',
 	mock: 'Mock',
 	reset: 'Reset',
 	select_one: 'Select One',
@@ -16,7 +17,8 @@ const Strings = {
 }
 
 const CSS = {
-	DelayCheckbox: 'DelayCheckbox',
+	DelayToggler: 'DelayToggler',
+	InternalServerErrorToggler: 'InternalServerErrorToggler',
 	Documentation: 'Documentation',
 	MockSelector: 'MockSelector',
 	PayloadViewer: 'PayloadViewer',
@@ -25,7 +27,6 @@ const CSS = {
 	bold: 'bold',
 	chosen: 'chosen',
 	status4xx: 'status4xx',
-	status5xx: 'status5xx'
 }
 
 const r = createElement
@@ -136,8 +137,10 @@ function SectionByMethod({ method, brokers }) {
 				.map(([urlMask, broker]) =>
 					r('tr', null,
 						r('td', null, r(PreviewLink, { method, urlMask, documentation: broker.documentation })),
-						r('td', null, r(MockSelector, { items: broker.mocks, selected: broker.currentMock.file })),
-						r('td', null, r(DelayToggler, { name: broker.currentMock.file, checked: Boolean(broker.currentMock.delay) }))))))
+						r('td', null, r(MockSelector, { broker })),
+						r('td', null, r(DelayToggler, { broker })),
+						r('td', null, r(InternalServerErrorToggler, { broker }))
+					))))
 }
 
 function PreviewLink({ method, urlMask, documentation }) {
@@ -173,19 +176,27 @@ function PreviewLink({ method, urlMask, documentation }) {
 		}, urlMask))
 }
 
-function MockSelector({ items, selected }) {
+function MockSelector({ broker }) {
 	const className = (defaultIsSelected, status) => cssClass(
 		CSS.MockSelector,
 		!defaultIsSelected && CSS.bold,
-		status >= 400 && status < 500 && CSS.status4xx,
-		status >= 500 && CSS.status5xx)
+		status >= 400 && status < 500 && CSS.status4xx)
+
+	const items = broker.mocks
+	const selected = broker.currentMock.file
+
+	const { status } = Route.parseFilename(selected)
+	const files = items.filter(item =>
+		status === 500 ||
+		!item.includes(DEFAULT_500_COMMENT))
+
 	return (
 		r('select', {
-			className: className(selected === items[0], Route.parseFilename(selected).status),
+			className: className(selected === files[0], status),
 			autocomplete: 'off',
-			disabled: items.length <= 1,
+			disabled: files.length <= 1,
 			onChange() {
-				const status = Route.parseFilename(this.value).status
+				const { status } = Route.parseFilename(this.value)
 				this.style.fontWeight = this.value === this.options[0].value // default is selected
 					? 'normal'
 					: 'bold'
@@ -194,20 +205,22 @@ function MockSelector({ items, selected }) {
 					body: JSON.stringify({ [DF.file]: this.value })
 				}).then(() => {
 					this.closest('tr').querySelector('a').click()
-					this.className = className(this.value === this.options[0].value, this.value === status)
+					this.closest('tr').querySelector(`.${CSS.InternalServerErrorToggler}>[type=checkbox]`).checked = status === 500
+					this.className = className(this.value === this.options[0].value, status)
 				})
 			}
-		}, items.map(item =>
-			r('option', {
-				value: item,
-				selected: item === selected
-			}, item))))
+		}, files.map(file => r('option', {
+			value: file,
+			selected: file === selected
+		}, file))))
 }
 
-function DelayToggler({ name, checked }) {
+function DelayToggler({ broker }) {
+	const name = broker.currentMock.file
+	const checked = Boolean(broker.currentMock.delay)
 	return (
 		r('label', {
-				className: CSS.DelayCheckbox,
+				className: CSS.DelayToggler,
 				title: Strings.delay
 			},
 			r('input', {
@@ -232,6 +245,36 @@ function TimerIcon() {
 	return (
 		r('svg', { viewBox: '0 0 24 24' },
 			r('path', { d: 'M12 7H11v6l5 3.2.75-1.23-4.5-3z' })))
+}
+
+function InternalServerErrorToggler({ broker }) {
+	const items = broker.mocks
+	const name = broker.currentMock.file
+	const checked = Route.parseFilename(broker.currentMock.file).status === 500
+	return (
+		r('label', {
+				className: CSS.InternalServerErrorToggler,
+				title: Strings.internal_server_error
+			},
+			r('input', {
+				type: 'checkbox',
+				autocomplete: 'off',
+				name,
+				checked,
+				onChange(event) {
+					fetch(API.edit, {
+						method: 'PATCH',
+						body: JSON.stringify({
+							[DF.file]: event.currentTarget.checked
+								? items.find(f => f.includes(DEFAULT_500_COMMENT))
+								: items[0]
+						})
+					}).then(init)
+				}
+			}),
+			r('span', null, '500')
+		)
+	)
 }
 
 

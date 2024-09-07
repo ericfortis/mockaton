@@ -14,3 +14,5 @@ export const DF = { // Dashboard Fields (XHR)
 	delayed: 'delayed',
 	file: 'file'
 }
+
+export const DEFAULT_500_COMMENT = '(Mockaton Temp 500)'

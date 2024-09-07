@@ -1,4 +1,4 @@
-import fs, { readFileSync } from 'node:fs'
+import fs, { existsSync, readFileSync } from 'node:fs'
 import { mimeFor } from './mime.js'
 
 
@@ -12,8 +12,12 @@ export function sendJSON(response, payload) {
 }
 
 export function sendFile(response, file) {
-	response.setHeader('content-type', mimeFor(file))
-	response.end(readFileSync(file))
+	if (!existsSync(file))
+		sendNotFound(response)
+	else {
+		response.setHeader('content-type', mimeFor(file))
+		response.end(readFileSync(file))
+	}	
 }
 
 export async function sendPartialContent(response, range, file) {

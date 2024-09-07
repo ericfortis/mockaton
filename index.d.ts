@@ -6,11 +6,10 @@ interface Config {
 	host?: string,
 	port?: number
 	delay?: number
-	open?: (address: string) => void
+	onReady?: (address: string) => void
 	cookies?: object
 	proxyFallback?: string
 	allowedExt?: RegExp
-	generate500?: boolean,
 	extraHeaders?: [string, string][] 
 }
 

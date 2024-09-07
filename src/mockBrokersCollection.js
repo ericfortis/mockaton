@@ -40,15 +40,13 @@ export function init() {
 			collection[method][urlMask].register(file)
 	}
 
-	if (Config.generate500)
-		forEachBroker(broker => broker.ensureItHas500())
+	forEachBroker(broker => broker.ensureItHas500())
 }
 
 function forEachBroker(fn) {
 	for (const brokers of Object.values(collection))
 		Object.values(brokers).forEach(fn)
 }
-
 
 export const getAll = () => collection
 
@@ -71,7 +69,6 @@ export function getBrokerForUrl(method, url) {
 		if (brokers[i].urlMaskMatches(url))
 			return brokers[i]
 }
-
 
 export function extractAllComments() {
 	const comments = new Set()

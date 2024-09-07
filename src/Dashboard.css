@@ -8,7 +8,7 @@
 }
 html, body {
 	margin: 0;
-	font-size: 13px;
+	font-size: 12px;
 }
 body {
 	padding: 16px;
@@ -50,36 +50,40 @@ main {
 			padding-bottom: 2px;
 			text-align: left;
 		}
+
+		tr {
+			border-bottom: 2px solid transparent;
+		}
 	}
 }
 
 menu {
 	display: flex;
+	align-items: flex-end;
 	margin-bottom: 12px;
 	gap: 14px;
-	align-items: flex-end;
 
 	h1 {
 		margin: 0;
-		margin-right: 14px;
-		font-size: 2rem;
+		margin-right: 12px;
+		font-size: 26px;
 	}
 
 	label {
 		span {
 			display: block;
 			color: #555;
-			font-size: .85rem;
+			font-size: 11px;
 		}
 
 		select {
-			width: 143px;
+			width: 144px;
 			padding: 3px 0;
 			border: 1px solid #bbb;
 			margin-top: 1px;
 			cursor: pointer;
 			border-radius: 4px;
-			font-size: 0.9rem;
+			font-size: 11px;
 		}
 	}
 
@@ -105,6 +109,8 @@ menu {
 	margin-left: 16px;
 
 	pre {
+		tab-size: 2;
+
 		&:not(:empty) {
 			overflow: auto;
 			max-height: calc(100vh - 160px);
@@ -147,6 +153,7 @@ menu {
 	text-align: right;
 	direction: rtl;
 	text-overflow: ellipsis;
+	font-size: 12px;
 
 	&:disabled {
 		background: transparent;
@@ -160,14 +167,11 @@ menu {
 	&.status4xx {
 		background: var(--colorLightOrange);
 	}
-	&.status5xx {
-		background: var(--colorLightRed);
-	}
 }
 
-.DelayCheckbox {
+.DelayToggler {
 	display: flex;
-	margin-left: 6px;
+	margin-left: 8px;
 	cursor: pointer;
 
 	> input {
@@ -189,7 +193,36 @@ menu {
 		background: white;
 
 		&:hover {
-			background: #ddd
+			background: #bce5ff;
+			fill: #00318b;
+		}
+	}
+}
+
+.InternalServerErrorToggler {
+	display: flex;
+	margin-left: 6px;
+	cursor: pointer;
+
+	> input {
+		display: none;
+
+		&:checked ~ span {
+			color: white;
+			background: var(--colorRed);
+		}
+	}
+
+	> span {
+		padding: 4px;
+		font-size: 10px;
+		color: #333;
+		border-radius: 2px;
+		background: white;
+
+		&:hover {
+			background: var(--colorLightRed);
+			color: var(--colorRed);
 		}
 	}
 }

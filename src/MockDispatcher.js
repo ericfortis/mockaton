@@ -1,13 +1,12 @@
 import { join } from 'node:path'
 import { readFileSync } from 'node:fs'
 
-import { DF } from './ApiConstants.js'
 import { proxy } from './ProxyRelay.js'
 import { cookie } from './cookie.js'
 import { Config } from './Config.js'
 import { mimeFor } from './utils/mime.js'
 import * as mockBrokerCollection from './mockBrokersCollection.js'
-import { parseJSON, JsonBodyParserError } from './utils/http-request.js'
+import { JsonBodyParserError } from './utils/http-request.js'
 import { sendInternalServerError, sendNotFound, sendFile, sendBadRequest } from './utils/http-response.js'
 
 
@@ -33,20 +32,17 @@ export async function dispatchMock(req, response) {
 
 		let mockText
 		if (file.endsWith('.js')) {
-			response.setHeader('content-type', mimeFor('.json'))
-			const jsExport = await importDefault(file)
-			mockText = typeof jsExport === 'function'
-				? await jsExport(req, response)
-				: JSON.stringify(jsExport, null, 2)
+			response.setHeader('Content-Type', mimeFor('.json'))
+			mockText = await jsMockText(file, req, response)
 		}
 		else {
-			response.setHeader('content-type', mimeFor(file))
-			mockText = readMock(file)
+			response.setHeader('Content-Type', mimeFor(file))
+			mockText = broker.isTemp500 ? '' : readMock(file)
 		}
 		
 		if (cookie.getCurrent())
-			response.setHeader('set-cookie', cookie.getCurrent())
-		
+			response.setHeader('Set-Cookie', cookie.getCurrent())
+
 		response.writeHead(status, Config.extraHeaders)
 		setTimeout(() => response.end(mockText), delay)
 	}
@@ -59,6 +55,13 @@ export async function dispatchMock(req, response) {
 		else
 			sendInternalServerError(response)
 	}
+}
+
+async function jsMockText(file, req, response) {
+	const jsExport = await importDefault(file)
+	return typeof jsExport === 'function'
+		? await jsExport(req, response)
+		: JSON.stringify(jsExport, null, 2)
 }
 
 function readMock(file) {

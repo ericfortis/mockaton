@@ -26,7 +26,7 @@ export function setup(options) {
 		delay: ms => Number.isInteger(ms) && ms > 0,
 		cookies: is(Object),
 		skipOpen: is(Boolean),
-		proxyFallback: is(String),
+		proxyFallback: optional(URL.canParse),
 		allowedExt: is(RegExp),
 		generate500: is(Boolean),
 		extraHeaders: Array.isArray

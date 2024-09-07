@@ -160,7 +160,7 @@ The selected cookie is sent in every response in the `Set-Cookie` header.
 import { jwtCookie } from 'mockaton'
 
 Config.cookies = {
-  'My Admin User': 'my-cookie=1;Path=/;SameSite=strict',
+  'My Admin User':  'my-cookie=1;Path=/;SameSite=strict',
   'My Normal User': 'my-cookie=0;Path=/;SameSite=strict',
   'My JWT': jwtCookie('my-cookie', {
     email: 'john.doe@example.com',

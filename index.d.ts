@@ -6,8 +6,8 @@ interface Config {
 	host?: string,
 	port?: number
 	delay?: number
+	open?: (address: string) => void
 	cookies?: object
-	skipOpen?: boolean
 	proxyFallback?: string
 	allowedExt?: RegExp
 	generate500?: boolean,

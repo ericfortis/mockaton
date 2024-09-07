@@ -36,7 +36,7 @@ export function Mockaton(options) {
 			console.log('Dashboard', url + API.dashboard)
 			if (error)
 				console.error(error)
-			else if (!Config.skipOpen)
-				exec(`open ${url + API.dashboard}`)
+			else
+				Config.open(url + API.dashboard)
 		})
 }

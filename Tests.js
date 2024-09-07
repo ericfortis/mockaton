@@ -106,7 +106,7 @@ writeStatic('another-entry/index.html', '<h1>Another</h1>')
 const server = Mockaton({
 	mocksDir: tmpDir,
 	staticDir: staticTmpDir,
-	skipOpen: true,
+	open: () => {},
 	cookies: {
 		userA: 'CookieA',
 		userB: 'CookieB'

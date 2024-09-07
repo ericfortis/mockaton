@@ -22,7 +22,7 @@ exploring its [sample-mocks/](./sample-mocks) directory. Then, run
 <img src="./README-dashboard.png" style="max-width:820px"/>
 
 
-## Usage (see [_usage_example.js](./_usage_example.js))
+## Basic Usage
 ```
 npm install mockaton
 ```

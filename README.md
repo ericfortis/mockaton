@@ -1,7 +1,7 @@
 # Mockaton 
 _Mockaton_ is a mock server for developing and testing frontends.
 
-It scans `Config.mocksDir` for files following a specific
+It scans a given directory for files following a specific
 file name convention, which is similar to the URL paths. For
 example, the following file will be served for `/api/user/1234`
 ```
@@ -22,7 +22,7 @@ exploring its [sample-mocks/](./sample-mocks) directory. Then, run
 <img src="./README-dashboard.png" style="max-width:820px"/>
 
 
-## Basic Usage (see [_usage_example.js](./_usage_example.js))
+## Usage (see [_usage_example.js](./_usage_example.js))
 ```
 npm install mockaton
 ```
@@ -58,6 +58,7 @@ interface Config {
 }
 ```
 
+---
 
 ## Mock Variants
 Each route can have many mocks, which could either be:

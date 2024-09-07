@@ -13,58 +13,14 @@ extension](https://github.com/ericfortis/devtools-ext-tar-http-requests) can
 be used for downloading a TAR of your XHR requests following that convention.
 
 
-### Mock Variants
-Each route can have many mocks, which could either be:
-- Different response __status code__. 
-  - e.g. for testing error responses. 
-- __Comment__ on the filename, which is anything within parentheses.
-  - e.g. `api/user(my-comment).POST.201.json`
-
-Those alternatives can be manually selected in the dashboard
-UI, or programmatically, for instance, for setting up tests.
-
-The first file in **alphabetical order** becomes the default mock.
-
-### Optionally, you can write mocks in JavaScript
-An Object, Array, or String is sent as JSON.
-
-`api/foo.GET.200.js`
-```js
-export default [
-  { id: 0 }
-]
-```
-
-Or, export default a function. There, you
-can override the response status and the default JSON content
-type. But don’t call `response.end()`, just return a string.
-```js
-export default function (req, response) {
-  return JSON.stringify({ a: 1 })
-}
-```
-
-
-### Proxying Routes
-`Config.proxyFallback` lets you specify a target
-server for serving routes you don’t have mocks for.
-
-
 ## Getting Started
 The best way to learn _Mockaton_ is by checking out this repo and
 exploring its [sample-mocks/](./sample-mocks) directory. Then, run
 [`./_usage_example.js`](./_usage_example.js) and you’ll see this dashboard:
 
-<img src="./README-dashboard.png" style="max-width:890px"/>
 
+<img src="./README-dashboard.png" style="max-width:820px"/>
 
-## Delay 🕓
-The clock icon next to the mock selector is a checkbox for delaying a
-particular response. They are handy for testing spinners.
-
-The delay is globally configurable via `Config.delay = 1200` (milliseconds).
-
----
 
 ## Basic Usage (see [_usage_example.js](./_usage_example.js))
 ```
@@ -101,7 +57,52 @@ interface Config {
   extraHeaders?: []
 }
 ```
----
+
+
+## Mock Variants
+Each route can have many mocks, which could either be:
+- Different response __status code__. 
+  - e.g. for testing error responses. 
+- __Comment__ on the filename, which is anything within parentheses.
+  - e.g. `api/user(my-comment).POST.201.json`
+
+Those alternatives can be manually selected in the dashboard
+UI, or programmatically, for instance, for setting up tests.
+
+The first file in **alphabetical order** becomes the default mock.
+
+## You can write JSON mocks in JavaScript
+An Object, Array, or String is sent as JSON.
+
+`api/foo.GET.200.js`
+```js
+export default [
+  { id: 0 }
+]
+```
+
+Or, export default a function. There, you
+can override the response status and the default JSON content
+type. But don’t call `response.end()`, just return a string.
+```js
+export default function (req, response) {
+  return JSON.stringify({ a: 1 })
+}
+```
+
+
+## Proxying Routes
+`Config.proxyFallback` lets you specify a target
+server for serving routes you don’t have mocks for.
+
+
+
+## Delay 🕓
+The clock icon next to the mock selector is a checkbox for delaying a
+particular response. They are handy for testing spinners.
+
+The delay is globally configurable via `Config.delay = 1200` (milliseconds).
+
 
 ## File Name Convention
 

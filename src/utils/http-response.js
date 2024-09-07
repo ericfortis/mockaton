@@ -54,6 +54,11 @@ export function sendNotFound(response) {
 	response.end()
 }
 
+export function sendUnprocessableContent(response) {
+	response.statusCode = 422
+	response.end()
+}
+
 export function sendInternalServerError(response) {
 	response.statusCode = 500
 	response.end()

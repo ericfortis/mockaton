@@ -9,7 +9,7 @@ import { Config } from './Config.js'
 import { DF, API } from './ApiConstants.js'
 import { parseJSON } from './utils/http-request.js'
 import * as mockBrokersCollection from './mockBrokersCollection.js'
-import { sendOK, sendBadRequest, sendJSON, sendFile } from './utils/http-response.js'
+import { sendOK, sendBadRequest, sendJSON, sendFile, sendUnprocessableContent } from './utils/http-response.js'
 
 
 export const apiGetRequests = new Map([
@@ -69,7 +69,7 @@ async function updateBroker(req, response) {
 		const body = await parseJSON(req)
 		const broker = mockBrokersCollection.getBrokerByFilename(body[DF.file])
 		if (!broker) {
-			sendBadRequest(response)
+			sendUnprocessableContent(response)
 			return
 		}
 		if (DF.delayed in body)

@@ -36,7 +36,7 @@ export async function dispatchMock(req, response) {
 			response.setHeader('content-type', mimeFor('.json'))
 			const jsExport = await importDefault(file)
 			mockText = typeof jsExport === 'function'
-				? jsExport(req, response)
+				? await jsExport(req, response)
 				: JSON.stringify(jsExport)
 		}
 		else {

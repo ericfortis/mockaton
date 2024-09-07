@@ -176,7 +176,7 @@ words, it’s useful if you only care about its payload.
 
 ## `Config.extraHeaders`
 They are applied last, right before ending the response. In other words, they
-can overwrite the `Content-Type`. The header name goes in even-numbered indices.
+can overwrite the `Content-Type`. The header name goes in even indices.
 
 ```js
 Config.extraHeaders = [
@@ -222,7 +222,7 @@ fetch(addr + '/mockaton/bulk-select-by-comment', {
 ### Reset
 Re-Initialize the collection and its states (selected mocks and cookies, delays, etc.).
 ```js
-fetch(add + '/mockaton/reset', {
+fetch(addr + '/mockaton/reset', {
   method: 'PATCH'
 })
 ```

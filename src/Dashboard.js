@@ -26,7 +26,7 @@ const CSS = {
 
 	bold: 'bold',
 	chosen: 'chosen',
-	status4xx: 'status4xx',
+	status4xx: 'status4xx'
 }
 
 const r = createElement
@@ -266,7 +266,7 @@ function InternalServerErrorToggler({ broker }) {
 						method: 'PATCH',
 						body: JSON.stringify({
 							[DF.file]: event.currentTarget.checked
-								? items.find(f => f.includes(DEFAULT_500_COMMENT))
+								? items.find(f => Route.parseFilename(f).status === 500)
 								: items[0]
 						})
 					}).then(init)

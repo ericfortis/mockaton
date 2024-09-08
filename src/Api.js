@@ -31,21 +31,12 @@ export const apiPatchRequests = new Map([
 	[API.bulkSelect, bulkUpdateBrokersByCommentTag]
 ])
 
-function serveDashboard(_, response) {
-	sendFile(response, join(import.meta.dirname, 'Dashboard.html'))
-}
-function serveDashboardAsset(req, response) {
-	sendFile(response, join(import.meta.dirname, req.url))
-}
-function listCookies(_, response) {
-	sendJSON(response, cookie.list())
-}
-function listComments(_, response) {
-	sendJSON(response, mockBrokersCollection.extractAllComments())
-}
-function listMockBrokers(_, response) {
-	sendJSON(response, mockBrokersCollection.getAll())
-}
+function serveDashboard(_, response) { sendFile(response, join(import.meta.dirname, 'Dashboard.html')) }
+function serveDashboardAsset(req, response) { sendFile(response, join(import.meta.dirname, req.url)) }
+
+function listCookies(_, response) { sendJSON(response, cookie.list()) }
+function listComments(_, response) { sendJSON(response, mockBrokersCollection.extractAllComments()) }
+function listMockBrokers(_, response) { sendJSON(response, mockBrokersCollection.getAll()) }
 
 
 function reinitialize(_, response) {

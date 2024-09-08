@@ -78,7 +78,7 @@ export class MockBroker {
 	}
 
 	#registerTemp500() {
-		const { urlMask, method } = Route.parseFilename(this.mocks[0])
+		const { urlMask, method } = Route.parseFilename(this.mocks[0] || this.documentation)
 		let mask = urlMask
 		const t = join(Config.mocksDir, urlMask)
 		if (existsSync(t) && lstatSync(t).isDirectory())

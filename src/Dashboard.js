@@ -132,8 +132,7 @@ function SectionByMethod({ method, brokers }) {
 		r('tbody', null,
 			r('th', null, method),
 			Object.entries(brokers)
-				.sort((a, b) => a[0].localeCompare(b[0]))
-				.filter(([, broker]) => broker.mocks.length) // handles Markdown doc
+				.filter(([, broker]) => broker.mocks.length > 1) // Excludes Markdown only routes (>1 because of the autogen500)
 				.map(([urlMask, broker]) =>
 					r('tr', null,
 						r('td', null, r(PreviewLink, { method, urlMask, documentation: broker.documentation })),

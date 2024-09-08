@@ -94,7 +94,6 @@ function CookieSelector({ list }) {
 						method: 'PATCH',
 						body: JSON.stringify(this.value)
 					})
-						.then(init)
 						.catch(console.error)
 				}
 			}, list.map(([key, selected]) =>
@@ -202,11 +201,13 @@ function MockSelector({ broker }) {
 				fetch(API.edit, {
 					method: 'PATCH',
 					body: JSON.stringify({ [DF.file]: this.value })
-				}).then(() => {
-					this.closest('tr').querySelector('a').click()
-					this.closest('tr').querySelector(`.${CSS.InternalServerErrorToggler}>[type=checkbox]`).checked = status === 500
-					this.className = className(this.value === this.options[0].value, status)
 				})
+					.then(() => {
+						this.closest('tr').querySelector('a').click()
+						this.closest('tr').querySelector(`.${CSS.InternalServerErrorToggler}>[type=checkbox]`).checked = status === 500
+						this.className = className(this.value === this.options[0].value, status)
+					})
+					.catch(console.error)
 			}
 		}, files.map(file => r('option', {
 			value: file,
@@ -268,7 +269,9 @@ function InternalServerErrorToggler({ broker }) {
 								? items.find(f => Route.parseFilename(f).status === 500)
 								: items[0]
 						})
-					}).then(init)
+					})
+						.then(init)
+						.catch(console.error)
 				}
 			}),
 			r('span', null, '500')

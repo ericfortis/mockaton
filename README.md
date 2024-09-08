@@ -21,7 +21,6 @@ exploring its [sample-mocks/](./sample-mocks) directory. Then, run
 
 <img src="./README-dashboard.png" style="max-width:820px"/>
 
-
 ## Basic Usage
 ```
 npm install mockaton
@@ -52,7 +51,7 @@ interface Config {
   onReady?: (dashboardUrl: string) => void // defaults to openInBrowser. pass a noop to prevent opening the dashboard
   cookies?: object
   proxyFallback?: string // e.g. http://localhost:9999 Target for relaying routes without mocks
-  allowedExt?: RegExp // /\.(json|txt|md|js)$/ Just for excluding temporary editor files (e.g. JetBrains appends a ~)
+  allowedExt?: RegExp // /\.(md|json|txt|js)$/ Just for excluding temporary editor files (e.g. JetBrains appends a ~)
   extraHeaders?: []
 }
 ```
@@ -61,8 +60,7 @@ interface Config {
 
 ## Mock Variants
 Each route can have many mocks, which could either be:
-- Different response __status code__. 
-  - e.g. for testing error responses. 
+- Different response __status code__. For example, for testing error responses. 
 - __Comment__ on the filename, which is anything within parentheses.
   - e.g. `api/user(my-comment).POST.201.json`
 
@@ -81,11 +79,18 @@ export default [
 ]
 ```
 
-Or, export default a function. There, you
-can override the response status and the default JSON content
-type. But don’t call `response.end()`, just return a string.
+Or, export default a function. In it, you can override the response status and the
+default JSON content type. But don’t call `response.end()`, just return a string.
+
+In a sense, you can think of this is an HTTP handler. So you can read or
+write to a database, or pull data from a backend. The `request` is of type
+[IncomingMessage](https://nodejs.org/api/http.html#class-httpincomingmessage), and the
+`response` a [ServerResponse](https://nodejs.org/api/http.html#class-httpserverresponse).
 ```js
-export default function (req, response) {
+export default function optionalName(request, response) {
+  globalThis.myDatabase ??= { count: 0 }
+  globalThis.myDatabase.count++
+	
   return JSON.stringify({ a: 1 })
 }
 ```
@@ -104,15 +109,16 @@ particular response. They are handy for testing spinners.
 The delay is globally configurable via `Config.delay = 1200` (milliseconds).
 
 
+
 ## File Name Convention
 
 
 ### Extension
-`.Method.HttpResponseStatusCode.FileExt`
+`.Method.ResponseStatusCode.FileExt`
 
 The **file extension** can be anything, but `.md` is reserved for documentation.
 
-The `Config.allowedExt` regex defaults to: `/\.(json|txt|md|js)$/`
+The `Config.allowedExt` regex defaults to: `/\.(md|json|txt|js)$/`
 
 
 ### Dynamic Parameters
@@ -157,6 +163,14 @@ api/foo/(my comment).GET.200.json
 
 ## `Config.cookies`
 The selected cookie is sent in every response in the `Set-Cookie` header.
+
+The key is just a label used for selecting a particular cookie in the
+dashboard. In the dashboard, only one cookie can be selected. If you need
+more cookies you can inject additional cookies globally in `Config.extraHeaders`.
+
+`jwtCookie` has a hardcoded header and signature. In other
+words, it’s useful if you only care about its payload.
+
 ```js
 import { jwtCookie } from 'mockaton'
 
@@ -169,15 +183,11 @@ Config.cookies = {
   })
 }
 ```
-The key is just a label used for selecting a particular cookie in the dashboard.
-
-`jwtCookie` has a hardcoded header and signature. In other
-words, it’s useful if you only care about its payload.
-
 
 ## `Config.extraHeaders`
-They are applied last, right before ending the response. In other words, they
-can overwrite the `Content-Type`. The header name goes in even indices.
+They are applied last, right before ending the response.
+In other words, they can overwrite the `Content-Type`. Note
+that it's an array and the header name goes in even indices.
 
 ```js
 Config.extraHeaders = [
@@ -198,6 +208,7 @@ api/foo/[user-id].POST.201.md
 api/foo/[user-id].POST.201.json
 ```
 
+---
 
 ## API
 
@@ -229,8 +240,7 @@ fetch(addr + '/mockaton/reset', {
 ```
 
 ### Select a cookie
-In `Config.cookies`, each key is the label used
-for changing it. Only one cookie can be set.
+In `Config.cookies`, each key is the label used for changing it.
 ```js
 fetch(addr + '/mockaton/cookies', {
   method: 'PATCH',

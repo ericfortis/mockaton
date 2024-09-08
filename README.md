@@ -198,13 +198,11 @@ Config.extraHeaders = [
 ```
 
 ## Documenting Contracts (.md)
-This is handy for documenting request payload parameters. The dashboard will
-print the Markdown document (as plain text) above the actual payload content.
+This is handy for documenting request payload parameters. The
+dashboard prints the Markdown document as plain text (I know, I know).
 
-Create a markdown file following the same filename convention.
-The status code can be any number. For example,
 ```text
-api/foo/[user-id].POST.201.md
+api/foo/[user-id].POST.md
 api/foo/[user-id].POST.201.json
 ```
 

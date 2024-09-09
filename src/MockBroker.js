@@ -5,19 +5,15 @@ import { isDirectory } from './utils/fs.js'
 import { DEFAULT_500_COMMENT } from './ApiConstants.js'
 
 
-// MockBroker is a state for a particular route. It knows the available
-// mock files that can be served for the route, the currently selected
-// file, and its delay. Also, knows if the route has documentation (md)
+// MockBroker is a state for a particular route. It knows the available mock files
+// that can be served for the route, the currently selected file, and its delay.
 export class MockBroker {
 	#route
 
 	constructor(file) {
 		this.#route = new Route(file)
 		this.method = this.#route.method
-
-		this.documentation = '' // .md
-
-		this.mocks = [] // *.json,txt,js
+		this.mocks = []
 		this.currentMock = {
 			file: '',
 			delay: 0
@@ -27,13 +23,9 @@ export class MockBroker {
 	}
 
 	register(file) {
-		if (file.endsWith('.md'))
-			this.documentation = file
-		else {
-			if (!this.mocks.length)
-				this.currentMock.file = file // The first mock file option for a particular route becomes the default
-			this.mocks.push(file)
-		}
+		if (!this.mocks.length)
+			this.currentMock.file = file // The first mock file option for a particular route becomes the default
+		this.mocks.push(file)
 	}
 
 	urlMaskMatches(url) { return this.#route.urlMaskMatches(url) }
@@ -77,7 +69,7 @@ export class MockBroker {
 	}
 
 	#registerTemp500() {
-		const { urlMask, method } = Route.parseFilename(this.mocks[0] || this.documentation)
+		const { urlMask, method } = Route.parseFilename(this.mocks[0])
 		let mask = urlMask
 		if (isDirectory(join(Config.mocksDir, urlMask)))
 			mask = urlMask + '/'

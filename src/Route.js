@@ -44,43 +44,22 @@ export class Route {
 
 	static parseFilename(file) {
 		const tokens = file.replace(Route.reComments, '').split('.')
-		return file.endsWith('.md') 
-			? parseDocumentation(tokens) 
-			: parseMock(tokens)
-	}
-}
+		if (tokens.length < 4)
+			return { error: 'Invalid Filename Convention' }
 
-function parseDocumentation(tokens) { // TESTME
-	if (tokens.length < 3)
-		return { error: 'Invalid Documentation Filename Convention' }
+		const status = Number(tokens.at(-2))
+		if (!responseStatusIsValid(status))
+			return { error: `Invalid HTTP Response Status: "${status}"` }
 
-	const method = tokens.at(-2)
-	if (!httpMethods.includes(method))
-		return { error: `Unrecognized HTTP Method: "${method}"` }
+		const method = tokens.at(-3)
+		if (!httpMethods.includes(method))
+			return { error: `Unrecognized HTTP Method: "${method}"` }
 
-	return {
-		urlMask: '/' + removeTrailingSlash(tokens.at(-3)),
-		method,
-		status: 200
-	}
-}
-
-function parseMock(tokens) {
-	if (tokens.length < 4)
-		return { error: 'Invalid Filename Convention' }
-
-	const status = Number(tokens.at(-2))
-	if (!responseStatusIsValid(status))
-		return { error: `Invalid HTTP Response Status: "${status}"` }
-
-	const method = tokens.at(-3)
-	if (!httpMethods.includes(method))
-		return { error: `Unrecognized HTTP Method: "${method}"` }
-
-	return {
-		urlMask: '/' + removeTrailingSlash(tokens.at(-4)),
-		method,
-		status
+		return {
+			urlMask: '/' + removeTrailingSlash(tokens.at(-4)),
+			method,
+			status
+		}
 	}
 }
 

@@ -7,16 +7,10 @@ import { Config } from './Config.js'
 import { mimeFor } from './utils/mime.js'
 import * as mockBrokerCollection from './mockBrokersCollection.js'
 import { JsonBodyParserError } from './utils/http-request.js'
-import { sendInternalServerError, sendNotFound, sendFile, sendBadRequest } from './utils/http-response.js'
+import { sendInternalServerError, sendNotFound, sendBadRequest } from './utils/http-response.js'
 
 
 export async function dispatchMock(req, response) {
-	/* Serve Documentation */
-	if (req.method === 'GET' && req.url.endsWith('.md')) {
-		sendFile(response, join(Config.mocksDir, decodeURIComponent(req.url)))
-		return
-	}
-
 	const broker = mockBrokerCollection.getBrokerForUrl(req.method, req.url)
 	if (!broker) {
 		if (Config.proxyFallback)

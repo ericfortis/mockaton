@@ -19,7 +19,6 @@ const Strings = {
 const CSS = {
 	DelayToggler: 'DelayToggler',
 	InternalServerErrorToggler: 'InternalServerErrorToggler',
-	Documentation: 'Documentation',
 	MockSelector: 'MockSelector',
 	PayloadViewer: 'PayloadViewer',
 	PreviewLink: 'PreviewLink',
@@ -30,7 +29,6 @@ const CSS = {
 }
 
 const r = createElement
-const refDocumentation = useRef()
 const refPayloadViewer = useRef()
 const refPayloadFile = useRef()
 
@@ -64,7 +62,6 @@ function DevPanel(brokersByMethod, cookies, comments) {
 				r('table', null, Object.entries(brokersByMethod).map(([method, brokers]) =>
 					r(SectionByMethod, { method, brokers }))),
 				r('div', { className: CSS.PayloadViewer },
-					r('pre', { ref: refDocumentation, className: CSS.Documentation }),
 					r('h2', { ref: refPayloadFile }, Strings.mock),
 					r('pre', { ref: refPayloadViewer }, Strings.click_link_to_preview)))))
 }
@@ -134,14 +131,14 @@ function SectionByMethod({ method, brokers }) {
 				.filter(([, broker]) => broker.mocks.length > 1) // Excludes Markdown only routes (>1 because of the autogen500)
 				.map(([urlMask, broker]) =>
 					r('tr', null,
-						r('td', null, r(PreviewLink, { method, urlMask, documentation: broker.documentation })),
+						r('td', null, r(PreviewLink, { method, urlMask })),
 						r('td', null, r(MockSelector, { broker })),
 						r('td', null, r(DelayToggler, { broker })),
 						r('td', null, r(InternalServerErrorToggler, { broker }))
 					))))
 }
 
-function PreviewLink({ method, urlMask, documentation }) {
+function PreviewLink({ method, urlMask }) {
 	return (
 		r('a', {
 			className: CSS.PreviewLink,
@@ -150,13 +147,6 @@ function PreviewLink({ method, urlMask, documentation }) {
 			async onClick(event) {
 				event.preventDefault()
 				try {
-					if (documentation) {
-						const r = await fetch(documentation)
-						refDocumentation.current.innerText = await r.text()
-					}
-					else
-						refDocumentation.current.innerText = ''
-
 					const spinner = setTimeout(() => refPayloadViewer.current.innerText = Strings.fetching, 180)
 					const res = await fetch(this.href, {
 						method: this.getAttribute('data-method')

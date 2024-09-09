@@ -107,6 +107,10 @@ menu {
 	top: 0;
 	width: 50%;
 	margin-left: 16px;
+	
+	h2 {
+		padding-top: 20px;
+	}
 
 	pre {
 		tab-size: 2;
@@ -118,10 +122,6 @@ menu {
 			margin-top: 6px;
 			background: var(--colorLightGrey);
 			font-family: monospace;
-		}
-
-		&.Documentation {
-			margin-bottom: 12px;
 		}
 	}
 }

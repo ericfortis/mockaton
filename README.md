@@ -51,7 +51,7 @@ interface Config {
   onReady?: (dashboardUrl: string) => void // defaults to trying to open macOS default browser. pass a noop to prevent opening the dashboard
   cookies?: object
   proxyFallback?: string // e.g. http://localhost:9999 Target for relaying routes without mocks
-  allowedExt?: RegExp // /\.(md|json|txt|js)$/ Just for excluding temporary editor files (e.g. JetBrains appends a ~)
+  allowedExt?: RegExp // /\.(json|js|txt)$/ Just for excluding temporary editor files (e.g. JetBrains appends a ~)
   extraHeaders?: []
 }
 ```
@@ -197,15 +197,6 @@ Config.extraHeaders = [
   'Set-Cookie', 'foo=FOO;Path=/;SameSite=strict',
   'Set-Cookie', 'bar=BAR;Path=/;SameSite=strict'
 ]
-```
-
-## Documenting Contracts (.md)
-This is handy for documenting request payload parameters. The
-dashboard prints the Markdown document as plain text (I know, I know).
-
-```text
-api/foo/[user-id].POST.md
-api/foo/[user-id].POST.201.json
 ```
 
 ---

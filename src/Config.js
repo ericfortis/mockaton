@@ -1,5 +1,6 @@
 import { openInBrowser } from './utils/openInBrowser.js'
-import { validate, is, optional, isDirectory } from './utils/validate.js'
+import { validate, is, optional } from './utils/validate.js'
+import { isDirectory } from './utils/fs.js'
 
 
 export const Config = {

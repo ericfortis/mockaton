@@ -1,5 +1,6 @@
-import fs, { existsSync, readFileSync } from 'node:fs'
+import fs from 'node:fs'
 import { mimeFor } from './mime.js'
+import { isFile, read } from './fs.js'
 
 
 export function sendOK(response) {
@@ -7,17 +8,17 @@ export function sendOK(response) {
 }
 
 export function sendJSON(response, payload) {
-	response.setHeader('content-type', 'application/json')
+	response.setHeader('Content-Type', 'application/json')
 	response.end(JSON.stringify(payload))
 }
 
 export function sendFile(response, file) {
-	if (!existsSync(file))
+	if (!isFile(file))
 		sendNotFound(response)
 	else {
-		response.setHeader('content-type', mimeFor(file))
-		response.end(readFileSync(file))
-	}	
+		response.setHeader('Content-Type', mimeFor(file))
+		response.end(read(file))
+	}
 }
 
 export async function sendPartialContent(response, range, file) {
@@ -28,14 +29,14 @@ export async function sendPartialContent(response, range, file) {
 
 	if (start < 0 || start > end || start >= size || end >= size) {
 		response.statusCode = 416 // Range Not Satisfiable
-		response.setHeader('content-range', `bytes */${size}`)
+		response.setHeader('Content-Range', `bytes */${size}`)
 		response.end()
 	}
 	else {
 		response.statusCode = 206 // Partial Content
-		response.setHeader('accept-ranges', 'bytes')
-		response.setHeader('content-range', `bytes ${start}-${end}/${size}`)
-		response.setHeader('content-type', mimeFor(file))
+		response.setHeader('Accept-Ranges', 'bytes')
+		response.setHeader('Content-Range', `bytes ${start}-${end}/${size}`)
+		response.setHeader('Content-Type', mimeFor(file))
 		const reader = fs.createReadStream(file, { start, end })
 		reader.on('open', function () {
 			this.pipe(response)

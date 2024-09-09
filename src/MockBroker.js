@@ -1,8 +1,7 @@
 import { join } from 'node:path'
-import { existsSync, lstatSync } from 'node:fs'
-
 import { Route } from './Route.js'
 import { Config } from './Config.js'
+import { isDirectory } from './utils/fs.js'
 import { DEFAULT_500_COMMENT } from './ApiConstants.js'
 
 
@@ -80,8 +79,7 @@ export class MockBroker {
 	#registerTemp500() {
 		const { urlMask, method } = Route.parseFilename(this.mocks[0] || this.documentation)
 		let mask = urlMask
-		const t = join(Config.mocksDir, urlMask)
-		if (existsSync(t) && lstatSync(t).isDirectory())
+		if (isDirectory(join(Config.mocksDir, urlMask)))
 			mask = urlMask + '/'
 		mask = mask.replace(/^\//, '') // remove initial slash
 		const file = `${mask}${DEFAULT_500_COMMENT}.${method}.500.txt`

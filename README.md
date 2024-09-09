@@ -48,7 +48,7 @@ interface Config {
   host?: string, // defaults to 'localhost'
   port?: number // defaults to 0, which means auto-assigned
   delay?: number // defaults to 1200 (ms)
-  onReady?: (dashboardUrl: string) => void // defaults to openInBrowser. pass a noop to prevent opening the dashboard
+  onReady?: (dashboardUrl: string) => void // defaults to trying to open macOS default browser. pass a noop to prevent opening the dashboard
   cookies?: object
   proxyFallback?: string // e.g. http://localhost:9999 Target for relaying routes without mocks
   allowedExt?: RegExp // /\.(md|json|txt|js)$/ Just for excluding temporary editor files (e.g. JetBrains appends a ~)

@@ -149,16 +149,18 @@ permitted](https://learn.microsoft.com/en-us/windows/win32/fileio/naming-a-file)
 but since that’s part of the query string, it’s ignored anyway.
 
 
-
 ### Default (index-like) route
-For the default route of a directory, omit the mock filename name
-(<b>just use the extension</b>). For example, the following files will be
-routed to `api/foo` because comments and the query string are ignored.
+**Option A.** Place it outside the directory:
+```
+api/foo/
+api/foo.GET.200.json
+```
+
+**Option B.** Omit the filename:
 ```text
 api/foo/.GET.200.json
-api/foo/?bar=[bar].GET.200.json
-api/foo/(my comment).GET.200.json
 ```
+
 
 
 ## `Config.cookies`

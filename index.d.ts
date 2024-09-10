@@ -11,9 +11,9 @@ interface Config {
 	proxyFallback?: string
 
 	delay?: number
-	cookies?: object
+	cookies?: { [label: string]: string }
 	extraHeaders?: [string, string][]
-	extraMimes?: object
+	extraMimes?: { [fileExt: string]: string }
 
 	onReady?: (address: string) => void
 }

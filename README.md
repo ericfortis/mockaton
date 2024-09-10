@@ -53,8 +53,8 @@ interface Config {
   proxyFallback?: string // e.g. http://localhost:9999 Target for relaying routes without mocks
 	
   delay?: number // defaults to 1200 (ms)
-  cookies?: object
-  extraMimes?: object
+  cookies?: { [label: string]: string }
+  extraMimes?: { [fileExt: string]: string }
   extraHeaders?: []
 	
   onReady?: (dashboardUrl: string) => void // defaults to trying to open macOS default browser. pass a noop to prevent opening the dashboard
@@ -84,11 +84,12 @@ export default [
 ]
 ```
 
-Or, export default a function. In it, you can override the response status and the
-default JSON content type. But don’t call `response.end()`, just return a string.
+Or, export default a function. In it, you can override the
+response status and the default JSON content type. But don’t call
+`response.end()`, just return a `string`, `Buffer`, or `Uint8Array`.
 
-In a sense, you can think of this is an HTTP handler. So you can read or
-write to a database, or pull data from a backend. The `request` is of type
+Think of this as an HTTP handler. You can read or write to a
+database, or pull data from a backend. The `request` is of type
 [IncomingMessage](https://nodejs.org/api/http.html#class-httpincomingmessage), and the
 `response` a [ServerResponse](https://nodejs.org/api/http.html#class-httpserverresponse).
 ```js

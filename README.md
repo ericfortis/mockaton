@@ -115,8 +115,6 @@ The delay is globally configurable via `Config.delay = 1200` (milliseconds).
 ### Extension
 `.Method.ResponseStatusCode.FileExt`
 
-The **file extension** can be anything, but `.md` is reserved for documentation.
-
 
 ### Dynamic Parameters
 Anything within square brackets. For example:

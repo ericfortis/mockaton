@@ -18,7 +18,6 @@ export class MockBroker {
 			file: '',
 			delay: 0
 		}
-
 		this.register(file)
 	}
 

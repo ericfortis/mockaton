@@ -1,4 +1,4 @@
-#!/usr/bin/env node
+#!/usr/bin/env -S node --experimental-default-type=module
 
 import { tmpdir } from 'node:os'
 import { dirname } from 'node:path'

@@ -59,7 +59,7 @@ async function jsMockText(file, req, response) {
 }
 
 function readMock(file) {
-	return readFileSync(join(Config.mocksDir, file), 'utf8')
+	return readFileSync(join(Config.mocksDir, file))
 }
 
 async function importDefault(file) {

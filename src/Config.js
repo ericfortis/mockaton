@@ -12,7 +12,8 @@ export const Config = {
 	cookies: {}, // defaults to the first kv
 	onReady: openInBrowser,
 	proxyFallback: '', // e.g. http://localhost:9999
-	extraHeaders: []
+	extraHeaders: [],
+	ignore: /(\.DS_Store|~)$/
 }
 
 export function setup(options) {
@@ -26,7 +27,8 @@ export function setup(options) {
 		cookies: is(Object),
 		onReady: is(Function),
 		proxyFallback: optional(URL.canParse),
-		extraHeaders: Array.isArray
+		extraHeaders: Array.isArray,
+		ignore: is(RegExp)
 	})
 }
 

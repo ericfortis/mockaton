@@ -10,6 +10,7 @@ interface Config {
 	cookies?: object
 	proxyFallback?: string
 	extraHeaders?: [string, string][] 
+	ignore?: RegExp
 }
 
 export function Mockaton(options: Config): Server

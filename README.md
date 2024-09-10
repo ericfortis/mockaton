@@ -52,6 +52,7 @@ interface Config {
   cookies?: object
   proxyFallback?: string // e.g. http://localhost:9999 Target for relaying routes without mocks
   extraHeaders?: []
+	ignore?: RegExp // defaults to /(.DS_Store|~)$/
 }
 ```
 

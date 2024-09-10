@@ -145,6 +145,9 @@ but since that’s part of the query string, it’s ignored anyway.
 
 
 ### Default (index-like) route
+For instance, let's say you have `api/foo/bar`, and
+`api/foo`. For the latter you have two options:
+
 **Option A.** Place it outside the directory:
 ```
 api/foo/

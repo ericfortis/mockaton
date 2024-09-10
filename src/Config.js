@@ -3,7 +3,7 @@ import { validate, is, optional } from './utils/validate.js'
 import { isDirectory } from './utils/fs.js'
 
 
-export const Config = {
+export const Config = Object.seal({
 	mocksDir: '',
 	ignore: /(\.DS_Store|~)$/,
 
@@ -19,7 +19,7 @@ export const Config = {
 	extraMimes: {},
 
 	onReady: openInBrowser
-}
+})
 
 export function setup(options) {
 	Object.assign(Config, options)

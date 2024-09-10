@@ -127,7 +127,7 @@ Comments are anything within parentheses, including them.
 They are ignored for URL purposes, so they have no effect
 on the URL mask. For example, these two are for `/api/foo`
 <pre>
-api/foo<b>(my comment)</b>.GET.200.json<b>(bar)</b>
+api/foo<b>(my comment)</b>.GET.200.json
 api/foo.GET.200.json
 </pre>
 

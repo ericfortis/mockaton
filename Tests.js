@@ -354,7 +354,6 @@ async function testInvalidFilenamesAreIgnored() {
 		const consoleErrorSpy = t.mock.method(console, 'error')
 		consoleErrorSpy.mock.mockImplementation(() => {}) // so they don’t render in the test report
 
-		// An extension is needed for testing because of `Config.allowedExt`
 		write('api/_INVALID_FILENAME_CONVENTION_.json', '')
 		write('api/bad-filename.GET._INVALID_STATUS_.json', '')
 		write('api/bad-filename._INVALID_METHOD_.200.json', '')

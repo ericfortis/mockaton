@@ -51,7 +51,6 @@ interface Config {
   onReady?: (dashboardUrl: string) => void // defaults to trying to open macOS default browser. pass a noop to prevent opening the dashboard
   cookies?: object
   proxyFallback?: string // e.g. http://localhost:9999 Target for relaying routes without mocks
-  allowedExt?: RegExp // /\.(json|js|txt)$/ Just for excluding temporary editor files (e.g. JetBrains appends a ~)
   extraHeaders?: []
 }
 ```
@@ -117,8 +116,6 @@ The delay is globally configurable via `Config.delay = 1200` (milliseconds).
 `.Method.ResponseStatusCode.FileExt`
 
 The **file extension** can be anything, but `.md` is reserved for documentation.
-
-The `Config.allowedExt` regex defaults to: `/\.(md|json|txt|js)$/`
 
 
 ### Dynamic Parameters

@@ -5,6 +5,7 @@ import { Route } from './Route.js'
 import { Config } from './Config.js'
 import { cookie } from './cookie.js'
 import { isFile } from './utils/fs.js'
+import { mimeFor } from './utils/mime.js'
 import { MockBroker } from './MockBroker.js'
 
 
@@ -25,7 +26,7 @@ export function init() {
 	cookie.init(Config.cookies)
 
 	const files = readDir(Config.mocksDir, { recursive: true })
-		.filter(f => Config.allowedExt.test(f) && isFile(join(Config.mocksDir, f)))
+		.filter(f => isFile(join(Config.mocksDir, f)) && mimeFor(f))
 		.sort()
 
 	for (const file of files) {

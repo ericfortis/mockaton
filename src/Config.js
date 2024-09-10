@@ -12,7 +12,6 @@ export const Config = {
 	cookies: {}, // defaults to the first kv
 	onReady: openInBrowser,
 	proxyFallback: '', // e.g. http://localhost:9999
-	allowedExt: /\.(json|js|txt)$/, // Just for excluding temporary editor files (e.g. JetBrains appends a ~)
 	extraHeaders: []
 }
 
@@ -27,7 +26,6 @@ export function setup(options) {
 		cookies: is(Object),
 		onReady: is(Function),
 		proxyFallback: optional(URL.canParse),
-		allowedExt: is(RegExp),
 		extraHeaders: Array.isArray
 	})
 }

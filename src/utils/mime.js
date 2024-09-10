@@ -86,6 +86,6 @@ export function mimeFor(filename) {
 	const ext = filename.replace(/.*\./, '').toLowerCase()
 	const mime = mimes[ext] || ''
 	if (!mime)
-		console.error(`Missing MIME for ${filename}`)
+		console.info(`Missing MIME for ${filename}`)
 	return mime
 }

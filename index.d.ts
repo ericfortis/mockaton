@@ -9,7 +9,6 @@ interface Config {
 	onReady?: (address: string) => void
 	cookies?: object
 	proxyFallback?: string
-	allowedExt?: RegExp
 	extraHeaders?: [string, string][] 
 }
 

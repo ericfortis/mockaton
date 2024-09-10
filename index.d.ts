@@ -2,16 +2,20 @@ import { Server } from 'node:http';
 
 interface Config {
 	mocksDir: string
+	ignore?: RegExp
+
 	staticDir?: string
+
 	host?: string,
 	port?: number
-	ignore?: RegExp
-	delay?: number
-	onReady?: (address: string) => void
-	cookies?: object
 	proxyFallback?: string
+
+	delay?: number
+	cookies?: object
 	extraHeaders?: [string, string][]
 	extraMimes?: object
+
+	onReady?: (address: string) => void
 }
 
 export function Mockaton(options: Config): Server

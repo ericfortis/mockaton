@@ -10,7 +10,6 @@ export class MockBroker {
 
 	constructor(file) {
 		this.#route = new Route(file)
-		this.method = this.#route.method
 		this.mocks = []
 		this.currentMock = {
 			file: '',

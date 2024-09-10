@@ -44,7 +44,7 @@ node my-mockaton.js
 ```ts
 interface Config {
   mocksDir: string
-  ignore?: RegExp // defaults to /(.DS_Store|~)$/
+  ignore?: RegExp // defaults to /(\.DS_Store|~)$/
 	
   staticDir?: string
 	

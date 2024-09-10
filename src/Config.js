@@ -8,12 +8,13 @@ export const Config = {
 	staticDir: '',
 	host: '127.0.0.1',
 	port: 0, // auto-assigned
+	ignore: /(\.DS_Store|~)$/,
 	delay: 1200, // milliseconds
 	cookies: {}, // defaults to the first kv
 	onReady: openInBrowser,
 	proxyFallback: '', // e.g. http://localhost:9999
 	extraHeaders: [],
-	ignore: /(\.DS_Store|~)$/
+	extraMimes: {}
 }
 
 export function setup(options) {
@@ -23,12 +24,13 @@ export function setup(options) {
 		staticDir: optional(isDirectory),
 		host: is(String),
 		port: port => Number.isInteger(port) && port >= 0 && port < 2 ** 16,
+		ignore: is(RegExp),
 		delay: ms => Number.isInteger(ms) && ms > 0,
 		cookies: is(Object),
 		onReady: is(Function),
 		proxyFallback: optional(URL.canParse),
 		extraHeaders: Array.isArray,
-		ignore: is(RegExp)
+		extraMimes: is(Object)
 	})
 }
 

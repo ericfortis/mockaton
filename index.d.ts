@@ -5,12 +5,13 @@ interface Config {
 	staticDir?: string
 	host?: string,
 	port?: number
+	ignore?: RegExp
 	delay?: number
 	onReady?: (address: string) => void
 	cookies?: object
 	proxyFallback?: string
-	extraHeaders?: [string, string][] 
-	ignore?: RegExp
+	extraHeaders?: [string, string][]
+	extraMimes?: object
 }
 
 export function Mockaton(options: Config): Server

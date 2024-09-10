@@ -1,8 +1,9 @@
+import { Config } from './Config.js'
+
 // https://developer.mozilla.org/en-US/docs/Web/HTTP/Basics_of_HTTP/MIME_types/Common_types
 // m = {}; 
 // for (const row of tbody.children)
 //   m[row.children[0].querySelector('code').innerText] = row.children[2].querySelector('code').innerText
-
 const mimes = {
 	'3g2': 'video/3gpp2',
 	'3gp': 'video/3gpp',
@@ -40,6 +41,7 @@ const mimes = {
 	json: 'application/json',
 	jsonld: 'application/ld+json',
 	mid: 'audio/midi',
+	midi: 'audio/midi',
 	mjs: 'text/javascript',
 	mp3: 'audio/mpeg',
 	mp4: 'video/mp4',
@@ -84,7 +86,7 @@ const mimes = {
 
 export function mimeFor(filename) {
 	const ext = filename.replace(/.*\./, '').toLowerCase()
-	const mime = mimes[ext] || ''
+	const mime = Config.extraMimes[ext] || mimes[ext] || ''
 	if (!mime)
 		console.info(`Missing MIME for ${filename}`)
 	return mime

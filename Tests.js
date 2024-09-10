@@ -9,13 +9,20 @@ import { equal, deepEqual, match } from 'node:assert/strict'
 import { writeFileSync, mkdtempSync, mkdirSync } from 'node:fs'
 
 import { Route } from './src/Route.js'
-import { mimeFor } from './src/utils/mime.js'
+import { mimeFor } from './src/mime.js'
 import { Mockaton } from './src/Mockaton.js'
 import { API, DF, DEFAULT_500_COMMENT } from './src/ApiConstants.js'
 
 
 const tmpDir = mkdtempSync(tmpdir()) + '/'
 const staticTmpDir = mkdtempSync(tmpdir()) + '/'
+
+const fixtureCustomMime = [
+	'/api/custom-mime',
+	'api/custom-mime.GET.200.my_custom_extension',
+	'Custom Extension and MIME'
+]
+
 const fixtures = [
 	[
 		'/api',
@@ -87,7 +94,8 @@ const fixtures = [
 		'/api/company-e/1234/?limit=4',
 		'api/company-e/[id]?limit=[limit].GET.200.json',
 		'with pretty-param and query-params'
-	]
+	],
+	fixtureCustomMime
 ]
 for (const [, file, body] of fixtures)
 	write(file, file.endsWith('.json') ? JSON.stringify(body) : body)
@@ -111,7 +119,10 @@ const server = Mockaton({
 		userA: 'CookieA',
 		userB: 'CookieB'
 	},
-	extraHeaders: ['Server', 'MockatonTester']
+	extraHeaders: ['Server', 'MockatonTester'],
+	extraMimes: {
+		my_custom_extension: 'my_custom_mime'
+	}
 })
 server.on('listening', runTests)
 
@@ -161,6 +172,7 @@ async function runTests() {
 		await testMockDispatching(url, file, body)
 
 	await testMockDispatching('/api/object', 'api/object.GET.200.js', { JSON_FROM_JS: true }, mimeFor('.json'))
+	await testMockDispatching(...fixtureCustomMime, 'my_custom_mime')
 	await testJsFunctionMocks()
 
 	await testItUpdatesUserRole()

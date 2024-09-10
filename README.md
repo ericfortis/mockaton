@@ -48,11 +48,12 @@ interface Config {
   host?: string, // defaults to 'localhost'
   port?: number // defaults to 0, which means auto-assigned
   delay?: number // defaults to 1200 (ms)
+  ignore?: RegExp // defaults to /(.DS_Store|~)$/
   onReady?: (dashboardUrl: string) => void // defaults to trying to open macOS default browser. pass a noop to prevent opening the dashboard
   cookies?: object
   proxyFallback?: string // e.g. http://localhost:9999 Target for relaying routes without mocks
+  extraMimes?: object
   extraHeaders?: []
-	ignore?: RegExp // defaults to /(.DS_Store|~)$/
 }
 ```
 
@@ -196,6 +197,13 @@ Config.extraHeaders = [
   'Set-Cookie', 'foo=FOO;Path=/;SameSite=strict',
   'Set-Cookie', 'bar=BAR;Path=/;SameSite=strict'
 ]
+```
+
+## `Config.extraMimes`
+```js
+Config.extraMimes = {
+  jpg: 'application/jpeg'
+}
 ```
 
 ---

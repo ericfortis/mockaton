@@ -14,7 +14,7 @@ import { sendOK, sendBadRequest, sendJSON, sendFile, sendUnprocessableContent } 
 
 export const apiGetRequests = new Map([
 	[API.dashboard, serveDashboard],
-	['/Route.js', serveDashboardAsset],
+	['/Filename.js', serveDashboardAsset],
 	['/Dashboard.js', serveDashboardAsset],
 	['/Dashboard.css', serveDashboardAsset],
 	['/ApiConstants.js', serveDashboardAsset],

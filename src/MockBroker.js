@@ -1,6 +1,6 @@
 import { Config } from './Config.js'
 import { DEFAULT_500_COMMENT } from './ApiConstants.js'
-import { Route, includesComment, extractComments, parseFilename } from './Route.js'
+import { includesComment, extractComments, parseFilename } from './Filename.js'
 
 
 // MockBroker is a state for a particular route. It knows the available mock files
@@ -67,3 +67,33 @@ export class MockBroker {
 		this.register(`${file}${DEFAULT_500_COMMENT}.${method}.500.txt`)
 	}
 }
+
+
+class Route {
+	#urlRegex
+
+	constructor(urlMask) {
+		this.#urlRegex = new RegExp('^' + disregardVariables(removeQueryStringAndFragment(urlMask)) + '/*$')
+	}
+
+	// Appending a '/' so URLs ending with variables don't match
+	// URLs that have a path after that variable. For example,
+	// without it, the following regex would match both of these URLs:
+	//   api/foo/[route_id] => api/foo/.*  (wrong match because it’s too greedy)
+	//   api/foo/[route_id]/suffix => api/foo/.*/suffix
+	// By the same token, the regex handles many trailing
+	// slashes. For instance, for routing api/foo/[id]?qs…
+	urlMaskMatches(url) {
+		return this.#urlRegex.test(removeQueryStringAndFragment(decodeURIComponent(url)) + '/')
+	}
+}
+
+// Stars out (for regex) all the paths that are in square brackets
+function disregardVariables(str) {
+	return str.replace(/\[.*?]/g, '[^/]*')
+}
+
+function removeQueryStringAndFragment(urlMask) {
+	return urlMask.replace(/[?#].*/, '')
+}
+

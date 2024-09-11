@@ -11,7 +11,7 @@ import { writeFileSync, mkdtempSync, mkdirSync } from 'node:fs'
 import { Config } from './src/Config.js'
 import { mimeFor } from './src/utils/mime.js'
 import { Mockaton } from './src/Mockaton.js'
-import { parseFilename } from './src/Route.js'
+import { parseFilename } from './src/Filename.js'
 import { API, DF, DEFAULT_500_COMMENT } from './src/ApiConstants.js'
 
 

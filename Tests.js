@@ -52,6 +52,10 @@ const fixtures = [
 		'/api/alternative',
 		'api/alternative(comment-1).GET.200.json',
 		'With_Comment_1'
+	], [
+		'/api/dot.in.path',
+		'api/dot.in.path.GET.200.json',
+		'Dot_in_Path'
 	],
 
 
@@ -211,7 +215,7 @@ async function test404() {
 	})
 }
 
-async function testMockDispatching(url, file, expectedBody, forcedMime = void 0) {
+async function testMockDispatching(url, file, expectedBody, forcedMime = undefined) {
 	const { urlMask, method, status } = Route.parseFilename(file)
 	const mime = forcedMime || mimeFor(file)
 	const res = await request(url, { method })

@@ -46,16 +46,17 @@ export class Route {
 		if (tokens.length < 4)
 			return { error: 'Invalid Filename Convention' }
 
-		const status = Number(tokens.at(-2))
-		if (!responseStatusIsValid(status))
-			return { error: `Invalid HTTP Response Status: "${status}"` }
-
 		const method = tokens.at(-3)
+		const status = Number(tokens.at(-2))
+
 		if (!httpMethods.includes(method))
 			return { error: `Unrecognized HTTP Method: "${method}"` }
 
+		if (!responseStatusIsValid(status))
+			return { error: `Invalid HTTP Response Status: "${status}"` }
+
 		return {
-			urlMask: '/' + removeTrailingSlash(tokens.at(-4)),
+			urlMask: '/' + removeTrailingSlash(tokens.slice(0, -3).join('.')),
 			method,
 			status
 		}

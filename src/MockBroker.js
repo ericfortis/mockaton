@@ -6,15 +6,18 @@ import { includesComment, extractComments, parseFilename } from './Filename.js'
 // MockBroker is a state for a particular route. It knows the available mock files
 // that can be served for the route, the currently selected file, and its delay.
 export class MockBroker {
-	#route
+	#urlRegex
 
 	constructor(file) {
-		this.#route = new Route(parseFilename(file).urlMask)
+		const { urlMask } = parseFilename(file)
+		this.#urlRegex = new RegExp('^' + disregardVariables(removeQueryStringAndFragment(urlMask)) + '/*$')
+
 		this.mocks = []
 		this.currentMock = {
 			file: '',
 			delay: 0
 		}
+
 		this.register(file)
 	}
 
@@ -24,7 +27,16 @@ export class MockBroker {
 		this.mocks.push(file)
 	}
 
-	urlMaskMatches(url) { return this.#route.urlMaskMatches(url) }
+	// Appending a '/' so URLs ending with variables don't match
+	// URLs that have a path after that variable. For example,
+	// without it, the following regex would match both of these URLs:
+	//   api/foo/[route_id] => api/foo/.*  (wrong match because it’s too greedy)
+	//   api/foo/[route_id]/suffix => api/foo/.*/suffix
+	// By the same token, the regex handles many trailing
+	// slashes. For instance, for routing api/foo/[id]?qs…
+	urlMaskMatches(url) {
+		return this.#urlRegex.test(removeQueryStringAndFragment(decodeURIComponent(url)) + '/')
+	}
 
 	get file() { return this.currentMock.file }
 	get delay() { return this.currentMock.delay }
@@ -65,26 +77,6 @@ export class MockBroker {
 		const { urlMask, method } = parseFilename(this.mocks[0])
 		const file = urlMask.replace(/^\//, '') // Removes leading slash TESTME
 		this.register(`${file}${DEFAULT_500_COMMENT}.${method}.500.txt`)
-	}
-}
-
-
-class Route {
-	#urlRegex
-
-	constructor(urlMask) {
-		this.#urlRegex = new RegExp('^' + disregardVariables(removeQueryStringAndFragment(urlMask)) + '/*$')
-	}
-
-	// Appending a '/' so URLs ending with variables don't match
-	// URLs that have a path after that variable. For example,
-	// without it, the following regex would match both of these URLs:
-	//   api/foo/[route_id] => api/foo/.*  (wrong match because it’s too greedy)
-	//   api/foo/[route_id]/suffix => api/foo/.*/suffix
-	// By the same token, the regex handles many trailing
-	// slashes. For instance, for routing api/foo/[id]?qs…
-	urlMaskMatches(url) {
-		return this.#urlRegex.test(removeQueryStringAndFragment(decodeURIComponent(url)) + '/')
 	}
 }
 

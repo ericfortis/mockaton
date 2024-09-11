@@ -9,7 +9,7 @@ const reComments = /\(.*?\)/g // Anything within parentheses
 export const extractComments = filename =>
 	Array.from(filename.matchAll(reComments), ([comment]) => comment)
 
-export const hasInParentheses = (filename, search) =>
+export const includesComment = (filename, search) =>
 	extractComments(filename).some(comment => comment.includes(search))
 
 

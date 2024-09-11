@@ -1,6 +1,6 @@
 import { Config } from './Config.js'
 import { DEFAULT_500_COMMENT } from './ApiConstants.js'
-import { Route, hasInParentheses, extractComments, parseFilename } from './Route.js'
+import { Route, includesComment, extractComments, parseFilename } from './Route.js'
 
 
 // MockBroker is a state for a particular route. It knows the available mock files
@@ -29,7 +29,7 @@ export class MockBroker {
 	get file() { return this.currentMock.file }
 	get delay() { return this.currentMock.delay }
 	get status() { return parseFilename(this.file).status }
-	get isTemp500() { return hasInParentheses(this.file, DEFAULT_500_COMMENT) }
+	get isTemp500() { return includesComment(this.file, DEFAULT_500_COMMENT) }
 
 	updateFile(filename) {
 		this.currentMock.file = filename
@@ -41,7 +41,7 @@ export class MockBroker {
 
 	setByMatchingComment(comment) {
 		for (const file of this.mocks)
-			if (hasInParentheses(file, comment)) {
+			if (includesComment(file, comment)) {
 				this.updateFile(file)
 				break
 			}

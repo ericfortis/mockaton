@@ -1,5 +1,5 @@
 import fs from 'node:fs'
-import { mimeFor } from '../mime.js'
+import { mimeFor } from './mime.js'
 import { isFile, read } from './fs.js'
 
 

@@ -9,7 +9,7 @@ import { equal, deepEqual, match } from 'node:assert/strict'
 import { writeFileSync, mkdtempSync, mkdirSync } from 'node:fs'
 
 import { Route } from './src/Route.js'
-import { mimeFor } from './src/mime.js'
+import { mimeFor } from './src/utils/mime.js'
 import { Mockaton } from './src/Mockaton.js'
 import { API, DF, DEFAULT_500_COMMENT } from './src/ApiConstants.js'
 

@@ -1,14 +1,10 @@
 const httpMethods = [
-	'CONNECT',
-	'DELETE',
-	'GET',
-	'HEAD',
-	'OPTIONS',
-	'PATCH',
-	'POST',
-	'PUT',
-	'TRACE'
+	'CONNECT', 'DELETE', 'GET',
+	'HEAD', 'OPTIONS', 'PATCH',
+	'POST', 'PUT', 'TRACE'
 ]
+
+const reComments = /\(.*?\)/g // Anything within parentheses
 
 export class Route {
 	#urlRegex
@@ -29,11 +25,8 @@ export class Route {
 		return this.#urlRegex.test(removeQueryStringAndFragment(decodeURIComponent(url)) + '/')
 	}
 
-	// Anything within parentheses in the filename is a comment, including the parentheses.
-	static reComments = /\(.*?\)/g
-
 	static extractComments(filename) {
-		return Array.from(filename.matchAll(Route.reComments), ([comment]) => comment)
+		return Array.from(filename.matchAll(reComments), ([comment]) => comment)
 	}
 
 	static hasInParentheses(filename, search) {
@@ -41,7 +34,7 @@ export class Route {
 	}
 
 	static parseFilename(file) {
-		const tokens = file.replace(Route.reComments, '').split('.')
+		const tokens = file.replace(reComments, '').split('.')
 		if (tokens.length < 4)
 			return { error: 'Invalid Filename Convention' }
 

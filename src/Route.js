@@ -6,6 +6,13 @@ const httpMethods = [
 
 const reComments = /\(.*?\)/g // Anything within parentheses
 
+export const extractComments = filename =>
+	Array.from(filename.matchAll(reComments), ([comment]) => comment)
+
+export const hasInParentheses = (filename, search) =>
+	extractComments(filename).some(comment => comment.includes(search))
+
+
 export class Route {
 	#urlRegex
 
@@ -23,14 +30,6 @@ export class Route {
 	// slashes. For instance, for routing api/foo/[id]?qs…
 	urlMaskMatches(url) {
 		return this.#urlRegex.test(removeQueryStringAndFragment(decodeURIComponent(url)) + '/')
-	}
-
-	static extractComments(filename) {
-		return Array.from(filename.matchAll(reComments), ([comment]) => comment)
-	}
-
-	static hasInParentheses(filename, search) {
-		return Route.extractComments(filename).some(comment => comment.includes(search))
 	}
 
 	static parseFilename(file) {
@@ -54,6 +53,7 @@ export class Route {
 		}
 	}
 }
+
 
 // Stars out (for regex) all the paths that are in square brackets
 function disregardVariables(str) {

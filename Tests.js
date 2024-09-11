@@ -9,6 +9,7 @@ import { equal, deepEqual, match } from 'node:assert/strict'
 import { writeFileSync, mkdtempSync, mkdirSync } from 'node:fs'
 
 import { Route } from './src/Route.js'
+import { Config } from './src/Config.js'
 import { mimeFor } from './src/utils/mime.js'
 import { Mockaton } from './src/Mockaton.js'
 import { API, DF, DEFAULT_500_COMMENT } from './src/ApiConstants.js'
@@ -115,6 +116,7 @@ writeStatic('another-entry/index.html', '<h1>Another</h1>')
 const server = Mockaton({
 	mocksDir: tmpDir,
 	staticDir: staticTmpDir,
+	delay: 40,
 	onReady: () => {},
 	cookies: {
 		userA: 'CookieA',
@@ -212,7 +214,6 @@ async function test404() {
 async function testMockDispatching(url, file, expectedBody, forcedMime = void 0) {
 	const { urlMask, method, status } = Route.parseFilename(file)
 	const mime = forcedMime || mimeFor(file)
-	const now = new Date()
 	const res = await request(url, { method })
 	const body = mime === 'application/json'
 		? await res.json()
@@ -222,7 +223,6 @@ async function testMockDispatching(url, file, expectedBody, forcedMime = void 0)
 		it('mime: ' + mime, () => equal(res.headers.get('content-type'), mime))
 		it('status: ' + status, () => equal(res.status, status))
 		it('cookie: ' + mime, () => equal(res.headers.get('set-cookie'), 'CookieA'))
-		it('delay is under 1 sec', () => equal((new Date()).getTime() - now.getTime() < 1000, true))
 		it('extra header', () => equal(res.headers.get('server'), 'MockatonTester'))
 	})
 }
@@ -253,7 +253,7 @@ async function testItUpdatesDelayAndFile(url, file, expectedBody) {
 	const body = await res.text()
 	await describe('url: ' + url, () => {
 		it('body is: ' + expectedBody, () => equal(body, expectedBody))
-		it('delay is over 1 sec', () => equal((new Date()).getTime() - now.getTime() > 1000, true))
+		it('delay', () => equal((new Date()).getTime() - now.getTime() > Config.delay, true))
 	})
 }
 

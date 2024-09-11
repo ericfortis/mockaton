@@ -81,8 +81,8 @@ export class MockBroker {
 }
 
 // Stars out (for regex) all the paths that are in square brackets
-function disregardVariables(str) {
-	return str.replace(/\[.*?]/g, '[^/]*')
+function disregardVariables(urlMask) {
+	return urlMask.replace(/\[.*?]/g, '[^/]*')
 }
 
 function removeQueryStringAndFragment(urlMask) {

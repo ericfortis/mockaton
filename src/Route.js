@@ -12,12 +12,33 @@ export const extractComments = filename =>
 export const hasInParentheses = (filename, search) =>
 	extractComments(filename).some(comment => comment.includes(search))
 
+export function parseFilename(file) {
+	const tokens = file.replace(reComments, '').split('.')
+	if (tokens.length < 4)
+		return { error: 'Invalid Filename Convention' }
+
+	const method = tokens.at(-3)
+	const status = Number(tokens.at(-2))
+
+	if (!httpMethods.includes(method))
+		return { error: `Unrecognized HTTP Method: "${method}"` }
+
+	if (!responseStatusIsValid(status))
+		return { error: `Invalid HTTP Response Status: "${status}"` }
+
+	return {
+		urlMask: '/' + removeTrailingSlash(tokens.slice(0, -3).join('.')),
+		method,
+		status
+	}
+}
+
 
 export class Route {
 	#urlRegex
 
 	constructor(file) {
-		const { urlMask } = Route.parseFilename(file)
+		const { urlMask } = parseFilename(file)
 		this.#urlRegex = new RegExp('^' + disregardVariables(removeQueryStringAndFragment(urlMask)) + '/*$')
 	}
 
@@ -31,29 +52,7 @@ export class Route {
 	urlMaskMatches(url) {
 		return this.#urlRegex.test(removeQueryStringAndFragment(decodeURIComponent(url)) + '/')
 	}
-
-	static parseFilename(file) {
-		const tokens = file.replace(reComments, '').split('.')
-		if (tokens.length < 4)
-			return { error: 'Invalid Filename Convention' }
-
-		const method = tokens.at(-3)
-		const status = Number(tokens.at(-2))
-
-		if (!httpMethods.includes(method))
-			return { error: `Unrecognized HTTP Method: "${method}"` }
-
-		if (!responseStatusIsValid(status))
-			return { error: `Invalid HTTP Response Status: "${status}"` }
-
-		return {
-			urlMask: '/' + removeTrailingSlash(tokens.slice(0, -3).join('.')),
-			method,
-			status
-		}
-	}
 }
-
 
 // Stars out (for regex) all the paths that are in square brackets
 function disregardVariables(str) {

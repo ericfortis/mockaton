@@ -8,10 +8,10 @@ import { createServer } from 'node:http'
 import { equal, deepEqual, match } from 'node:assert/strict'
 import { writeFileSync, mkdtempSync, mkdirSync } from 'node:fs'
 
-import { Route } from './src/Route.js'
 import { Config } from './src/Config.js'
 import { mimeFor } from './src/utils/mime.js'
 import { Mockaton } from './src/Mockaton.js'
+import { parseFilename } from './src/Route.js'
 import { API, DF, DEFAULT_500_COMMENT } from './src/ApiConstants.js'
 
 
@@ -220,7 +220,7 @@ async function test404() {
 }
 
 async function testMockDispatching(url, file, expectedBody, forcedMime = undefined) {
-	const { urlMask, method, status } = Route.parseFilename(file)
+	const { urlMask, method, status } = parseFilename(file)
 	const mime = forcedMime || mimeFor(file)
 	const res = await request(url, { method })
 	const body = mime === 'application/json'

@@ -1,11 +1,11 @@
 import { join } from 'node:path'
 import { readdirSync as readDir } from 'node:fs'
 
-import { Route } from './Route.js'
 import { Config } from './Config.js'
 import { cookie } from './cookie.js'
 import { isFile } from './utils/fs.js'
 import { MockBroker } from './MockBroker.js'
+import { parseFilename } from './Route.js'
 
 
 /**
@@ -29,7 +29,7 @@ export function init() {
 		.sort()
 
 	for (const file of files) {
-		const { error, method, urlMask } = Route.parseFilename(file)
+		const { error, method, urlMask } = parseFilename(file)
 		if (error) {
 			console.error(error, file)
 			continue
@@ -52,7 +52,7 @@ function forEachBroker(fn) {
 export const getAll = () => collection
 
 export const getBrokerByFilename = file => {
-	const { method, urlMask } = Route.parseFilename(file)
+	const { method, urlMask } = parseFilename(file)
 	if (collection[method])
 		return collection[method][urlMask]
 }

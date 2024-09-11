@@ -1,4 +1,4 @@
-import { Route } from '../Route.js'
+import { parseFilename } from '../Route.js'
 import { API, DF, DEFAULT_500_COMMENT } from '../ApiConstants.js'
 
 
@@ -173,7 +173,7 @@ function MockSelector({ broker }) {
 	const items = broker.mocks
 	const selected = broker.currentMock.file
 
-	const { status } = Route.parseFilename(selected)
+	const { status } = parseFilename(selected)
 	const files = items.filter(item =>
 		status === 500 ||
 		!item.includes(DEFAULT_500_COMMENT))
@@ -184,7 +184,7 @@ function MockSelector({ broker }) {
 			autocomplete: 'off',
 			disabled: files.length <= 1,
 			onChange() {
-				const { status } = Route.parseFilename(this.value)
+				const { status } = parseFilename(this.value)
 				this.style.fontWeight = this.value === this.options[0].value // default is selected
 					? 'normal'
 					: 'bold'
@@ -240,7 +240,7 @@ function TimerIcon() {
 function InternalServerErrorToggler({ broker }) {
 	const items = broker.mocks
 	const name = broker.currentMock.file
-	const checked = Route.parseFilename(broker.currentMock.file).status === 500
+	const checked = parseFilename(broker.currentMock.file).status === 500
 	return (
 		r('label', {
 				className: CSS.InternalServerErrorToggler,
@@ -256,7 +256,7 @@ function InternalServerErrorToggler({ broker }) {
 						method: 'PATCH',
 						body: JSON.stringify({
 							[DF.file]: event.currentTarget.checked
-								? items.find(f => Route.parseFilename(f).status === 500)
+								? items.find(f => parseFilename(f).status === 500)
 								: items[0]
 						})
 					})

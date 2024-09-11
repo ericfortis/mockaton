@@ -1,6 +1,6 @@
 import { Config } from './Config.js'
 import { DEFAULT_500_COMMENT } from './ApiConstants.js'
-import { Route, hasInParentheses, extractComments } from './Route.js'
+import { Route, hasInParentheses, extractComments, parseFilename } from './Route.js'
 
 
 // MockBroker is a state for a particular route. It knows the available mock files
@@ -28,7 +28,7 @@ export class MockBroker {
 
 	get file() { return this.currentMock.file }
 	get delay() { return this.currentMock.delay }
-	get status() { return Route.parseFilename(this.file).status }
+	get status() { return parseFilename(this.file).status }
 	get isTemp500() { return hasInParentheses(this.file, DEFAULT_500_COMMENT) }
 
 	updateFile(filename) {
@@ -59,10 +59,10 @@ export class MockBroker {
 			this.#registerTemp500()
 	}
 	#has500() {
-		return this.mocks.some(mock => Route.parseFilename(mock).status === 500)
+		return this.mocks.some(mock => parseFilename(mock).status === 500)
 	}
 	#registerTemp500() {
-		const { urlMask, method } = Route.parseFilename(this.mocks[0])
+		const { urlMask, method } = parseFilename(this.mocks[0])
 		const file = urlMask.replace(/^\//, '') // Removes leading slash TESTME
 		this.register(`${file}${DEFAULT_500_COMMENT}.${method}.500.txt`)
 	}

@@ -9,7 +9,7 @@ export class MockBroker {
 	#route
 
 	constructor(file) {
-		this.#route = new Route(file)
+		this.#route = new Route(parseFilename(file).urlMask)
 		this.mocks = []
 		this.currentMock = {
 			file: '',

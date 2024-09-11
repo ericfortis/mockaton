@@ -12,6 +12,7 @@ export const extractComments = filename =>
 export const hasInParentheses = (filename, search) =>
 	extractComments(filename).some(comment => comment.includes(search))
 
+
 export function parseFilename(file) {
 	const tokens = file.replace(reComments, '').split('.')
 	if (tokens.length < 4)
@@ -33,12 +34,26 @@ export function parseFilename(file) {
 	}
 }
 
+function removeTrailingSlash(url = '') {
+	return url
+		.replace(/\/$/, '')
+		.replace('/?', '?')
+		.replace('/#', '#')
+}
+
+function responseStatusIsValid(status) {
+	return Number.isInteger(status)
+		&& status >= 100
+		&& status <= 599
+}
+
+
+
 
 export class Route {
 	#urlRegex
 
-	constructor(file) {
-		const { urlMask } = parseFilename(file)
+	constructor(urlMask) {
 		this.#urlRegex = new RegExp('^' + disregardVariables(removeQueryStringAndFragment(urlMask)) + '/*$')
 	}
 
@@ -63,15 +78,3 @@ function removeQueryStringAndFragment(urlMask) {
 	return urlMask.replace(/[?#].*/, '')
 }
 
-function removeTrailingSlash(url = '') {
-	return url
-		.replace(/\/$/, '')
-		.replace('/?', '?')
-		.replace('/#', '#')
-}
-
-function responseStatusIsValid(status) {
-	return Number.isInteger(status)
-		&& status >= 100
-		&& status <= 599
-}

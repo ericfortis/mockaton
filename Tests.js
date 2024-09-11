@@ -56,6 +56,10 @@ const fixtures = [
 		'/api/dot.in.path',
 		'api/dot.in.path.GET.200.json',
 		'Dot_in_Path'
+	], [
+		'/api/space & colon:',
+		'api/space & colon:.GET.200.json',
+		'Decodes URI'
 	],
 
 

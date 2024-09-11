@@ -26,7 +26,7 @@ export class Route {
 		//   api/foo/[route_id]/suffix => api/foo/.*/suffix
 		// By the same token, the regex handles many trailing
 		// slashes. For instance, for routing api/foo/[id]?qs…
-		return this.#urlRegex.test(removeQueryStringAndFragment(url) + '/')
+		return this.#urlRegex.test(removeQueryStringAndFragment(decodeURIComponent(url)) + '/')
 	}
 
 	// Anything within parentheses in the filename is a comment, including the parentheses.
@@ -74,10 +74,10 @@ function removeQueryStringAndFragment(urlMask) {
 }
 
 function removeTrailingSlash(url = '') {
-	return decodeURIComponent(url
+	return url
 		.replace(/\/$/, '')
 		.replace('/?', '?')
-		.replace('/#', '#'))
+		.replace('/#', '#')
 }
 
 function responseStatusIsValid(status) {

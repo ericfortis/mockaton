@@ -22,7 +22,7 @@ export async function dispatchMock(req, response) {
 
 	try {
 		const { file, status, delay } = broker
-		console.log(req.url, ' → ', file)
+		console.log(decodeURIComponent(req.url), ' → ', file)
 
 		let mockText
 		if (file.endsWith('.js')) {

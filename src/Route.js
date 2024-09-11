@@ -18,14 +18,14 @@ export class Route {
 		this.#urlRegex = new RegExp('^' + disregardVariables(removeQueryStringAndFragment(urlMask)) + '/*$')
 	}
 
+	// Appending a '/' so URLs ending with variables don't match
+	// URLs that have a path after that variable. For example,
+	// without it, the following regex would match both of these URLs:
+	//   api/foo/[route_id] => api/foo/.*  (wrong match because it’s too greedy)
+	//   api/foo/[route_id]/suffix => api/foo/.*/suffix
+	// By the same token, the regex handles many trailing
+	// slashes. For instance, for routing api/foo/[id]?qs…
 	urlMaskMatches(url) {
-		// Appending a '/' so URLs ending with variables don't match
-		// URLs that have a path after that variable. For example,
-		// without it, the following regex would match both of these URLs:
-		//   api/foo/[route_id] => api/foo/.*  (wrong match because it’s too greedy)
-		//   api/foo/[route_id]/suffix => api/foo/.*/suffix
-		// By the same token, the regex handles many trailing
-		// slashes. For instance, for routing api/foo/[id]?qs…
 		return this.#urlRegex.test(removeQueryStringAndFragment(decodeURIComponent(url)) + '/')
 	}
 
@@ -37,8 +37,7 @@ export class Route {
 	}
 
 	static hasInParentheses(filename, search) {
-		return Route.extractComments(filename)
-			.some(comment => comment.includes(search))
+		return Route.extractComments(filename).some(comment => comment.includes(search))
 	}
 
 	static parseFilename(file) {
@@ -62,7 +61,6 @@ export class Route {
 		}
 	}
 }
-
 
 // Stars out (for regex) all the paths that are in square brackets
 function disregardVariables(str) {

@@ -42,14 +42,14 @@ export async function sendPartialContent(response, range, file) {
 			this.pipe(response)
 		})
 		reader.on('error', function (error) {
-			console.error(error)
-			sendInternalServerError(response)
+			sendInternalServerError(response, error)
 		})
 	}
 }
 
 
-export function sendBadRequest(response) {
+export function sendBadRequest(response, error) {
+	console.error(error);
 	response.statusCode = 400
 	response.end()
 }
@@ -64,7 +64,8 @@ export function sendUnprocessableContent(response) {
 	response.end()
 }
 
-export function sendInternalServerError(response) {
+export function sendInternalServerError(response, error) {
+	console.error(error);
 	response.statusCode = 500
 	response.end()
 }

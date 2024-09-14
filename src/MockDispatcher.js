@@ -41,13 +41,12 @@ export async function dispatchMock(req, response) {
 		setTimeout(() => response.end(mockText), delay)
 	}
 	catch (error) {
-		console.error(error)
 		if (error instanceof JsonBodyParserError)
-			sendBadRequest(response)
+			sendBadRequest(response, error)
 		else if (error.code === 'ENOENT')
 			sendNotFound(response) // file has been deleted
 		else
-			sendInternalServerError(response)
+			sendInternalServerError(response, error)
 	}
 }
 

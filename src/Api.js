@@ -50,8 +50,7 @@ async function selectCookie(req, response) {
 		sendOK(response)
 	}
 	catch (error) {
-		console.error(error)
-		sendBadRequest(response)
+		sendBadRequest(response, error)
 	}
 }
 
@@ -69,8 +68,7 @@ async function updateBroker(req, response) {
 		sendOK(response)
 	}
 	catch (error) {
-		console.error(error)
-		sendBadRequest(response)
+		sendBadRequest(response, error)
 	}
 }
 
@@ -80,8 +78,7 @@ async function updateProxyFallback(req, response) {
 		sendOK(response)
 	}
 	catch (error) {
-		console.error(error)
-		sendBadRequest(response)
+		sendBadRequest(response, error)
 	}
 }
 
@@ -91,7 +88,6 @@ async function bulkUpdateBrokersByCommentTag(req, response) {
 		sendOK(response)
 	}
 	catch (error) {
-		console.error(error)
-		sendBadRequest(response)
+		sendBadRequest(response, error)
 	}
 }

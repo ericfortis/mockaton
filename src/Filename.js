@@ -19,8 +19,9 @@ export function parseFilename(file) {
 	if (tokens.length < 4)
 		return { error: 'Invalid Filename Convention' }
 
-	const method = tokens.at(-3)
 	const status = Number(tokens.at(-2))
+	const method = tokens.at(-3)
+	const urlMask = '/' + removeTrailingSlash(tokens.slice(0, -3).join('.'))
 
 	if (!httpMethods.includes(method))
 		return { error: `Unrecognized HTTP Method: "${method}"` }
@@ -28,11 +29,7 @@ export function parseFilename(file) {
 	if (!responseStatusIsValid(status))
 		return { error: `Invalid HTTP Response Status: "${status}"` }
 
-	return {
-		urlMask: '/' + removeTrailingSlash(tokens.slice(0, -3).join('.')),
-		method,
-		status
-	}
+	return { urlMask, method, status }
 }
 
 function removeTrailingSlash(url = '') {

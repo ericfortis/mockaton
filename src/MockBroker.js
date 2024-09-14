@@ -41,7 +41,6 @@ export class MockBroker {
 	get file() { return this.currentMock.file }
 	get delay() { return this.currentMock.delay }
 	get status() { return parseFilename(this.file).status }
-	get isTemp500() { return includesComment(this.file, DEFAULT_500_COMMENT) }
 
 	updateFile(filename) {
 		this.currentMock.file = filename
@@ -77,6 +76,9 @@ export class MockBroker {
 		const { urlMask, method } = parseFilename(this.mocks[0])
 		const file = urlMask.replace(/^\//, '') // Removes leading slash TESTME
 		this.register(`${file}${DEFAULT_500_COMMENT}.${method}.500.txt`)
+	}
+	get isTemp500() {
+		return includesComment(this.file, DEFAULT_500_COMMENT)
 	}
 }
 

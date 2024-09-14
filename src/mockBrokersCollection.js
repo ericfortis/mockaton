@@ -5,7 +5,7 @@ import { Config } from './Config.js'
 import { cookie } from './cookie.js'
 import { isFile } from './utils/fs.js'
 import { MockBroker } from './MockBroker.js'
-import { parseFilename } from './Filename.js'
+import { parseFilename, validateFilename } from './Filename.js'
 
 
 /**
@@ -29,11 +29,12 @@ export function init() {
 		.sort()
 
 	for (const file of files) {
-		const { error, method, urlMask } = parseFilename(file)
+		const error = validateFilename(file)
 		if (error) {
 			console.error(error, file)
 			continue
 		}
+		const { method, urlMask } = parseFilename(file)
 		collection[method] ??= {}
 		if (!collection[method][urlMask])
 			collection[method][urlMask] = new MockBroker(file)

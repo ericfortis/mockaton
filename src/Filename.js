@@ -30,10 +30,11 @@ export function validateFilename(file) {
 
 export function parseFilename(file) {
 	const tokens = file.replace(reComments, '').split('.')
-	const status = Number(tokens.at(-2))
-	const method = tokens.at(-3)
-	const urlMask = '/' + removeTrailingSlash(tokens.slice(0, -3).join('.'))
-	return { urlMask, method, status }
+	return {
+		urlMask: '/' + removeTrailingSlash(tokens.slice(0, -3).join('.')),
+		method: tokens.at(-3),
+		status: Number(tokens.at(-2))
+	}
 }
 
 function removeTrailingSlash(url = '') {

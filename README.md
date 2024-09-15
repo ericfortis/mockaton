@@ -12,6 +12,23 @@ By the way, [this browser
 extension](https://github.com/ericfortis/devtools-ext-tar-http-requests) can
 be used for downloading a TAR of your XHR requests following that convention.
 
+## What do I use a Mockaton for?
+- I’m a frontend dev, so I don’t have spin up and maintain hefty or complex backends.
+- For having a deterministic state with all the possible state variants at once.
+- Testing empty responses, such a list without users.
+- Testing spinners by delaying responses.
+- Triggering error responses such as, Bad Requests and Internal Server Errors.
+  - Also, notifications and alerts.
+- If the mocks are checked-in in the repo, when bisecting a bug, it avoids
+  having to syncing the frontend with many backend repos.
+  - Similarly, it allows for checking out long-lived branches that have old API contracts.
+- Prototyping ahead of the backend.
+- As API documentation
+- Setting up tests
+
+### Caveats
+- Syncing the mocks
+
 
 ## Getting Started
 The best way to learn _Mockaton_ is by checking out this repo and

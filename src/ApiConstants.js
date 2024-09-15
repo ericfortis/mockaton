@@ -15,5 +15,5 @@ export const DF = { // Dashboard Fields (XHR)
 	file: 'file'
 }
 
-export const DEFAULT_500_COMMENT = '(Mockaton Temp 500)'
+export const DEFAULT_500_COMMENT = '(Mockaton 500)'
 export const DEFAULT_MOCK_COMMENT = '(default)'

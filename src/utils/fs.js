@@ -7,6 +7,6 @@ export const isDirectory = path => lstatSync(path, { throwIfNoEntry: false })?.i
 
 export const read = path => readFileSync(path)
 
-/** @returns Array<string> paths relative to `dir` */
+/** @returns {Array<string>} paths relative to `dir` */
 export const listFilesRecursively = dir => readdirSync(dir, { recursive: true })
 	.filter(f => isFile(join(dir, f)))

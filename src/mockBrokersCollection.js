@@ -1,10 +1,7 @@
-import { join } from 'node:path'
-import { readdirSync as readDir } from 'node:fs'
-
 import { Config } from './Config.js'
 import { cookie } from './cookie.js'
-import { isFile } from './utils/fs.js'
 import { MockBroker } from './MockBroker.js'
+import { listFilesRecursively } from './utils/fs.js'
 import { parseFilename, filenameIsValid } from './Filename.js'
 
 
@@ -24,9 +21,9 @@ export function init() {
 	collection = {}
 	cookie.init(Config.cookies)
 
-	const files = readDir(Config.mocksDir, { recursive: true })
+	const files = listFilesRecursively(Config.mocksDir)
 		.sort()
-		.filter(f => !Config.ignore.test(f) && isFile(join(Config.mocksDir, f)) && filenameIsValid(f))
+		.filter(f => !Config.ignore.test(f) && filenameIsValid(f))
 
 	for (const file of files) {
 		const { method, urlMask } = parseFilename(file)

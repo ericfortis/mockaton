@@ -5,7 +5,7 @@ import { Config } from './Config.js'
 import { cookie } from './cookie.js'
 import { isFile } from './utils/fs.js'
 import { MockBroker } from './MockBroker.js'
-import { parseFilename, validateFilename } from './Filename.js'
+import { parseFilename, filenameIsValid } from './Filename.js'
 
 
 /**
@@ -25,15 +25,10 @@ export function init() {
 	cookie.init(Config.cookies)
 
 	const files = readDir(Config.mocksDir, { recursive: true })
-		.filter(f => !Config.ignore.test(f) && isFile(join(Config.mocksDir, f)))
 		.sort()
+		.filter(f => !Config.ignore.test(f) && isFile(join(Config.mocksDir, f)) && filenameIsValid(f))
 
 	for (const file of files) {
-		const error = validateFilename(file)
-		if (error) {
-			console.error(error, file)
-			continue
-		}
 		const { method, urlMask } = parseFilename(file)
 		collection[method] ??= {}
 		if (!collection[method][urlMask])

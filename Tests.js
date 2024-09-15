@@ -17,6 +17,7 @@ import { API, DF, DEFAULT_500_COMMENT } from './src/ApiConstants.js'
 
 const tmpDir = mkdtempSync(tmpdir()) + '/'
 const staticTmpDir = mkdtempSync(tmpdir()) + '/'
+console.log(tmpDir)
 
 const fixtureCustomMime = [
 	'/api/custom-mime',
@@ -380,12 +381,12 @@ async function testInvalidFilenamesAreIgnored() {
 		consoleErrorSpy.mock.mockImplementation(() => {}) // so they don’t render in the test report
 
 		write('api/_INVALID_FILENAME_CONVENTION_.json', '')
-		write('api/bad-filename.GET._INVALID_STATUS_.json', '')
-		write('api/bad-filename._INVALID_METHOD_.200.json', '')
+		write('api/bad-filename-method._INVALID_METHOD_.200.json', '')
+		write('api/bad-filename-status.GET._INVALID_STATUS_.json', '')
 		await reset()
 		equal(consoleErrorSpy.mock.calls[0].arguments[0], 'Invalid Filename Convention')
-		equal(consoleErrorSpy.mock.calls[1].arguments[0], 'Invalid HTTP Response Status: "NaN"')
-		equal(consoleErrorSpy.mock.calls[2].arguments[0], 'Unrecognized HTTP Method: "_INVALID_METHOD_"')
+		equal(consoleErrorSpy.mock.calls[1].arguments[0], 'Unrecognized HTTP Method: "_INVALID_METHOD_"')
+		equal(consoleErrorSpy.mock.calls[2].arguments[0], 'Invalid HTTP Response Status: "NaN"')
 	})
 }
 

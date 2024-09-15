@@ -14,7 +14,14 @@ export const includesComment = (filename, search) =>
 	extractComments(filename).some(comment => comment.includes(search))
 
 
-export function validateFilename(file) {
+export function filenameIsValid(file) {
+	const error = validateFilename(file)
+	if (error)
+		console.error(error, file)
+	return !error
+}
+
+function validateFilename(file) {
 	const tokens = file.replace(reComments, '').split('.')
 	if (tokens.length < 4)
 		return 'Invalid Filename Convention'

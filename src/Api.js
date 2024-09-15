@@ -60,7 +60,7 @@ async function updateBroker(req, response) {
 		const file = body[DF.file]
 		const broker = mockBrokersCollection.getBrokerByFilename(file)
 		if (!broker || !broker.mockExists(file)) {
-			sendUnprocessableContent(response)
+			sendUnprocessableContent(response, `Missing Mock: "${file}`)
 			return
 		}
 		if (DF.delayed in body)

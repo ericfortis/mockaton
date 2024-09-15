@@ -4,7 +4,6 @@ const httpMethods = [
 	'POST', 'PUT', 'TRACE'
 ]
 
-
 const reComments = /\(.*?\)/g // Anything within parentheses
 
 export const extractComments = filename =>
@@ -20,20 +19,17 @@ export function filenameIsValid(file) {
 		console.error(error, file)
 	return !error
 }
-
 function validateFilename(file) {
 	const tokens = file.replace(reComments, '').split('.')
 	if (tokens.length < 4)
 		return 'Invalid Filename Convention'
-
 	const { status, method } = parseFilename(file)
-
 	if (!responseStatusIsValid(status))
 		return `Invalid HTTP Response Status: "${status}"`
-
 	if (!httpMethods.includes(method))
 		return `Unrecognized HTTP Method: "${method}"`
 }
+
 
 export function parseFilename(file) {
 	const tokens = file.replace(reComments, '').split('.')
@@ -43,6 +39,7 @@ export function parseFilename(file) {
 		status: Number(tokens.at(-2))
 	}
 }
+
 
 function removeTrailingSlash(url = '') {
 	return url

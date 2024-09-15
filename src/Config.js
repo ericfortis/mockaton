@@ -21,6 +21,7 @@ export const Config = Object.seal({
 	onReady: openInBrowser
 })
 
+
 export function setup(options) {
 	Object.assign(Config, options)
 	validate(Config, {

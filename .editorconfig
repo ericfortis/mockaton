@@ -6,3 +6,6 @@ end_of_line = lf
 indent_size = 2
 indent_style = tab
 insert_final_newline = true
+
+[*.md]
+indent_style = space

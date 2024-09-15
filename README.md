@@ -32,8 +32,8 @@ import { Mockaton } from 'mockaton'
 
 
 Mockaton({
-	mocksDir: resolve('my-mocks-dir'),
-	port: 2345
+  mocksDir: resolve('my-mocks-dir'),
+  port: 2345
 })
 ```
 
@@ -44,21 +44,21 @@ node my-mockaton.js
 ## Config Options
 ```ts
 interface Config {
-	mocksDir: string
-	ignore?: RegExp // defaults to /(\.DS_Store|~)$/
+  mocksDir: string
+  ignore?: RegExp // defaults to /(\.DS_Store|~)$/
 
-	staticDir?: string
+  staticDir?: string
 
-	host?: string, // defaults to 'localhost'
-	port?: number // defaults to 0, which means auto-assigned
-	proxyFallback?: string // e.g. http://localhost:9999 Target for relaying routes without mocks
+  host?: string, // defaults to 'localhost'
+  port?: number // defaults to 0, which means auto-assigned
+  proxyFallback?: string // e.g. http://localhost:9999 Target for relaying routes without mocks
 
-	delay?: number // defaults to 1200 (ms)
-	cookies?: { [label: string]: string }
-	extraMimes?: { [fileExt: string]: string }
-	extraHeaders?: []
+  delay?: number // defaults to 1200 (ms)
+  cookies?: { [label: string]: string }
+  extraMimes?: { [fileExt: string]: string }
+  extraHeaders?: []
 
-	onReady?: (dashboardUrl: string) => void // defaults to trying to open macOS default browser. pass a noop to prevent opening the dashboard
+  onReady?: (dashboardUrl: string) => void // defaults to trying to open macOS default browser. pass a noop to prevent opening the dashboard
 }
 ```
 
@@ -68,12 +68,21 @@ interface Config {
 Each route can have many mocks, which could either be:
 - Different response __status code__. For example, for testing error responses.
 - __Comment__ on the filename, which is anything within parentheses.
-	- e.g. `api/user(my-comment).POST.201.json`
+  - e.g. `api/user(my-comment).POST.201.json`
 
 Those alternatives can be manually selected in the dashboard
 UI, or programmatically, for instance, for setting up tests.
 
-The first file in **alphabetical order** becomes the default mock.
+### Default Mock for a Route
+You can add the comment: `(default)` to a filename.
+Otherwise, the first file in **alphabetical order** wins.
+
+```
+api/user(some comment).GET.200.json
+api/user(default).GET.200.json
+```
+
+---
 
 ## You can write JSON mocks in JavaScript
 An Object, Array, or String is sent as JSON.
@@ -81,7 +90,7 @@ An Object, Array, or String is sent as JSON.
 `api/foo.GET.200.js`
 ```js
 export default [
-	{ id: 0 }
+  { id: 0 }
 ]
 ```
 
@@ -95,10 +104,10 @@ database, or pull data from a backend. The `request` is of type
 `response` a [ServerResponse](https://nodejs.org/api/http.html#class-httpserverresponse).
 ```js
 export default function optionalName(request, response) {
-	globalThis.myDatabase ??= { count: 0 }
-	globalThis.myDatabase.count++
+  globalThis.myDatabase ??= { count: 0 }
+  globalThis.myDatabase.count++
 
-	return JSON.stringify({ a: 1 })
+  return JSON.stringify({ a: 1 })
 }
 ```
 
@@ -150,7 +159,7 @@ permitted](https://learn.microsoft.com/en-us/windows/win32/fileio/naming-a-file)
 but since that’s part of the query string, it’s ignored anyway.
 
 
-### Default (index-like) route
+### Index-like route
 For instance, let's say you have `api/foo/bar`, and
 `api/foo`. For the latter you have two options:
 
@@ -181,12 +190,12 @@ import { jwtCookie } from 'mockaton'
 
 
 Config.cookies = {
-	'My Admin User': 'my-cookie=1;Path=/;SameSite=strict',
-	'My Normal User': 'my-cookie=0;Path=/;SameSite=strict',
-	'My JWT': jwtCookie('my-cookie', {
-		email: 'john.doe@example.com',
-		picture: 'https://cdn.auth0.com/avatars/jd.png'
-	})
+  'My Admin User': 'my-cookie=1;Path=/;SameSite=strict',
+  'My Normal User': 'my-cookie=0;Path=/;SameSite=strict',
+  'My JWT': jwtCookie('my-cookie', {
+    email: 'john.doe@example.com',
+    picture: 'https://cdn.auth0.com/avatars/jd.png'
+  })
 }
 ```
 
@@ -197,16 +206,16 @@ that it's an array and the header name goes in even indices.
 
 ```js
 Config.extraHeaders = [
-	'Server', 'Mockaton',
-	'Set-Cookie', 'foo=FOO;Path=/;SameSite=strict',
-	'Set-Cookie', 'bar=BAR;Path=/;SameSite=strict'
+  'Server', 'Mockaton',
+  'Set-Cookie', 'foo=FOO;Path=/;SameSite=strict',
+  'Set-Cookie', 'bar=BAR;Path=/;SameSite=strict'
 ]
 ```
 
 ## `Config.extraMimes`
 ```js
 Config.extraMimes = {
-	jpg: 'application/jpeg'
+  jpg: 'application/jpeg'
 }
 ```
 
@@ -217,19 +226,19 @@ Config.extraMimes = {
 ### Select a mock for a route
 ```js
 fetch(addr + '/mockaton/edit', {
-	method: 'PATCH',
-	body: JSON.stringify({
-		file: 'api/foo.200.GET.json',
-		delayed: true // optional
-	})
+  method: 'PATCH',
+  body: JSON.stringify({
+    file: 'api/foo.200.GET.json',
+    delayed: true // optional
+  })
 })
 ```
 
 ### Select all mocks that have a particular comment
 ```js
 fetch(addr + '/mockaton/bulk-select-by-comment', {
-	method: 'PATCH',
-	body: JSON.stringify('(demo-a)')
+  method: 'PATCH',
+  body: JSON.stringify('(demo-a)')
 })
 ```
 
@@ -243,16 +252,16 @@ fetch(addr + '/mockaton/cookies')
 In `Config.cookies`, each key is the label used for changing it.
 ```js
 fetch(addr + '/mockaton/cookies', {
-	method: 'PATCH',
-	body: JSON.stringify('My Normal User')
+  method: 'PATCH',
+  body: JSON.stringify('My Normal User')
 })
 ```
 
 ### Update Fallback Proxy
 ```js
 fetch(addr + '/mockaton/fallback', {
-	method: 'PATCH',
-	body: JSON.stringify('http://example.com')
+  method: 'PATCH',
+  body: JSON.stringify('http://example.com')
 })
 ```
 
@@ -262,6 +271,6 @@ will be considered. The selected mocks, cookies, and delays are
 back to default. But the `Config.proxyFalllback` is not affected.
 ```js
 fetch(addr + '/mockaton/reset', {
-	method: 'PATCH'
+  method: 'PATCH'
 })
 ```

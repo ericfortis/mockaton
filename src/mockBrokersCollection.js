@@ -34,7 +34,10 @@ export function init() {
 			collection[method][urlMask].register(file)
 	}
 
-	forEachBroker(broker => broker.ensureItHas500())
+	forEachBroker(broker => {
+		broker.selectDefaultFile()
+		broker.ensureItHas500()
+	})
 }
 
 

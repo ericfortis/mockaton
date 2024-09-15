@@ -1,5 +1,5 @@
 import { Config } from './Config.js'
-import { DEFAULT_500_COMMENT } from './ApiConstants.js'
+import { DEFAULT_500_COMMENT, DEFAULT_MOCK_COMMENT } from './ApiConstants.js'
 import { includesComment, extractComments, parseFilename } from './Filename.js'
 
 
@@ -22,8 +22,6 @@ export class MockBroker {
 	}
 
 	register(file) {
-		if (!this.mocks.length)
-			this.currentMock.file = file // The first mock file option for a particular route becomes the default
 		this.mocks.push(file)
 	}
 
@@ -41,6 +39,15 @@ export class MockBroker {
 	get file() { return this.currentMock.file }
 	get delay() { return this.currentMock.delay }
 	get status() { return parseFilename(this.file).status }
+
+	selectDefaultFile() {
+		this.updateFile(this.#findMockWithDefaultComment() || this.mocks[0])
+	}
+	#findMockWithDefaultComment() {
+		for (const f of this.mocks)
+			if (includesComment(f, DEFAULT_MOCK_COMMENT))
+				return f
+	}
 
 	mockExists(file) {
 		return this.mocks.includes(file)

@@ -16,3 +16,4 @@ export const DF = { // Dashboard Fields (XHR)
 }
 
 export const DEFAULT_500_COMMENT = '(Mockaton Temp 500)'
+export const DEFAULT_MOCK_COMMENT = '(default)'

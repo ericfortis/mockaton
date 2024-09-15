@@ -47,7 +47,7 @@ interface Config {
   mocksDir: string
   ignore?: RegExp // defaults to /(\.DS_Store|~)$/
 
-  staticDir?: string // static routes take precedence. These file are don’t use the filename convention (.200.GET.json)
+  staticDir?: string // static routes take precedence. These file are don’t use the mock-filename convention 
 
   host?: string, // defaults to 'localhost'
   port?: number // defaults to 0, which means auto-assigned

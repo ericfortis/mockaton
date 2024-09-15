@@ -47,7 +47,7 @@ interface Config {
   mocksDir: string
   ignore?: RegExp // defaults to /(\.DS_Store|~)$/
 
-  staticDir?: string
+  staticDir?: string // static routes take precedence. These file are don’t use the filename convention (.200.GET.json)
 
   host?: string, // defaults to 'localhost'
   port?: number // defaults to 0, which means auto-assigned
@@ -78,7 +78,6 @@ You can add the comment: `(default)` to a filename.
 Otherwise, the first file in **alphabetical order** wins.
 
 ```
-api/user(some comment).GET.200.json
 api/user(default).GET.200.json
 ```
 

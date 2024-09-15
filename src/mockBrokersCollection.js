@@ -37,10 +37,6 @@ export function init() {
 	forEachBroker(broker => broker.ensureItHas500())
 }
 
-function forEachBroker(fn) {
-	for (const brokers of Object.values(collection))
-		Object.values(brokers).forEach(fn)
-}
 
 export const getAll = () => collection
 
@@ -77,4 +73,9 @@ export function setMocksMatchingComment(comment) {
 	forEachBroker(broker => broker.setByMatchingComment(comment))
 }
 
+
+function forEachBroker(fn) {
+	for (const brokers of Object.values(collection))
+		Object.values(brokers).forEach(fn)
+}
 

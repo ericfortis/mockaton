@@ -75,8 +75,8 @@ export function getBrokerForUrl(method, url) {
 export function extractAllComments() {
 	const comments = new Set()
 	forEachBroker(broker => {
-		for (const comment of broker.extractComments())
-			comments.add(comment)
+		for (const c of broker.extractComments())
+			comments.add(c)
 	})
 	return Array.from(comments)
 }

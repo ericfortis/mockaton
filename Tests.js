@@ -29,7 +29,7 @@ const fixtures = [
 	[
 		'/api',
 		'api/.GET.200.json',
-		'index-like route is just the extension convention'
+		'index-like route for /api, which could just be the extension convention'
 	],
 
 	// Exact route paths
@@ -150,6 +150,8 @@ async function runTests() {
 		'api/alternative(comment-2).GET.200.json',
 		JSON.stringify({ comment: 2 }))
 
+	await test422WhenUpdatingNonExistingMockAlternative()
+
 	await testAutogenerates500(
 		'/api/alternative',
 		`api/alternative${DEFAULT_500_COMMENT}.GET.500.txt`)
@@ -266,6 +268,15 @@ async function testItUpdatesDelayAndFile(url, file, expectedBody) {
 	})
 }
 
+async function test422WhenUpdatingNonExistingMockAlternative() {
+	await it('There are mocks for /api/the-route but not this one', async () => {
+		const res = await request(API.edit, {
+			method: 'PATCH',
+			body: JSON.stringify({ [DF.file]: 'api/the-route(non-existing-variant).GET.200.json' })
+		})
+		equal(res.status, 422)
+	})
+}
 
 async function testAutogenerates500(url, file) {
 	await request(API.edit, {

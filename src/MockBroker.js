@@ -42,6 +42,10 @@ export class MockBroker {
 	get delay() { return this.currentMock.delay }
 	get status() { return parseFilename(this.file).status }
 
+	mockExists(file) {
+		return this.mocks.includes(file)
+	}
+
 	updateFile(filename) {
 		this.currentMock.file = filename
 	}

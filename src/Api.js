@@ -57,14 +57,15 @@ async function selectCookie(req, response) {
 async function updateBroker(req, response) {
 	try {
 		const body = await parseJSON(req)
-		const broker = mockBrokersCollection.getBrokerByFilename(body[DF.file])
-		if (!broker) {
+		const file = body[DF.file]
+		const broker = mockBrokersCollection.getBrokerByFilename(file)
+		if (!broker || !broker.mockExists(file)) {
 			sendUnprocessableContent(response)
 			return
 		}
 		if (DF.delayed in body)
 			broker.updateDelay(body[DF.delayed])
-		broker.updateFile(body[DF.file])
+		broker.updateFile(file)
 		sendOK(response)
 	}
 	catch (error) {

@@ -12,19 +12,24 @@ By the way, [this browser
 extension](https://github.com/ericfortis/devtools-ext-tar-http-requests) can
 be used for downloading a TAR of your XHR requests following that convention.
 
-## What do I use a Mockaton for?
+## What do I use Mockaton for?
 - I’m a frontend dev, so I don’t have spin up and maintain hefty or complex backends.
-- For having a deterministic state with all the possible state variants at once.
-- Testing empty responses, such a list without users.
+- For a deterministic state with all the possible state variants at once.
+- Testing empty responses, such as an empty user list.
 - Testing spinners by delaying responses.
-- Triggering error responses such as, Bad Requests and Internal Server Errors.
-  - Also, notifications and alerts.
+- Triggering errors such as Bad Request and Internal Server Error.
+  - Also, for triggering notifications and alerts.
 - If the mocks are checked-in in the repo, when bisecting a bug, it avoids
   having to syncing the frontend with many backend repos.
   - Similarly, it allows for checking out long-lived branches that have old API contracts.
-- Prototyping ahead of the backend.
-- As API documentation
-- Setting up tests
+- Prototyping before the backend API is developed.
+- As API documentation.
+- Setting up tests.
+
+## Alternatives
+- Chrome DevTools allows for [overriding responses](https://developer.chrome.com/docs/devtools/overrides)
+- Reverse Proxies such as [Burp](https://portswigger.net/burp) are also handy for overriding responses.
+- [Storybook](https://storybook.js.org)
 
 ### Caveats
 - Syncing the mocks

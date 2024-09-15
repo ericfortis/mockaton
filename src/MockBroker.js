@@ -41,7 +41,13 @@ export class MockBroker {
 	get status() { return parseFilename(this.file).status }
 
 	selectDefaultFile() {
-		this.updateFile(this.#findMockWithDefaultComment() || this.mocks[0])
+		const userSpecifiedDefault = this.#findMockWithDefaultComment()
+		if (userSpecifiedDefault)
+			this.mocks = [ // sort for dashboard list TESTME
+				userSpecifiedDefault,
+				...this.mocks.filter(m => m !== userSpecifiedDefault)
+			]
+		this.updateFile(userSpecifiedDefault || this.mocks[0])
 	}
 	#findMockWithDefaultComment() {
 		for (const f of this.mocks)

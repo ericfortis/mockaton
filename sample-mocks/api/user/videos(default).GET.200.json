@@ -1,5 +1,5 @@
 {
-	"_": "This file has a comment: `(entirely unverified)`. i.e. the route is /api/user/videos",
+	"_": "This file has a comment: `(default)`. Which makes the file with comment: (all variants) not to win",
 	"videos": [
 		{
 			"url": "https://example.com/1",

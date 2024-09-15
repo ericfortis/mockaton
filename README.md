@@ -1,4 +1,4 @@
-# Mockaton 
+# Mockaton
 _Mockaton_ is a mock server for developing and testing frontends.
 
 It scans a given directory for files following a specific
@@ -30,9 +30,10 @@ Create a `my-mockaton.js` file
 import { resolve } from 'node:path'
 import { Mockaton } from 'mockaton'
 
+
 Mockaton({
-  mocksDir: resolve('my-mocks-dir'), 
-  port: 2345
+	mocksDir: resolve('my-mocks-dir'),
+	port: 2345
 })
 ```
 
@@ -43,21 +44,21 @@ node my-mockaton.js
 ## Config Options
 ```ts
 interface Config {
-  mocksDir: string
-  ignore?: RegExp // defaults to /(\.DS_Store|~)$/
-	
-  staticDir?: string
-	
-  host?: string, // defaults to 'localhost'
-  port?: number // defaults to 0, which means auto-assigned
-  proxyFallback?: string // e.g. http://localhost:9999 Target for relaying routes without mocks
-	
-  delay?: number // defaults to 1200 (ms)
-  cookies?: { [label: string]: string }
-  extraMimes?: { [fileExt: string]: string }
-  extraHeaders?: []
-	
-  onReady?: (dashboardUrl: string) => void // defaults to trying to open macOS default browser. pass a noop to prevent opening the dashboard
+	mocksDir: string
+	ignore?: RegExp // defaults to /(\.DS_Store|~)$/
+
+	staticDir?: string
+
+	host?: string, // defaults to 'localhost'
+	port?: number // defaults to 0, which means auto-assigned
+	proxyFallback?: string // e.g. http://localhost:9999 Target for relaying routes without mocks
+
+	delay?: number // defaults to 1200 (ms)
+	cookies?: { [label: string]: string }
+	extraMimes?: { [fileExt: string]: string }
+	extraHeaders?: []
+
+	onReady?: (dashboardUrl: string) => void // defaults to trying to open macOS default browser. pass a noop to prevent opening the dashboard
 }
 ```
 
@@ -65,9 +66,9 @@ interface Config {
 
 ## Mock Variants
 Each route can have many mocks, which could either be:
-- Different response __status code__. For example, for testing error responses. 
+- Different response __status code__. For example, for testing error responses.
 - __Comment__ on the filename, which is anything within parentheses.
-  - e.g. `api/user(my-comment).POST.201.json`
+	- e.g. `api/user(my-comment).POST.201.json`
 
 Those alternatives can be manually selected in the dashboard
 UI, or programmatically, for instance, for setting up tests.
@@ -80,7 +81,7 @@ An Object, Array, or String is sent as JSON.
 `api/foo.GET.200.js`
 ```js
 export default [
-  { id: 0 }
+	{ id: 0 }
 ]
 ```
 
@@ -94,10 +95,10 @@ database, or pull data from a backend. The `request` is of type
 `response` a [ServerResponse](https://nodejs.org/api/http.html#class-httpserverresponse).
 ```js
 export default function optionalName(request, response) {
-  globalThis.myDatabase ??= { count: 0 }
-  globalThis.myDatabase.count++
-	
-  return JSON.stringify({ a: 1 })
+	globalThis.myDatabase ??= { count: 0 }
+	globalThis.myDatabase.count++
+
+	return JSON.stringify({ a: 1 })
 }
 ```
 
@@ -107,13 +108,11 @@ export default function optionalName(request, response) {
 server for serving routes you don’t have mocks for.
 
 
-
 ## Delay 🕓
 The clock icon next to the mock selector is a checkbox for delaying a
 particular response. They are handy for testing spinners.
 
 The delay is globally configurable via `Config.delay = 1200` (milliseconds).
-
 
 
 ## File Name Convention
@@ -167,7 +166,6 @@ api/foo/.GET.200.json
 ```
 
 
-
 ## `Config.cookies`
 The selected cookie is sent in every response in the `Set-Cookie` header.
 
@@ -181,13 +179,14 @@ words, it’s useful if you only care about its payload.
 ```js
 import { jwtCookie } from 'mockaton'
 
+
 Config.cookies = {
-  'My Admin User':  'my-cookie=1;Path=/;SameSite=strict',
-  'My Normal User': 'my-cookie=0;Path=/;SameSite=strict',
-  'My JWT': jwtCookie('my-cookie', {
-    email: 'john.doe@example.com',
-    picture: 'https://cdn.auth0.com/avatars/jd.png'
-  })
+	'My Admin User': 'my-cookie=1;Path=/;SameSite=strict',
+	'My Normal User': 'my-cookie=0;Path=/;SameSite=strict',
+	'My JWT': jwtCookie('my-cookie', {
+		email: 'john.doe@example.com',
+		picture: 'https://cdn.auth0.com/avatars/jd.png'
+	})
 }
 ```
 
@@ -198,16 +197,16 @@ that it's an array and the header name goes in even indices.
 
 ```js
 Config.extraHeaders = [
-  'Server', 'Mockaton',
-  'Set-Cookie', 'foo=FOO;Path=/;SameSite=strict',
-  'Set-Cookie', 'bar=BAR;Path=/;SameSite=strict'
+	'Server', 'Mockaton',
+	'Set-Cookie', 'foo=FOO;Path=/;SameSite=strict',
+	'Set-Cookie', 'bar=BAR;Path=/;SameSite=strict'
 ]
 ```
 
 ## `Config.extraMimes`
 ```js
 Config.extraMimes = {
-  jpg: 'application/jpeg'
+	jpg: 'application/jpeg'
 }
 ```
 
@@ -218,49 +217,51 @@ Config.extraMimes = {
 ### Select a mock for a route
 ```js
 fetch(addr + '/mockaton/edit', {
-  method: 'PATCH',
-  body: JSON.stringify({
-    file: 'api/foo.200.GET.json',
-    delayed: true // optional
-  })
+	method: 'PATCH',
+	body: JSON.stringify({
+		file: 'api/foo.200.GET.json',
+		delayed: true // optional
+	})
 })
 ```
 
 ### Select all mocks that have a particular comment
 ```js
 fetch(addr + '/mockaton/bulk-select-by-comment', {
-  method: 'PATCH',
-  body: JSON.stringify('(demo-a)')
+	method: 'PATCH',
+	body: JSON.stringify('(demo-a)')
 })
 ```
 
-### Reset
-Re-Initialize the collection and its states (selected mocks and cookies, delays, etc.).
+### List Cookies
+Sends a list of the available cookies along with an "is selected" boolean flag.
 ```js
-fetch(addr + '/mockaton/reset', {
-  method: 'PATCH'
-})
+fetch(addr + '/mockaton/cookies')
 ```
 
 ### Select a cookie
 In `Config.cookies`, each key is the label used for changing it.
 ```js
 fetch(addr + '/mockaton/cookies', {
-  method: 'PATCH',
-  body: JSON.stringify('My Normal User')
+	method: 'PATCH',
+	body: JSON.stringify('My Normal User')
 })
-```
-
-### List Cookies
-Sends a list of the available cookies along with a flag indicated if it’s the selected.
-```js
-fetch(addr + '/mockaton/cookies')
 ```
 
 ### Update Fallback Proxy
 ```js
 fetch(addr + '/mockaton/fallback', {
-  method: 'PATCH',
-  body: JSON.stringify('http://example.com')
+	method: 'PATCH',
+	body: JSON.stringify('http://example.com')
+})
+```
+
+### Reset
+Re-initialize the collection. So if you added or removed mocks they
+will be considered. The selected mocks, cookies, and delays are
+back to default. But the `Config.proxyFalllback` is not affected.
+```js
+fetch(addr + '/mockaton/reset', {
+	method: 'PATCH'
 })
 ```

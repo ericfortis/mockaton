@@ -7,23 +7,18 @@ import { includesComment, extractComments, parseFilename } from './Filename.js'
 // that can be served for the route, the currently selected file, and its delay.
 export class MockBroker {
 	#urlRegex
-
 	constructor(file) {
 		const { urlMask } = parseFilename(file)
 		this.#urlRegex = new RegExp('^' + disregardVariables(removeQueryStringAndFragment(urlMask)) + '/*$')
-
 		this.mocks = []
 		this.currentMock = {
 			file: '',
 			delay: 0
 		}
-
 		this.register(file)
 	}
 
-	register(file) {
-		this.mocks.push(file)
-	}
+	register(file) { this.mocks.push(file) }
 
 	// Appending a '/' so URLs ending with variables don't match
 	// URLs that have a path after that variable. For example,
@@ -39,11 +34,12 @@ export class MockBroker {
 	get file() { return this.currentMock.file }
 	get delay() { return this.currentMock.delay }
 	get status() { return parseFilename(this.file).status }
+	get isTemp500() { return includesComment(this.file, DEFAULT_500_COMMENT) }
 
 	selectDefaultFile() {
 		const userSpecifiedDefault = this.#findMockWithDefaultComment()
-		if (userSpecifiedDefault)
-			this.mocks = [ // sort for dashboard list TESTME
+		if (userSpecifiedDefault) // Sort for dashboard list TESTME
+			this.mocks = [
 				userSpecifiedDefault,
 				...this.mocks.filter(m => m !== userSpecifiedDefault)
 			]
@@ -55,17 +51,9 @@ export class MockBroker {
 				return f
 	}
 
-	mockExists(file) {
-		return this.mocks.includes(file)
-	}
-
-	updateFile(filename) {
-		this.currentMock.file = filename
-	}
-
-	updateDelay(delayed) {
-		this.currentMock.delay = Number(delayed) * Config.delay
-	}
+	mockExists(file) { return this.mocks.includes(file) }
+	updateFile(filename) { this.currentMock.file = filename }
+	updateDelay(delayed) { this.currentMock.delay = Number(delayed) * Config.delay }
 
 	setByMatchingComment(comment) {
 		for (const file of this.mocks)
@@ -93,9 +81,6 @@ export class MockBroker {
 		const { urlMask, method } = parseFilename(this.mocks[0])
 		const file = urlMask.replace(/^\//, '') // Removes leading slash TESTME
 		this.register(`${file}${DEFAULT_500_COMMENT}.${method}.500.txt`)
-	}
-	get isTemp500() {
-		return includesComment(this.file, DEFAULT_500_COMMENT)
 	}
 }
 

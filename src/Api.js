@@ -1,6 +1,6 @@
 /**
- * API for controlling the mock server. For example,
- * setting a specific mock-file for a particular route.
+ * API for controlling Mockaton. For example, for
+ * selecting a specific mock-file for a particular route.
  */
 
 import { join } from 'node:path'
@@ -60,7 +60,7 @@ async function updateBroker(req, response) {
 		const file = body[DF.file]
 		const broker = mockBrokersCollection.getBrokerByFilename(file)
 		if (!broker || !broker.mockExists(file)) {
-			sendUnprocessableContent(response, `Missing Mock: "${file}`)
+			sendUnprocessableContent(response, `Missing Mock: ${file}`)
 			return
 		}
 		if (DF.delayed in body)

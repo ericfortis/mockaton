@@ -8,20 +8,20 @@ example, the following file will be served for `/api/user/1234`
 my-mocks-dir/api/user/[user-id].GET.200.json
 ```
 
-By the way, [this browser
-extension](https://github.com/ericfortis/devtools-ext-tar-http-requests) can
-be used for downloading a TAR of your XHR requests following that convention.
+[This browser extension](https://github.com/ericfortis/devtools-ext-tar-http-requests)
+can be used for downloading a TAR of your XHR requests following that convention.
 
 ## What do I use Mockaton for?
-- I’m a frontend dev, so I don’t have spin up and maintain hefty or complex backends.
-- For a deterministic state with all the possible state variants at once.
-- Testing empty responses, such as an empty user list.
+- I’m a frontend dev, so I don’t have to spin up and maintain hefty or complex backends.
+- For a deterministic and comprehensive state. Having all the possible
+  state variants at once lets me visually spot inadvertent bugs right away.
+- Testing empty responses.
 - Testing spinners by delaying responses.
 - Triggering errors such as Bad Request and Internal Server Error.
-  - Also, for triggering notifications and alerts.
-- If the mocks are checked-in in the repo, when bisecting a bug, it avoids
-  having to syncing the frontend with many backend repos.
-  - Similarly, it allows for checking out long-lived branches that have old API contracts.
+- Triggering notifications and alerts.
+- As check-in the mocks in the repo, when bisecting a bug, I don’t
+  have to sync the frontend with many backend repos.
+  - Similarly, I can check out long-lived branches that have old API contracts.
 - Prototyping before the backend API is developed.
 - As API documentation.
 - Setting up tests.
@@ -32,7 +32,7 @@ be used for downloading a TAR of your XHR requests following that convention.
 - [Storybook](https://storybook.js.org)
 
 ### Caveats
-- Syncing the mocks
+- Syncing the mocks. The browser extension mentioned above helps.
 
 
 ## Getting Started
@@ -67,22 +67,23 @@ node my-mockaton.js
 ```ts
 interface Config {
   mocksDir: string
-  ignore?: RegExp // defaults to /(\.DS_Store|~)$/
+  ignore?: RegExp // Defaults to /(\.DS_Store|~)$/
 
-  staticDir?: string // static routes take precedence. These file are don’t use the mock-filename convention 
+  staticDir?: string // These files don’t use the mock-filename convention
 
-  host?: string, // defaults to 'localhost'
-  port?: number // defaults to 0, which means auto-assigned
+  host?: string, // Defaults to 'localhost'
+  port?: number // Defaults to 0, which means auto-assigned
   proxyFallback?: string // e.g. http://localhost:9999 Target for relaying routes without mocks
 
-  delay?: number // defaults to 1200 (ms)
+  delay?: number // Defaults to 1200 (ms)
   cookies?: { [label: string]: string }
   extraMimes?: { [fileExt: string]: string }
   extraHeaders?: []
 
-  onReady?: (dashboardUrl: string) => void // defaults to trying to open macOS default browser. pass a noop to prevent opening the dashboard
+  onReady?: (dashboardUrl: string) => void // Defaults to trying to open macOS and Win default browser.
 }
 ```
+There’s a Config section below with more details.
 
 ---
 
@@ -195,6 +196,16 @@ api/foo.GET.200.json
 api/foo/.GET.200.json
 ```
 
+---
+## `Config.staticDir`
+These files don’t use the mock filename convention. They take precedence
+over mocks. Also, they get served on the same address, so no CORS issues.
+
+Use Case 1: If you have a bunch of static assets you don’t want to add `.GET.200.ext`
+
+Use Case 2: For a standalone demo server. For example,
+build your frontend bundle, and serve it from Mockaton.
+
 
 ## `Config.cookies`
 The selected cookie is sent in every response in the `Set-Cookie` header.
@@ -238,6 +249,33 @@ Config.extraHeaders = [
 Config.extraMimes = {
   jpg: 'application/jpeg'
 }
+```
+
+## `Config.onReady`
+This is a callback `(dashboardAddress: string) => void`, which defaults to
+trying to open the dashboard in your default browser in macOS and Windows.
+
+If you don’t want to open a browser, pass a noop, such as
+```js
+Config.onReady = () => {}
+```
+
+On Linux, you could pass:
+```js
+import { exec } from 'node:child_process'
+
+
+Config.onReady = function openInBrowser(address) {
+  exec(`xdg-open ${address}`)
+}
+```
+
+Or, for more cross-platform utility, you could `npm install open` and pass it.
+```js
+import open from 'open'
+
+
+Config.onReady = open
 ```
 
 ---

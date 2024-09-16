@@ -54,7 +54,7 @@ function DevPanel(brokersByMethod, cookies, comments) {
 	return (
 		r('div', null,
 			r('menu', null,
-				r('h1', null, Strings.title),
+				r('img', { src: 'mockaton-logo.svg', width: 160 }),
 				r(CookieSelector, { list: cookies }),
 				r(BulkSelector, { comments }),
 				r(ResetButton)),

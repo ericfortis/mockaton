@@ -1,4 +1,5 @@
-# Mockaton
+<img src="src/mockaton-logo.svg" alt="Mockaton Logo" width="210" style="margin-top: 30px"/>
+
 _Mockaton_ is a mock server for developing and testing frontends.
 
 It scans a given directory for files following a specific
@@ -334,3 +335,7 @@ fetch(addr + '/mockaton/reset', {
   method: 'PATCH'
 })
 ```
+
+## TODO
+- Dashboard. List `staticDir` and indicate if it’s overriding some mock.
+- Refactor Tests

@@ -18,6 +18,7 @@ export const apiGetRequests = new Map([
 	['/Dashboard.js', serveDashboardAsset],
 	['/Dashboard.css', serveDashboardAsset],
 	['/ApiConstants.js', serveDashboardAsset],
+	['/mockaton-logo.svg', serveDashboardAsset],
 	[API.mocks, listMockBrokers],
 	[API.cookies, listCookies],
 	[API.comments, listComments]

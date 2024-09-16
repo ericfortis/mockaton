@@ -327,8 +327,8 @@ fetch(addr + '/mockaton/fallback', {
 
 ### Reset
 Re-initialize the collection. So if you added or removed mocks they
-will be considered. The selected mocks, cookies, and delays are
-back to default. But the `Config.proxyFalllback` is not affected.
+will be considered. The selected mocks, cookies, and delays go
+back to default, but `Config.proxyFalllback` is not affected.
 ```js
 fetch(addr + '/mockaton/reset', {
   method: 'PATCH'

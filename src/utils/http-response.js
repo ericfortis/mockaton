@@ -51,17 +51,11 @@ export async function sendPartialContent(response, range, file) {
 export function sendBadRequest(response, error) {
 	console.error(error)
 	response.statusCode = 400
-	response.end()
+	response.end(error)
 }
 
 export function sendNotFound(response) {
 	response.statusCode = 404
-	response.end()
-}
-
-export function sendUnprocessableContent(response, error) {
-	console.error(error)
-	response.statusCode = 422
 	response.end()
 }
 

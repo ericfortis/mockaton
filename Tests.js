@@ -165,7 +165,7 @@ async function runTests() {
 		'api/alternative(comment-2).GET.200.json',
 		JSON.stringify({ comment: 2 }))
 
-	await test422WhenUpdatingNonExistingMockAlternative()
+	await testBadRequestWhenUpdatingNonExistingMockAlternative()
 
 	await testAutogenerates500(
 		'/api/alternative',
@@ -288,13 +288,15 @@ async function testItUpdatesDelayAndFile(url, file, expectedBody) {
 	})
 }
 
-async function test422WhenUpdatingNonExistingMockAlternative() {
+async function testBadRequestWhenUpdatingNonExistingMockAlternative() {
 	await it('There are mocks for /api/the-route but not this one', async () => {
+		const missingFile = 'api/the-route(non-existing-variant).GET.200.json'
 		const res = await request(API.edit, {
 			method: 'PATCH',
-			body: JSON.stringify({ [DF.file]: 'api/the-route(non-existing-variant).GET.200.json' })
+			body: JSON.stringify({ [DF.file]: missingFile })
 		})
-		equal(res.status, 422)
+		equal(res.status, 400)
+		equal(await res.text(), `Missing Mock: ${missingFile}`)
 	})
 }
 

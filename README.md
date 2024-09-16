@@ -134,18 +134,6 @@ export default function optionalName(request, response) {
 ```
 
 
-## Proxying Routes
-`Config.proxyFallback` lets you specify a target
-server for serving routes you don’t have mocks for.
-
-
-## Delay 🕓
-The clock icon next to the mock selector is a checkbox for delaying a
-particular response. They are handy for testing spinners.
-
-The delay is globally configurable via `Config.delay = 1200` (milliseconds).
-
-
 ## File Name Convention
 
 
@@ -197,6 +185,19 @@ api/foo/.GET.200.json
 ```
 
 ---
+
+
+## `Config.proxyFallback`
+Lets you specify a target server for serving routes you don’t have mocks for.
+
+
+## `Config.delay` 🕓
+The clock icon next to the mock selector is a checkbox for delaying a
+particular response. They are handy for testing spinners.
+
+The delay is globally configurable via `Config.delay = 1200` (milliseconds).
+
+
 ## `Config.staticDir`
 These files don’t use the mock filename convention. They take precedence
 over mocks. Also, they get served on the same address, so no CORS issues.

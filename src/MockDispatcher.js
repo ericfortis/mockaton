@@ -28,7 +28,7 @@ export async function dispatchMock(req, response) {
 		let mockBody
 		if (file.endsWith('.js')) {
 			response.setHeader('Content-Type', mimeFor('.json'))
-			const jsExport = await importDefault(filePath)
+			const jsExport = (await import(filePath + '?' + Date.now())).default // date for cache busting
 			mockBody = typeof jsExport === 'function'
 				? await jsExport(req, response)
 				: JSON.stringify(jsExport, null, 2)
@@ -54,8 +54,4 @@ export async function dispatchMock(req, response) {
 		else
 			sendInternalServerError(response, error)
 	}
-}
-
-async function importDefault(file) {
-	return (await import(file + '?' + Date.now())).default // date for cache busting
 }

@@ -11,16 +11,16 @@ import { sendInternalServerError, sendNotFound, sendBadRequest } from './utils/h
 
 
 export async function dispatchMock(req, response) {
-	const broker = mockBrokerCollection.getBrokerForUrl(req.method, req.url)
-	if (!broker) {
-		if (Config.proxyFallback)
-			await proxy(req, response)
-		else
-			sendNotFound(response)
-		return
-	}
-
 	try {
+		const broker = mockBrokerCollection.getBrokerForUrl(req.method, req.url)
+		if (!broker) {
+			if (Config.proxyFallback)
+				await proxy(req, response)
+			else
+				sendNotFound(response)
+			return
+		}
+
 		const { file, status, delay } = broker
 		console.log(decodeURIComponent(req.url), ' → ', file)
 		const filePath = join(Config.mocksDir, file)

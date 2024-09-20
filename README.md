@@ -12,35 +12,41 @@ my-mocks-dir/api/user/[user-id].GET.200.json
 [This browser extension](https://github.com/ericfortis/devtools-ext-tar-http-requests)
 can be used for downloading a TAR of your XHR requests following that convention.
 
-## What do I use Mockaton for?
+## What do I use it for?
 - I’m a frontend dev, so I don’t have to spin up and maintain hefty or complex backends.
-- For a deterministic and comprehensive state. Having all the possible
-  state variants at once lets me visually spot inadvertent bugs right away.
+- For a deterministic and comprehensive backend state. For example, having all the possible
+  state variants of a particular collection helps for spotting inadvertent bugs. And having those
+  assorted responses are not easy to trigger from the backend.
 - Testing empty responses.
 - Testing spinners by delaying responses.
-- Triggering errors such as Bad Request and Internal Server Error.
+- Testing errors such as _Bad Request_ and _Internal Server Error_.
 - Triggering notifications and alerts.
-- As check-in the mocks in the repo, when bisecting a bug, I don’t
+- Prototyping before the backend API is developed.
+- Setting up tests.
+- If you commit the mocks in the repo, when bisecting a bug, you don’t
   have to sync the frontend with many backend repos.
   - Similarly, I can check out long-lived branches that have old API contracts.
-- Prototyping before the backend API is developed.
 - As API documentation.
-- Setting up tests.
 
 ## Alternatives
 - Chrome DevTools allows for [overriding responses](https://developer.chrome.com/docs/devtools/overrides)
 - Reverse Proxies such as [Burp](https://portswigger.net/burp) are also handy for overriding responses.
-- [Storybook](https://storybook.js.org)
+- Storybook’s [MSW](https://storybook.js.org/addons/msw-storybook-addon)
 
 ### Caveats
-- Syncing the mocks. The browser extension mentioned above helps.
+- Syncing the mocks, but the browser extension mentioned above helps.
 
 
 ## Getting Started
 The best way to learn _Mockaton_ is by checking out this repo and
 exploring its [sample-mocks/](./sample-mocks) directory. Then, run
-[`./_usage_example.js`](./_usage_example.js) and you’ll see this dashboard:
+[`./_usage_example.js`](./_usage_example.js) and you’ll see the dashboard.
 
+You can edit mock files without resetting Mockaton. The _Reset_
+button is for when you add, remove, or rename a mock file.
+
+The dropdown lets you pick a mock variant, details in the next section. Next to it is a
+_Delay_ toggler, and a button for sending _500 - Internal Server Error_ on that endpoint.
 
 <img src="./README-dashboard.png" style="max-width:820px"/>
 

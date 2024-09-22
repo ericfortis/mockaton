@@ -296,32 +296,32 @@ import { Commander } from 'mockaton'
 
 
 const myMockatonAddr = 'http://localhost:2345'
-const commander = new Commander(myMockatonAddr)
+const mockaton = new Commander(myMockatonAddr)
 ```
 
 ### Select a mock file for a route
 ```js
-await commander.select('api/foo.200.GET.json')
+await mockaton.select('api/foo.200.GET.json')
 ```
 ### Select all mocks that have a particular comment
 ```js
-await commander.bulkSelectByComment('(demo-a)')
+await mockaton.bulkSelectByComment('(demo-a)')
 ```
 
 ### Set Route is Delayed Flag
 ```js
-await commander.setRouteIsDelayed('GET', '/api/foo', true)
+await mockaton.setRouteIsDelayed('GET', '/api/foo', true)
 ```
 
 ### Select a cookie
 In `Config.cookies`, each key is the label used for selecting it.
 ```js
-await commander.selectCookie('My Normal User')
+await mockaton.selectCookie('My Normal User')
 ```
 
 ### Set Fallback Proxy
 ```js
-await commander.setProxyFallback('http://example.com')
+await mockaton.setProxyFallback('http://example.com')
 ```
 Pass an empty string to disable it.
 
@@ -330,7 +330,7 @@ Re-initialize the collection. So if you added or removed mocks they
 will be considered. The selected mocks, cookies, and delays go
 back to default, but `Config.proxyFallback` is not affected.
 ```js
-await commander.reset()
+await mockaton.reset()
 ```
 
 

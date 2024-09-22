@@ -25,7 +25,8 @@ export const apiGetRequests = new Map([
 ])
 
 export const apiPatchRequests = new Map([
-	[API.edit, updateBroker],
+	[API.select, selectMock],
+	[API.delay, setRouteIsDelayed],
 	[API.reset, reinitialize],
 	[API.cookies, selectCookie],
 	[API.fallback, updateProxyFallback],
@@ -45,6 +46,7 @@ function reinitialize(_, response) {
 	sendOK(response)
 }
 
+
 async function selectCookie(req, response) {
 	try {
 		cookie.setCurrent(await parseJSON(req))
@@ -55,16 +57,14 @@ async function selectCookie(req, response) {
 	}
 }
 
-async function updateBroker(req, response) {
+
+async function selectMock(req, response) {
 	try {
-		const body = await parseJSON(req)
-		const file = body[DF.file]
+		const file = await parseJSON(req)
 		const broker = mockBrokersCollection.getBrokerByFilename(file)
 		if (!broker || !broker.mockExists(file))
 			throw `Missing Mock: ${file}`
 
-		if (DF.delayed in body)
-			broker.updateDelay(body[DF.delayed])
 		broker.updateFile(file)
 		sendOK(response)
 	}
@@ -72,6 +72,26 @@ async function updateBroker(req, response) {
 		sendBadRequest(response, error)
 	}
 }
+
+
+async function setRouteIsDelayed(req, response) {
+	try {
+		const body = await parseJSON(req)
+		const broker = mockBrokersCollection.getBrokerForUrl(
+			body[DF.routeMethod],
+			body[DF.routeUrlMask])
+
+		if (!broker)
+			throw `Route does not exist: ${body[DF.routeUrlMask]} ${body[DF.routeUrlMask]}`
+
+		broker.updateDelay(body[DF.delayed])
+		sendOK(response)
+	}
+	catch (error) {
+		sendBadRequest(response, error)
+	}
+}
+
 
 async function updateProxyFallback(req, response) {
 	try {
@@ -82,6 +102,7 @@ async function updateProxyFallback(req, response) {
 		sendBadRequest(response, error)
 	}
 }
+
 
 async function bulkUpdateBrokersByCommentTag(req, response) {
 	try {

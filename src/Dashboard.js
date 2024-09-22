@@ -133,7 +133,7 @@ function SectionByMethod({ method, brokers }) {
 					r('tr', null,
 						r('td', null, r(PreviewLink, { method, urlMask })),
 						r('td', null, r(MockSelector, { broker })),
-						r('td', null, r(DelayToggler, { broker })),
+						r('td', null, r(DelayRouteToggler, { broker })),
 						r('td', null, r(InternalServerErrorToggler, { broker }))
 					))))
 }
@@ -188,9 +188,9 @@ function MockSelector({ broker }) {
 				this.style.fontWeight = this.value === this.options[0].value // default is selected
 					? 'normal'
 					: 'bold'
-				fetch(API.edit, {
+				fetch(API.select, {
 					method: 'PATCH',
-					body: JSON.stringify({ [DF.file]: this.value })
+					body: JSON.stringify(this.value)
 				})
 					.then(() => {
 						this.closest('tr').querySelector('a').click()
@@ -205,7 +205,7 @@ function MockSelector({ broker }) {
 		}, file))))
 }
 
-function DelayToggler({ broker }) {
+function DelayRouteToggler({ broker }) {
 	const name = broker.currentMock.file
 	const checked = Boolean(broker.currentMock.delay)
 	return (
@@ -219,10 +219,12 @@ function DelayToggler({ broker }) {
 				name,
 				checked,
 				onChange(event) {
-					fetch(API.edit, {
+					const { method, urlMask } = parseFilename(this.name)
+					fetch(API.delay, {
 						method: 'PATCH',
 						body: JSON.stringify({
-							[DF.file]: this.name,
+							[DF.routeMethod]: method,
+							[DF.routeUrlMask]: urlMask,
 							[DF.delayed]: event.currentTarget.checked
 						})
 					})
@@ -252,13 +254,11 @@ function InternalServerErrorToggler({ broker }) {
 				name,
 				checked,
 				onChange(event) {
-					fetch(API.edit, {
+					fetch(API.select, {
 						method: 'PATCH',
-						body: JSON.stringify({
-							[DF.file]: event.currentTarget.checked
-								? items.find(f => parseFilename(f).status === 500)
-								: items[0]
-						})
+						body: JSON.stringify(event.currentTarget.checked
+							? items.find(f => parseFilename(f).status === 500)
+							: items[0])
 					})
 						.then(init)
 						.catch(console.error)

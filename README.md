@@ -42,7 +42,7 @@ The best way to learn _Mockaton_ is by checking out this repo and
 exploring its [sample-mocks/](./sample-mocks) directory. Then, run
 [`./_usage_example.js`](./_usage_example.js) and you’ll see the dashboard.
 
-You can edit mock files without resetting Mockaton. The _Reset_
+You can select mock files without resetting Mockaton. The _Reset_
 button is for when you add, remove, or rename a mock file.
 
 The dropdown lets you pick a mock variant, details in the next section. Next to it is a
@@ -288,17 +288,24 @@ Config.onReady = open
 
 ---
 
-## API
-
-### Select a mock for a route
+## HTTP API
+`Commander` is a wrapper for the Mockaton HTTP API.
+All of its methods return their `fetch` promise.
 ```js
-fetch(addr + '/mockaton/edit', {
-  method: 'PATCH',
-  body: JSON.stringify({
-    file: 'api/foo.200.GET.json',
-    delayed: true // optional
-  })
-})
+import { Commander } from 'mockaton'
+
+
+const commander = new Commander(mockatonAddr)
+```
+
+### Select a mock file for a route
+```js
+commander.select('api/foo.200.GET.json')
+```
+
+### Set Route is Delayed
+```js
+commander.setMockIsDelayed('api/foo.200.GET.json', true)
 ```
 
 ### Select all mocks that have a particular comment

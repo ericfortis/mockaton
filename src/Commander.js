@@ -8,11 +8,12 @@ export class Commander {
 	}
 
 	select(file) {
-		return this.#patch(API.edit, { [DF.file]: file })
+		return this.#patch(API.select, file)
 	}
-	setMockIsDelayed(file, delayed) { // selects the file as well
-		return this.#patch(API.edit, {
-			[DF.file]: file,
+	setRouteIsDelayed(routeMethod, routeUrlMask, delayed) {
+		return this.#patch(API.delay, {
+			[DF.routeMethod]: routeMethod,
+			[DF.routeUrlMask]: routeUrlMask,
 			[DF.delayed]: delayed
 		})
 	}

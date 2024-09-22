@@ -37,6 +37,12 @@ const fixtureDefaultInName = [
 	'default my route body content'
 ]
 
+const fixtureDelayed = [
+	'/api/delayed',
+	'api/delayed.GET.200.json',
+	'Route_To_Be_Delayed'
+]
+
 const fixtures = [
 	[
 		'/api',
@@ -46,6 +52,7 @@ const fixtures = [
 
 	// Exact route paths
 	fixtureDefaultInName,
+	fixtureDelayed,
 	[
 		'/api/the-route',
 		'api/the-route(default).GET.200.json',
@@ -136,6 +143,8 @@ writeStatic('index.html', '<h1>Static</h1>')
 writeStatic('assets/app.js', 'const app = 1')
 writeStatic('another-entry/index.html', '<h1>Another</h1>')
 
+
+
 const server = Mockaton({
 	mocksDir: tmpDir,
 	staticDir: staticTmpDir,
@@ -152,16 +161,18 @@ const server = Mockaton({
 })
 server.on('listening', runTests)
 
-
-function request(path, options = {}) {
+function mockatonAddr() {
 	const { address, port } = server.address()
-	return fetch(`http://${address}:${port}${path}`, options)
+	return `http://${address}:${port}`
 }
 
+function request(path, options = {}) {
+	return fetch(`${mockatonAddr()}${path}`, options)
+}
 
 let commander
 async function runTests() {
-	commander = new Commander(`http://${server.address().address}:${server.address().port}`)
+	commander = new Commander(mockatonAddr())
 
 	await testItRendersDashboard()
 	await test404()
@@ -171,11 +182,7 @@ async function runTests() {
 
 	await testDefaultMock()
 
-	await testItUpdatesDelayAndFile(
-		'/api/alternative',
-		'api/alternative(comment-2).GET.200.json',
-		JSON.stringify({ comment: 2 }))
-
+	await testItUpdatesRouteDelay(...fixtureDelayed)
 	await testBadRequestWhenUpdatingNonExistingMockAlternative()
 
 	await testAutogenerates500(
@@ -276,13 +283,14 @@ async function testItUpdatesTheCurrentSelectedMock(url, file, expectedStatus, ex
 	})
 }
 
-async function testItUpdatesDelayAndFile(url, file, expectedBody) {
-	await commander.setMockIsDelayed(file, true)
+async function testItUpdatesRouteDelay(url, file, expectedBody) {
+	const { method } = parseFilename(file)
+	await commander.setRouteIsDelayed(method, url, true)
 	const now = new Date()
 	const res = await request(url)
 	const body = await res.text()
 	await describe('url: ' + url, () => {
-		it('body is: ' + expectedBody, () => equal(body, expectedBody))
+		it('body is: ' + expectedBody, () => equal(body, JSON.stringify(expectedBody)))
 		it('delay', () => equal((new Date()).getTime() - now.getTime() > Config.delay, true))
 	})
 }

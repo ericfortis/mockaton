@@ -3,7 +3,8 @@ export const API = {
 	dashboard: MOUNT,
 	bulkSelect: MOUNT + '/bulk-select-by-comment',
 	comments: MOUNT + '/comments',
-	edit: MOUNT + '/edit',
+	select: MOUNT + '/select',
+	delay: MOUNT + '/delay',
 	mocks: MOUNT + '/mocks',
 	reset: MOUNT + '/reset',
 	cookies: MOUNT + '/cookies',
@@ -11,8 +12,9 @@ export const API = {
 }
 
 export const DF = { // Dashboard Fields (XHR)
-	delayed: 'delayed',
-	file: 'file'
+	routeMethod: 'route_method',
+	routeUrlMask: 'route_url_mask',
+	delayed: 'delayed'
 }
 
 export const DEFAULT_500_COMMENT = '(Mockaton 500)'

@@ -10,6 +10,10 @@ export class Commander {
 	select(file) {
 		return this.#patch(API.select, file)
 	}
+	bulkSelectByComment(comment) {
+		return this.#patch(API.bulkSelect, comment)
+	}
+
 	setRouteIsDelayed(routeMethod, routeUrlMask, delayed) {
 		return this.#patch(API.delay, {
 			[DF.routeMethod]: routeMethod,
@@ -28,9 +32,6 @@ export class Commander {
 	listComments() {
 		return this.#get(API.comments)
 	}
-	bulkSelectByComment(comment) {
-		return this.#patch(API.bulkSelect, comment)
-	}
 
 	setFallback(proxyAddr) {
 		return this.#patch(API.fallback, proxyAddr)
@@ -41,14 +42,13 @@ export class Commander {
 	}
 
 
+	#get(api) {
+		return fetch(this.#addr + api)
+	}
 	#patch(api, body) {
 		return fetch(this.#addr + api, {
 			method: 'PATCH',
 			body: JSON.stringify(body)
 		})
-	}
-
-	#get(api) {
-		return fetch(this.#addr + api)
 	}
 }

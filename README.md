@@ -300,55 +300,38 @@ const commander = new Commander(mockatonAddr)
 
 ### Select a mock file for a route
 ```js
-commander.select('api/foo.200.GET.json')
+await commander.select('api/foo.200.GET.json')
 ```
-
-### Set Route is Delayed
-```js
-commander.setMockIsDelayed('api/foo.200.GET.json', true)
-```
-
 ### Select all mocks that have a particular comment
 ```js
-fetch(addr + '/mockaton/bulk-select-by-comment', {
-  method: 'PATCH',
-  body: JSON.stringify('(demo-a)')
-})
+await commander.bulkSelectByComment('(demo-a)')
 ```
 
-### List Cookies
-Sends a list of the available cookies along with an "is selected" boolean flag.
+### Set Route is Delayed Flag
 ```js
-fetch(addr + '/mockaton/cookies')
+await commander.setRouteIsDelayed('GET', 'api/foo', true)
 ```
 
 ### Select a cookie
-In `Config.cookies`, each key is the label used for changing it.
+In `Config.cookies`, each key is the label used for selecting it.
 ```js
-fetch(addr + '/mockaton/cookies', {
-  method: 'PATCH',
-  body: JSON.stringify('My Normal User')
-})
+await commander.selectCookie('My Normal User')
 ```
 
 ### Update Fallback Proxy
 ```js
-fetch(addr + '/mockaton/fallback', {
-  method: 'PATCH',
-  body: JSON.stringify('http://example.com')
-})
+await commander.setFallback('http://example.com')
 ```
 
 ### Reset
 Re-initialize the collection. So if you added or removed mocks they
 will be considered. The selected mocks, cookies, and delays go
-back to default, but `Config.proxyFalllback` is not affected.
+back to default, but `Config.proxyFallback` is not affected.
 ```js
-fetch(addr + '/mockaton/reset', {
-  method: 'PATCH'
-})
+await commander.reset()
 ```
 
+
 ## TODO
-- Dashboard. List `staticDir` and indicate if it’s overriding some mock.
 - Refactor Tests
+- Dashboard. List `staticDir` and indicate if it’s overriding some mock.

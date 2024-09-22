@@ -295,7 +295,8 @@ All of its methods return their `fetch` promise.
 import { Commander } from 'mockaton'
 
 
-const commander = new Commander(mockatonAddr)
+const myMockatonAddr = 'http://localhost:2345'
+const commander = new Commander(myMockatonAddr)
 ```
 
 ### Select a mock file for a route
@@ -318,10 +319,11 @@ In `Config.cookies`, each key is the label used for selecting it.
 await commander.selectCookie('My Normal User')
 ```
 
-### Update Fallback Proxy
+### Set Fallback Proxy
 ```js
-await commander.setFallback('http://example.com')
+await commander.setProxyFallback('http://example.com')
 ```
+Pass an empty string to disable it.
 
 ### Reset
 Re-initialize the collection. So if you added or removed mocks they

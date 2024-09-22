@@ -424,7 +424,7 @@ async function testEnableFallbackSoRoutesWithoutMocksGetRelayed() {
 		})
 		await promisify(fallbackServer.listen).bind(fallbackServer, 0, '127.0.0.1')()
 
-		await commander.setFallback(`http://localhost:${fallbackServer.address().port}`)
+		await commander.setProxyFallback(`http://localhost:${fallbackServer.address().port}`)
 		await it('Relays to fallback server', async () => {
 			const res = await request('/non-existing-mock')
 			equal(res.headers.get('custom_header'), 'my_custom_header')

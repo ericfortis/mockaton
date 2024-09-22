@@ -12,8 +12,8 @@ my-mocks-dir/api/user/[user-id].GET.200.json
 [This browser extension](https://github.com/ericfortis/devtools-ext-tar-http-requests)
 can be used for downloading a TAR of your XHR requests following that convention.
 
-## What do I use it for?
-- I’m a frontend dev, so I don’t have to spin up and maintain hefty or complex backends.
+## What for?
+- Avoids having to spin up and maintain hefty or complex backends when developing UIs.
 - For a deterministic and comprehensive backend state. For example, having all the possible
   state variants of a particular collection helps for spotting inadvertent bugs. And having those
   assorted responses are not easy to trigger from the backend.

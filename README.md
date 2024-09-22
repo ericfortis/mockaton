@@ -290,7 +290,7 @@ Config.onReady = open
 
 ## HTTP API
 `Commander` is a wrapper for the Mockaton HTTP API.
-All of its methods return their `fetch` promise.
+All of its methods return their `fetch` response promise.
 ```js
 import { Commander } from 'mockaton'
 
@@ -310,7 +310,7 @@ await commander.bulkSelectByComment('(demo-a)')
 
 ### Set Route is Delayed Flag
 ```js
-await commander.setRouteIsDelayed('GET', 'api/foo', true)
+await commander.setRouteIsDelayed('GET', '/api/foo', true)
 ```
 
 ### Select a cookie

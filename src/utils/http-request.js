@@ -1,3 +1,9 @@
+export const StandardMethods = [
+	'GET', 'PUT', 'DELETE', 'POST', 'PATCH',
+	'HEAD', 'OPTIONS', 'TRACE', 'CONNECT'
+]
+
+
 export class JsonBodyParserError extends Error {}
 
 export function parseJSON(req) {

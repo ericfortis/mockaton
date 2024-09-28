@@ -12,7 +12,7 @@ my-mocks-dir/api/user/[user-id].GET.200.json
 [This browser extension](https://github.com/ericfortis/devtools-ext-tar-http-requests)
 can be used for downloading a TAR of your XHR requests following that convention.
 
-## What for?
+## Benefits
 - Avoids having to spin up and maintain hefty or complex backends when developing UIs.
 - For a deterministic and comprehensive backend state. For example, having all the possible
   state variants of a particular collection helps for spotting inadvertent bugs. And having those
@@ -71,6 +71,7 @@ node my-mockaton.js
 ```
 
 ## Config Options
+There’s a Config section below with more details.
 ```ts
 interface Config {
   mocksDir: string
@@ -87,10 +88,12 @@ interface Config {
   extraMimes?: { [fileExt: string]: string }
   extraHeaders?: []
 
+  corsAllowed?: boolean, // Defaults to false
+  // The options for customizing CORS are listed below
+
   onReady?: (dashboardUrl: string) => void // Defaults to trying to open macOS and Win default browser.
 }
 ```
-There’s a Config section below with more details.
 
 ---
 
@@ -257,6 +260,19 @@ Config.extraHeaders = [
 Config.extraMimes = {
   jpg: 'application/jpeg'
 }
+```
+
+## `Config.corsAllowed`
+```js
+Config.corsAllowed = true
+
+// Defaults when `corsAllowed === true`
+Config.corsOrigins = ['*']
+Config.corsMethods = ['GET', 'PUT', 'DELETE', 'POST', 'PATCH', 'HEAD', 'OPTIONS', 'TRACE', 'CONNECT']
+Config.corsHeaders = []
+Config.corsCredentials = true
+Config.corsMaxAge = 0
+Config.corsExposedHeaders = []
 ```
 
 ## `Config.onReady`

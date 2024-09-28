@@ -15,6 +15,14 @@ interface Config {
 	extraHeaders?: [string, string][]
 	extraMimes?: { [fileExt: string]: string }
 
+	corsAllowed?: boolean,
+	corsOrigins: string[]
+	corsMethods: string[]
+	corsHeaders: string[]
+	corsExposedHeaders: string[]
+	corsCredentials: boolean
+	corsMaxAge: number
+
 	onReady?: (address: string) => void
 }
 

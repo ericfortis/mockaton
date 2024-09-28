@@ -13,6 +13,7 @@ import { mimeFor } from './src/utils/mime.js'
 import { Mockaton } from './src/Mockaton.js'
 import { Commander } from './src/Commander.js'
 import { parseFilename } from './src/Filename.js'
+import { PreflightHeader } from './src/utils/http-cors.js'
 import { API, DEFAULT_500_COMMENT, DEFAULT_MOCK_COMMENT } from './src/ApiConstants.js'
 
 
@@ -157,7 +158,9 @@ const server = Mockaton({
 	extraHeaders: ['Server', 'MockatonTester'],
 	extraMimes: {
 		my_custom_extension: 'my_custom_mime'
-	}
+	},
+	corsAllowed: true,
+	corsOrigins: ['http://example.com']
 })
 server.on('listening', runTests)
 
@@ -223,10 +226,12 @@ async function runTests() {
 	await testMockDispatching(...fixtureCustomMime, 'my_custom_mime')
 	await testJsFunctionMocks()
 
+	await testCorsAllowed()
 	await testItUpdatesUserRole()
 	await testStaticFileServing()
 	await testInvalidFilenamesAreIgnored()
 	await testEnableFallbackSoRoutesWithoutMocksGetRelayed()
+
 	server.close()
 }
 
@@ -434,6 +439,23 @@ async function testEnableFallbackSoRoutesWithoutMocksGetRelayed() {
 		})
 	})
 }
+
+// TODO make API for changing CORS? so we can automate testing?
+async function testCorsAllowed() {
+	await it('cors', async () => {
+		const res = await request('/does-not-matter', {
+			method: 'OPTIONS',
+			headers: {
+				[PreflightHeader.Origin]: 'http://example.com',
+				[PreflightHeader.AccessControlRequestMethod]: 'GET'
+			}
+		})
+		equal(res.status, 204)
+		equal(res.headers.get(PreflightHeader.AccessControlAllowOrigin), 'http://example.com')
+		equal(res.headers.get(PreflightHeader.AccessControlAllowMethods), 'GET')
+	})
+}
+
 
 // Utils
 

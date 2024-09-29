@@ -1,5 +1,3 @@
-#!/usr/bin/env -S node 
-
 import { tmpdir } from 'node:os'
 import { dirname } from 'node:path'
 import { promisify } from 'node:util'

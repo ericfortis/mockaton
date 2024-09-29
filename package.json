@@ -8,7 +8,7 @@
 	"license": "MIT",
 	"repository": "https://github.com/ericfortis/mockaton",
 	"scripts": {
-		"test": "node --test --experimental-default-type=module",
+		"test": "node --test",
 		"demo": "./_usage_example.js"
 	}
 }

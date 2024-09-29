@@ -17,19 +17,23 @@ await describe('CORS', async () => {
 	let corsAllow = {}
 
 	const server = createServer((req, response) => {
+		setCorsHeaders(req, response, corsAllow)
 		if (isPreflight(req)) {
-			setCorsHeaders(req, response, corsAllow)
 			response.statusCode = 204
 			response.end()
-			return
 		}
-		response.end('NON_PREFLIGHT')
+		else
+			response.end('NON_PREFLIGHT')
 	})
 	await promisify(server.listen).bind(server, 0, '127.0.0.1')()
 	after(() => {
 		server.close()
 	})
 	function preflight(headers, method = 'OPTIONS') {
+		const { address, port } = server.address()
+		return fetch(`http://${address}:${port}/`, { method, headers })
+	}
+	function request(headers, method) {
 		const { address, port } = server.address()
 		return fetch(`http://${address}:${port}/`, { method, headers })
 	}
@@ -41,7 +45,7 @@ await describe('CORS', async () => {
 		}
 
 		await it('Ignores non-OPTIONS requests', async () => {
-			const res = await preflight(requiredRequestHeaders, 'POST')
+			const res = await request(requiredRequestHeaders, 'POST')
 			equal(await res.text(), 'NON_PREFLIGHT')
 		})
 
@@ -90,6 +94,7 @@ await describe('CORS', async () => {
 			headerIs(p, PH.AccessControlAllowMethods, null)
 			headerIs(p, PH.AccessControlAllowCredentials, null)
 			headerIs(p, PH.AccessControlAllowHeaders, null)
+			headerIs(p, PH.AccessControlMaxAge, null)
 		})
 
 		await it('not in allowed origins', async () => {
@@ -186,5 +191,35 @@ await describe('CORS', async () => {
 		})
 	})
 
-	// TODO Actual request response headers
+	await describe('Non-Preflight (Actual Response) Headers', async () => {
+		await it('no origins allowed', async () => {
+			corsAllow = {
+				origins: [],
+				methods: ['GET']
+			}
+			const p = await request({
+				[PH.Origin]: NotAllowedDotCom
+			})
+			equal(p.status, 200)
+			headerIs(p, PH.AccessControlAllowOrigin, null)
+			headerIs(p, PH.AccessControlAllowCredentials, null)
+			headerIs(p, PH.AccessControlExposeHeaders, null)
+		})
+
+		await it('origin allowed', async () => {
+			corsAllow = {
+				origins: [AllowedDotCom],
+				methods: ['GET'],
+				credentials: true,
+				exposedHeaders: ['x-h1', 'x-h2']
+			}
+			const p = await request({
+				[PH.Origin]: AllowedDotCom
+			})
+			equal(p.status, 200)
+			headerIs(p, PH.AccessControlAllowOrigin, AllowedDotCom)
+			headerIs(p, PH.AccessControlAllowCredentials, 'true')
+			headerIs(p, PH.AccessControlExposeHeaders, 'x-h1,x-h2')
+		})
+	})
 })

@@ -10,7 +10,6 @@ const Strings = {
 	cookie: 'Cookie',
 	delay: 'Delay',
 	empty_response_body: '/* Empty Response Body */',
-	fetching: '⌚ Fetching…',
 	internal_server_error: 'Internal Server Error',
 	mock: 'Mock',
 	reset: 'Reset',
@@ -25,6 +24,7 @@ const CSS = {
 	MockSelector: 'MockSelector',
 	PayloadViewer: 'PayloadViewer',
 	PreviewLink: 'PreviewLink',
+	ProgressBar: 'ProgressBar',
 
 	bold: 'bold',
 	chosen: 'chosen',
@@ -162,7 +162,10 @@ function PreviewLink({ method, urlMask }) {
 			async onClick(event) {
 				event.preventDefault()
 				try {
-					const spinner = setTimeout(() => refPayloadViewer.current.innerText = Strings.fetching, 180)
+					const spinner = setTimeout(() => {
+						empty(refPayloadViewer.current)
+						refPayloadViewer.current.append(ProgressBar())
+					}, 180)
 					const res = await fetch(this.href, {
 						method: this.getAttribute('data-method')
 					})
@@ -179,6 +182,12 @@ function PreviewLink({ method, urlMask }) {
 				}
 			}
 		}, urlMask))
+}
+
+function ProgressBar() {
+	return (
+		r('div', { className: CSS.ProgressBar },
+			r('div', { style: { animationDuration: '1000ms' } }))) // TODO from Config.delay - 180
 }
 
 function updatePayloadViewer(body, mime) {
@@ -320,6 +329,8 @@ function createElement(elem, props = null, ...children) {
 				value.current = node
 			else if (key.startsWith('on'))
 				node.addEventListener(key.replace(/^on/, '').toLowerCase(), value)
+			else if (key === 'style')
+				Object.assign(node.style, value)
 			else if (key in node)
 				node[key] = value
 			else

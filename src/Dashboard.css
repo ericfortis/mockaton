@@ -86,9 +86,9 @@ menu {
 	width: 100%;
 	align-items: flex-end;
 	padding: 20px 16px;
+	border-bottom: 1px solid rgba(0, 0, 0, 0.1);
 	background: var(--colorHeaderBackground);
 	gap: 16px;
-	border-bottom: 1px solid rgba(0, 0, 0, 0.1);
 
 	img {
 		width: 140px;
@@ -274,6 +274,32 @@ main {
 			background: var(--colorLightRed);
 			color: var(--colorRed);
 		}
+	}
+}
+
+.ProgressBar {
+	position: relative;
+	width: 100%;
+	height: 16px;
+	background: var(--colorComboBoxHeaderBackground);
+
+	div {
+		position: absolute;
+		top: 0;
+		left: 0;
+		height: 100%;
+		background: var(--colorAccent);
+		animation: _kfProgress;
+		/*animation-duration: It's in JavaScript */
+	}
+
+}
+@keyframes _kfProgress {
+	0% {
+		width: 0;
+	}
+	100% {
+		width: 100%;
 	}
 }
 

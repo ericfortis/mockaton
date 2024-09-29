@@ -55,11 +55,10 @@ function setPreflightSpecificHeaders(req, response, methods, headers, maxAge) {
 	if (!methods.includes(methodAskingFor))
 		return
 
+	response.setHeader(CH.AccessControlMaxAge, maxAge)
 	response.setHeader(CH.AccessControlAllowMethods, methodAskingFor)
 	if (headers.length)
 		response.setHeader(CH.AccessControlAllowHeaders, headers.join(','))
-
-	response.setHeader(CH.AccessControlMaxAge, maxAge)
 }
 
 

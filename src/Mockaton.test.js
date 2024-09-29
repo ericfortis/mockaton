@@ -1,4 +1,4 @@
-#!/usr/bin/env -S node --experimental-default-type=module
+#!/usr/bin/env -S node 
 
 import { tmpdir } from 'node:os'
 import { dirname } from 'node:path'
@@ -8,13 +8,13 @@ import { createServer } from 'node:http'
 import { equal, deepEqual, match } from 'node:assert/strict'
 import { writeFileSync, mkdtempSync, mkdirSync } from 'node:fs'
 
-import { Config } from './src/Config.js'
-import { mimeFor } from './src/utils/mime.js'
-import { Mockaton } from './src/Mockaton.js'
-import { Commander } from './src/Commander.js'
-import { parseFilename } from './src/Filename.js'
-import { PreflightHeader } from './src/utils/http-cors.js'
-import { API, DEFAULT_500_COMMENT, DEFAULT_MOCK_COMMENT } from './src/ApiConstants.js'
+import { Config } from './Config.js'
+import { mimeFor } from './utils/mime.js'
+import { Mockaton } from './Mockaton.js'
+import { Commander } from './Commander.js'
+import { parseFilename } from './Filename.js'
+import { PreflightHeader } from './utils/http-cors.js'
+import { API, DEFAULT_500_COMMENT, DEFAULT_MOCK_COMMENT } from './ApiConstants.js'
 
 
 const tmpDir = mkdtempSync(tmpdir()) + '/'

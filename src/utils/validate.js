@@ -1,7 +1,7 @@
 export function validate(obj, shape) {
 	for (const [field, value] of Object.entries(obj))
 		if (!shape[field](value))
-			throw new TypeError(`${field} ${value}`)
+			throw new TypeError(`Config.${field}=${JSON.stringify(value)} is invalid`)
 }
 
 export const is = ctor => val => val.constructor === ctor

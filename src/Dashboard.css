@@ -21,7 +21,7 @@
 @media (prefers-color-scheme: dark) {
 	:root {
 		--color4xxBackground: #403630;
-		--colorAccent: #0482fb;
+		--colorAccent: #0682fa;
 		--colorBackground: #141414;
 		--colorCodeBackground: #333;
 		--colorComboBoxBackground: #252525;
@@ -97,7 +97,7 @@ menu {
 	display: flex;
 	align-items: flex-end;
 	margin-bottom: 12px;
-	gap: 12px;
+	gap: 16px;
 
 	img {
 		width: 140px;
@@ -132,6 +132,13 @@ menu {
 			background: var(--colorRed);
 			color: white;
 		}
+	}
+
+	.CorsCheckbox {
+		display: flex;
+		align-items: center;
+		margin-bottom: 4px;
+		gap: 4px;
 	}
 }
 

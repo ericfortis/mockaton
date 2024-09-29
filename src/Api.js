@@ -18,10 +18,12 @@ export const apiGetRequests = new Map([
 	['/Dashboard.js', serveDashboardAsset],
 	['/Dashboard.css', serveDashboardAsset],
 	['/ApiConstants.js', serveDashboardAsset],
+	['/Commander.js', serveDashboardAsset],
 	['/mockaton-logo.svg', serveDashboardAsset],
 	[API.mocks, listMockBrokers],
 	[API.cookies, listCookies],
-	[API.comments, listComments]
+	[API.comments, listComments],
+	[API.cors, getIsCorsAllowed]
 ])
 
 export const apiPatchRequests = new Map([
@@ -30,7 +32,8 @@ export const apiPatchRequests = new Map([
 	[API.reset, reinitialize],
 	[API.cookies, selectCookie],
 	[API.fallback, updateProxyFallback],
-	[API.bulkSelect, bulkUpdateBrokersByCommentTag]
+	[API.bulkSelect, bulkUpdateBrokersByCommentTag],
+	[API.cors, setCorsAllowed]
 ])
 
 function serveDashboard(_, response) { sendFile(response, join(import.meta.dirname, 'Dashboard.html')) }
@@ -39,6 +42,7 @@ function serveDashboardAsset(req, response) { sendFile(response, join(import.met
 function listCookies(_, response) { sendJSON(response, cookie.list()) }
 function listComments(_, response) { sendJSON(response, mockBrokersCollection.extractAllComments()) }
 function listMockBrokers(_, response) { sendJSON(response, mockBrokersCollection.getAll()) }
+function getIsCorsAllowed(_, response) { sendJSON(response, Config.corsAllowed) }
 
 
 function reinitialize(_, response) {
@@ -107,6 +111,17 @@ async function updateProxyFallback(req, response) {
 async function bulkUpdateBrokersByCommentTag(req, response) {
 	try {
 		mockBrokersCollection.setMocksMatchingComment(await parseJSON(req))
+		sendOK(response)
+	}
+	catch (error) {
+		sendBadRequest(response, error)
+	}
+}
+
+
+async function setCorsAllowed(req, response) {
+	try {
+		Config.corsAllowed = await parseJSON(req)
 		sendOK(response)
 	}
 	catch (error) {

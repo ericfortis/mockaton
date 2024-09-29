@@ -41,6 +41,10 @@ export class Commander {
 		return this.#patch(API.reset)
 	}
 
+	setCorsAllowed(value) {
+		return this.#patch(API.cors, value)
+	}
+
 
 	#get(api) {
 		return fetch(this.#addr + api)

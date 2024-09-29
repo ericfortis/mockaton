@@ -1,8 +1,10 @@
 import { parseFilename } from '../Filename.js'
+import { Commander } from '../Commander.js'
 import { API, DF, DEFAULT_500_COMMENT } from '../ApiConstants.js'
 
 
 const Strings = {
+	allow_cors: 'Allow CORS',
 	bulk_select_by_comment: 'Bulk Select by Comment',
 	click_link_to_preview: 'Click a link to preview it',
 	cookie: 'Cookie',
@@ -17,6 +19,7 @@ const Strings = {
 }
 
 const CSS = {
+	CorsCheckbox: 'CorsCheckbox',
 	DelayToggler: 'DelayToggler',
 	InternalServerErrorToggler: 'InternalServerErrorToggler',
 	MockSelector: 'MockSelector',
@@ -32,24 +35,27 @@ const r = createElement
 const refPayloadViewer = useRef()
 const refPayloadFile = useRef()
 
+const commander = new Commander(window.location.origin)
+
 function init() {
 	Promise.all([
 		API.mocks,
 		API.cookies,
-		API.comments
+		API.comments,
+		API.cors
 	].map(api => fetch(api).then(res => res.ok && res.json())))
 		.then(App)
 		.catch(console.error)
 }
 init()
 
-function App([brokersByMethod, cookies, comments]) {
+function App([brokersByMethod, cookies, comments, corsAllowed]) {
 	empty(document.body)
 	createRoot(document.body).render(
-		DevPanel(brokersByMethod, cookies, comments))
+		DevPanel(brokersByMethod, cookies, comments, corsAllowed))
 }
 
-function DevPanel(brokersByMethod, cookies, comments) {
+function DevPanel(brokersByMethod, cookies, comments, corsAllowed) {
 	document.title = Strings.title
 	return (
 		r('div', null,
@@ -57,6 +63,7 @@ function DevPanel(brokersByMethod, cookies, comments) {
 				r('img', { src: 'mockaton-logo.svg', width: 160 }),
 				r(CookieSelector, { list: cookies }),
 				r(BulkSelector, { comments }),
+				r(CorsCheckbox, { corsAllowed }),
 				r(ResetButton)),
 			r('main', null,
 				r('table', null, Object.entries(brokersByMethod).map(([method, brokers]) =>
@@ -64,19 +71,6 @@ function DevPanel(brokersByMethod, cookies, comments) {
 				r('div', { className: CSS.PayloadViewer },
 					r('h2', { ref: refPayloadFile }, Strings.mock),
 					r('pre', { ref: refPayloadViewer }, Strings.click_link_to_preview)))))
-}
-
-
-function ResetButton() {
-	return (
-		r('button', {
-			onClick() {
-				fetch(API.reset, { method: 'PATCH' })
-					.then(init)
-					.catch(console.error)
-			}
-		}, Strings.reset)
-	)
 }
 
 function CookieSelector({ list }) {
@@ -100,7 +94,6 @@ function CookieSelector({ list }) {
 				}, key)))))
 }
 
-
 function BulkSelector({ comments }) {
 	return (
 		r('label', null,
@@ -121,6 +114,34 @@ function BulkSelector({ comments }) {
 					value: item
 				}, item)))))
 }
+
+function CorsCheckbox({ corsAllowed }) {
+	return (
+		r('label', { className: CSS.CorsCheckbox },
+			r('input', {
+				type: 'checkbox',
+				checked: corsAllowed,
+				onChange(event) {
+					commander.setCorsAllowed(event.target.checked)
+						.then(init)
+						.catch(console.error)
+				}
+			}),
+			Strings.allow_cors))
+}
+
+function ResetButton() {
+	return (
+		r('button', {
+			onClick() {
+				fetch(API.reset, { method: 'PATCH' })
+					.then(init)
+					.catch(console.error)
+			}
+		}, Strings.reset)
+	)
+}
+
 
 
 function SectionByMethod({ method, brokers }) {

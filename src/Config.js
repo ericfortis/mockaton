@@ -58,9 +58,6 @@ export function setup(options) {
 
 		onReady: is(Function)
 	})
-
-	if (!Config.corsAllowed) // TESTME
-		Config.corsOrigins = []
 }
 
 

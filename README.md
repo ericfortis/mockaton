@@ -89,7 +89,7 @@ interface Config {
   extraHeaders?: []
 
   corsAllowed?: boolean, // Defaults to false
-  // The options for customizing CORS are listed below
+  // cors* customization options are explained below
 
   onReady?: (dashboardUrl: string) => void // Defaults to trying to open macOS and Win default browser.
 }
@@ -342,9 +342,9 @@ await mockaton.setProxyFallback('http://example.com')
 Pass an empty string to disable it.
 
 ### Reset
-Re-initialize the collection. So if you added or removed mocks they
-will be considered. The selected mocks, cookies, and delays go
-back to default, but `Config.proxyFallback` is not affected.
+Re-initialize the collection. So if you added or removed mocks they will
+be considered. The selected mocks, cookies, and delays go back to default,
+but `Config.proxyFallback` and `Config.corsAllowed` are not affected.
 ```js
 await mockaton.reset()
 ```

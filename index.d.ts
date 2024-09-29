@@ -36,19 +36,29 @@ export function jwtCookie(cookieName: string, payload: any): string
 export class Commander {
 	constructor(addr: string)
 
+	listMocks(): Promise<Response>
+
 	select(file: string): Promise<Response>
 
 	bulkSelectByComment(comment: string): Promise<Response>
 
+
 	setRouteIsDelayed(routeMethod: string, routeUrlMask: string, delayed: boolean): Promise<Response>
 
+
+	listCookies(): Promise<Response>
+
 	selectCookie(cookieKey: string): Promise<Response>
+
+
+	listComments(): Promise<Response>
 
 	setProxyFallback(proxyAddr: string): Promise<Response>
 
 	reset(): Promise<Response>
 
-	listCookies(): Promise<Response>
 
-	listComments(): Promise<Response>
+	getCorsAllowed(): Promise<Response>
+
+	setCorsAllowed(value: boolean): Promise<Response>
 }

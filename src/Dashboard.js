@@ -70,7 +70,8 @@ function DevPanel(brokersByMethod, cookies, comments, corsAllowed) {
 					r(SectionByMethod, { method, brokers }))),
 				r('div', { className: CSS.PayloadViewer },
 					r('h2', { ref: refPayloadFile }, Strings.mock),
-					r('pre', { ref: refPayloadViewer }, Strings.click_link_to_preview)))))
+					r('pre', null,
+						r('code', { ref: refPayloadViewer }, Strings.click_link_to_preview))))))
 }
 
 function CookieSelector({ list }) {
@@ -168,7 +169,9 @@ function PreviewLink({ method, urlMask }) {
 					document.querySelector(`.${CSS.PreviewLink}.${CSS.chosen}`)?.classList.remove(CSS.chosen)
 					this.classList.add(CSS.chosen)
 					clearTimeout(spinner)
-					refPayloadViewer.current.innerText = await res.text() || Strings.empty_response_body
+					updatePayloadViewer(
+						await res.text() || Strings.empty_response_body,
+						res.headers.get('content-type'))
 					refPayloadFile.current.innerText = this.closest('tr').querySelector('select').value
 				}
 				catch (error) {
@@ -177,6 +180,14 @@ function PreviewLink({ method, urlMask }) {
 			}
 		}, urlMask))
 }
+
+function updatePayloadViewer(body, mime) {
+	if (mime === 'application/json' && window.Prism)
+		refPayloadViewer.current.innerHTML = Prism.highlight(body, Prism.languages.json, 'json')
+	else
+		refPayloadViewer.current.innerText = body
+}
+
 
 function MockSelector({ broker }) {
 	const className = (defaultIsSelected, status) => cssClass(

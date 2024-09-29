@@ -7,7 +7,7 @@
 		--color4xxBackground: #ffedd1;
 		--colorAccent: #1E88E5;
 		--colorBackground: #fff;
-		--colorCodeBackground: #fafafa;
+		--colorMockBodyBackground: #333;
 		--colorComboBoxBackground: #fafafa;
 		--colorDisabled: #222;
 		--colorHover: #dfefff;
@@ -23,7 +23,7 @@
 		--color4xxBackground: #403630;
 		--colorAccent: #0682fa;
 		--colorBackground: #141414;
-		--colorCodeBackground: #333;
+		--colorMockBodyBackground: #333;
 		--colorComboBoxBackground: #252525;
 		--colorDisabled: #aaa;
 		--colorHover: #023661;
@@ -76,7 +76,7 @@ select {
 menu {
 	display: flex;
 	align-items: flex-end;
-	margin-bottom: 12px;
+	padding-bottom: 24px;
 	gap: 16px;
 
 	img {
@@ -155,16 +155,17 @@ main {
 	}
 
 	pre {
-		tab-size: 2;
+		overflow: auto;
+		max-height: calc(100vh - 160px);
+		padding: 12px;
+		margin-top: 6px;
+		box-shadow: var(--boxShadow1);
+		border-radius: 4px;
+		color: white; /* always dark */
+		background: var(--colorMockBodyBackground);
+		white-space: pre;
 
-		&:not(:empty) {
-			overflow: auto;
-			max-height: calc(100vh - 160px);
-			padding: 12px;
-			margin-top: 6px;
-			box-shadow: var(--boxShadow1);
-			border-radius: 4px;
-			background: var(--colorCodeBackground);
+		code * {
 			font-family: monospace;
 		}
 	}

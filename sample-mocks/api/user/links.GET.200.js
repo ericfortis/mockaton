@@ -4,6 +4,6 @@
 export default function (req, response) {
 	return JSON.stringify([
 		'http://example.com/foo',
-		'http://example.com/bar',
-	])
+		'http://example.com/bar'
+	], null, 2)
 }

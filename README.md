@@ -12,21 +12,41 @@ my-mocks-dir/api/user/[user-id].GET.200.json
 [This browser extension](https://github.com/ericfortis/devtools-ext-tar-http-requests)
 can be used for downloading a TAR of your XHR requests following that convention.
 
-## Benefits
+
+## Getting Started Demo
+Checkout this repo and run `npm run demo`, which will open the following
+dashboard. Then, explore the [sample-mocks/](./sample-mocks) directory.
+
+<picture>
+  <source media="(prefers-color-scheme: light)" srcset="./README-dashboard-light.png">
+  <source media="(prefers-color-scheme: dark)" srcset="./README-dashboard-dark.png">
+  <img alt="Mockaton Dashboard Demo" src="./README-dashboard-light.png" style="max-width: 860px">
+</picture>
+
+Then, pick a mock variant from the Mock dropdown (we’ll discuss
+them later). At its right, note the _Delay_ toggler, and the button
+for sending _500 - Internal Server Error_ on that endpoint.
+
+Then edit a mock file. You don’t need to restart Mockaton for that, the
+_Reset_ button is for registering newly added, removed, or renamed mocks.
+
+
+## Use Cases
+- Test empty responses
+- Test spinners by delaying responses
+- Test errors such as _Bad Request_ and _Internal Server Error_
+- Trigger notifications and alerts
+- Prototyping before the backend API is developed
+- Setting up tests
+- As API documentation
+- If you commit the mocks in the repo, when bisecting a bug, you don’t
+  have to sync the frontend with many backend repos
+  - Similarly, I can check out long-lived branches that have old API contracts
+
+## Motivation
 - Avoids having to spin up and maintain hefty or complex backends when developing UIs.
 - For a deterministic and comprehensive backend state. For example, having all the possible
-  state variants of a particular collection helps for spotting inadvertent bugs. And having those
-  assorted responses are not easy to trigger from the backend.
-- Testing empty responses.
-- Testing spinners by delaying responses.
-- Testing errors such as _Bad Request_ and _Internal Server Error_.
-- Triggering notifications and alerts.
-- Prototyping before the backend API is developed.
-- Setting up tests.
-- If you commit the mocks in the repo, when bisecting a bug, you don’t
-  have to sync the frontend with many backend repos.
-  - Similarly, I can check out long-lived branches that have old API contracts.
-- As API documentation.
+  state variants of a collection helps for spotting inadvertent bugs.
 
 ## Alternatives
 - Chrome DevTools allows for [overriding responses](https://developer.chrome.com/docs/devtools/overrides)
@@ -36,19 +56,6 @@ can be used for downloading a TAR of your XHR requests following that convention
 ### Caveats
 - Syncing the mocks, but the browser extension mentioned above helps.
 
-
-## Getting Started
-The best way to learn _Mockaton_ is by checking out this repo and
-exploring its [sample-mocks/](./sample-mocks) directory. Then, run
-[`./_usage_example.js`](./_usage_example.js) and you’ll see the dashboard.
-
-You can select mock files without resetting Mockaton. The _Reset_
-button is for when you add, remove, or rename a mock file.
-
-The dropdown lets you pick a mock variant, details in the next section. Next to it is a
-_Delay_ toggler, and a button for sending _500 - Internal Server Error_ on that endpoint.
-
-<img src="./README-dashboard.png" style="max-width:820px"/>
 
 ## Basic Usage
 ```

@@ -11,7 +11,7 @@ import { mimeFor } from './utils/mime.js'
 import { Mockaton } from './Mockaton.js'
 import { Commander } from './Commander.js'
 import { parseFilename } from './Filename.js'
-import { PreflightHeader } from './utils/http-cors.js'
+import { CorsHeader } from './utils/http-cors.js'
 import { API, DEFAULT_500_COMMENT, DEFAULT_MOCK_COMMENT } from './ApiConstants.js'
 
 
@@ -444,13 +444,13 @@ async function testCorsAllowed() {
 		const res = await request('/does-not-matter', {
 			method: 'OPTIONS',
 			headers: {
-				[PreflightHeader.Origin]: 'http://example.com',
-				[PreflightHeader.AccessControlRequestMethod]: 'GET'
+				[CorsHeader.Origin]: 'http://example.com',
+				[CorsHeader.AccessControlRequestMethod]: 'GET'
 			}
 		})
 		equal(res.status, 204)
-		equal(res.headers.get(PreflightHeader.AccessControlAllowOrigin), 'http://example.com')
-		equal(res.headers.get(PreflightHeader.AccessControlAllowMethods), 'GET')
+		equal(res.headers.get(CorsHeader.AccessControlAllowOrigin), 'http://example.com')
+		equal(res.headers.get(CorsHeader.AccessControlAllowMethods), 'GET')
 	})
 }
 

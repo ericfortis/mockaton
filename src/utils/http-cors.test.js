@@ -2,7 +2,7 @@ import { equal } from 'node:assert/strict'
 import { promisify } from 'node:util'
 import { createServer } from 'node:http'
 import { describe, it, after } from 'node:test'
-import { isPreflight, setCorsHeaders, PreflightHeader as PH } from './http-cors.js'
+import { isPreflight, setCorsHeaders, CorsHeader as PH } from './http-cors.js'
 
 
 function headerIs(response, header, value) {

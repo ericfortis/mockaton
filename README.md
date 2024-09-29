@@ -271,8 +271,8 @@ Config.corsOrigins = ['*']
 Config.corsMethods = ['GET', 'PUT', 'DELETE', 'POST', 'PATCH', 'HEAD', 'OPTIONS', 'TRACE', 'CONNECT']
 Config.corsHeaders = ['content-type']
 Config.corsCredentials = true
-Config.corsMaxAge = 0
-Config.corsExposedHeaders = []
+Config.corsMaxAge = 0 // seconds to cache the preflight req
+Config.corsExposedHeaders = [] // headers you need to access in client-side JS
 ```
 
 ## `Config.onReady`

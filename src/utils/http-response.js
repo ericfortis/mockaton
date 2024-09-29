@@ -7,6 +7,11 @@ export function sendOK(response) {
 	response.end()
 }
 
+export function sendNoContent(response) {
+	response.statusCode = 204
+	response.end()
+}
+
 export function sendJSON(response, payload) {
 	response.setHeader('Content-Type', 'application/json')
 	response.end(JSON.stringify(payload))

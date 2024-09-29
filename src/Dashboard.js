@@ -1,6 +1,6 @@
-import { parseFilename } from '../Filename.js'
-import { Commander } from '../Commander.js'
-import { API, DF, DEFAULT_500_COMMENT } from '../ApiConstants.js'
+import { parseFilename } from '/Filename.js'
+import { Commander } from '/Commander.js'
+import { API, DEFAULT_500_COMMENT } from '/ApiConstants.js'
 
 
 const Strings = {
@@ -35,7 +35,7 @@ const r = createElement
 const refPayloadViewer = useRef()
 const refPayloadFile = useRef()
 
-const commander = new Commander(window.location.origin)
+const mockaton = new Commander(window.location.origin)
 
 function init() {
 	Promise.all([
@@ -81,10 +81,7 @@ function CookieSelector({ list }) {
 				autocomplete: 'off',
 				disabled: list.length <= 1,
 				onChange() {
-					fetch(API.cookies, {
-						method: 'PATCH',
-						body: JSON.stringify(this.value)
-					})
+					mockaton.selectCookie(this.value)
 						.catch(console.error)
 				}
 			}, list.map(([key, selected]) =>
@@ -102,10 +99,7 @@ function BulkSelector({ comments }) {
 				autocomplete: 'off',
 				disabled: comments.length <= 1,
 				onChange() {
-					fetch(API.bulkSelect, {
-						method: 'PATCH',
-						body: JSON.stringify(this.value)
-					})
+					mockaton.bulkSelectByComment(this.value)
 						.then(init)
 						.catch(console.error)
 				}
@@ -122,8 +116,7 @@ function CorsCheckbox({ corsAllowed }) {
 				type: 'checkbox',
 				checked: corsAllowed,
 				onChange(event) {
-					commander.setCorsAllowed(event.target.checked)
-						.then(init)
+					mockaton.setCorsAllowed(event.currentTarget.checked)
 						.catch(console.error)
 				}
 			}),
@@ -134,7 +127,7 @@ function ResetButton() {
 	return (
 		r('button', {
 			onClick() {
-				fetch(API.reset, { method: 'PATCH' })
+				mockaton.reset()
 					.then(init)
 					.catch(console.error)
 			}
@@ -209,10 +202,7 @@ function MockSelector({ broker }) {
 				this.style.fontWeight = this.value === this.options[0].value // default is selected
 					? 'normal'
 					: 'bold'
-				fetch(API.select, {
-					method: 'PATCH',
-					body: JSON.stringify(this.value)
-				})
+				mockaton.select(this.value)
 					.then(() => {
 						this.closest('tr').querySelector('a').click()
 						this.closest('tr').querySelector(`.${CSS.InternalServerErrorToggler}>[type=checkbox]`).checked = status === 500
@@ -241,14 +231,8 @@ function DelayRouteToggler({ broker }) {
 				checked,
 				onChange(event) {
 					const { method, urlMask } = parseFilename(this.name)
-					fetch(API.delay, {
-						method: 'PATCH',
-						body: JSON.stringify({
-							[DF.routeMethod]: method,
-							[DF.routeUrlMask]: urlMask,
-							[DF.delayed]: event.currentTarget.checked
-						})
-					})
+					mockaton.setRouteIsDelayed(method, urlMask, event.currentTarget.checked)
+						.catch(console.error)
 				}
 			}),
 			TimerIcon()))
@@ -275,12 +259,9 @@ function InternalServerErrorToggler({ broker }) {
 				name,
 				checked,
 				onChange(event) {
-					fetch(API.select, {
-						method: 'PATCH',
-						body: JSON.stringify(event.currentTarget.checked
-							? items.find(f => parseFilename(f).status === 500)
-							: items[0])
-					})
+					mockaton.select(event.currentTarget.checked
+						? items.find(f => parseFilename(f).status === 500)
+						: items[0])
 						.then(init)
 						.catch(console.error)
 				}

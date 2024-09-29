@@ -7,6 +7,10 @@ export class Commander {
 		this.#addr = addr
 	}
 
+	listMocks() {
+		return this.#get(API.mocks)
+	}
+
 	select(file) {
 		return this.#patch(API.select, file)
 	}
@@ -41,6 +45,9 @@ export class Commander {
 		return this.#patch(API.reset)
 	}
 
+	getCorsAllowed() {
+		return this.#get(API.cors)
+	}
 	setCorsAllowed(value) {
 		return this.#patch(API.cors, value)
 	}

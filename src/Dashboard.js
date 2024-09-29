@@ -1,6 +1,6 @@
 import { parseFilename } from '/Filename.js'
 import { Commander } from '/Commander.js'
-import { API, DEFAULT_500_COMMENT } from '/ApiConstants.js'
+import { DEFAULT_500_COMMENT } from '/ApiConstants.js'
 
 
 const Strings = {
@@ -39,11 +39,11 @@ const mockaton = new Commander(window.location.origin)
 
 function init() {
 	Promise.all([
-		API.mocks,
-		API.cookies,
-		API.comments,
-		API.cors
-	].map(api => fetch(api).then(res => res.ok && res.json())))
+		mockaton.listMocks(),
+		mockaton.listCookies(),
+		mockaton.listComments(),
+		mockaton.getCorsAllowed()
+	].map(api => api.then(response => response.ok && response.json())))
 		.then(App)
 		.catch(console.error)
 }

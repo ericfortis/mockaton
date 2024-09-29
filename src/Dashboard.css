@@ -5,14 +5,16 @@
 @media (prefers-color-scheme: light) {
 	:root {
 		--color4xxBackground: #ffedd1;
-		--colorAccent: #1E88E5;
+		--colorAccent: #1e88e5;
 		--colorBackground: #fff;
-		--colorMockBodyBackground: #fafafa;
 		--colorComboBoxBackground: #fafafa;
+		--colorComboBoxHeaderBackground: #fff;
 		--colorDisabled: #222;
+		--colorHeaderBackground: #f7f7f7;
 		--colorHover: #dfefff;
 		--colorLabel: #666;
 		--colorLightRed: #ffe4ee;
+		--colorMockBodyBackground: #fafafa;
 		--colorRed: #da0f00;
 		--colorSecondaryButtonBackground: #fafafa;
 		--colorText: #000;
@@ -21,14 +23,16 @@
 @media (prefers-color-scheme: dark) {
 	:root {
 		--color4xxBackground: #403630;
-		--colorAccent: #0682fa;
+		--colorAccent: #1f91ff;
 		--colorBackground: #141414;
-		--colorMockBodyBackground: #333;
 		--colorComboBoxBackground: #252525;
+		--colorComboBoxHeaderBackground: #222;
 		--colorDisabled: #aaa;
+		--colorHeaderBackground: #0b0b0b;
 		--colorHover: #023661;
 		--colorLabel: #aaa;
 		--colorLightRed: #ffe4ee;
+		--colorMockBodyBackground: #333;
 		--colorRed: #f41606;
 		--colorSecondaryButtonBackground: #444;
 		--colorText: #fff;
@@ -74,10 +78,17 @@ select {
 }
 
 menu {
+	position: fixed;
+	z-index: 100;
+	top: 0;
+	left: 0;
 	display: flex;
+	width: 100%;
 	align-items: flex-end;
-	padding-bottom: 24px;
+	padding: 20px 16px;
+	background: var(--colorHeaderBackground);
 	gap: 16px;
+	border-bottom: 1px solid rgba(0, 0, 0, 0.1);
 
 	img {
 		width: 140px;
@@ -97,6 +108,7 @@ menu {
 			padding: 4px;
 			margin-top: 2px;
 			font-size: 11px;
+			background: var(--colorComboBoxHeaderBackground);
 		}
 	}
 
@@ -127,6 +139,7 @@ menu {
 main {
 	display: flex;
 	align-items: flex-start;
+	margin-top: 64px;
 
 	> table {
 		border-collapse: collapse;
@@ -146,7 +159,7 @@ main {
 
 .PayloadViewer {
 	position: sticky;
-	top: 0;
+	top: 64px;
 	width: 50%;
 	margin-left: 16px;
 

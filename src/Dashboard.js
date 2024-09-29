@@ -60,7 +60,7 @@ function DevPanel(brokersByMethod, cookies, comments, corsAllowed) {
 	return (
 		r('div', null,
 			r('menu', null,
-				r('img', { src: 'mockaton-logo.svg', width: 160, alt: 'Mockaton Logo' }),
+				r('img', { src: '/mockaton-logo.svg', width: 160, alt: Strings.title }),
 				r(CookieSelector, { list: cookies }),
 				r(BulkSelector, { comments }),
 				r(CorsCheckbox, { corsAllowed }),

@@ -5,16 +5,16 @@
 @media (prefers-color-scheme: light) {
 	:root {
 		--color4xxBackground: #ffedd1;
-		--colorAccent: #0171dd;
+		--colorAccent: #1E88E5;
 		--colorBackground: #fff;
 		--colorCodeBackground: #fafafa;
 		--colorComboBoxBackground: #fafafa;
 		--colorDisabled: #222;
 		--colorHover: #dfefff;
-		--colorLabel: #777;
+		--colorLabel: #666;
 		--colorLightRed: #ffe4ee;
 		--colorRed: #da0f00;
-		--colorSecondaryButtonBackground: #f0f0f0;
+		--colorSecondaryButtonBackground: #fafafa;
 		--colorText: #000;
 	}
 }
@@ -73,26 +73,6 @@ select {
 	}
 }
 
-
-main {
-	display: flex;
-	align-items: flex-start;
-
-	> table {
-		border-collapse: collapse;
-
-		th {
-			padding-top: 20px;
-			padding-bottom: 2px;
-			text-align: left;
-		}
-
-		tr {
-			border-bottom: 2px solid transparent;
-		}
-	}
-}
-
 menu {
 	display: flex;
 	align-items: flex-end;
@@ -101,13 +81,13 @@ menu {
 
 	img {
 		width: 140px;
-		margin-right: 24px;
+		margin-right: 76px;
+		margin-left: -1px;
 	}
 
 	label {
 		span {
 			display: block;
-			padding-left: 7px;
 			color: var(--colorLabel);
 			font-size: 11px;
 		}
@@ -131,6 +111,7 @@ menu {
 		&:hover {
 			background: var(--colorRed);
 			color: white;
+			box-shadow: var(--boxShadow1);
 		}
 	}
 
@@ -141,6 +122,27 @@ menu {
 		gap: 4px;
 	}
 }
+
+
+main {
+	display: flex;
+	align-items: flex-start;
+
+	> table {
+		border-collapse: collapse;
+
+		th {
+			padding-top: 20px;
+			padding-bottom: 2px;
+			text-align: left;
+		}
+
+		tr {
+			border-bottom: 2px solid transparent;
+		}
+	}
+}
+
 
 .PayloadViewer {
 	position: sticky;
@@ -160,6 +162,8 @@ menu {
 			max-height: calc(100vh - 160px);
 			padding: 12px;
 			margin-top: 6px;
+			box-shadow: var(--boxShadow1);
+			border-radius: 4px;
 			background: var(--colorCodeBackground);
 			font-family: monospace;
 		}
@@ -172,6 +176,7 @@ menu {
 	display: inline-block;
 	width: 280px;
 	padding: 8px 6px;
+	border-radius: 4px;
 	color: var(--colorAccent);
 	text-decoration: none;
 
@@ -220,6 +225,7 @@ menu {
 		fill: var(--colorText);
 		border-radius: 50%;
 		background: var(--colorSecondaryButtonBackground);
+		box-shadow: var(--boxShadow1);
 
 		&:hover {
 			background: var(--colorHover);
@@ -244,6 +250,7 @@ menu {
 
 	> span {
 		padding: 4px;
+		box-shadow: var(--boxShadow1);
 		font-size: 10px;
 		color: var(--colorText);
 		border-radius: 2px;

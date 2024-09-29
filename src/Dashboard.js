@@ -60,7 +60,7 @@ function DevPanel(brokersByMethod, cookies, comments, corsAllowed) {
 	return (
 		r('div', null,
 			r('menu', null,
-				r('img', { src: 'mockaton-logo.svg', width: 160 }),
+				r('img', { src: 'mockaton-logo.svg', width: 160, alt: 'Mockaton Logo' }),
 				r(CookieSelector, { list: cookies }),
 				r(BulkSelector, { comments }),
 				r(CorsCheckbox, { corsAllowed }),
@@ -183,7 +183,7 @@ function PreviewLink({ method, urlMask }) {
 
 function updatePayloadViewer(body, mime) {
 	if (mime === 'application/json' && window.Prism)
-		refPayloadViewer.current.innerHTML = Prism.highlight(body, Prism.languages.json, 'json')
+		refPayloadViewer.current.innerHTML = window.Prism.highlight(body, window.Prism.languages.json, 'json')
 	else
 		refPayloadViewer.current.innerText = body
 }

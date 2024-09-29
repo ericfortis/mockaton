@@ -22,7 +22,7 @@ export const Config = Object.seal({
 	corsAllowed: false,
 	corsOrigins: ['*'],
 	corsMethods: StandardMethods,
-	corsHeaders: [],
+	corsHeaders: ['content-type'],
 	corsExposedHeaders: [],
 	corsCredentials: true,
 	corsMaxAge: 0,

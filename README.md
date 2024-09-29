@@ -269,7 +269,7 @@ Config.corsAllowed = true
 // Defaults when `corsAllowed === true`
 Config.corsOrigins = ['*']
 Config.corsMethods = ['GET', 'PUT', 'DELETE', 'POST', 'PATCH', 'HEAD', 'OPTIONS', 'TRACE', 'CONNECT']
-Config.corsHeaders = []
+Config.corsHeaders = ['content-type']
 Config.corsCredentials = true
 Config.corsMaxAge = 0
 Config.corsExposedHeaders = []

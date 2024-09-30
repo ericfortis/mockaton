@@ -10,11 +10,10 @@
 		--colorComboBoxBackground: #fafafa;
 		--colorComboBoxHeaderBackground: #fff;
 		--colorDisabled: #222;
-		--colorHeaderBackground: #f7f7f7;
+		--colorHeaderBackground: #fff;
 		--colorHover: #dfefff;
 		--colorLabel: #666;
 		--colorLightRed: #ffe4ee;
-		--colorMockBodyBackground: #fafafa;
 		--colorRed: #da0f00;
 		--colorSecondaryButtonBackground: #fafafa;
 		--colorText: #000;
@@ -28,11 +27,10 @@
 		--colorComboBoxBackground: #252525;
 		--colorComboBoxHeaderBackground: #222;
 		--colorDisabled: #aaa;
-		--colorHeaderBackground: #0b0b0b;
+		--colorHeaderBackground: #141414;
 		--colorHover: #023661;
 		--colorLabel: #aaa;
 		--colorLightRed: #ffe4ee;
-		--colorMockBodyBackground: #333;
 		--colorRed: #f41606;
 		--colorSecondaryButtonBackground: #444;
 		--colorText: #fff;
@@ -85,15 +83,13 @@ menu {
 	display: flex;
 	width: 100%;
 	align-items: flex-end;
-	padding: 20px 16px;
-	border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+	padding: 16px 16px;
 	background: var(--colorHeaderBackground);
 	gap: 16px;
 
 	img {
 		width: 140px;
-		margin-right: 76px;
-		margin-left: -1px;
+		margin-right: 75px;
 	}
 
 	label {
@@ -139,7 +135,7 @@ menu {
 main {
 	display: flex;
 	align-items: flex-start;
-	margin-top: 64px;
+	margin-top: 56px;
 
 	> table {
 		border-collapse: collapse;
@@ -161,7 +157,7 @@ main {
 	position: sticky;
 	top: 80px;
 	width: 50%;
-	margin-left: 16px;
+	margin-left: 20px;
 
 	h2 {
 		padding-top: 20px;
@@ -171,10 +167,9 @@ main {
 		overflow: auto;
 		max-height: calc(100vh - 160px);
 		padding: 12px;
+		padding-left: 0;
 		margin-top: 6px;
-		box-shadow: var(--boxShadow1);
 		border-radius: 4px;
-		background: var(--colorMockBodyBackground);
 		white-space: pre;
 		tab-size: 2;
 

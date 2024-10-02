@@ -191,7 +191,7 @@ function ProgressBar() {
 }
 
 function updatePayloadViewer(body, mime) {
-	if (mime === 'application/json' && window.Prism)
+	if (mime === 'application/json' && window?.Prism.languages)
 		refPayloadViewer.current.innerHTML = window.Prism.highlight(body, window.Prism.languages.json, 'json')
 	else
 		refPayloadViewer.current.innerText = body

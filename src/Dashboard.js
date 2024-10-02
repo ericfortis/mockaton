@@ -172,9 +172,11 @@ function PreviewLink({ method, urlMask }) {
 					document.querySelector(`.${CSS.PreviewLink}.${CSS.chosen}`)?.classList.remove(CSS.chosen)
 					this.classList.add(CSS.chosen)
 					clearTimeout(spinner)
-					updatePayloadViewer(
-						await res.text() || Strings.empty_response_body,
-						res.headers.get('content-type'))
+					const mime = res.headers.get('content-type')
+					if (mime.startsWith('image/')) // naively assumes GET.200
+						renderPayloadImage(this.href)
+					else
+						updatePayloadViewer(await res.text() || Strings.empty_response_body, mime)
 					refPayloadFile.current.innerText = this.closest('tr').querySelector('select').value
 				}
 				catch (error) {
@@ -188,6 +190,11 @@ function ProgressBar() {
 	return (
 		r('div', { className: CSS.ProgressBar },
 			r('div', { style: { animationDuration: '1000ms' } }))) // TODO from Config.delay - 180
+}
+
+function renderPayloadImage(href) {
+	empty(refPayloadViewer.current)
+	refPayloadViewer.current.append(r('img', { src: href }))
 }
 
 function updatePayloadViewer(body, mime) {

@@ -360,4 +360,3 @@ await mockaton.reset()
 ## TODO
 - Refactor Tests
 - Dashboard. List `staticDir` and indicate if it’s overriding some mock.
-- Dashboard. Handle non-json Mock Preview (such as images)

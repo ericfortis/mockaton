@@ -1,1 +1,4 @@
-"This mock is for /api/user"
+{
+	"_": "This mock is for /api/user",
+	"name": "John"
+}

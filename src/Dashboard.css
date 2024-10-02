@@ -23,7 +23,7 @@
 	:root {
 		--color4xxBackground: #403630;
 		--colorAccent: #1f91ff;
-		--colorBackground: #141414;
+		--colorBackground: #161616;
 		--colorComboBoxBackground: #252525;
 		--colorComboBoxHeaderBackground: #222;
 		--colorDisabled: #aaa;
@@ -168,13 +168,15 @@ main {
 		max-height: calc(100vh - 160px);
 		padding: 12px;
 		padding-left: 0;
-		margin-top: 6px;
-		border-radius: 4px;
-		white-space: pre;
-		tab-size: 2;
 
-		code * {
+		code {
+			white-space: pre;
+			tab-size: 2;
 			font-family: monospace;
+
+			* {
+				font-family: monospace;
+			}
 		}
 	}
 }
@@ -306,6 +308,7 @@ main {
 /* 
  * Prism 
  */
+
 
 @media (prefers-color-scheme: dark) {
 	.token.cdata, .token.comment, .token.doctype, .token.prolog {

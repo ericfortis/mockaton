@@ -93,18 +93,22 @@ function CookieSelector({ list }) {
 }
 
 function BulkSelector({ comments }) {
+	const disabled = !comments.length
+	const list = disabled
+		? []
+		: [Strings.select_one].concat(comments)
 	return (
 		r('label', null,
 			r('span', null, Strings.bulk_select_by_comment),
 			r('select', {
 				autocomplete: 'off',
-				disabled: comments.length <= 1,
+				disabled,
 				onChange() {
 					mockaton.bulkSelectByComment(this.value)
 						.then(init)
 						.catch(console.error)
 				}
-			}, [Strings.select_one].concat(comments).map(item =>
+			}, list.map(item =>
 				r('option', {
 					value: item
 				}, item)))))

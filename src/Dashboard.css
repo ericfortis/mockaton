@@ -70,11 +70,7 @@ select {
 		background: var(--colorHover);
 	}
 	&:disabled {
-		appearance: none;
-		background: transparent;
-		cursor: default;
-		color: var(--colorDisabled);
-		opacity: 1;
+		cursor: not-allowed;
 	}
 }
 
@@ -88,7 +84,7 @@ menu {
 	align-items: flex-end;
 	padding: 20px 16px;
 	background: var(--colorHeaderBackground);
-	box-shadow: var(--boxShadow1);
+	border-bottom: 1px solid rgba(127, 127, 127, 0.17);
 	gap: 16px;
 
 	img {
@@ -216,6 +212,13 @@ main {
 
 	&.status4xx {
 		background: var(--color4xxBackground);
+	}
+	&:disabled {
+		appearance: none;
+		background: transparent;
+		cursor: default;
+		color: var(--colorDisabled);
+		opacity: 1;
 	}
 }
 

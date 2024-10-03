@@ -55,6 +55,7 @@ body {
 }
 
 select {
+	font-size: 100%;
 	background: var(--colorComboBoxBackground);
 	color: var(--colorText);
 	cursor: pointer;

@@ -7,7 +7,7 @@
 		--color4xxBackground: #ffedd1;
 		--colorAccent: #1e88e5;
 		--colorBackground: #fff;
-		--colorHeaderBackground: #fff;
+		--colorHeaderBackground: #eee;
 		--colorComboBoxBackground: #fafafa;
 		--colorComboBoxHeaderBackground: #fff;
 		--colorDisabled: #222;
@@ -85,6 +85,7 @@ menu {
 	align-items: flex-end;
 	padding: 20px 16px;
 	background: var(--colorHeaderBackground);
+	box-shadow: var(--boxShadow1);
 	gap: 16px;
 
 	img {

@@ -10,7 +10,7 @@
 		--colorHeaderBackground: #eee;
 		--colorComboBoxBackground: #fafafa;
 		--colorComboBoxHeaderBackground: #fff;
-		--colorDisabled: #222;
+		--colorDisabled: #555;
 		--colorHover: #dfefff;
 		--colorLabel: #666;
 		--colorLightRed: #ffe4ee;
@@ -27,7 +27,7 @@
 		--colorHeaderBackground: #090909;
 		--colorComboBoxBackground: #252525;
 		--colorComboBoxHeaderBackground: #222;
-		--colorDisabled: #aaa;
+		--colorDisabled: #bbb;
 		--colorHover: #023661;
 		--colorLabel: #aaa;
 		--colorLightRed: #ffe4ee;
@@ -70,9 +70,11 @@ select {
 		background: var(--colorHover);
 	}
 	&:disabled {
+		appearance: none;
 		background: transparent;
-		cursor: not-allowed;
+		cursor: default;
 		color: var(--colorDisabled);
+		opacity: 1;
 	}
 }
 
@@ -150,7 +152,7 @@ main {
 		}
 
 		tr {
-			border-bottom: 2px solid transparent;
+			border-top: 1px solid transparent;
 		}
 	}
 }

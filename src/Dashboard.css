@@ -7,10 +7,10 @@
 		--color4xxBackground: #ffedd1;
 		--colorAccent: #1e88e5;
 		--colorBackground: #fff;
+		--colorHeaderBackground: #fff;
 		--colorComboBoxBackground: #fafafa;
 		--colorComboBoxHeaderBackground: #fff;
 		--colorDisabled: #222;
-		--colorHeaderBackground: #fff;
 		--colorHover: #dfefff;
 		--colorLabel: #666;
 		--colorLightRed: #ffe4ee;
@@ -24,10 +24,10 @@
 		--color4xxBackground: #403630;
 		--colorAccent: #1f91ff;
 		--colorBackground: #161616;
+		--colorHeaderBackground: #090909;
 		--colorComboBoxBackground: #252525;
 		--colorComboBoxHeaderBackground: #222;
 		--colorDisabled: #aaa;
-		--colorHeaderBackground: #141414;
 		--colorHover: #023661;
 		--colorLabel: #aaa;
 		--colorLightRed: #ffe4ee;
@@ -83,12 +83,13 @@ menu {
 	display: flex;
 	width: 100%;
 	align-items: flex-end;
-	padding: 16px 16px;
+	padding: 20px 16px;
 	background: var(--colorHeaderBackground);
 	gap: 16px;
 
 	img {
 		width: 140px;
+		align-self: center;
 		margin-right: 75px;
 	}
 
@@ -135,7 +136,7 @@ menu {
 main {
 	display: flex;
 	align-items: flex-start;
-	margin-top: 56px;
+	margin-top: 64px;
 
 	> table {
 		border-collapse: collapse;
@@ -155,7 +156,7 @@ main {
 
 .PayloadViewer {
 	position: sticky;
-	top: 60px;
+	top: 72px;
 	width: 50%;
 	margin-left: 20px;
 
@@ -165,9 +166,8 @@ main {
 
 	pre {
 		overflow: auto;
-		max-height: calc(100vh - 160px);
-		padding: 12px;
-		padding-left: 0;
+		max-height: calc(100vh - 72px);
+		padding-top: 12px;
 
 		code {
 			white-space: pre;

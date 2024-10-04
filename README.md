@@ -150,6 +150,8 @@ export default function optionalName(request, response) {
 }
 ```
 
+If you need to serve a static `.js` file, put it in `Config.staticDir`.
+
 
 ## File Name Convention
 
@@ -202,6 +204,16 @@ api/foo/.GET.200.json
 ```
 
 ---
+
+## `Config.staticDir`
+Files under `Config.staticDir` don’t use the filename convention.
+Also, they take precedence over the `GET` mocks in `Config.mockDir`.
+
+For example, if you have two files for `GET /foo/bar.jpg`
+```
+my-static-dir/foo/bar.jpg
+ my-mocks-dir/foo/bar.jpg.GET.200.jpg // Unreacheable
+```
 
 
 ## `Config.proxyFallback`
@@ -360,3 +372,4 @@ await mockaton.reset()
 ## TODO
 - Refactor Tests
 - Dashboard. List `staticDir` and indicate if it’s overriding some mock.
+- jsonc, json5

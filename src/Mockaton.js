@@ -46,13 +46,13 @@ async function onRequest(req, response) {
 	if (isPreflight(req))
 		sendNoContent(response)
 
-	else if (method === 'GET' && apiGetRequests.has(url))
-		apiGetRequests.get(url)(req, response)
-
 	else if (method === 'PATCH' && apiPatchRequests.has(url))
 		await apiPatchRequests.get(url)(req, response)
 
-	else if (isStatic(req))
+	else if (method === 'GET' && apiGetRequests.has(url))
+		apiGetRequests.get(url)(req, response)
+
+	else if (method === 'GET' && isStatic(req)) // TESTME
 		await dispatchStatic(req, response)
 
 	else

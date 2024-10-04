@@ -5,11 +5,16 @@ import { sendFile, sendPartialContent, sendNotFound } from './utils/http-respons
 
 
 export function isStatic(req) {
-	return Config.staticDir && resolvePath(req)
+	if (!Config.staticDir)
+		return false
+
+	const f = resolvePath(req.url)
+	return !Config.ignore.test(f) // TESTME
+		&& Boolean(f)
 }
 
 export async function dispatchStatic(req, response) {
-	const file = resolvePath(req)
+	const file = resolvePath(req.url)
 	if (!file)
 		sendNotFound(response)
 	else if (req.headers.range)
@@ -18,8 +23,8 @@ export async function dispatchStatic(req, response) {
 		sendFile(response, file)
 }
 
-function resolvePath(req) {
-	let candidate = join(Config.staticDir, req.url)
+function resolvePath(url) {
+	let candidate = join(Config.staticDir, url)
 	if (isDirectory(candidate))
 		candidate += '/index.html'
 	if (isFile(candidate))

@@ -52,7 +52,7 @@ async function onRequest(req, response) {
 	else if (method === 'GET' && apiGetRequests.has(url))
 		apiGetRequests.get(url)(req, response)
 
-	else if (method === 'GET' && isStatic(req)) // TESTME
+	else if (method === 'GET' && isStatic(req))
 		await dispatchStatic(req, response)
 
 	else

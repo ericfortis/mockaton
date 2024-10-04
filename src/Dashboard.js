@@ -14,6 +14,7 @@ const Strings = {
 	mock: 'Mock',
 	reset: 'Reset',
 	select_one: 'Select One',
+	static: 'Static',
 	title: 'Mockaton'
 }
 
@@ -25,6 +26,7 @@ const CSS = {
 	PayloadViewer: 'PayloadViewer',
 	PreviewLink: 'PreviewLink',
 	ProgressBar: 'ProgressBar',
+	StaticFilesList: 'StaticFilesList',
 
 	bold: 'bold',
 	chosen: 'chosen',
@@ -42,20 +44,21 @@ function init() {
 		mockaton.listMocks(),
 		mockaton.listCookies(),
 		mockaton.listComments(),
-		mockaton.getCorsAllowed()
+		mockaton.getCorsAllowed(),
+		mockaton.listStaticFiles()
 	].map(api => api.then(response => response.ok && response.json())))
 		.then(App)
 		.catch(console.error)
 }
 init()
 
-function App([brokersByMethod, cookies, comments, corsAllowed]) {
+function App([brokersByMethod, cookies, comments, corsAllowed, staticFiles]) {
 	empty(document.body)
 	createRoot(document.body).render(
-		DevPanel(brokersByMethod, cookies, comments, corsAllowed))
+		DevPanel(brokersByMethod, cookies, comments, corsAllowed, staticFiles))
 }
 
-function DevPanel(brokersByMethod, cookies, comments, corsAllowed) {
+function DevPanel(brokersByMethod, cookies, comments, corsAllowed, staticFiles) {
 	document.title = Strings.title
 	return (
 		r('div', null,
@@ -71,7 +74,8 @@ function DevPanel(brokersByMethod, cookies, comments, corsAllowed) {
 				r('div', { className: CSS.PayloadViewer },
 					r('h2', { ref: refPayloadFile }, Strings.mock),
 					r('pre', null,
-						r('code', { ref: refPayloadViewer }, Strings.click_link_to_preview))))))
+						r('code', { ref: refPayloadViewer }, Strings.click_link_to_preview)))),
+			r(StaticFilesList, { staticFiles })))
 }
 
 function CookieSelector({ list }) {
@@ -140,6 +144,24 @@ function ResetButton() {
 	)
 }
 
+function StaticFilesList({ staticFiles }) {
+	console.log(staticFiles)
+	if (!staticFiles.length)
+		return null
+	return (
+		r('details', {
+				open: true,
+				className: CSS.StaticFilesList
+			},
+			r('summary', null, Strings.static),
+			r('ul', null,
+				staticFiles.map(f =>
+					r('li', null,
+						r('a', {
+							href: f,
+							target: '_blank'
+						}, f))))))
+}
 
 
 function SectionByMethod({ method, brokers }) {

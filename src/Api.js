@@ -8,6 +8,7 @@ import { cookie } from './cookie.js'
 import { Config } from './Config.js'
 import { DF, API } from './ApiConstants.js'
 import { parseJSON } from './utils/http-request.js'
+import { listFilesRecursively } from './utils/fs.js'
 import * as mockBrokersCollection from './mockBrokersCollection.js'
 import { sendOK, sendBadRequest, sendJSON, sendFile } from './utils/http-response.js'
 
@@ -23,7 +24,8 @@ export const apiGetRequests = new Map([
 	[API.mocks, listMockBrokers],
 	[API.cookies, listCookies],
 	[API.comments, listComments],
-	[API.cors, getIsCorsAllowed]
+	[API.cors, getIsCorsAllowed],
+	[API.static, listStaticFiles]
 ])
 
 export const apiPatchRequests = new Map([
@@ -123,6 +125,20 @@ async function setCorsAllowed(req, response) {
 	try {
 		Config.corsAllowed = await parseJSON(req)
 		sendOK(response)
+	}
+	catch (error) {
+		sendBadRequest(response, error)
+	}
+}
+
+
+// TESTME
+async function listStaticFiles(req, response) {
+	try {
+		const files = Config.staticDir
+			? listFilesRecursively(Config.staticDir).filter(f => !Config.ignore.test(f))
+			: []
+		sendJSON(response, files)
 	}
 	catch (error) {
 		sendBadRequest(response, error)

@@ -52,6 +52,10 @@ export class Commander {
 		return this.#patch(API.cors, value)
 	}
 
+	listStaticFiles() {
+		return this.#get(API.static)
+	}
+
 
 	#get(api) {
 		return fetch(this.#addr + api)

@@ -9,7 +9,8 @@ export const API = {
 	reset: MOUNT + '/reset',
 	cookies: MOUNT + '/cookies',
 	fallback: MOUNT + '/fallback',
-	cors: MOUNT + '/cors'
+	cors: MOUNT + '/cors',
+	static: MOUNT + '/static'
 }
 
 export const DF = { // Dashboard Fields (XHR)

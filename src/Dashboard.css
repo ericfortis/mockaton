@@ -88,9 +88,9 @@ menu {
 	gap: 16px;
 
 	img {
-		width: 140px;
+		width: 130px;
 		align-self: center;
-		margin-right: 75px;
+		margin-right: 85px;
 	}
 
 	label {
@@ -309,6 +309,30 @@ main {
 
 .bold {
 	font-weight: bold;
+}
+
+.StaticFilesList {
+	margin-top: 40px;
+
+	summary {
+		margin-bottom: 8px;
+		cursor: pointer;
+	}
+
+	li {
+		list-style: none;
+	}
+
+	a {
+		color: var(--colorAccent);
+		text-decoration: none;
+		padding: 3px 0;
+		display: inline-block;
+
+		&:hover {
+			text-decoration: underline;
+		}
+	}
 }
 
 

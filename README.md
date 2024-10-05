@@ -51,7 +51,7 @@ _Reset_ button is for registering newly added, removed, or renamed mocks.
 ## Alternatives
 - Chrome DevTools allows for [overriding responses](https://developer.chrome.com/docs/devtools/overrides)
 - Reverse Proxies such as [Burp](https://portswigger.net/burp) are also handy for overriding responses.
-- Storybook’s [MSW](https://storybook.js.org/addons/msw-storybook-addon)
+- [Mock Server Worker](https://mswjs.io)
 
 ### Caveats
 - Syncing the mocks, but the browser extension mentioned above helps.
@@ -84,11 +84,11 @@ interface Config {
   mocksDir: string
   ignore?: RegExp // Defaults to /(\.DS_Store|~)$/
 
-  staticDir?: string // These files don’t use the mock-filename convention
+  staticDir?: string
 
   host?: string, // Defaults to 'localhost'
   port?: number // Defaults to 0, which means auto-assigned
-  proxyFallback?: string // e.g. http://localhost:9999 Target for relaying routes without mocks
+  proxyFallback?: string // Target for relaying routes without mocks
 
   delay?: number // Defaults to 1200 (ms)
   cookies?: { [label: string]: string }
@@ -150,14 +150,20 @@ export default function optionalName(request, response) {
 }
 ```
 
-If you need to serve a static `.js` file, put it in `Config.staticDir`.
+If you need to serve a static `.js` file, put it in your `Config.staticDir`.
 
 
 ## File Name Convention
-
+This convention is only for files within your `Config.mocksDir`.
 
 ### Extension
-`.Method.ResponseStatusCode.FileExt`
+
+The last 3 dots are reserved for the HTTP Method,
+Response Status Code, and the File Extension.
+
+```
+api/user.GET.200.json
+```
 
 
 ### Dynamic Parameters
@@ -204,8 +210,21 @@ api/foo/.GET.200.json
 ```
 
 ---
+## Config
 
-## `Config.staticDir`
+### `proxyFallback`
+Lets you specify a target server for serving routes you don’t have mocks for.
+For example, `Config.proxyFallback = 'http://example.com:8080'`
+
+
+### `delay` 🕓
+The clock icon next to the mock selector is a checkbox for delaying a
+particular response. They are handy for testing spinners.
+
+The delay is globally configurable via `Config.delay = 1200` (milliseconds).
+
+
+### `staticDir`
 Files under `Config.staticDir` don’t use the filename convention.
 Also, they take precedence over the `GET` mocks in `Config.mockDir`.
 
@@ -215,29 +234,13 @@ my-static-dir/foo/bar.jpg
  my-mocks-dir/foo/bar.jpg.GET.200.jpg // Unreacheable
 ```
 
-
-## `Config.proxyFallback`
-Lets you specify a target server for serving routes you don’t have mocks for.
-
-
-## `Config.delay` 🕓
-The clock icon next to the mock selector is a checkbox for delaying a
-particular response. They are handy for testing spinners.
-
-The delay is globally configurable via `Config.delay = 1200` (milliseconds).
-
-
-## `Config.staticDir`
-These files don’t use the mock filename convention. They take precedence
-over mocks. Also, they get served on the same address, so no CORS issues.
-
 Use Case 1: If you have a bunch of static assets you don’t want to add `.GET.200.ext`
 
 Use Case 2: For a standalone demo server. For example,
 build your frontend bundle, and serve it from Mockaton.
 
 
-## `Config.cookies`
+### `cookies`
 The selected cookie is sent in every response in the `Set-Cookie` header.
 
 The key is just a label used for selecting a particular cookie in the
@@ -261,7 +264,7 @@ Config.cookies = {
 }
 ```
 
-## `Config.extraHeaders`
+### `extraHeaders`
 They are applied last, right before ending the response.
 In other words, they can overwrite the `Content-Type`. Note
 that it's an array and the header name goes in even indices.
@@ -274,14 +277,14 @@ Config.extraHeaders = [
 ]
 ```
 
-## `Config.extraMimes`
+### `extraMimes`
 ```js
 Config.extraMimes = {
   jpg: 'application/jpeg'
 }
 ```
 
-## `Config.corsAllowed`
+### `corsAllowed`
 ```js
 Config.corsAllowed = true
 
@@ -294,7 +297,7 @@ Config.corsMaxAge = 0 // seconds to cache the preflight req
 Config.corsExposedHeaders = [] // headers you need to access in client-side JS
 ```
 
-## `Config.onReady`
+### `onReady`
 This is a callback `(dashboardAddress: string) => void`, which defaults to
 trying to open the dashboard in your default browser in macOS and Windows.
 
@@ -368,8 +371,13 @@ but `Config.proxyFallback` and `Config.corsAllowed` are not affected.
 await mockaton.reset()
 ```
 
+<div style="display: flex; align-items: center; gap: 20px">
+  <img src="./sample-mocks/api/user/avatar.GET.200.png" width="170"/>
+  <p style="font-size: 18px">“Use Mockaton” - Albert Einstein</p>
+</div>
+
 
 ## TODO
 - Refactor Tests
-- Dashboard. Indicate if some static it’s overriding a mock.
-- jsonc, json5
+- Dashboard. Indicate if some file on `staticDir` is overriding a mock.
+- jsonc, json5?

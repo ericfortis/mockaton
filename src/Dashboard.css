@@ -326,7 +326,7 @@ main {
 	a {
 		color: var(--colorAccent);
 		text-decoration: none;
-		padding: 3px 0;
+		padding: 6px 0;
 		display: inline-block;
 
 		&:hover {

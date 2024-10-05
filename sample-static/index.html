@@ -3,11 +3,35 @@
 <head>
 	<meta charset="UTF-8">
 	<meta content="width=device-width" name="viewport">
+	<link rel="icon" href="data:">
 	<title>Title</title>
 </head>
 <body>
-<h1>Sample</h1>
+<h1>Welcome!</h1>
 <video src="assets/video.mp4" width="720" controls></video>
-<script src="assets/app.js"></script>
+
+<h2>/api/user</h2>
+<pre></pre>
+
+<script>
+	(async () => {
+		let output = ''
+		try {
+			const response = await fetch('/api/user')
+			if (response.ok) {
+				const json = await response.json()
+				output = JSON.stringify(json, null, 2)
+			}
+			else
+				throw response.status
+		}
+		catch (error) {
+			output = 'Error: ' + error
+		}
+		finally {
+			document.querySelector('pre').innerText = output
+		}
+	})()
+</script>
 </body>
 </html>

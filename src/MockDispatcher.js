@@ -25,25 +25,19 @@ export async function dispatchMock(req, response) {
 		console.log(decodeURIComponent(req.url), ' → ', file)
 		const filePath = join(Config.mocksDir, file)
 
-		let mockBody
-		if (file.endsWith('.js')) {
-			response.setHeader('Content-Type', mimeFor('.json'))
-			const jsExport = (await import(filePath + '?' + Date.now())).default // date for cache busting
-			mockBody = typeof jsExport === 'function'
-				? await jsExport(req, response)
-				: JSON.stringify(jsExport, null, 2)
-		}
-		else {
-			response.setHeader('Content-Type', mimeFor(file))
-			mockBody = broker.isTemp500
-				? ''
-				: read(filePath)
-		}
+		response.statusCode = status
 
 		if (cookie.getCurrent())
 			response.setHeader('Set-Cookie', cookie.getCurrent())
 
-		response.writeHead(status, Config.extraHeaders)
+		for (let i = 0; i < Config.extraHeaders.length; i += 2)
+			response.setHeader(Config.extraHeaders[i], Config.extraHeaders[i + 1])
+
+		const [mime, mockBody] = broker.isTemp500
+			? temp500Plugin(filePath, req, response)
+			: await preprocessPlugins(filePath, req, response)
+
+		response.setHeader('Content-Type', mime)
 		setTimeout(() => response.end(mockBody), delay)
 	}
 	catch (error) {
@@ -54,4 +48,29 @@ export async function dispatchMock(req, response) {
 		else
 			sendInternalServerError(response, error)
 	}
+}
+
+// TODO expose to userland for custom plugins such yaml -> json
+async function preprocessPlugins(filePath, req, response) {
+	if (filePath.endsWith('.js') || filePath.endsWith('.ts'))
+		return await jsPlugin(filePath, req, response)
+	return readPlugin(filePath, req, response)
+}
+
+function temp500Plugin(filePath) {
+	return [mimeFor(filePath), '']
+}
+
+async function jsPlugin(filePath, req, response) {
+	const jsExport = (await import(filePath + '?' + Date.now())).default // date for cache busting
+	const mockBody = typeof jsExport === 'function'
+		? await jsExport(req, response)
+		: JSON.stringify(jsExport, null, 2)
+	const mime = response.getHeader('Content-Type') // jsFunc are allowed to set it
+		|| mimeFor('.json')
+	return [mime, mockBody]
+}
+
+function readPlugin(filePath) {
+	return [mimeFor(filePath), read(filePath)]
 }

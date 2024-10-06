@@ -24,7 +24,6 @@ const fixtureCustomMime = [
 	'api/custom-mime.GET.200.my_custom_extension',
 	'Custom Extension and MIME'
 ]
-
 const fixtureNonDefaultInName = [
 	'/api/the-route',
 	'api/the-route(default).GET.200.json',
@@ -35,7 +34,6 @@ const fixtureDefaultInName = [
 	'api/the-route(default).GET.200.json',
 	'default my route body content'
 ]
-
 const fixtureDelayed = [
 	'/api/delayed',
 	'api/delayed.GET.200.json',

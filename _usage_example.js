@@ -1,5 +1,3 @@
-#!/usr/bin/env node
-
 import { join } from 'node:path'
 import { Mockaton, jwtCookie } from './index.js' // from 'mockaton'
 

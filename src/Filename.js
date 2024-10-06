@@ -19,13 +19,16 @@ export function filenameIsValid(file) {
 		console.error(error, file)
 	return !error
 }
+
 function validateFilename(file) {
 	const tokens = file.replace(reComments, '').split('.')
 	if (tokens.length < 4)
 		return 'Invalid Filename Convention'
+
 	const { status, method } = parseFilename(file)
 	if (!responseStatusIsValid(status))
 		return `Invalid HTTP Response Status: "${status}"`
+
 	if (!httpMethods.includes(method))
 		return `Unrecognized HTTP Method: "${method}"`
 }

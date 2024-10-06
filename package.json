@@ -9,6 +9,10 @@
 	"repository": "https://github.com/ericfortis/mockaton",
 	"scripts": {
 		"test": "node --test",
-		"demo": "./_usage_example.js"
+		"demo": "node _usage_example.js",
+		"demo:ts": "node --import=tsx _usage_example.js"
+	},
+	"optionalDependencies": {
+		"tsx": "4.19.1"
 	}
 }

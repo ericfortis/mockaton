@@ -145,7 +145,6 @@ function ResetButton() {
 }
 
 function StaticFilesList({ staticFiles }) {
-	console.log(staticFiles)
 	if (!staticFiles.length)
 		return null
 	return (

@@ -64,9 +64,9 @@ export class MockBroker {
 	}
 
 	extractComments() {
-		let comments = []
+		const comments = []
 		for (const file of this.mocks)
-			comments = comments.concat(extractComments(file))
+			comments.push(...extractComments(file))
 		return comments
 	}
 

@@ -46,7 +46,7 @@ export async function dispatchMock(req, response) {
 		else if (error.code === 'ENOENT') // mock-file has been deleted
 			sendNotFound(response)
 		else if (error.code === 'ERR_UNKNOWN_FILE_EXTENSION') {
-			if (error.toString().includes('Unknown file extension ".ts"'))
+			if (error.toString().includes('Unknown file extension ".ts'))
 				console.log('Looks like you need a TypeScript compiler\n',
 					'    npm install tsx\n',
 					'    node --import=tsx my-mockaton.js\n')

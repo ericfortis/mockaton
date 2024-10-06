@@ -44,7 +44,7 @@ _Reset_ button is for registering newly added, removed, or renamed mocks.
 - As API documentation
 - If you commit the mocks in the repo, when bisecting a bug, you don’t
   have to sync the frontend with many backend repos
-  - Similarly, I can check out long-lived branches that have old API contracts
+  - Similarly, it allows for checking out long-lived branches that have old API contracts
 
 ## Motivation
 - Avoids having to spin up and maintain hefty or complex backends when developing UIs.

@@ -128,12 +128,6 @@ api/user(default).GET.200.json
 ---
 
 ## You can write JSON mocks in JavaScript or TypeScript
-For TypeScript mocks, install [tsx](https://www.npmjs.com/package/tsx) and load it.
-```shell
-npm install --save-dev tsx
-node --import=tsx my-mockaton.js
-```
----
 
 An Object, Array, or String is sent as JSON.
 

@@ -380,7 +380,7 @@ await mockaton.reset()
 
 <div style="display: flex; align-items: center; gap: 20px">
   <img src="./sample-mocks/api/user/avatar.GET.200.png" width="170"/>
-  <p style="font-size: 18px">“Use Mockaton” - Albert Einstein</p>
+  <p style="font-size: 18px">“Use Mockaton”</p>
 </div>
 
 

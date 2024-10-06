@@ -58,8 +58,9 @@ _Reset_ button is for registering newly added, removed, or renamed mocks.
 
 
 ## Basic Usage
+`tsx` is only needed if you want to write mocks in TypeScript
 ```
-npm install mockaton
+npm install mockaton tsx
 ```
 Create a `my-mockaton.js` file
 ```js
@@ -74,7 +75,7 @@ Mockaton({
 ```
 
 ```sh
-node my-mockaton.js
+node --import=tsx my-mockaton.js
 ```
 
 ## Config Options

@@ -14,8 +14,11 @@ can be used for downloading a TAR of your XHR requests following that convention
 
 
 ## Getting Started Demo
-Checkout this repo and run `npm run demo`, which will open the following
-dashboard. Then, explore the [sample-mocks/](./sample-mocks) directory.
+- Checkout this repo
+- `npm install tsx`
+- `npm run demo:ts`
+  which will open the following dashboard
+- Explore the [sample-mocks/](./sample-mocks) directory
 
 <picture>
   <source media="(prefers-color-scheme: light)" srcset="./README-dashboard-light.png">

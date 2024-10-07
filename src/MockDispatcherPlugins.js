@@ -3,14 +3,9 @@ import { mimeFor } from './utils/mime.js'
 import { Config } from './Config.js'
 
 
-const plugins = {
-	'.js': jsToJsonPlugin,
-	'.ts': jsToJsonPlugin
-}
-
 export async function preprocessPlugins(filePath, req, response) {
-	for (const [ext, plugin] of Object.entries({ ...plugins, ...Config.plugins }))
-		if (filePath.endsWith(ext))
+	for (const [regex, plugin] of Config.plugins) // TESTME capitalizePlugin
+		if (regex.test(filePath))
 			return await plugin(filePath, req, response)
 	return defaultPlugin(filePath)
 }

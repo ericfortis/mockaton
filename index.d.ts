@@ -24,7 +24,7 @@ interface Config {
 	extraHeaders?: string[]
 	extraMimes?: { [fileExt: string]: string }
 
-	plugins?: { [fileExt: string]: Plugin }
+	plugins?: [filenameTester: RegExp, plugin: Plugin][]
 
 	corsAllowed?: boolean,
 	corsOrigins: string[]

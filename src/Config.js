@@ -1,5 +1,6 @@
 import { isDirectory } from './utils/fs.js'
 import { openInBrowser } from './utils/openInBrowser.js'
+import { jsToJsonPlugin } from './MockDispatcherPlugins.js'
 import { StandardMethods } from './utils/http-request.js'
 import { validate, is, optional } from './utils/validate.js'
 
@@ -19,7 +20,9 @@ export const Config = Object.seal({
 	extraHeaders: [],
 	extraMimes: {},
 
-	plugins: {},
+	plugins: [
+		[/\.(js|ts)$/, jsToJsonPlugin]
+	],
 
 	corsAllowed: false,
 	corsOrigins: ['*'],
@@ -50,7 +53,7 @@ export function setup(options) {
 		extraHeaders: val => Array.isArray(val) && val.length % 2 === 0,
 		extraMimes: is(Object),
 
-		plugins: is(Object),
+		plugins: Array.isArray,
 
 		corsAllowed: is(Boolean),
 		corsOrigins: validateCorsAllowedOrigins,

@@ -2,7 +2,7 @@
 	"name": "mockaton",
 	"description": "A deterministic server-side for developing and testing frontend clients",
 	"type": "module",
-	"version": "7.8.1",
+	"version": "8.0.0",
 	"main": "index.js",
 	"types": "index.d.ts",
 	"license": "MIT",
@@ -11,8 +11,5 @@
 		"test": "node --test",
 		"demo": "node _usage_example.js",
 		"demo:ts": "node --import=tsx _usage_example.js"
-	},
-	"optionalDependencies": {
-		"tsx": "4.19.1"
 	}
 }

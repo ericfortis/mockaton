@@ -274,7 +274,7 @@ Config.extraMimes = {
 }
 ```
 
-### `plugins?: { [fileEnding: string]: Plugin }`
+### `plugins?: [filenameTester: RegExp, plugin: Plugin][]
 ```ts
 type Plugin = (
   filePath: string,
@@ -287,7 +287,7 @@ type Plugin = (
 ```
 Plugins are for processing mocks before sending them.
 
-Node’s `request` and `response` are included but don’t call `response.end()`
+Note: don’t call `response.end()`
 
 
 #### Plugin Examples
@@ -295,32 +295,29 @@ Node’s `request` and `response` are included but don’t call `response.end()`
 npm install yaml
 ```
 ```js
-import { readFileSync as read } from 'node:js'
 import { parse } from 'yaml'
+import { readFileSync } from 'node:js'
 import { jsToJsonPlugin } from 'mockaton'
 
 
-Config.plugins = {
-  '.yaml': function yamlToJsonPlugin(filePath) {
-    return {
-      mime: 'application/json',
-      body: JSON.stringify(parse(read(filePath, 'utf8')))
-    }
-  },
+Config.plugins = [
+  [/\.(js|ts)$/, jsToJsonPlugin], // Default 
+  [/\.yaml$/, yamlToJsonPlugin],
+  [/foo\.GET\.200\.txt$/, capitalizePlugin], // e.g. GET /api/foo would be capitalized
+]
 
-  // The key is the ending of a filename. In other words,
-  // it’s not limited to the file extension.
-  //   e.g. GET /api/foo would be capitalized
-  'foo.GET.200.txt': function capitalizePlugin(filePath) {
-    return {
-      mime: 'application/text',
-      body: read(filePath, 'utf8').toUpperCase()
-    }
-  },
+function yamlToJsonPlugin(filePath) {
+  return {
+    mime: 'application/json',
+    body: JSON.stringify(parse(readFileSync(filePath, 'utf8')))
+  }
+}
 
-  // Default Plugins
-  '.js': jsToJsonPlugin,
-  '.ts': jsToJsonPlugin // yes, it’s reused
+function capitalizePlugin(filePath) {
+  return {
+    mime: 'application/text',
+    body: readFileSync(filePath, 'utf8').toUpperCase()
+  }
 }
 ```
 
@@ -339,8 +336,8 @@ Config.corsExposedHeaders = [] // headers you need to access in client-side JS
 ```
 
 ### `onReady?: (dashboardUrl: string) => void`
-This is a callback `(dashboardAddress: string) => void`, which defaults to
-trying to open the dashboard in your default browser in macOS and Windows.
+This defaults to trying to open the dashboard
+in your default browser in macOS and Windows.
 
 If you don’t want to open a browser, pass a noop, such as
 ```js

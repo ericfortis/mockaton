@@ -4,10 +4,10 @@ type Plugin = (
 	filePath: string,
 	request: IncomingMessage,
 	response: OutgoingMessage
-) => {
+) => Promise<{
 	mime: string,
 	body: string | Uint8Array
-}
+}>
 
 interface Config {
 	mocksDir: string

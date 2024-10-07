@@ -280,10 +280,10 @@ type Plugin = (
   filePath: string,
   request: IncomingMessage,
   response: OutgoingMessage
-) => {
+) => Promise<{
   mime: string,
   body: string | Uint8Array
-}
+}>
 ```
 Plugins are for processing mocks before sending them. The key is the ending
 of a filename. In other words, it’s not limited to the file extension.

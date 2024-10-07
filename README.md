@@ -285,8 +285,7 @@ type Plugin = (
   body: string | Uint8Array
 }>
 ```
-Plugins are for processing mocks before sending them. The key is the ending
-of a filename. In other words, it’s not limited to the file extension.
+Plugins are for processing mocks before sending them.
 
 Node’s `request` and `response` are included but don’t call `response.end()`
 
@@ -309,7 +308,9 @@ Config.plugins = {
     }
   },
 
-  // e.g. GET /api/foo would be capitalized
+  // The key is the ending of a filename. In other words,
+  // it’s not limited to the file extension.
+  //   e.g. GET /api/foo would be capitalized
   'foo.GET.200.txt': function capitalizePlugin(filePath) {
     return {
       mime: 'application/text',

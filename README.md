@@ -102,7 +102,7 @@ api/user(default).GET.200.json
 
 ## You can write JSON mocks in JavaScript or TypeScript
 
-An Object, Array, or String is sent as JSON.
+**Option A:** An Object, Array, or String is sent as JSON.
 
 `api/foo.GET.200.js`
 ```js
@@ -111,29 +111,32 @@ export default [
 ]
 ```
 
-Or, export default a function. In it, you can override the
-response status and the default JSON content type. But don’t call
-`response.end()`, just return a `string`, `Buffer`, or `Uint8Array`.
+**Option B:** Function
 
 Think of this as an HTTP handler. You can read or write to a
-database, or pull data from a backend. The `request` is of type
-[IncomingMessage](https://nodejs.org/api/http.html#class-httpincomingmessage), and the
-`response` a [ServerResponse](https://nodejs.org/api/http.html#class-httpserverresponse).
+database, or pull data from a backend.
+
+Don’t call `response.end()`, just return a `string | Buffer | Uint8Array`.
+
 ```js
 export default function optionalName(request, response) {
   globalThis.myDatabase ??= { count: 0 }
   globalThis.myDatabase.count++
 
+  // Optinally, you can override these two:
+  repsonse.statusCode = 200
+  response.setHeader('Content-Type', 'application/json')
+
   return JSON.stringify({ a: 1 })
 }
 ```
 
-If you need to serve a static `.js` file, put it in your `Config.staticDir`.
+If you need to serve a static `.js` file, put it in your
+`Config.staticDir` without the mock filename convention.
 
 ---
 
-## File Name Convention
-This convention is only for files within your `Config.mocksDir`.
+## Mock File Name Convention
 
 ### Extension
 
@@ -274,7 +277,7 @@ Config.extraMimes = {
 }
 ```
 
-### `plugins?: [filenameTester: RegExp, plugin: Plugin][]
+### `plugins?: [filenameTester: RegExp, plugin: Plugin][]`
 ```ts
 type Plugin = (
   filePath: string,

@@ -19,6 +19,8 @@ export const Config = Object.seal({
 	extraHeaders: [],
 	extraMimes: {},
 
+	plugins: {},
+
 	corsAllowed: false,
 	corsOrigins: ['*'],
 	corsMethods: StandardMethods,
@@ -47,6 +49,8 @@ export function setup(options) {
 		cookies: is(Object),
 		extraHeaders: val => Array.isArray(val) && val.length % 2 === 0,
 		extraMimes: is(Object),
+
+		plugins: is(Object),
 
 		corsAllowed: is(Boolean),
 		corsOrigins: validateCorsAllowedOrigins,

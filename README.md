@@ -56,9 +56,6 @@ _Reset_ button is for registering newly added, removed, or renamed mocks.
 - Reverse Proxies such as [Burp](https://portswigger.net/burp) are also handy for overriding responses.
 - [Mock Server Worker](https://mswjs.io)
 
-### Caveats
-- Syncing the mocks, but the browser extension mentioned above helps.
-
 
 ## Basic Usage
 `tsx` is only needed if you want to write mocks in TypeScript
@@ -71,6 +68,7 @@ import { resolve } from 'node:path'
 import { Mockaton } from 'mockaton'
 
 
+// The Config options are explained in a section below
 Mockaton({
   mocksDir: resolve('my-mocks-dir'),
   port: 2345
@@ -79,31 +77,6 @@ Mockaton({
 
 ```sh
 node --import=tsx my-mockaton.js
-```
-
-## Config Options
-There’s a Config section below with more details.
-```ts
-interface Config {
-  mocksDir: string
-  ignore?: RegExp // Defaults to /(\.DS_Store|~)$/
-
-  staticDir?: string
-
-  host?: string, // Defaults to 'localhost'
-  port?: number // Defaults to 0, which means auto-assigned
-  proxyFallback?: string // Target for relaying routes without mocks
-
-  delay?: number // Defaults to 1200 (ms)
-  cookies?: { [label: string]: string }
-  extraMimes?: { [fileExt: string]: string }
-  extraHeaders?: []
-
-  corsAllowed?: boolean, // Defaults to false
-  // cors* customization options are explained below
-
-  onReady?: (dashboardUrl: string) => void // Defaults to trying to open macOS and Win default browser.
-}
 ```
 
 ---
@@ -157,6 +130,7 @@ export default function optionalName(request, response) {
 
 If you need to serve a static `.js` file, put it in your `Config.staticDir`.
 
+---
 
 ## File Name Convention
 This convention is only for files within your `Config.mocksDir`.
@@ -216,20 +190,33 @@ api/foo/.GET.200.json
 
 ---
 ## Config
+### `mocksDir: string`
+This is the only required field
 
-### `proxyFallback`
+### `host?: string`
+Defaults to `'localhost'`
+
+### `port?: number`
+Defaults to `0`, which means auto-assigned
+
+
+### `ignore?: RegExp`
+Defaults to `/(\.DS_Store|~)$/`
+
+
+### `proxyFallback?: string`
 Lets you specify a target server for serving routes you don’t have mocks for.
 For example, `Config.proxyFallback = 'http://example.com:8080'`
 
 
-### `delay` 🕓
+### `delay?: number` 🕓
 The clock icon next to the mock selector is a checkbox for delaying a
 particular response. They are handy for testing spinners.
 
 The delay is globally configurable via `Config.delay = 1200` (milliseconds).
 
 
-### `staticDir`
+### `staticDir?: string`
 Files under `Config.staticDir` don’t use the filename convention.
 Also, they take precedence over the `GET` mocks in `Config.mockDir`.
 
@@ -245,7 +232,7 @@ Use Case 2: For a standalone demo server. For example,
 build your frontend bundle, and serve it from Mockaton.
 
 
-### `cookies`
+### `cookies?: { [label: string]: string }`
 The selected cookie is sent in every response in the `Set-Cookie` header.
 
 The key is just a label used for selecting a particular cookie in the
@@ -269,10 +256,8 @@ Config.cookies = {
 }
 ```
 
-### `extraHeaders`
-They are applied last, right before ending the response.
-In other words, they can overwrite the `Content-Type`. Note
-that it's an array and the header name goes in even indices.
+### `extraHeaders?: string[]`
+Note it’s a unidimensional array. The header name goes at even indices.
 
 ```js
 Config.extraHeaders = [
@@ -282,18 +267,68 @@ Config.extraHeaders = [
 ]
 ```
 
-### `extraMimes`
+### `extraMimes?: { [fileExt: string]: string }`
 ```js
 Config.extraMimes = {
   jpg: 'application/jpeg'
 }
 ```
 
-### `corsAllowed`
-```js
-Config.corsAllowed = true
+### `plugins?: { [fileEnding: string]: Plugin }`
+```ts
+type Plugin = (
+  filePath: string,
+  request: IncomingMessage,
+  response: OutgoingMessage
+) => {
+  mime: string,
+  body: string | Uint8Array
+}
+```
+Plugins are for processing mocks before sending them. The key is the ending
+of a filename. In other words, it’s not limited to the file extension.
 
-// Defaults when `corsAllowed === true`
+Node’s `request` and `response` are included but don’t call `response.end()`
+
+
+#### Plugin Examples
+```shell
+npm install yaml
+```
+```js
+import { readFileSync as read } from 'node:js'
+import { parse } from 'yaml'
+import { jsToJsonPlugin } from 'mockaton'
+
+
+Config.plugins = {
+  '.yaml': function yamlToJsonPlugin(filePath) {
+    return {
+      mime: 'application/json',
+      body: JSON.stringify(parse(read(filePath, 'utf8')))
+    }
+  },
+
+  // e.g. GET /api/foo would be capitalized
+  'foo.GET.200.txt': function capitalizePlugin(filePath) {
+    return {
+      mime: 'application/text',
+      body: read(filePath, 'utf8').toUpperCase()
+    }
+  },
+
+  // Default Plugins
+  '.js': jsToJsonPlugin,
+  '.ts': jsToJsonPlugin // yes, it’s reused
+}
+```
+
+
+### `corsAllowed?: boolean`
+Defaults to `corsAllowed = false`
+
+When `corsAllowed === true`, these are the default options:
+```js
 Config.corsOrigins = ['*']
 Config.corsMethods = ['GET', 'PUT', 'DELETE', 'POST', 'PATCH', 'HEAD', 'OPTIONS', 'TRACE', 'CONNECT']
 Config.corsHeaders = ['content-type']
@@ -302,7 +337,7 @@ Config.corsMaxAge = 0 // seconds to cache the preflight req
 Config.corsExposedHeaders = [] // headers you need to access in client-side JS
 ```
 
-### `onReady`
+### `onReady?: (dashboardUrl: string) => void`
 This is a callback `(dashboardAddress: string) => void`, which defaults to
 trying to open the dashboard in your default browser in macOS and Windows.
 

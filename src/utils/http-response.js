@@ -67,5 +67,5 @@ export function sendNotFound(response) {
 export function sendInternalServerError(response, error) {
 	console.error(error)
 	response.statusCode = 500
-	response.end()
+	response.end(error?.code || '')
 }

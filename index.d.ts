@@ -1,4 +1,13 @@
-import { Server } from 'node:http';
+import { Server, IncomingMessage, OutgoingMessage } from 'node:http';
+
+type Plugin = (
+	filePath: string,
+	request: IncomingMessage,
+	response: OutgoingMessage
+) => {
+	mime: string,
+	body: string | Uint8Array
+}
 
 interface Config {
 	mocksDir: string
@@ -12,8 +21,10 @@ interface Config {
 
 	delay?: number
 	cookies?: { [label: string]: string }
-	extraHeaders?: [string, string][]
+	extraHeaders?: string[]
 	extraMimes?: { [fileExt: string]: string }
+
+	plugins?: { [fileExt: string]: Plugin }
 
 	corsAllowed?: boolean,
 	corsOrigins: string[]

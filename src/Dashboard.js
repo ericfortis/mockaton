@@ -197,7 +197,7 @@ function PreviewLink({ method, urlMask }) {
 					document.querySelector(`.${CSS.PreviewLink}.${CSS.chosen}`)?.classList.remove(CSS.chosen)
 					this.classList.add(CSS.chosen)
 					clearTimeout(spinner)
-					const mime = res.headers.get('content-type')
+					const mime = res.headers.get('content-type') || ''
 					if (mime.startsWith('image/')) // naively assumes GET.200
 						renderPayloadImage(this.href)
 					else

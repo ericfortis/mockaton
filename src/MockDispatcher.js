@@ -1,10 +1,9 @@
 import { join } from 'node:path'
-import { readFileSync as read } from 'node:fs'
 
 import { proxy } from './ProxyRelay.js'
 import { cookie } from './cookie.js'
 import { Config } from './Config.js'
-import { mimeFor } from './utils/mime.js'
+import { preprocessPlugins } from './MockDispatcherPlugins.js'
 import * as mockBrokerCollection from './mockBrokersCollection.js'
 import { JsonBodyParserError } from './utils/http-request.js'
 import { sendInternalServerError, sendNotFound, sendBadRequest } from './utils/http-response.js'
@@ -21,11 +20,8 @@ export async function dispatchMock(req, response) {
 			return
 		}
 
-		const { file, status, delay } = broker
-		console.log(decodeURIComponent(req.url), ' → ', file)
-		const filePath = join(Config.mocksDir, file)
-
-		response.statusCode = status
+		console.log(decodeURIComponent(req.url), ' → ', broker.file)
+		response.statusCode = broker.status
 
 		if (cookie.getCurrent())
 			response.setHeader('Set-Cookie', cookie.getCurrent())
@@ -33,12 +29,12 @@ export async function dispatchMock(req, response) {
 		for (let i = 0; i < Config.extraHeaders.length; i += 2)
 			response.setHeader(Config.extraHeaders[i], Config.extraHeaders[i + 1])
 
-		const [mime, mockBody] = broker.isTemp500
-			? temp500Plugin(filePath, req, response)
-			: await preprocessPlugins(filePath, req, response)
+		const { mime, body } = broker.isTemp500
+			? { mime: '', body: '' }
+			: await preprocessPlugins(join(Config.mocksDir, broker.file), req, response)
 
 		response.setHeader('Content-Type', mime)
-		setTimeout(() => response.end(mockBody), delay)
+		setTimeout(() => response.end(body), broker.delay)
 	}
 	catch (error) {
 		if (error instanceof JsonBodyParserError)
@@ -47,37 +43,10 @@ export async function dispatchMock(req, response) {
 			sendNotFound(response)
 		else if (error.code === 'ERR_UNKNOWN_FILE_EXTENSION') {
 			if (error.toString().includes('Unknown file extension ".ts'))
-				console.log('Looks like you need a TypeScript compiler\n',
-					'    npm install tsx\n',
-					'    node --import=tsx my-mockaton.js\n')
+				console.error('Looks like you need a TypeScript compiler')
 			sendInternalServerError(response, error)
 		}
 		else
 			sendInternalServerError(response, error)
 	}
-}
-
-// TODO expose to userland for custom plugins such yaml -> json
-async function preprocessPlugins(filePath, req, response) {
-	if (filePath.endsWith('.js') || filePath.endsWith('.ts'))
-		return await jsPlugin(filePath, req, response)
-	return readPlugin(filePath, req, response)
-}
-
-function temp500Plugin(filePath) {
-	return [mimeFor(filePath), '']
-}
-
-async function jsPlugin(filePath, req, response) {
-	const jsExport = (await import(filePath + '?' + Date.now())).default // date for cache busting
-	const mockBody = typeof jsExport === 'function'
-		? await jsExport(req, response)
-		: JSON.stringify(jsExport, null, 2)
-	const mime = response.getHeader('Content-Type') // jsFunc are allowed to set it
-		|| mimeFor('.json')
-	return [mime, mockBody]
-}
-
-function readPlugin(filePath) {
-	return [mimeFor(filePath), read(filePath)]
 }

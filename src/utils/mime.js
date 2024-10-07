@@ -81,6 +81,8 @@ const mimes = {
 	xlsx: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
 	xml: 'application/xml',
 	xul: 'application/vnd.mozilla.xul+xml',
+	yaml: 'application/yaml',
+	yml: 'application/yaml',
 	zip: 'application/zip'
 }
 

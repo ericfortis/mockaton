@@ -40,6 +40,7 @@ interface Config {
 
 export function Mockaton(options: Config): Server
 
+export const jsToJsonPlugin: Plugin
 
 export function jwtCookie(cookieName: string, payload: any): string
 

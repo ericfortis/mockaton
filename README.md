@@ -15,7 +15,7 @@ can be used for downloading a TAR of your XHR requests following that convention
 
 ## Getting Started Demo
 - Checkout this repo
-- `npm install tsx`
+- `npm install tsx` (optional)
 - `npm run demo:ts`
   which will open the following dashboard
 - Explore the [sample-mocks/](./sample-mocks) directory
@@ -47,7 +47,7 @@ _Reset_ button is for registering newly added, removed, or renamed mocks.
   - Similarly, it allows for checking out long-lived branches that have old API contracts
 
 ## Motivation
-- Avoids having to spin up and maintain hefty or complex backends when developing UIs.
+- Avoids spinning up and maintaining hefty backends when developing UIs.
 - For a deterministic and comprehensive backend state. For example, having all the possible
   state variants of a collection helps for spotting inadvertent bugs.
 
@@ -177,7 +177,7 @@ but since that’s part of the query string, it’s ignored anyway.
 
 
 ### Index-like route
-For instance, let's say you have `api/foo/bar`, and
+For instance, let’s say you have `api/foo/bar`, and
 `api/foo`. For the latter you have two options:
 
 **Option A.** Place it outside the directory:
@@ -207,16 +207,16 @@ Defaults to `0`, which means auto-assigned
 Defaults to `/(\.DS_Store|~)$/`
 
 
-### `proxyFallback?: string`
-Lets you specify a target server for serving routes you don’t have mocks for.
-For example, `Config.proxyFallback = 'http://example.com:8080'`
-
-
 ### `delay?: number` 🕓
 The clock icon next to the mock selector is a checkbox for delaying a
 particular response. They are handy for testing spinners.
 
 The delay is globally configurable via `Config.delay = 1200` (milliseconds).
+
+
+### `proxyFallback?: string`
+Lets you specify a target server for serving routes you don’t have mocks for.
+For example, `Config.proxyFallback = 'http://example.com:8080'`
 
 
 ### `staticDir?: string`
@@ -305,7 +305,7 @@ import { jsToJsonPlugin } from 'mockaton'
 
 Config.plugins = [
   [/\.(js|ts)$/, jsToJsonPlugin], // Default 
-  [/\.yaml$/, yamlToJsonPlugin],
+  [/\.yml$/, yamlToJsonPlugin],
   [/foo\.GET\.200\.txt$/, capitalizePlugin], // e.g. GET /api/foo would be capitalized
 ]
 
@@ -328,7 +328,7 @@ function capitalizePlugin(filePath) {
 ### `corsAllowed?: boolean`
 Defaults to `corsAllowed = false`
 
-When `corsAllowed === true`, these are the default options:
+When `Config.corsAllowed === true`, these are the default options:
 ```js
 Config.corsOrigins = ['*']
 Config.corsMethods = ['GET', 'PUT', 'DELETE', 'POST', 'PATCH', 'HEAD', 'OPTIONS', 'TRACE', 'CONNECT']

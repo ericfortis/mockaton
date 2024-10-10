@@ -7,7 +7,7 @@
 		--color4xxBackground: #ffedd1;
 		--colorAccent: #1e88e5;
 		--colorBackground: #fff;
-		--colorHeaderBackground: #eee;
+		--colorHeaderBackground: #f4f4f4;
 		--colorComboBoxBackground: #fafafa;
 		--colorComboBoxHeaderBackground: #fff;
 		--colorDisabled: #555;
@@ -83,8 +83,8 @@ menu {
 	width: 100%;
 	align-items: flex-end;
 	padding: 20px 16px;
+	border-bottom: 1px solid rgba(127, 127, 127, 0.1);
 	background: var(--colorHeaderBackground);
-	border-bottom: 1px solid rgba(127, 127, 127, 0.17);
 	gap: 16px;
 
 	img {
@@ -103,6 +103,7 @@ menu {
 		select {
 			width: 150px;
 			padding: 4px;
+			border-right: 3px solid transparent;
 			margin-top: 2px;
 			font-size: 11px;
 			background: var(--colorComboBoxHeaderBackground);
@@ -204,6 +205,7 @@ main {
 	width: 300px;
 	padding: 8px 1px;
 	border: 0;
+	border-left: 3px solid transparent;
 	border-radius: 4px;
 	text-align: right;
 	direction: rtl;
@@ -324,10 +326,10 @@ main {
 	}
 
 	a {
+		display: inline-block;
+		padding: 6px 0;
 		color: var(--colorAccent);
 		text-decoration: none;
-		padding: 6px 0;
-		display: inline-block;
 
 		&:hover {
 			text-decoration: underline;

@@ -6,16 +6,17 @@ import { DEFAULT_500_COMMENT } from '/ApiConstants.js'
 const Strings = {
 	allow_cors: 'Allow CORS',
 	bulk_select_by_comment: 'Bulk Select by Comment',
+	bulk_select_by_comment_disabled_title: 'No mock files have comments, which are anything within parentheses on the filename.',
 	click_link_to_preview: 'Click a link to preview it',
 	cookie: 'Cookie',
+	cookie_disabled_title: 'No cookies specified in Config.cookies',
 	delay: 'Delay',
 	empty_response_body: '/* Empty Response Body */',
 	internal_server_error: 'Internal Server Error',
 	mock: 'Mock',
 	reset: 'Reset',
 	select_one: 'Select One',
-	static: 'Static',
-	title: 'Mockaton'
+	static: 'Static'
 }
 
 const CSS = {
@@ -59,7 +60,6 @@ function App([brokersByMethod, cookies, comments, corsAllowed, staticFiles]) {
 }
 
 function DevPanel(brokersByMethod, cookies, comments, corsAllowed, staticFiles) {
-	document.title = Strings.title
 	return (
 		r('div', null,
 			r('menu', null,
@@ -79,12 +79,14 @@ function DevPanel(brokersByMethod, cookies, comments, corsAllowed, staticFiles) 
 }
 
 function CookieSelector({ list }) {
+	const disabled = list.length <= 1
 	return (
 		r('label', null,
 			r('span', null, Strings.cookie),
 			r('select', {
 				autocomplete: 'off',
-				disabled: list.length <= 1,
+				disabled,
+				title: disabled ? Strings.cookie_disabled_title : '',
 				onChange() {
 					mockaton.selectCookie(this.value)
 						.catch(console.error)
@@ -107,6 +109,7 @@ function BulkSelector({ comments }) {
 			r('select', {
 				autocomplete: 'off',
 				disabled,
+				title: disabled ? Strings.bulk_select_by_comment_disabled_title : '',
 				onChange() {
 					mockaton.bulkSelectByComment(this.value)
 						.then(init)

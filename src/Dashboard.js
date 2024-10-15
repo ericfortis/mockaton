@@ -36,7 +36,7 @@ const CSS = {
 
 const r = createElement
 const refPayloadViewer = useRef()
-const refPayloadFile = useRef()
+const refPayloadViewerFileTitle = useRef()
 
 const mockaton = new Commander(window.location.origin)
 
@@ -72,7 +72,7 @@ function DevPanel(brokersByMethod, cookies, comments, corsAllowed, staticFiles) 
 				r('table', null, Object.entries(brokersByMethod).map(([method, brokers]) =>
 					r(SectionByMethod, { method, brokers }))),
 				r('div', { className: CSS.PayloadViewer },
-					r('h2', { ref: refPayloadFile }, Strings.mock),
+					r('h2', { ref: refPayloadViewerFileTitle }, Strings.mock),
 					r('pre', null,
 						r('code', { ref: refPayloadViewer }, Strings.click_link_to_preview)))),
 			r(StaticFilesList, { staticFiles })))
@@ -200,13 +200,15 @@ function PreviewLink({ method, urlMask }) {
 					document.querySelector(`.${CSS.PreviewLink}.${CSS.chosen}`)?.classList.remove(CSS.chosen)
 					this.classList.add(CSS.chosen)
 					clearTimeout(spinner)
+
 					const mime = res.headers.get('content-type') || ''
 					if (mime.startsWith('image/')) // naively assumes GET.200
 						renderPayloadImage(this.href)
 					else
 						updatePayloadViewer(await res.text() || Strings.empty_response_body, mime)
-					empty(refPayloadFile.current)
-					refPayloadFile.current.append(PayloadViewerTitle({
+
+					empty(refPayloadViewerFileTitle.current)
+					refPayloadViewerFileTitle.current.append(PayloadViewerTitle({
 						file: this.closest('tr').querySelector('select').value
 					}))
 				}

@@ -39,7 +39,8 @@ export function parseFilename(file) {
 	return {
 		urlMask: '/' + removeTrailingSlash(tokens.slice(0, -3).join('.')),
 		method: tokens.at(-3),
-		status: Number(tokens.at(-2))
+		status: Number(tokens.at(-2)),
+		ext: tokens.at(-1)
 	}
 }
 

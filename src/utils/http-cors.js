@@ -62,6 +62,7 @@ function setPreflightSpecificHeaders(req, response, methods, headers, maxAge) {
 }
 
 
+// TESTME
 function setActualRequestHeaders(response, exposedHeaders) {
 	// Exposed means the client-side JavaScript can read them
 	if (exposedHeaders.length)

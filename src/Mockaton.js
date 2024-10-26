@@ -38,7 +38,7 @@ async function onRequest(req, response) {
 			methods: Config.corsMethods,
 			maxAge: Config.corsMaxAge,
 			credentials: Config.corsCredentials,
-			exposedHeaders: Config.extraHeaders
+			exposedHeaders: Config.corsExposedHeaders
 		})
 
 	const { url, method } = req

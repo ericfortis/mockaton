@@ -347,17 +347,7 @@ If you don’t want to open a browser, pass a noop, such as
 Config.onReady = () => {}
 ```
 
-On Linux, you could pass:
-```js
-import { exec } from 'node:child_process'
-
-
-Config.onReady = function openInBrowser(address) {
-  exec(`xdg-open ${address}`)
-}
-```
-
-Or, for more cross-platform utility, you could `npm install open` and pass it.
+For a more cross-platform utility, you could `npm install open` and pass it.
 ```js
 import open from 'open'
 

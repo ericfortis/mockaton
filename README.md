@@ -226,7 +226,7 @@ Also, they take precedence over the `GET` mocks in `Config.mockDir`.
 For example, if you have two files for `GET /foo/bar.jpg`
 ```
 my-static-dir/foo/bar.jpg
- my-mocks-dir/foo/bar.jpg.GET.200.jpg // Unreacheable
+my-mocks-dir/foo/bar.jpg.GET.200.jpg // Unreacheable
 ```
 
 Use Case 1: If you have a bunch of static assets you don’t want to add `.GET.200.ext`

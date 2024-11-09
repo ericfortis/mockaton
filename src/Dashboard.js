@@ -53,13 +53,13 @@ function init() {
 }
 init()
 
-function App([brokersByMethod, cookies, comments, corsAllowed, staticFiles]) {
+function App(apiResponses) {
 	empty(document.body)
-	createRoot(document.body).render(
-		DevPanel(brokersByMethod, cookies, comments, corsAllowed, staticFiles))
+	createRoot(document.body)
+		.render(DevPanel(apiResponses))
 }
 
-function DevPanel(brokersByMethod, cookies, comments, corsAllowed, staticFiles) {
+function DevPanel([brokersByMethod, cookies, comments, corsAllowed, staticFiles]) {
 	return (
 		r('div', null,
 			r('menu', null,
@@ -182,8 +182,7 @@ function SectionByMethod({ method, brokers }) {
 						r('td', null, r(PreviewLink, { method, urlMask })),
 						r('td', null, r(MockSelector, { broker })),
 						r('td', null, r(DelayRouteToggler, { broker })),
-						r('td', null, r(InternalServerErrorToggler, { broker }))
-					))))
+						r('td', null, r(InternalServerErrorToggler, { broker }))))))
 }
 
 
@@ -280,18 +279,16 @@ function MockSelector({ broker }) {
 			status >= 400 && status < 500 && CSS.status4xx)
 	}
 
-	const items = broker.mocks
 	const selected = broker.currentMock.file
-
 	const { status } = parseFilename(selected)
-	const files = items.filter(item =>
+	const files = broker.mocks.filter(item =>
 		status === 500 ||
 		!item.includes(DEFAULT_500_COMMENT))
 
 	return (
 		r('select', {
-				className: className(selected === files[0], status),
 				autocomplete: 'off',
+				className: className(selected === files[0], status),
 				disabled: files.length <= 1,
 				onChange
 			},
@@ -316,7 +313,6 @@ function DelayRouteToggler({ broker }) {
 			},
 			r('input', {
 				type: 'checkbox',
-				autocomplete: 'off',
 				name: broker.currentMock.file,
 				checked: Boolean(broker.currentMock.delay),
 				onChange
@@ -347,7 +343,6 @@ function InternalServerErrorToggler({ broker }) {
 			},
 			r('input', {
 				type: 'checkbox',
-				autocomplete: 'off',
 				name: broker.currentMock.file,
 				checked: parseFilename(broker.currentMock.file).status === 500,
 				onChange

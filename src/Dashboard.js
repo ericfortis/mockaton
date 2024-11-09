@@ -78,27 +78,33 @@ function DevPanel(brokersByMethod, cookies, comments, corsAllowed, staticFiles) 
 			r(StaticFilesList, { staticFiles })))
 }
 
+
 function CookieSelector({ list }) {
+	function onChange() {
+		mockaton.selectCookie(this.value)
+			.catch(console.error)
+	}
 	const disabled = list.length <= 1
 	return (
 		r('label', null,
 			r('span', null, Strings.cookie),
 			r('select', {
-				autocomplete: 'off',
-				disabled,
-				title: disabled ? Strings.cookie_disabled_title : '',
-				onChange() {
-					mockaton.selectCookie(this.value)
-						.catch(console.error)
-				}
-			}, list.map(([key, selected]) =>
-				r('option', {
-					value: key,
-					selected
-				}, key)))))
+					autocomplete: 'off',
+					disabled,
+					title: disabled ? Strings.cookie_disabled_title : '',
+					onChange
+				},
+				list.map(([key, selected]) =>
+					r('option', { value: key, selected }, key)))))
 }
 
+
 function BulkSelector({ comments }) {
+	function onChange() {
+		mockaton.bulkSelectByComment(this.value)
+			.then(init)
+			.catch(console.error)
+	}
 	const disabled = !comments.length
 	const list = disabled
 		? []
@@ -107,33 +113,31 @@ function BulkSelector({ comments }) {
 		r('label', null,
 			r('span', null, Strings.bulk_select_by_comment),
 			r('select', {
-				autocomplete: 'off',
-				disabled,
-				title: disabled ? Strings.bulk_select_by_comment_disabled_title : '',
-				onChange() {
-					mockaton.bulkSelectByComment(this.value)
-						.then(init)
-						.catch(console.error)
-				}
-			}, list.map(item =>
-				r('option', {
-					value: item
-				}, item)))))
+					autocomplete: 'off',
+					disabled,
+					title: disabled ? Strings.bulk_select_by_comment_disabled_title : '',
+					onChange
+				},
+				list.map(value =>
+					r('option', { value }, value)))))
 }
 
+
 function CorsCheckbox({ corsAllowed }) {
+	function onChange(event) {
+		mockaton.setCorsAllowed(event.currentTarget.checked)
+			.catch(console.error)
+	}
 	return (
 		r('label', { className: CSS.CorsCheckbox },
 			r('input', {
 				type: 'checkbox',
 				checked: corsAllowed,
-				onChange(event) {
-					mockaton.setCorsAllowed(event.currentTarget.checked)
-						.catch(console.error)
-				}
+				onChange
 			}),
 			Strings.allow_cors))
 }
+
 
 function ResetButton() {
 	return (
@@ -146,6 +150,7 @@ function ResetButton() {
 		}, Strings.reset)
 	)
 }
+
 
 function StaticFilesList({ staticFiles }) {
 	if (!staticFiles.length)
@@ -181,43 +186,46 @@ function SectionByMethod({ method, brokers }) {
 					))))
 }
 
+
 function PreviewLink({ method, urlMask }) {
+	async function onClick(event) {
+		event.preventDefault()
+		try {
+			const spinner = setTimeout(() => {
+				empty(refPayloadViewer.current)
+				refPayloadViewer.current.append(ProgressBar())
+			}, 180)
+			const res = await fetch(this.href, {
+				method: this.getAttribute('data-method')
+			})
+			document.querySelector(`.${CSS.PreviewLink}.${CSS.chosen}`)?.classList.remove(CSS.chosen)
+			this.classList.add(CSS.chosen)
+			clearTimeout(spinner)
+
+			const mime = res.headers.get('content-type') || ''
+			if (mime.startsWith('image/')) // naively assumes GET.200
+				renderPayloadImage(this.href)
+			else
+				updatePayloadViewer(await res.text() || Strings.empty_response_body, mime)
+
+			empty(refPayloadViewerFileTitle.current)
+			refPayloadViewerFileTitle.current.append(PayloadViewerTitle({
+				file: this.closest('tr').querySelector('select').value
+			}))
+		}
+		catch (error) {
+			console.error(error)
+		}
+	}
 	return (
 		r('a', {
 			className: CSS.PreviewLink,
 			href: urlMask,
 			'data-method': method,
-			async onClick(event) {
-				event.preventDefault()
-				try {
-					const spinner = setTimeout(() => {
-						empty(refPayloadViewer.current)
-						refPayloadViewer.current.append(ProgressBar())
-					}, 180)
-					const res = await fetch(this.href, {
-						method: this.getAttribute('data-method')
-					})
-					document.querySelector(`.${CSS.PreviewLink}.${CSS.chosen}`)?.classList.remove(CSS.chosen)
-					this.classList.add(CSS.chosen)
-					clearTimeout(spinner)
-
-					const mime = res.headers.get('content-type') || ''
-					if (mime.startsWith('image/')) // naively assumes GET.200
-						renderPayloadImage(this.href)
-					else
-						updatePayloadViewer(await res.text() || Strings.empty_response_body, mime)
-
-					empty(refPayloadViewerFileTitle.current)
-					refPayloadViewerFileTitle.current.append(PayloadViewerTitle({
-						file: this.closest('tr').querySelector('select').value
-					}))
-				}
-				catch (error) {
-					console.error(error)
-				}
-			}
+			onClick
 		}, urlMask))
 }
+
 
 function PayloadViewerTitle({ file }) {
 	const { urlMask, method, status, ext } = parseFilename(file)
@@ -228,11 +236,13 @@ function PayloadViewerTitle({ file }) {
 			'.' + ext))
 }
 
+
 function ProgressBar() {
 	return (
 		r('div', { className: CSS.ProgressBar },
 			r('div', { style: { animationDuration: '1000ms' } }))) // TODO from Config.delay - 180
 }
+
 
 function renderPayloadImage(href) {
 	empty(refPayloadViewer.current)
@@ -248,10 +258,27 @@ function updatePayloadViewer(body, mime) {
 
 
 function MockSelector({ broker }) {
-	const className = (defaultIsSelected, status) => cssClass(
-		CSS.MockSelector,
-		!defaultIsSelected && CSS.bold,
-		status >= 400 && status < 500 && CSS.status4xx)
+	function onChange() {
+		const { status } = parseFilename(this.value)
+		this.style.fontWeight = this.value === this.options[0].value // default is selected
+			? 'normal'
+			: 'bold'
+		mockaton.select(this.value)
+			.then(() => {
+				this.closest('tr').querySelector('a').click()
+				this.closest('tr').querySelector(`.${CSS.InternalServerErrorToggler}>[type=checkbox]`).checked = status === 500
+				this.className = className(this.value === this.options[0].value, status)
+			})
+			.catch(console.error)
+	}
+
+
+	function className(defaultIsSelected, status) {
+		return cssClass(
+			CSS.MockSelector,
+			!defaultIsSelected && CSS.bold,
+			status >= 400 && status < 500 && CSS.status4xx)
+	}
 
 	const items = broker.mocks
 	const selected = broker.currentMock.file
@@ -263,31 +290,25 @@ function MockSelector({ broker }) {
 
 	return (
 		r('select', {
-			className: className(selected === files[0], status),
-			autocomplete: 'off',
-			disabled: files.length <= 1,
-			onChange() {
-				const { status } = parseFilename(this.value)
-				this.style.fontWeight = this.value === this.options[0].value // default is selected
-					? 'normal'
-					: 'bold'
-				mockaton.select(this.value)
-					.then(() => {
-						this.closest('tr').querySelector('a').click()
-						this.closest('tr').querySelector(`.${CSS.InternalServerErrorToggler}>[type=checkbox]`).checked = status === 500
-						this.className = className(this.value === this.options[0].value, status)
-					})
-					.catch(console.error)
-			}
-		}, files.map(file => r('option', {
-			value: file,
-			selected: file === selected
-		}, file))))
+				className: className(selected === files[0], status),
+				autocomplete: 'off',
+				disabled: files.length <= 1,
+				onChange
+			},
+			files.map(file =>
+				r('option', {
+					value: file,
+					selected: file === selected
+				}, file))))
 }
 
+
 function DelayRouteToggler({ broker }) {
-	const name = broker.currentMock.file
-	const checked = Boolean(broker.currentMock.delay)
+	function onChange(event) {
+		const { method, urlMask } = parseFilename(this.name)
+		mockaton.setRouteIsDelayed(method, urlMask, event.currentTarget.checked)
+			.catch(console.error)
+	}
 	return (
 		r('label', {
 				className: CSS.DelayToggler,
@@ -296,16 +317,13 @@ function DelayRouteToggler({ broker }) {
 			r('input', {
 				type: 'checkbox',
 				autocomplete: 'off',
-				name,
-				checked,
-				onChange(event) {
-					const { method, urlMask } = parseFilename(this.name)
-					mockaton.setRouteIsDelayed(method, urlMask, event.currentTarget.checked)
-						.catch(console.error)
-				}
+				name: broker.currentMock.file,
+				checked: Boolean(broker.currentMock.delay),
+				onChange
 			}),
 			TimerIcon()))
 }
+
 
 function TimerIcon() {
 	return (
@@ -313,10 +331,15 @@ function TimerIcon() {
 			r('path', { d: 'M12 7H11v6l5 3.2.75-1.23-4.5-3z' })))
 }
 
+
 function InternalServerErrorToggler({ broker }) {
-	const items = broker.mocks
-	const name = broker.currentMock.file
-	const checked = parseFilename(broker.currentMock.file).status === 500
+	function onChange(event) {
+		mockaton.select(event.currentTarget.checked
+			? broker.mocks.find(f => parseFilename(f).status === 500)
+			: broker.mocks[0])
+			.then(init)
+			.catch(console.error)
+	}
 	return (
 		r('label', {
 				className: CSS.InternalServerErrorToggler,
@@ -325,15 +348,9 @@ function InternalServerErrorToggler({ broker }) {
 			r('input', {
 				type: 'checkbox',
 				autocomplete: 'off',
-				name,
-				checked,
-				onChange(event) {
-					mockaton.select(event.currentTarget.checked
-						? items.find(f => parseFilename(f).status === 500)
-						: items[0])
-						.then(init)
-						.catch(console.error)
-				}
+				name: broker.currentMock.file,
+				checked: parseFilename(broker.currentMock.file).status === 500,
+				onChange
 			}),
 			r('span', null, '500')
 		)

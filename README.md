@@ -410,5 +410,3 @@ await mockaton.reset()
 
 ## TODO
 - Refactor Tests
-- Dashboard. Indicate if some file on `staticDir` is overriding a mock.
-- jsonc, json5?

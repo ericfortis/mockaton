@@ -94,8 +94,8 @@ function CookieSelector({ list }) {
 					title: disabled ? Strings.cookie_disabled_title : '',
 					onChange
 				},
-				list.map(([key, selected]) =>
-					r('option', { value: key, selected }, key)))))
+				list.map(([value, selected]) =>
+					r('option', { value, selected }, value)))))
 }
 
 
@@ -113,6 +113,7 @@ function BulkSelector({ comments }) {
 		r('label', null,
 			r('span', null, Strings.bulk_select_by_comment),
 			r('select', {
+					'data-qaid': 'BulkSelector',
 					autocomplete: 'off',
 					disabled,
 					title: disabled ? Strings.bulk_select_by_comment_disabled_title : '',
@@ -280,13 +281,14 @@ function MockSelector({ broker }) {
 	}
 
 	const selected = broker.currentMock.file
-	const { status } = parseFilename(selected)
+	const { status, urlMask } = parseFilename(selected)
 	const files = broker.mocks.filter(item =>
 		status === 500 ||
 		!item.includes(DEFAULT_500_COMMENT))
 
 	return (
 		r('select', {
+				'data-qaid': urlMask,
 				autocomplete: 'off',
 				className: className(selected === files[0], status),
 				disabled: files.length <= 1,

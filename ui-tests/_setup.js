@@ -1,0 +1,32 @@
+import { after } from 'node:test'
+import { launch } from 'puppeteer'
+import {
+	removeDiffsAndCandidates,
+	testPixels as _testPixels,
+	diffServer
+} from 'pixaton'
+import { Commander } from '../index.js'
+
+// Before running these tests you need to spin up the demo:
+//   npm run demo
+
+const MOCKATON_ADDR = 'http://localhost:2345'
+const mockaton = new Commander(MOCKATON_ADDR)
+
+const testsDir = import.meta.dirname
+
+removeDiffsAndCandidates(testsDir)
+const browser = await launch({ headless: true })
+const page = await browser.newPage()
+
+after(() => {
+	browser?.close()
+	diffServer(testsDir)
+})
+
+export function testPixels(testFileName, options = {}) {
+	options.beforeSuite = async () => await mockaton.reset()
+	options.viewports ??= [{ width: 1024, height: 800 }]
+	options.colorSchemes ??= ['light', 'dark']
+	_testPixels(page, testFileName, MOCKATON_ADDR + '/mockaton', 'body', options)
+}

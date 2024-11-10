@@ -1,2 +1,5 @@
 .idea
 node_modules/
+
+ui-tests/*.candidate.png
+ui-tests/*.diff.png

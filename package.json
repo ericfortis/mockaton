@@ -8,8 +8,13 @@
 	"license": "MIT",
 	"repository": "https://github.com/ericfortis/mockaton",
 	"scripts": {
-		"test": "node --test",
+		"test": "node --test src/**.test.js",
 		"demo": "node _usage_example.js",
-		"demo:ts": "node --import=tsx _usage_example.js"
+		"demo:ts": "node --import=tsx _usage_example.js",
+		"demo:test-ui": "node --test --import=./ui-tests/_setup.js --experimental-test-isolation=none \"./ui-tests/**/*.test.js\""
+	},
+	"optionalDependencies": {
+		"puppeteer": "23.7.1",
+		"pixaton": "0.0.1"
 	}
 }

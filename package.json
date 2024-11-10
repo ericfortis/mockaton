@@ -15,6 +15,6 @@
 	},
 	"optionalDependencies": {
 		"puppeteer": "23.7.1",
-		"pixaton": "0.0.1"
+		"pixaton": "0.1.0"
 	}
 }

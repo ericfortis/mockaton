@@ -15,6 +15,8 @@ can be used for downloading a TAR of your XHR requests following that convention
 
 ## Getting Started Demo
 - Checkout this repo
+  - `git clone https://github.com/ericfortis/mockaton.git`
+  - `cd mockaton`
 - `npm install tsx` (optional)
 - `npm run demo:ts`
   which will open the following dashboard

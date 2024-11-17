@@ -93,10 +93,10 @@ _Reset_ button is for registering newly added, removed, or renamed mocks.
 Each route can have many mocks, which could either be:
 - Different response __status code__. For example, for testing error responses.
 - __Comment__ on the filename, which is anything within parentheses.
-  - e.g. `api/user(my-comment).POST.201.json`
+  - e.g. `api/login(locked out user).POST.423.json`
 
-Those alternatives can be manually selected in the dashboard
-UI, or programmatically, for instance, for setting up tests.
+Those alternatives can be manually selected on the dashboard, or
+programmatically (see **Commander API** section), for instance, for setting up tests.
 
 ### Default Mock for a Route
 You can add the comment: `(default)` to a filename.
@@ -365,7 +365,7 @@ Config.onReady = open
 
 ---
 
-## HTTP API
+## Commander API
 `Commander` is a wrapper for the Mockaton HTTP API.
 All of its methods return their `fetch` response promise.
 ```js

@@ -12,6 +12,7 @@ By the way, [this browser
 extension](https://github.com/ericfortis/devtools-ext-tar-http-requests)
 can create a TAR of your XHR requests following that convention.
 
+### Dashboard Example
 
 <picture>
   <source media="(prefers-color-scheme: light)" srcset="./README-dashboard-light.png">

@@ -45,7 +45,7 @@ node --import=tsx my-mockaton.js
 ```
 
 
-## Running the Example Demo
+## Running the Example
 This demo uses the [sample-mocks/](./sample-mocks) directory of this repository.
 
 - Checkout this repo
@@ -216,8 +216,7 @@ Defaults to `/(\.DS_Store|~)$/`
 
 
 ### `delay?: number` 🕓
-The clock icon next to the mock selector is a checkbox for delaying a
-particular response. They are handy for testing spinners.
+The clock icon next to the mock selector is a checkbox for delaying a particular response.
 
 The delay is globally configurable via `Config.delay = 1200` (milliseconds).
 
@@ -229,7 +228,7 @@ For example, `Config.proxyFallback = 'http://example.com:8080'`
 
 ### `staticDir?: string`
 Files under `Config.staticDir` don’t use the filename convention.
-Also, they take precedence over the `GET` mocks in `Config.mockDir`.
+Also, they take precedence over the `GET` mocks in `Config.mocksDir`.
 
 For example, if you have two files for `GET /foo/bar.jpg`
 ```
@@ -250,8 +249,8 @@ The key is just a label used for selecting a particular cookie in the
 dashboard. In the dashboard, only one cookie can be selected. If you need
 more cookies you can inject additional cookies globally in `Config.extraHeaders`.
 
-`jwtCookie` has a hardcoded header and signature. In other
-words, it’s useful if you only care about its payload.
+By the way, there’s a `jwtCookie` helper, which has a hardcoded header and
+signature. In other words, it’s useful if you only care about its payload.
 
 ```js
 import { jwtCookie } from 'mockaton'
@@ -281,7 +280,7 @@ Config.extraHeaders = [
 ### `extraMimes?: { [fileExt: string]: string }`
 ```js
 Config.extraMimes = {
-  jpg: 'application/jpeg'
+  jpe: 'application/jpeg'
 }
 ```
 

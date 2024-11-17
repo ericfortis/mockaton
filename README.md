@@ -58,8 +58,8 @@ Experiment with the Dashboard:
 
 - Pick a mock variant from the Mock dropdown (we’ll discuss
   them later)
-- Toggle the clock icon, which _Delays_ responses (e.g. for testing spinners)
-- Toggle _500_ button, which sends and _Internal Server Error_ on that endpoint
+- Toggle the 🕓 Clock button, which _Delays_ responses (e.g. for testing spinners)
+- Toggle the _500_ button, which sends and _Internal Server Error_ on that endpoint
 
 Finally, edit a mock file. You don’t need to restart Mockaton for that. The
 _Reset_ button is for registering newly added, removed, or renamed mocks.

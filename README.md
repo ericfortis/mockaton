@@ -2,25 +2,16 @@
 
 _Mockaton_ is a mock server for developing and testing frontends.
 
-It scans a given directory for files following a specific
-file name convention, which is similar to the URL paths. For
-example, the following file will be served for `/api/user/1234`
+The mock filename convention is similar to the URL paths. For
+example, the following file will be served on `/api/user/1234`
 ```
 my-mocks-dir/api/user/[user-id].GET.200.json
 ```
 
-[This browser extension](https://github.com/ericfortis/devtools-ext-tar-http-requests)
-can be used for downloading a TAR of your XHR requests following that convention.
+By the way, [this browser
+extension](https://github.com/ericfortis/devtools-ext-tar-http-requests)
+can create a TAR of your XHR requests following that convention.
 
-
-## Getting Started Demo
-- Checkout this repo
-  - `git clone https://github.com/ericfortis/mockaton.git`
-  - `cd mockaton`
-- `npm install tsx` (optional)
-- `npm run demo:ts`
-  which will open the following dashboard
-- Explore the [sample-mocks/](./sample-mocks) directory
 
 <picture>
   <source media="(prefers-color-scheme: light)" srcset="./README-dashboard-light.png">
@@ -28,11 +19,48 @@ can be used for downloading a TAR of your XHR requests following that convention
   <img alt="Mockaton Dashboard Demo" src="./README-dashboard-light.png" style="max-width: 860px">
 </picture>
 
-Then, pick a mock variant from the Mock dropdown (we’ll discuss
-them later). At its right, note the _Delay_ toggler, and the button
-for sending _500 - Internal Server Error_ on that endpoint.
 
-Then edit a mock file. You don’t need to restart Mockaton for that, the
+## Basic Usage
+`tsx` is only needed if you want to write mocks in TypeScript
+```
+npm install mockaton tsx
+```
+
+Create a `my-mockaton.js` file
+```js
+import { resolve } from 'node:path'
+import { Mockaton } from 'mockaton'
+
+
+// The Config options are explained in a section below
+Mockaton({
+  mocksDir: resolve('my-mocks-dir'),
+  port: 2345
+})
+```
+
+```sh
+node --import=tsx my-mockaton.js
+```
+
+
+## Running the Example Demo
+This demo uses the [sample-mocks/](./sample-mocks) directory of this repository.
+
+- Checkout this repo
+  - `git clone https://github.com/ericfortis/mockaton.git`
+  - `cd mockaton`
+- `npm install tsx` (optional)
+- `npm run demo:ts` it will open a dashboard
+
+Experiment with the Dashboard:
+
+- Pick a mock variant from the Mock dropdown (we’ll discuss
+  them later)
+- Toggle the clock icon, which _Delays_ responses (e.g. for testing spinners)
+- Toggle _500_ button, which sends and _Internal Server Error_ on that endpoint
+
+Finally, edit a mock file. You don’t need to restart Mockaton for that. The
 _Reset_ button is for registering newly added, removed, or renamed mocks.
 
 
@@ -57,29 +85,6 @@ _Reset_ button is for registering newly added, removed, or renamed mocks.
 - Chrome DevTools allows for [overriding responses](https://developer.chrome.com/docs/devtools/overrides)
 - Reverse Proxies such as [Burp](https://portswigger.net/burp) are also handy for overriding responses.
 - [Mock Server Worker](https://mswjs.io)
-
-
-## Basic Usage
-`tsx` is only needed if you want to write mocks in TypeScript
-```
-npm install mockaton tsx
-```
-Create a `my-mockaton.js` file
-```js
-import { resolve } from 'node:path'
-import { Mockaton } from 'mockaton'
-
-
-// The Config options are explained in a section below
-Mockaton({
-  mocksDir: resolve('my-mocks-dir'),
-  port: 2345
-})
-```
-
-```sh
-node --import=tsx my-mockaton.js
-```
 
 ---
 

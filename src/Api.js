@@ -10,7 +10,7 @@ import { DF, API } from './ApiConstants.js'
 import { parseJSON } from './utils/http-request.js'
 import { listFilesRecursively } from './utils/fs.js'
 import * as mockBrokersCollection from './mockBrokersCollection.js'
-import { sendOK, sendBadRequest, sendJSON, sendFile } from './utils/http-response.js'
+import { sendOK, sendBadRequest, sendJSON, sendFile, sendUnprocessableContent } from './utils/http-response.js'
 
 
 export const apiGetRequests = new Map([
@@ -24,6 +24,7 @@ export const apiGetRequests = new Map([
 	[API.mocks, listMockBrokers],
 	[API.cookies, listCookies],
 	[API.comments, listComments],
+	[API.fallback, getProxyFallback],
 	[API.cors, getIsCorsAllowed],
 	[API.static, listStaticFiles]
 ])
@@ -44,6 +45,7 @@ function serveDashboardAsset(req, response) { sendFile(response, join(import.met
 function listCookies(_, response) { sendJSON(response, cookie.list()) }
 function listComments(_, response) { sendJSON(response, mockBrokersCollection.extractAllComments()) }
 function listMockBrokers(_, response) { sendJSON(response, mockBrokersCollection.getAll()) }
+function getProxyFallback(_, response) { sendJSON(response, Config.proxyFallback) }
 function getIsCorsAllowed(_, response) { sendJSON(response, Config.corsAllowed) }
 
 
@@ -101,8 +103,13 @@ async function setRouteIsDelayed(req, response) {
 
 async function updateProxyFallback(req, response) {
 	try {
-		Config.proxyFallback = await parseJSON(req)
-		sendOK(response)
+		const fallback = await parseJSON(req)
+		if (fallback && !URL.canParse(fallback)) // TESTME
+			sendUnprocessableContent(response)
+		else {
+			Config.proxyFallback = fallback
+			sendOK(response)
+		}
 	}
 	catch (error) {
 		sendBadRequest(response, error)

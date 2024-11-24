@@ -37,6 +37,9 @@ export class Commander {
 		return this.#get(API.comments)
 	}
 
+	getProxyFallback() {
+		return this.#get(API.fallback)
+	}
 	setProxyFallback(proxyAddr) {
 		return this.#patch(API.fallback, proxyAddr)
 	}

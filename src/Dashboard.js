@@ -12,6 +12,8 @@ const Strings = {
 	cookie_disabled_title: 'No cookies specified in Config.cookies',
 	delay: 'Delay',
 	empty_response_body: '/* Empty Response Body */',
+	fallback_server: 'Fallback Server',
+	fallback_server_placeholder: 'Type Server Address',
 	internal_server_error: 'Internal Server Error',
 	mock: 'Mock',
 	reset: 'Reset',
@@ -46,6 +48,7 @@ function init() {
 		mockaton.listCookies(),
 		mockaton.listComments(),
 		mockaton.getCorsAllowed(),
+		mockaton.getProxyFallback(),
 		mockaton.listStaticFiles()
 	].map(api => api.then(response => response.ok && response.json())))
 		.then(App)
@@ -59,13 +62,14 @@ function App(apiResponses) {
 		.render(DevPanel(apiResponses))
 }
 
-function DevPanel([brokersByMethod, cookies, comments, corsAllowed, staticFiles]) {
+function DevPanel([brokersByMethod, cookies, comments, corsAllowed, fallbackAddress, staticFiles]) {
 	return (
 		r('div', null,
 			r('menu', null,
 				r('img', { src: '/mockaton-logo.svg', width: 160, alt: Strings.title }),
 				r(CookieSelector, { list: cookies }),
 				r(BulkSelector, { comments }),
+				r(ProxyFallbackField, { fallbackAddress }),
 				r(CorsCheckbox, { corsAllowed }),
 				r(ResetButton)),
 			r('main', null,
@@ -121,6 +125,29 @@ function BulkSelector({ comments }) {
 				},
 				list.map(value =>
 					r('option', { value }, value)))))
+}
+
+
+function ProxyFallbackField({ fallbackAddress = '' }) {
+	function onChange(event) {
+		const input = event.currentTarget
+		if (!input.validity.valid)
+			input.reportValidity()
+		else
+			mockaton.setProxyFallback(input.value)
+				.catch(console.error)
+	}
+
+	return (
+		r('label', null,
+			r('span', null, Strings.fallback_server),
+			r('input', {
+				type: 'url',
+				autocomplete: 'none',
+				placeholder: Strings.fallback_server_placeholder,
+				value: fallbackAddress,
+				onChange
+			})))
 }
 
 

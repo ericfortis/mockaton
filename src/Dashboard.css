@@ -6,12 +6,12 @@
 	:root {
 		--color4xxBackground: #ffedd1;
 		--colorAccent: #0072d6;
-		--colorAccentAlt: #01873b;
+		--colorAccentAlt: #0e906c;
 		--colorBackground: #fff;
 		--colorHeaderBackground: #f4f4f4;
 		--colorComboBoxBackground: #fafafa;
 		--colorComboBoxHeaderBackground: #fff;
-		--colorDisabled: #555;
+		--colorDisabled: #444;
 		--colorHover: #dfefff;
 		--colorLabel: #666;
 		--colorLightRed: #ffe4ee;
@@ -190,7 +190,7 @@ main {
 	display: inline-block;
 	width: 280px;
 	padding: 8px 6px;
-	border-radius: 4px;
+	border-radius: 0;
 	color: var(--colorAccent);
 	text-decoration: none;
 
@@ -205,10 +205,11 @@ main {
 
 .MockSelector {
 	width: 300px;
+	height: 30px;
 	padding: 8px 1px;
 	border: 0;
 	border-left: 3px solid transparent;
-	border-radius: 4px;
+	border-radius: 0;
 	text-align: right;
 	direction: rtl;
 	text-overflow: ellipsis;
@@ -218,6 +219,7 @@ main {
 		background: var(--color4xxBackground);
 	}
 	&:disabled {
+		padding-right: 4px;
 		appearance: none;
 		background: transparent;
 		cursor: default;

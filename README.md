@@ -127,6 +127,7 @@ database, or pull data from a backend.
 Don’t call `response.end()`, just return a `string | Buffer | Uint8Array`.
 
 ```js
+
 export default function optionalName(request, response) {
   globalThis.myDatabase ??= { count: 0 }
   globalThis.myDatabase.count++
@@ -141,6 +142,19 @@ export default function optionalName(request, response) {
 
 If you need to serve a static `.js` file, put it in your
 `Config.staticDir` without the mock filename convention.
+
+This example will echo back the request body concatenated with another fixture.
+```js
+// api/color.POST.201.js
+
+import colors from './colors.json' with { type: 'json' }
+import { parseJSON } from 'mockaton' // body-parser alike
+
+export default async function concatColor(request, response) {
+  const newColor = await parseJSON(request)
+  return JSON.stringify(colors.concat(newColor))
+}
+```
 
 ---
 

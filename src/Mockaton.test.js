@@ -212,8 +212,11 @@ async function runTests() {
 		['/api/alternative', 'api/alternative(comment-2).GET.200.json', { comment: 2 }],
 		['/api/my-route', 'api/my-route(comment-2).GET.200.json', { comment: 2 }]
 	])
-
+	await testItBulkSelectsByComment('mment-1', [ // partial match within parentheses
+		['/api/alternative', 'api/alternative(comment-1).GET.200.json', 'With_Comment_1']
+	])
 	await commander.reset()
+
 	for (const [url, file, body] of fixtures)
 		await testMockDispatching(url, file, body)
 

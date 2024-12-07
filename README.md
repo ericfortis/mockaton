@@ -393,6 +393,9 @@ await mockaton.select('api/foo.200.GET.json')
 ```js
 await mockaton.bulkSelectByComment('(demo-a)')
 ```
+Parentheses are optional. You can pass a partial match.
+For example, passing `'demo-'` (without the final `a`), selects the
+first mock in alphabetical order that matches.
 
 ### Set Route is Delayed Flag
 ```js

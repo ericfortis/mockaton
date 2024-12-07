@@ -12,7 +12,7 @@ const Strings = {
 	cookie_disabled_title: 'No cookies specified in Config.cookies',
 	delay: 'Delay',
 	empty_response_body: '/* Empty Response Body */',
-	fallback_server: 'Fallback Server',
+	fallback_server: 'Fallback Backend',
 	fallback_server_placeholder: 'Type Server Address',
 	internal_server_error: 'Internal Server Error',
 	mock: 'Mock',
@@ -22,6 +22,7 @@ const Strings = {
 }
 
 const CSS = {
+	ResetButton: 'ResetButton',
 	CorsCheckbox: 'CorsCheckbox',
 	DelayToggler: 'DelayToggler',
 	InternalServerErrorToggler: 'InternalServerErrorToggler',
@@ -170,6 +171,7 @@ function CorsCheckbox({ corsAllowed }) {
 function ResetButton() {
 	return (
 		r('button', {
+			className: CSS.ResetButton,
 			onClick() {
 				mockaton.reset()
 					.then(init)

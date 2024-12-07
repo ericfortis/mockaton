@@ -8,9 +8,12 @@ example, the following file will be served on `/api/user/1234`
 my-mocks-dir/api/user/[user-id].GET.200.json
 ```
 
-By the way, [this browser
-extension](https://github.com/ericfortis/devtools-ext-tar-http-requests)
+By the way, [this browser extension](https://github.com/ericfortis/devtools-ext-tar-http-requests)
 can create a TAR of your XHR requests following that convention.
+
+Nonetheless, you don’t need to mock everything. Indicate
+your backend address in `Config.proxyFallback`, and Mockaton
+will fall back to it on routes you don’t have mocks for.
 
 ### Dashboard Example
 
@@ -33,7 +36,7 @@ import { resolve } from 'node:path'
 import { Mockaton } from 'mockaton'
 
 
-// The Config options are explained in a section below
+// See the Config section below for more options
 Mockaton({
   mocksDir: resolve('my-mocks-dir'),
   port: 2345
@@ -56,8 +59,7 @@ This demo uses the [sample-mocks/](./sample-mocks) directory of this repository.
 
 Experiment with the Dashboard:
 
-- Pick a mock variant from the Mock dropdown (we’ll discuss
-  them later)
+- Pick a mock variant from the Mock dropdown (we’ll discuss them later)
 - Toggle the 🕓 Clock button, which _Delays_ responses (e.g. for testing spinners)
 - Toggle the _500_ button, which sends and _Internal Server Error_ on that endpoint
 

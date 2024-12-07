@@ -5,7 +5,7 @@
 @media (prefers-color-scheme: light) {
 	:root {
 		--color4xxBackground: #ffedd1;
-		--colorAccent: #0081ef;
+		--colorAccent: #0078e1;
 		--colorAccentAlt: #009c71;
 		--colorBackground: #fff;
 		--colorHeaderBackground: #f7f7f7;
@@ -13,7 +13,7 @@
 		--colorComboBoxHeaderBackground: #fff;
 		--colorDisabled: #444;
 		--colorHover: #dfefff;
-		--colorLabel: #666;
+		--colorLabel: #444;
 		--colorLightRed: #ffe4ee;
 		--colorRed: #da0f00;
 		--colorSecondaryButtonBackground: #fafafa;
@@ -105,7 +105,7 @@ menu {
 
 		input[type=url],
 		select {
-			height: 24px;
+			height: 28px;
 			width: 150px;
 			padding: 4px 2px;
 			border-right: 3px solid transparent;
@@ -123,8 +123,9 @@ menu {
 		}
 	}
 
-	button {
+	.ResetButton {
 		padding: 4px 12px;
+		margin-bottom: 4px;
 		border: 1px solid var(--colorRed);
 		background: transparent;
 		color: var(--colorRed);
@@ -141,7 +142,7 @@ menu {
 	.CorsCheckbox {
 		display: flex;
 		align-items: center;
-		margin-bottom: 4px;
+		margin-bottom: 8px;
 		gap: 4px;
 	}
 }

@@ -175,8 +175,7 @@ function ResetButton() {
 					.then(init)
 					.catch(console.error)
 			}
-		}, Strings.reset)
-	)
+		}, Strings.reset))
 }
 
 
@@ -298,7 +297,6 @@ function MockSelector({ broker }) {
 			})
 			.catch(console.error)
 	}
-
 
 	function className(defaultIsSelected, status) {
 		return cssClass(

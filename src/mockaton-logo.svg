@@ -2,7 +2,7 @@
 <svg version="1.1" viewBox="0 0 570 100" xmlns="http://www.w3.org/2000/svg">
 	<style>
 		:root { --color: #000000; }
-		@media (prefers-color-scheme: light) { :root { --color: #444 } }
+		@media (prefers-color-scheme: light) { :root { --color: #555 } }
 		@media (prefers-color-scheme: dark) { :root { --color: #eee } }
 		path { fill: var(--color) }
 	</style>

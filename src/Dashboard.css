@@ -1,12 +1,12 @@
 :root {
-	--boxShadow1: 0 2px 1px -1px rgba(0, 0, 0, 0.2), 0 1px 1px 0 rgba(0, 0, 0, 0.14), 0 1px 3px 0 rgba(0, 0, 0, 0.12);
+	--boxShadow1: 0 2px 1px -1px rgba(0, 0, 0, 0.1), 0 1px 1px 0 rgba(0, 0, 0, 0.1), 0 1px 3px 0 rgba(0, 0, 0, 0.08);
 }
 
 @media (prefers-color-scheme: light) {
 	:root {
 		--color4xxBackground: #ffedd1;
-		--colorAccent: #0072d6;
-		--colorAccentAlt: #0e906c;
+		--colorAccent: #0081ef;
+		--colorAccentAlt: #009c71;
 		--colorBackground: #fff;
 		--colorHeaderBackground: #f7f7f7;
 		--colorComboBoxBackground: #fafafa;
@@ -23,8 +23,8 @@
 @media (prefers-color-scheme: dark) {
 	:root {
 		--color4xxBackground: #403630;
-		--colorAccent: #1f91ff;
-		--colorAccentAlt: #00E676;
+		--colorAccent: #2495ff;
+		--colorAccentAlt: #00bf64;
 		--colorBackground: #161616;
 		--colorHeaderBackground: #090909;
 		--colorComboBoxBackground: #252525;
@@ -62,6 +62,7 @@ select {
 	color: var(--colorText);
 	cursor: pointer;
 	outline: 0;
+	border-radius: 6px;
 
 	&:enabled {
 		box-shadow: var(--boxShadow1);
@@ -83,7 +84,7 @@ menu {
 	display: flex;
 	width: 100%;
 	align-items: flex-end;
-	padding: 12px 16px;
+	padding: 16px;
 	border-bottom: 1px solid rgba(127, 127, 127, 0.1);
 	background: var(--colorHeaderBackground);
 	box-shadow: var(--boxShadow1);
@@ -111,6 +112,7 @@ menu {
 			margin-top: 2px;
 			font-size: 11px;
 			background: var(--colorComboBoxHeaderBackground);
+			border-radius: 6px;
 		}
 
 		input[type=url] {
@@ -148,7 +150,7 @@ menu {
 main {
 	display: flex;
 	align-items: flex-start;
-	margin-top: 48px;
+	margin-top: 56px;
 
 	> table {
 		border-collapse: collapse;
@@ -199,7 +201,7 @@ main {
 	display: inline-block;
 	width: 280px;
 	padding: 8px 6px;
-	border-radius: 0;
+	border-radius: 6px;
 	color: var(--colorAccent);
 	text-decoration: none;
 
@@ -218,7 +220,6 @@ main {
 	padding: 8px 1px;
 	border: 0;
 	border-left: 3px solid transparent;
-	border-radius: 0;
 	text-align: right;
 	direction: rtl;
 	text-overflow: ellipsis;

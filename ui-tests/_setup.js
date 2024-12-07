@@ -26,7 +26,12 @@ after(() => {
 
 export function testPixels(testFileName, options = {}) {
 	options.beforeSuite = async () => await mockaton.reset()
-	options.viewports ??= [{ width: 1024, height: 800 }]
+	options.viewports ??= [{
+		width: 1024,
+		height: 800,
+		deviceScaleFactor: 1.5 // for better screenshots
+	}]
 	options.colorSchemes ??= ['light', 'dark']
+	options.screenshotOptions ??= {}
 	_testPixels(page, testFileName, MOCKATON_ADDR + '/mockaton', 'body', options)
 }

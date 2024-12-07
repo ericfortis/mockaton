@@ -17,12 +17,12 @@ export function sendJSON(response, payload) {
 	response.end(JSON.stringify(payload))
 }
 
-export function sendFile(response, file) {
-	if (!isFile(file))
+export function sendFile(response, filePath) {
+	if (!isFile(filePath))
 		sendNotFound(response)
 	else {
-		response.setHeader('Content-Type', mimeFor(file))
-		response.end(read(file))
+		response.setHeader('Content-Type', mimeFor(filePath))
+		response.end(read(filePath))
 	}
 }
 

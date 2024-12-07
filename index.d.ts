@@ -42,7 +42,12 @@ export function Mockaton(options: Config): Server
 
 export const jsToJsonPlugin: Plugin
 
+
+// Utils
+
 export function jwtCookie(cookieName: string, payload: any): string
+
+export function parseJSON(request: IncomingMessage): Promise<any>
 
 
 export class Commander {

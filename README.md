@@ -63,8 +63,8 @@ Experiment with the Dashboard:
 - Toggle the 🕓 Clock button, which _Delays_ responses (e.g. for testing spinners)
 - Toggle the _500_ button, which sends and _Internal Server Error_ on that endpoint
 
-Finally, edit a mock file. You don’t need to restart Mockaton for that. The
-_Reset_ button is for registering newly added, removed, or renamed mocks.
+Finally, edit a mock file in your IDE. You don’t need to restart Mockaton for that.
+The _Reset_ button is for registering newly added, removed, or renamed mocks.
 
 
 ## Use Cases
@@ -111,49 +111,66 @@ api/user(default).GET.200.json
 ---
 
 ## You can write JSON mocks in JavaScript or TypeScript
+For example, `api/foo.GET.200.js`
+
 
 **Option A:** An Object, Array, or String is sent as JSON.
 
-`api/foo.GET.200.js`
 ```js
-export default [
-  { id: 0 }
-]
+export default [{ foo: 'bar' }]
 ```
 
 **Option B:** Function
 
-Think of this as an HTTP handler. You can read or write to a
-database, or pull data from a backend. Also, you can modify the
-response object, e.g. for changing the status code and mime.
-
-Don’t call `response.end()`, just return a `string | Buffer | Uint8Array`.
-
-If you need to serve a static `.js` file, put it in your
-`Config.staticDir` without the mock filename convention.
+Return a `string | Buffer | Uint8Array`, but don’t call `response.end()`
 
 ```js
-export default function requestCounter(request, response) {
-  globalThis.myDatabase ??= { count: 0 }
-  globalThis.myDatabase.count++
-  return JSON.stringify({
-    count: globalThis.myDatabase.count
-  })
-}
+export default (request, response) => JSON.stringify({ foo: 'bar' })
 ```
 
-This example will echo the request body concatenated with another fixture.
-```js
-// api/color.POST.201.js
+Think of these functions as HTTP handlers. You can read or write to a
+database, or pull data from a backend.
 
-import colors from './colors.json' with { type: 'json' }
+<details>
+<summary><b>See More Examples</b></summary>
+
+For example, imagine you have an initial list of
+colors, and you want to concatenate newly added colors.
+
+`api/colors.POST.201.js`
+```js
 import { parseJSON } from 'mockaton' // body-parser alike
 
-export default async function concatColor(request, response) {
-  const newColor = await parseJSON(request)
-  return JSON.stringify(colors.concat(newColor))
+export default async function insertColor(request, response) {
+  const color = await parseJSON(request)
+  globalThis.newColorsDatabase ??= []
+  globalThis.newColorsDatabase.push(color)
+
+  // These two lines are not needed but you can change them
+  //   response.statusCode = 201 // default derived from filename
+  //   response.setHeader('Content-Type', 'application/json') // unconditional default
+
+  return JSON.stringify({ msg: 'CREATED' })
 }
 ```
+
+`api/colors.GET.200.js`
+```js
+import colorsFixture from './colors.json' with { type: 'json' }
+
+export default function listColors() {
+  return JSON.stringify([
+    ...colorsFixture,
+    ...(globalThis.newColorsDatabase || [])
+  ])
+}
+```
+</details>
+
+---
+
+If you are wondering, what if I need to serve a static `.js`?
+Put it in your `Config.staticDir` without the mock filename convention.
 
 ---
 
@@ -268,7 +285,6 @@ signature. In other words, it’s useful if you only care about its payload.
 ```js
 import { jwtCookie } from 'mockaton'
 
-
 Config.cookies = {
   'My Admin User': 'my-cookie=1;Path=/;SameSite=strict',
   'My Normal User': 'my-cookie=0;Path=/;SameSite=strict',
@@ -322,7 +338,6 @@ import { parse } from 'yaml'
 import { readFileSync } from 'node:js'
 import { jsToJsonPlugin } from 'mockaton'
 
-
 Config.plugins = [
   [/\.(js|ts)$/, jsToJsonPlugin], // Default 
   [/\.yml$/, yamlToJsonPlugin],
@@ -371,7 +386,6 @@ For a more cross-platform utility, you could `npm install open` and pass it.
 ```js
 import open from 'open'
 
-
 Config.onReady = open
 ```
 
@@ -382,7 +396,6 @@ Config.onReady = open
 All of its methods return their `fetch` response promise.
 ```js
 import { Commander } from 'mockaton'
-
 
 const myMockatonAddr = 'http://localhost:2345'
 const mockaton = new Commander(myMockatonAddr)

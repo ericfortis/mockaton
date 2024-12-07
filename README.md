@@ -127,11 +127,10 @@ database, or pull data from a backend.
 Don’t call `response.end()`, just return a `string | Buffer | Uint8Array`.
 
 ```js
-export default function optionalName(request, response) {
+export default function requestCounter(request, response) {
   globalThis.myDatabase ??= { count: 0 }
   globalThis.myDatabase.count++
-
-  return JSON.stringify({ a: 1 })
+  return JSON.stringify({ count: globalThis.count })
 }
 ```
 

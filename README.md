@@ -1,6 +1,6 @@
 <img src="src/mockaton-logo.svg" alt="Mockaton Logo" width="210" style="margin-top: 30px"/>
 
-_Mockaton_ is a mock server for developing and testing frontends.
+_Mockaton_ is a mock server for improving the frontend development and testing experience.
 
 The mock filename convention is similar to the URL paths. For
 example, the following file will be served on `/api/user/1234`
@@ -9,11 +9,11 @@ my-mocks-dir/api/user/[user-id].GET.200.json
 ```
 
 By the way, [this browser extension](https://github.com/ericfortis/devtools-ext-tar-http-requests)
-can create a TAR of your XHR requests following that convention.
+can create a TAR of your requests following that convention.
 
 Nonetheless, you don’t need to mock everything. Indicate
 your backend address in `Config.proxyFallback`, and Mockaton
-will fall back to it on routes you don’t have mocks for.
+will request from it routes you don’t have mocks for.
 
 ### Dashboard Example
 

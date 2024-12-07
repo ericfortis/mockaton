@@ -1,0 +1,5 @@
+ui-tests/
+sample-mocks/
+sample-static/
+README-*.png
+.editorconfig

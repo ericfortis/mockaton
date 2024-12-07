@@ -130,7 +130,9 @@ Don’t call `response.end()`, just return a `string | Buffer | Uint8Array`.
 export default function requestCounter(request, response) {
   globalThis.myDatabase ??= { count: 0 }
   globalThis.myDatabase.count++
-  return JSON.stringify({ count: globalThis.myDatabase.count })
+  return JSON.stringify({
+    count: globalThis.myDatabase.count
+  })
 }
 ```
 

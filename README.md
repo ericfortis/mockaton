@@ -69,9 +69,9 @@ _Reset_ button is for registering newly added, removed, or renamed mocks.
 - Test empty responses
 - Test spinners by delaying responses
 - Test errors such as _Bad Request_ and _Internal Server Error_
-- Trigger notifications and alerts
-- Prototyping before the backend API is developed
-- Setting up tests
+- Trigger polled resources such as notifications and alerts
+- Prototype before the backend API is developed
+- Setup tests
 - As API documentation
 - If you commit the mocks in the repo, when bisecting a bug, you don’t
   have to sync the frontend with many backend repos

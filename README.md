@@ -127,14 +127,9 @@ database, or pull data from a backend.
 Don’t call `response.end()`, just return a `string | Buffer | Uint8Array`.
 
 ```js
-
 export default function optionalName(request, response) {
   globalThis.myDatabase ??= { count: 0 }
   globalThis.myDatabase.count++
-
-  // These are the default status and mime, but optionally you can override them
-  repsonse.statusCode = 200
-  response.setHeader('Content-Type', 'application/json')
 
   return JSON.stringify({ a: 1 })
 }
@@ -143,8 +138,8 @@ export default function optionalName(request, response) {
 If you need to serve a static `.js` file, put it in your
 `Config.staticDir` without the mock filename convention.
 
-This example will echo back the request body concatenated with another fixture.
 ```js
+// This example will echo the request body concatenated with another fixture.
 // api/color.POST.201.js
 
 import colors from './colors.json' with { type: 'json' }

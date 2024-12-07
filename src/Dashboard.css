@@ -151,7 +151,7 @@ menu {
 main {
 	display: flex;
 	align-items: flex-start;
-	margin-top: 56px;
+	margin-top: 64px;
 
 	> table {
 		border-collapse: collapse;
@@ -334,6 +334,7 @@ main {
 	summary {
 		margin-bottom: 8px;
 		cursor: pointer;
+		font-weight: bold;
 	}
 
 	li {

@@ -43,7 +43,7 @@ export async function dispatchMock(req, response) {
 			sendNotFound(response)
 		else if (error.code === 'ERR_UNKNOWN_FILE_EXTENSION') {
 			if (error.toString().includes('Unknown file extension ".ts'))
-				console.error('Looks like you need a TypeScript compiler')
+				console.error('\nLooks like you need a TypeScript compiler\n')
 			sendInternalServerError(response, error)
 		}
 		else

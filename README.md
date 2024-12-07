@@ -124,9 +124,13 @@ export default [
 **Option B:** Function
 
 Think of this as an HTTP handler. You can read or write to a
-database, or pull data from a backend.
+database, or pull data from a backend. Also, you can modify the
+response object, e.g. for changing the status code and mime.
 
 Don’t call `response.end()`, just return a `string | Buffer | Uint8Array`.
+
+If you need to serve a static `.js` file, put it in your
+`Config.staticDir` without the mock filename convention.
 
 ```js
 export default function requestCounter(request, response) {
@@ -138,11 +142,8 @@ export default function requestCounter(request, response) {
 }
 ```
 
-If you need to serve a static `.js` file, put it in your
-`Config.staticDir` without the mock filename convention.
-
+This example will echo the request body concatenated with another fixture.
 ```js
-// This example will echo the request body concatenated with another fixture.
 // api/color.POST.201.js
 
 import colors from './colors.json' with { type: 'json' }

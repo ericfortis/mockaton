@@ -132,7 +132,7 @@ export default function optionalName(request, response) {
   globalThis.myDatabase ??= { count: 0 }
   globalThis.myDatabase.count++
 
-  // Optinally, you can override these two:
+  // These are the default status and mime, but optionally you can override them
   repsonse.statusCode = 200
   response.setHeader('Content-Type', 'application/json')
 

@@ -62,22 +62,47 @@ Experiment with the Dashboard:
 - Pick a mock variant from the Mock dropdown (we’ll discuss them later)
 - Toggle the 🕓 Clock button, which _Delays_ responses (e.g. for testing spinners)
 - Toggle the _500_ button, which sends and _Internal Server Error_ on that endpoint
+- Click `index.html` in the "Static" section
+  - see what for in the "Deterministic Standalone Demo Server" use case below
 
 Finally, edit a mock file in your IDE. You don’t need to restart Mockaton for that.
 The _Reset_ button is for registering newly added, removed, or renamed mocks.
 
 
 ## Use Cases
-- Test empty responses
-- Test spinners by delaying responses
-- Test errors such as _Bad Request_ and _Internal Server Error_
-- Trigger polled resources such as notifications and alerts
-- Prototype before the backend API is developed
-- Setup tests
-- As API documentation
-- If you commit the mocks in the repo, when bisecting a bug, you don’t
-  have to sync the frontend with many backend repos
-  - Similarly, it allows for checking out long-lived branches that have old API contracts
+### Testing
+- Empty responses
+- Spinners by delaying responses
+- Errors such as _Bad Request_ and _Internal Server Error_
+- Setting up UI tests
+- Polled resources (trigger different states)
+  - alerts
+  - notifications
+  - slow to build assets
+
+### Prototype Ahead of Backend
+Sometimes, frontend progress is needlessly blocked waiting for some
+backend API. Similarly, it’s often delayed due to missing data or inconvenient
+contracts. Therefore, many meetings can be saved by prototyping frontend
+features with mocks, and then showing those contracts to the backend team.
+
+They won’t like it at first.
+
+### Time Travel
+If you commit the mocks in the repo, when bisecting a bug, you don’t
+have to sync the frontend with many backend repos. Similarly, it
+allows for checking out long-lived branches that have old API contracts.
+
+### Deterministic Standalone Demo Server
+Perhaps you need to demo your app, but the ideal flow is too complex to
+simulate from the actual backend. In this case, compile your frontend app and
+put its built assets in `Config.staticDir`. Then, from the Mockaton dashboard
+you can "Bulk Select" mocks to simulate the complete states you want to demo.
+
+For bulk-selecting, you just need to add a comment to the mock
+filename. For example, `(demo-part1)`, `(demo-part2)`. See the
+"Comments" section under the "Filename Convention" for details.
+
 
 ## Motivation
 - Avoids spinning up and maintaining hefty backends when developing UIs.
@@ -134,19 +159,19 @@ database, or pull data from a backend.
 <details>
 <summary><b>See More Examples</b></summary>
 
-For example, imagine you have an initial list of
-colors, and you want to concatenate newly added colors.
+Imagine you have an initial list of colors, and
+you want to concatenate newly added colors.
 
 `api/colors.POST.201.js`
 ```js
-import { parseJSON } from 'mockaton' // body-parser alike
+import { parseJSON } from 'mockaton'
 
 export default async function insertColor(request, response) {
   const color = await parseJSON(request)
   globalThis.newColorsDatabase ??= []
   globalThis.newColorsDatabase.push(color)
 
-  // These two lines are not needed but you can change them
+  // These two lines are not needed but you can change their values
   //   response.statusCode = 201 // default derived from filename
   //   response.setHeader('Content-Type', 'application/json') // unconditional default
 

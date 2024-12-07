@@ -43,6 +43,7 @@ const refPayloadViewerFileTitle = useRef()
 
 const mockaton = new Commander(window.location.origin)
 
+
 function init() {
 	Promise.all([
 		mockaton.listMocks(),
@@ -53,7 +54,7 @@ function init() {
 		mockaton.listStaticFiles()
 	].map(api => api.then(response => response.ok && response.json())))
 		.then(App)
-		.catch(console.error)
+		.catch(onError)
 }
 init()
 
@@ -87,7 +88,7 @@ function DevPanel([brokersByMethod, cookies, comments, corsAllowed, fallbackAddr
 function CookieSelector({ list }) {
 	function onChange() {
 		mockaton.selectCookie(this.value)
-			.catch(console.error)
+			.catch(onError)
 	}
 	const disabled = list.length <= 1
 	return (
@@ -108,7 +109,7 @@ function BulkSelector({ comments }) {
 	function onChange() {
 		mockaton.bulkSelectByComment(this.value)
 			.then(init)
-			.catch(console.error)
+			.catch(onError)
 	}
 	const disabled = !comments.length
 	const list = disabled
@@ -136,7 +137,7 @@ function ProxyFallbackField({ fallbackAddress = '' }) {
 			input.reportValidity()
 		else
 			mockaton.setProxyFallback(input.value)
-				.catch(console.error)
+				.catch(onError)
 	}
 
 	return (
@@ -155,7 +156,7 @@ function ProxyFallbackField({ fallbackAddress = '' }) {
 function CorsCheckbox({ corsAllowed }) {
 	function onChange(event) {
 		mockaton.setCorsAllowed(event.currentTarget.checked)
-			.catch(console.error)
+			.catch(onError)
 	}
 	return (
 		r('label', { className: CSS.CorsCheckbox },
@@ -175,7 +176,7 @@ function ResetButton() {
 			onClick() {
 				mockaton.reset()
 					.then(init)
-					.catch(console.error)
+					.catch(onError)
 			}
 		}, Strings.reset))
 }
@@ -242,7 +243,7 @@ function PreviewLink({ method, urlMask }) {
 			}))
 		}
 		catch (error) {
-			console.error(error)
+			onError(error)
 		}
 	}
 	return (
@@ -297,7 +298,7 @@ function MockSelector({ broker }) {
 				this.closest('tr').querySelector(`.${CSS.InternalServerErrorToggler}>[type=checkbox]`).checked = status === 500
 				this.className = className(this.value === this.options[0].value, status)
 			})
-			.catch(console.error)
+			.catch(onError)
 	}
 
 	function className(defaultIsSelected, status) {
@@ -333,7 +334,7 @@ function DelayRouteToggler({ broker }) {
 	function onChange(event) {
 		const { method, urlMask } = parseFilename(this.name)
 		mockaton.setRouteIsDelayed(method, urlMask, event.currentTarget.checked)
-			.catch(console.error)
+			.catch(onError)
 	}
 	return (
 		r('label', {
@@ -363,7 +364,7 @@ function InternalServerErrorToggler({ broker }) {
 			? broker.mocks.find(f => parseFilename(f).status === 500)
 			: broker.mocks[0])
 			.then(init)
-			.catch(console.error)
+			.catch(onError)
 	}
 	return (
 		r('label', {
@@ -381,6 +382,12 @@ function InternalServerErrorToggler({ broker }) {
 	)
 }
 
+
+function onError(error) {
+	if (error?.message === 'Failed to fetch')
+		alert('Looks like the Mockaton server is not running')
+	console.error(error)
+}
 
 
 /* === Utils === */

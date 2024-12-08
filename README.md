@@ -37,8 +37,7 @@ Create a `my-mockaton.js` file
 import { resolve } from 'node:path'
 import { Mockaton } from 'mockaton'
 
-
-// See the Config section below for more options
+// See the Config section for more options
 Mockaton({
   mocksDir: resolve('my-mocks-dir'),
   port: 2345
@@ -205,9 +204,10 @@ api/user.GET.200.json
 
 
 ### Dynamic Parameters
-Anything within square brackets. For example:
+Anything within square brackets is always matched. For example, for this route
+`/api/company/1234/user/5678`
 <pre>
-api/user/<b>[id]</b>/<b>[age]</b>.GET.200.json
+api/company/<b>[id]</b>/user/<b>[uid]</b>.GET.200.json
 </pre>
 
 ### Comments
@@ -220,18 +220,18 @@ api/foo.GET.200.json
 </pre>
 
 ### Query String Params
+The query string is ignored when routing to it. In other words, it’s only used for
+documenting the URL contract.
 <pre>
 api/video<b>?limit=[limit]</b>.GET.200.json
 </pre>
 
-The query string is ignored when routing to it. In other words, it’s only used for
-documenting the URL contract. Speaking of which, in Windows, filenames containing "?" are
-[not permitted](https://learn.microsoft.com/en-us/windows/win32/fileio/naming-a-file),
-but since that’s part of the query string, it’s ignored anyway.
+Speaking of which, in Windows, filenames containing "?" are [not
+permitted](https://learn.microsoft.com/en-us/windows/win32/fileio/naming-a-file), but since that’s part of the query string, it’s ignored anyway.
 
 
 ### Index-like route
-For instance, let’s say you have `api/foo/bar`, and
+For instance, if you have `api/foo/bar` and
 `api/foo`. For the latter you have two options:
 
 **Option A.** Place it outside the directory:
@@ -274,17 +274,17 @@ For example, `Config.proxyFallback = 'http://example.com:8080'`
 
 
 ### `staticDir?: string`
+- Use Case 1: If you have a bunch of static assets you don’t want to add `.GET.200.ext`
+- Use Case 2: For a standalone demo server. For example,
+  build your frontend bundle, and serve it from Mockaton.
+
 Files under `Config.staticDir` don’t use the filename convention.
-Also, they take precedence over the `GET` mocks in `Config.mocksDir`.
+They take precedence over the `GET` mocks in `Config.mocksDir`.
 For example, if you have two files for `GET /foo/bar.jpg`
 ```
 my-static-dir/foo/bar.jpg
 my-mocks-dir/foo/bar.jpg.GET.200.jpg // Unreacheable
 ```
-
-- Use Case 1: If you have a bunch of static assets you don’t want to add `.GET.200.ext`
-- Use Case 2: For a standalone demo server. For example,
-build your frontend bundle, and serve it from Mockaton.
 
 
 ### `cookies?: { [label: string]: string }`
@@ -346,7 +346,7 @@ Plugins are for processing mocks before sending them.
 Note: don’t call `response.end()`
 
 <details>
-<summary><b> Plugin Examples </b></summary>
+<summary><b> See Plugin Examples </b></summary>
 
 ```shell
 npm install yaml
@@ -380,9 +380,7 @@ function capitalizePlugin(filePath) {
 
 
 ### `corsAllowed?: boolean`
-Defaults to `corsAllowed = false`
-
-When `Config.corsAllowed === true`, these are the default options:
+Defaults to `corsAllowed = false`. When `Config.corsAllowed === true`, these are the default options:
 ```js
 Config.corsOrigins = ['*']
 Config.corsMethods = ['GET', 'PUT', 'DELETE', 'POST', 'PATCH', 'HEAD', 'OPTIONS', 'TRACE', 'CONNECT']
@@ -394,19 +392,18 @@ Config.corsExposedHeaders = [] // headers you need to access in client-side JS
 
 
 ### `onReady?: (dashboardUrl: string) => void`
-This defaults to trying to open the dashboard in your default browser in
-macOS and Windows. If you don’t want to open a browser, pass a noop, such as
+This defaults to trying to open the dashboard in your default browser in macOS and
+Windows. For a more cross-platform utility, you could `npm install open` and pass it.
+```js
+import open from 'open'
+Config.onReady = open
+```
 
+If you don’t want to open a browser, pass a noop:
 ```js
 Config.onReady = () => {}
 ```
 
-For a more cross-platform utility, you could `npm install open` and pass it.
-```js
-import open from 'open'
-
-Config.onReady = open
-```
 
 ---
 

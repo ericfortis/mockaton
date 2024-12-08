@@ -4,7 +4,7 @@
 ![NPM Version](https://img.shields.io/npm/l/mockaton)
 
 
-_Mockaton_ is an HTTP mock server developing and testing frontend apps.
+_Mockaton_ is a mock server for developing and testing frontend apps.
 
 With Mockaton, you don’t need to write code for wiring your mocks. Instead, it
 scans a given directory for filenames following a convention similar to the
@@ -12,7 +12,7 @@ URL paths. For example, the following file will be served on `/api/user/1234`
 ```
 my-mocks-dir/api/user/[user-id].GET.200.json
 ```
-Also, you don’t need to mock everything. It can request from your backend
+Also, you don’t need to mock everything. Mockaton can request from your backend
 the routes you don’t have mocks for. See `Config.proxyFallback` below.
 
 By the way, [this browser
@@ -22,7 +22,7 @@ can create a TAR of your requests following that convention.
 ## Dashboard UI
 
 In the dashboard, you can manually select which mock variant to serve for a particular
-route. This is useful for testing different scenarios without changing code or the database state.
+route. So you can test different scenarios without changing code or the database state.
 
 <picture>
   <source media="(prefers-color-scheme: light)" srcset="./README-dashboard-light.png">

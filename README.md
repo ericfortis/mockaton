@@ -9,8 +9,8 @@ the URL paths. For example, the following mock will be served on `/api/user/1234
 ```
 my-mocks-dir/api/user/[user-id].GET.200.json
 ```
-You don’t need to mock everything. Indicate your backend address in
-`Config.proxyFallback`, and Mockaton will request from it routes you don’t have mocks for.
+You don’t need to mock everything. If you indicate your backend address in
+`Config.proxyFallback` Mockaton will request from it the routes you don’t have mocks for.
 
 
 By the way, [this browser
@@ -90,8 +90,7 @@ simulate from the actual backend. In this case, compile your frontend app and
 put its built assets in `Config.staticDir`. Then, from the Mockaton dashboard
 you can "Bulk Select" mocks to simulate the complete states you want to demo.
 For bulk-selecting, you just need to add a comment to the mock
-filename. For example, `(demo-part1)`, `(demo-part2)`. See the
-"Comments" section under the "Filename Convention" for details.
+filename, such as `(demo-part1)`, `(demo-part2)`.
 
 
 ## Motivation

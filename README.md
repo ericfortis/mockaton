@@ -3,21 +3,23 @@
 _Mockaton_ is an HTTP mock server for improving the frontend 
 development and testing experience.
 
-
-Mockaton scans a given directory for filenames following a convention similar to
-the URL paths. For example, the following mock will be served on `/api/user/1234`
+In contrast to other solutions, you don’t need to write code for wiring your mocks.
+Instead, Mockaton scans a given directory for filenames following a convention similar to the
+URL paths. For example, the following file will be served on `/api/user/1234`
 ```
 my-mocks-dir/api/user/[user-id].GET.200.json
 ```
-You don’t need to mock everything. If you indicate your backend address in
-`Config.proxyFallback` Mockaton will request from it the routes you don’t have mocks for.
-
+Also, you don’t need to mock all your APIs. It can request from your backend
+the routes you don’t have mocks for. See `Config.proxyFallback` below.
 
 By the way, [this browser
-extension](https://github.com/ericfortis/devtools-ext-tar-http-requests) can
-create a TAR of your requests following that convention. 
+extension](https://github.com/ericfortis/devtools-ext-tar-http-requests)
+can create a TAR of your requests following that convention.
 
 ## Dashboard UI
+
+In the dashboard, you can manually select which mock variant to serve for a particular
+route. This is useful for testing different scenarios without changing code or the database state.
 
 <picture>
   <source media="(prefers-color-scheme: light)" srcset="./README-dashboard-light.png">
@@ -59,7 +61,7 @@ This demo uses the [sample-mocks/](./sample-mocks) directory of this repository.
 
 Experiment with the Dashboard:
 
-- Pick a mock variant from the Mock dropdown (we’ll discuss them later)
+- Pick a mock variant from the _Mock dropdown_ (we’ll discuss them later)
 - Toggle the 🕓 _Delay Responses_ button, (e.g. for testing spinners)
 - Toggle the _500_ button, which sends and _Internal Server Error_ on that endpoint
 

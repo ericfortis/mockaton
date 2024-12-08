@@ -1,21 +1,23 @@
 <img src="src/mockaton-logo.svg" alt="Mockaton Logo" width="210" style="margin-top: 30px"/>
 
-_Mockaton_ is a mock server for improving the frontend development and testing experience.
+_Mockaton_ is an HTTP mock server for improving the frontend 
+development and testing experience.
 
-The mock filename convention is similar to the URL paths. For
-example, the following file will be served on `/api/user/1234`
+
+Mockaton scans a given directory for filenames following a convention similar to
+the URL paths. For example, the following mock will be served on `/api/user/1234`
 ```
 my-mocks-dir/api/user/[user-id].GET.200.json
 ```
+You don’t need to mock everything. Indicate your backend address in
+`Config.proxyFallback`, and Mockaton will request from it routes you don’t have mocks for.
 
-By the way, [this browser extension](https://github.com/ericfortis/devtools-ext-tar-http-requests)
-can create a TAR of your requests following that convention.
 
-Nonetheless, you don’t need to mock everything. Indicate
-your backend address in `Config.proxyFallback`, and Mockaton
-will request from it routes you don’t have mocks for.
+By the way, [this browser
+extension](https://github.com/ericfortis/devtools-ext-tar-http-requests) can
+create a TAR of your requests following that convention. 
 
-### Dashboard Example
+## Dashboard UI
 
 <picture>
   <source media="(prefers-color-scheme: light)" srcset="./README-dashboard-light.png">
@@ -48,22 +50,19 @@ node --import=tsx my-mockaton.js
 ```
 
 
-## Running the Example
+## Running the Demo Example
 This demo uses the [sample-mocks/](./sample-mocks) directory of this repository.
 
-- Checkout this repo
-  - `git clone https://github.com/ericfortis/mockaton.git`
-  - `cd mockaton`
+- `git clone https://github.com/ericfortis/mockaton.git`
+- `cd mockaton`
 - `npm install tsx` (optional)
 - `npm run demo:ts` it will open a dashboard
 
 Experiment with the Dashboard:
 
 - Pick a mock variant from the Mock dropdown (we’ll discuss them later)
-- Toggle the 🕓 Clock button, which _Delays_ responses (e.g. for testing spinners)
+- Toggle the 🕓 _Delay Responses_ button, (e.g. for testing spinners)
 - Toggle the _500_ button, which sends and _Internal Server Error_ on that endpoint
-- Click `index.html` in the "Static" section
-  - see what for in the "Deterministic Standalone Demo Server" use case below
 
 Finally, edit a mock file in your IDE. You don’t need to restart Mockaton for that.
 The _Reset_ button is for registering newly added, removed, or renamed mocks.
@@ -75,30 +74,21 @@ The _Reset_ button is for registering newly added, removed, or renamed mocks.
 - Spinners by delaying responses
 - Errors such as _Bad Request_ and _Internal Server Error_
 - Setting up UI tests
-- Polled resources (trigger different states)
+- Polled resources (for triggering their different states)
   - alerts
   - notifications
   - slow to build assets
 
-### Prototype Ahead of Backend
-Sometimes, frontend progress is needlessly blocked waiting for some
-backend API. Similarly, it’s often delayed due to missing data or inconvenient
-contracts. Therefore, many meetings can be saved by prototyping frontend
-features with mocks, and then showing those contracts to the backend team.
-
-They won’t like it at first.
-
 ### Time Travel
 If you commit the mocks in the repo, when bisecting a bug, you don’t
 have to sync the frontend with many backend repos. Similarly, it
-allows for checking out long-lived branches that have old API contracts.
+allows for checking out long-lived branches with old API contracts.
 
 ### Deterministic Standalone Demo Server
 Perhaps you need to demo your app, but the ideal flow is too complex to
 simulate from the actual backend. In this case, compile your frontend app and
 put its built assets in `Config.staticDir`. Then, from the Mockaton dashboard
 you can "Bulk Select" mocks to simulate the complete states you want to demo.
-
 For bulk-selecting, you just need to add a comment to the mock
 filename. For example, `(demo-part1)`, `(demo-part2)`. See the
 "Comments" section under the "Filename Convention" for details.
@@ -108,6 +98,10 @@ filename. For example, `(demo-part1)`, `(demo-part2)`. See the
 - Avoids spinning up and maintaining hefty backends when developing UIs.
 - For a deterministic and comprehensive backend state. For example, having all the possible
   state variants of a collection helps for spotting inadvertent bugs.
+- Sometimes, frontend progress is blocked waiting for some backend API. Similarly,
+  it’s often delayed due to missing data or inconvenient contracts. Therefore,
+  many meetings can be saved by prototyping frontend features with mocks, and
+  then showing those contracts to the backend team.
 
 ## Alternatives
 - Chrome DevTools allows for [overriding responses](https://developer.chrome.com/docs/devtools/overrides)
@@ -116,9 +110,9 @@ filename. For example, `(demo-part1)`, `(demo-part2)`. See the
 
 ---
 
-## Mock Variants
+## Multiple Mock Variants
 Each route can have many mocks, which could either be:
-- Different response __status code__. For example, for testing error responses.
+- Different response __status code__. For example, for triggering errors.
 - __Comment__ on the filename, which is anything within parentheses.
   - e.g. `api/login(locked out user).POST.423.json`
 
@@ -199,7 +193,7 @@ Put it in your `Config.staticDir` without the mock filename convention.
 
 ---
 
-## Mock File Name Convention
+## Mock Filename Convention
 
 ### Extension
 
@@ -231,11 +225,9 @@ api/foo.GET.200.json
 api/video<b>?limit=[limit]</b>.GET.200.json
 </pre>
 
-The query string is ignored when routing to it. In other words, it’s
-only used for documenting the URL contract.
-
-Speaking of which, in Windows, filenames containing "?" are [not
-permitted](https://learn.microsoft.com/en-us/windows/win32/fileio/naming-a-file),
+The query string is ignored when routing to it. In other words, it’s only used for
+documenting the URL contract. Speaking of which, in Windows, filenames containing "?" are
+[not permitted](https://learn.microsoft.com/en-us/windows/win32/fileio/naming-a-file),
 but since that’s part of the query string, it’s ignored anyway.
 
 
@@ -259,8 +251,10 @@ api/foo/.GET.200.json
 ### `mocksDir: string`
 This is the only required field
 
+
 ### `host?: string`
 Defaults to `'localhost'`
+
 
 ### `port?: number`
 Defaults to `0`, which means auto-assigned
@@ -271,9 +265,8 @@ Defaults to `/(\.DS_Store|~)$/`
 
 
 ### `delay?: number` 🕓
-The clock icon next to the mock selector is a checkbox for delaying a particular response.
-
-The delay is globally configurable via `Config.delay = 1200` (milliseconds).
+The clock icon next to the mock selector is a checkbox for delaying a particular
+response. The delay is globally configurable via `Config.delay = 1200` (milliseconds).
 
 
 ### `proxyFallback?: string`
@@ -284,25 +277,22 @@ For example, `Config.proxyFallback = 'http://example.com:8080'`
 ### `staticDir?: string`
 Files under `Config.staticDir` don’t use the filename convention.
 Also, they take precedence over the `GET` mocks in `Config.mocksDir`.
-
 For example, if you have two files for `GET /foo/bar.jpg`
 ```
 my-static-dir/foo/bar.jpg
 my-mocks-dir/foo/bar.jpg.GET.200.jpg // Unreacheable
 ```
 
-Use Case 1: If you have a bunch of static assets you don’t want to add `.GET.200.ext`
-
-Use Case 2: For a standalone demo server. For example,
+- Use Case 1: If you have a bunch of static assets you don’t want to add `.GET.200.ext`
+- Use Case 2: For a standalone demo server. For example,
 build your frontend bundle, and serve it from Mockaton.
 
 
 ### `cookies?: { [label: string]: string }`
 The selected cookie is sent in every response in the `Set-Cookie` header.
-
 The key is just a label used for selecting a particular cookie in the
-dashboard. In the dashboard, only one cookie can be selected. If you need
-more cookies you can inject additional cookies globally in `Config.extraHeaders`.
+dashboard. In the dashboard, only one cookie can be selected. If you need more
+cookies you can inject additional cookies globally in `Config.extraHeaders`.
 
 By the way, there’s a `jwtCookie` helper, which has a hardcoded header and
 signature. In other words, it’s useful if you only care about its payload.
@@ -320,6 +310,7 @@ Config.cookies = {
 }
 ```
 
+
 ### `extraHeaders?: string[]`
 Note it’s a unidimensional array. The header name goes at even indices.
 
@@ -331,12 +322,14 @@ Config.extraHeaders = [
 ]
 ```
 
+
 ### `extraMimes?: { [fileExt: string]: string }`
 ```js
 Config.extraMimes = {
   jpe: 'application/jpeg'
 }
 ```
+
 
 ### `plugins?: [filenameTester: RegExp, plugin: Plugin][]`
 ```ts
@@ -353,8 +346,9 @@ Plugins are for processing mocks before sending them.
 
 Note: don’t call `response.end()`
 
+<details>
+<summary><b> Plugin Examples </b></summary>
 
-#### Plugin Examples
 ```shell
 npm install yaml
 ```
@@ -383,6 +377,7 @@ function capitalizePlugin(filePath) {
   }
 }
 ```
+</details>
 
 
 ### `corsAllowed?: boolean`
@@ -398,11 +393,11 @@ Config.corsMaxAge = 0 // seconds to cache the preflight req
 Config.corsExposedHeaders = [] // headers you need to access in client-side JS
 ```
 
-### `onReady?: (dashboardUrl: string) => void`
-This defaults to trying to open the dashboard
-in your default browser in macOS and Windows.
 
-If you don’t want to open a browser, pass a noop, such as
+### `onReady?: (dashboardUrl: string) => void`
+This defaults to trying to open the dashboard in your default browser in
+macOS and Windows. If you don’t want to open a browser, pass a noop, such as
+
 ```js
 Config.onReady = () => {}
 ```

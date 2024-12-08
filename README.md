@@ -145,11 +145,11 @@ Return a `string | Buffer | Uint8Array`, but don’t call `response.end()`
 export default (request, response) => JSON.stringify({ foo: 'bar' })
 ```
 
-Think of these functions as HTTP handlers. You can read or write to a
-database, or pull data from a backend.
+Think of these functions as HTTP handlers, so you can
+intercept requests. For example, for writing to a database.
 
 <details>
-<summary><b>See More Examples</b></summary>
+<summary><b>See Intercepting Requests Examples</b></summary>
 
 Imagine you have an initial list of colors, and
 you want to concatenate newly added colors.

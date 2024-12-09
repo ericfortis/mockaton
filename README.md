@@ -4,7 +4,7 @@
 ![NPM Version](https://img.shields.io/npm/l/mockaton)
 
 
-_Mockaton_ is a mock server for developing and testing frontend apps.
+_Mockaton_ is a mock server for improving the frontend development and testing experience.
 
 With Mockaton, you don’t need to write code for wiring your mocks. Instead, it
 scans a given directory for filenames following a convention similar to the
@@ -12,17 +12,26 @@ URL paths. For example, the following file will be served on `/api/user/1234`
 ```
 my-mocks-dir/api/user/[user-id].GET.200.json
 ```
-Also, you don’t need to mock everything. Mockaton can request from your backend
-the routes you don’t have mocks for. See `Config.proxyFallback` below.
 
 By the way, [this browser
 extension](https://github.com/ericfortis/devtools-ext-tar-http-requests)
 can create a TAR of your requests following that convention.
 
+Nonetheless, you don’t need to mock all your APIs. Mockaton can request from your backend
+the routes you don’t have mocks for. That’s done with `Config.proxyFallback = 'http://mybackend'`
+
+## Multiple Mock Variants
+Each route can have many mocks, which could either be:
+- Different response __status code__. For example, for triggering errors.
+- __Comment__ on the filename, which is anything within parentheses.
+  For example, `api/login(locked out user).POST.423.json`
+
+
 ## Dashboard UI
 
-In the dashboard, you can manually select which mock variant to serve for a particular
-route. So you can test different scenarios without changing code or the database state.
+In the dashboard, you can select a mock variant for a particular
+route. On the other hand, they can be selected programmatically
+for instance, for setting up tests  (see **Commander API** below).
 
 <picture>
   <source media="(prefers-color-scheme: light)" srcset="./README-dashboard-light.png">
@@ -64,7 +73,7 @@ This demo uses the [sample-mocks/](./sample-mocks) directory of this repository.
 
 Experiment with the Dashboard:
 
-- Pick a mock variant from the _Mock dropdown_ (we’ll discuss them later)
+- Pick a mock variant from the _Mock dropdown_ 
 - Toggle the 🕓 _Delay Responses_ button, (e.g. for testing spinners)
 - Toggle the _500_ button, which sends and _Internal Server Error_ on that endpoint
 
@@ -112,17 +121,7 @@ filename, such as `(demo-part1)`, `(demo-part2)`.
 - [Mock Server Worker](https://mswjs.io)
 
 ---
-
-## Multiple Mock Variants
-Each route can have many mocks, which could either be:
-- Different response __status code__. For example, for triggering errors.
-- __Comment__ on the filename, which is anything within parentheses.
-  - e.g. `api/login(locked out user).POST.423.json`
-
-Those alternatives can be manually selected on the dashboard, or
-programmatically (see **Commander API** section), for instance, for setting up tests.
-
-### Default Mock for a Route
+## Default Mock for a Route
 You can add the comment: `(default)` to a filename.
 Otherwise, the first file in **alphabetical order** wins.
 

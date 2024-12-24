@@ -18,7 +18,7 @@ extension](https://github.com/ericfortis/devtools-ext-tar-http-requests)
 can create a TAR of your requests following that convention.
 
 Nonetheless, you don’t need to mock all your APIs. Mockaton can request from your backend
-the routes you don’t have mocks for. That’s done with `Config.proxyFallback = 'http://mybackend'`
+the routes you don’t have mocks for. That’s done with `config.proxyFallback = 'http://mybackend'`
 
 ## Multiple Mock Variants
 Each route can have many mocks, which could either be:
@@ -100,7 +100,7 @@ allows for checking out long-lived branches with old API contracts.
 ### Deterministic Standalone Demo Server
 Perhaps you need to demo your app, but the ideal flow is too complex to
 simulate from the actual backend. In this case, compile your frontend app and
-put its built assets in `Config.staticDir`. Then, from the Mockaton dashboard
+put its built assets in `config.staticDir`. Then, from the Mockaton dashboard
 you can "Bulk Select" mocks to simulate the complete states you want to demo.
 For bulk-selecting, you just need to add a comment to the mock
 filename, such as `(demo-part1)`, `(demo-part2)`.
@@ -191,7 +191,7 @@ export default function listColors() {
 ---
 
 If you are wondering, what if I need to serve a static `.js`?
-Put it in your `Config.staticDir` without the mock filename convention.
+Put it in your `config.staticDir` without the mock filename convention.
 
 ---
 
@@ -269,12 +269,12 @@ Defaults to `/(\.DS_Store|~)$/`
 
 ### `delay?: number` 🕓
 The clock icon next to the mock selector is a checkbox for delaying a particular
-response. The delay is globally configurable via `Config.delay = 1200` (milliseconds).
+response. The delay is globally configurable via `config.delay = 1200` (milliseconds).
 
 
 ### `proxyFallback?: string`
 Lets you specify a target server for serving routes you don’t have mocks for.
-For example, `Config.proxyFallback = 'http://example.com:8080'`
+For example, `config.proxyFallback = 'http://example.com:8080'`
 
 
 ### `staticDir?: string`
@@ -282,8 +282,8 @@ For example, `Config.proxyFallback = 'http://example.com:8080'`
 - Use Case 2: For a standalone demo server. For example,
   build your frontend bundle, and serve it from Mockaton.
 
-Files under `Config.staticDir` don’t use the filename convention.
-They take precedence over the `GET` mocks in `Config.mocksDir`.
+Files under `config.staticDir` don’t use the filename convention.
+They take precedence over the `GET` mocks in `config.mocksDir`.
 For example, if you have two files for `GET /foo/bar.jpg`
 ```
 my-static-dir/foo/bar.jpg
@@ -295,7 +295,7 @@ my-mocks-dir/foo/bar.jpg.GET.200.jpg // Unreacheable
 The selected cookie is sent in every response in the `Set-Cookie` header.
 The key is just a label used for selecting a particular cookie in the
 dashboard. In the dashboard, only one cookie can be selected. If you need more
-cookies you can inject additional cookies globally in `Config.extraHeaders`.
+cookies you can inject additional cookies globally in `config.extraHeaders`.
 
 By the way, there’s a `jwtCookie` helper, which has a hardcoded header and
 signature. In other words, it’s useful if you only care about its payload.
@@ -303,7 +303,7 @@ signature. In other words, it’s useful if you only care about its payload.
 ```js
 import { jwtCookie } from 'mockaton'
 
-Config.cookies = {
+config.cookies = {
   'My Admin User': 'my-cookie=1;Path=/;SameSite=strict',
   'My Normal User': 'my-cookie=0;Path=/;SameSite=strict',
   'My JWT': jwtCookie('my-cookie', {
@@ -318,7 +318,7 @@ Config.cookies = {
 Note it’s a unidimensional array. The header name goes at even indices.
 
 ```js
-Config.extraHeaders = [
+config.extraHeaders = [
   'Server', 'Mockaton',
   'Set-Cookie', 'foo=FOO;Path=/;SameSite=strict',
   'Set-Cookie', 'bar=BAR;Path=/;SameSite=strict'
@@ -328,7 +328,7 @@ Config.extraHeaders = [
 
 ### `extraMimes?: { [fileExt: string]: string }`
 ```js
-Config.extraMimes = {
+config.extraMimes = {
   jpe: 'application/jpeg'
 }
 ```
@@ -360,7 +360,7 @@ import { parse } from 'yaml'
 import { readFileSync } from 'node:js'
 import { jsToJsonPlugin } from 'mockaton'
 
-Config.plugins = [
+config.plugins = [
   [/\.(js|ts)$/, jsToJsonPlugin], // Default 
   [/\.yml$/, yamlToJsonPlugin],
   [/foo\.GET\.200\.txt$/, capitalizePlugin], // e.g. GET /api/foo would be capitalized
@@ -384,14 +384,14 @@ function capitalizePlugin(filePath) {
 
 
 ### `corsAllowed?: boolean`
-Defaults to `corsAllowed = false`. When `Config.corsAllowed === true`, these are the default options:
+Defaults to `corsAllowed = false`. When `config.corsAllowed === true`, these are the default options:
 ```js
-Config.corsOrigins = ['*']
-Config.corsMethods = ['GET', 'PUT', 'DELETE', 'POST', 'PATCH', 'HEAD', 'OPTIONS', 'TRACE', 'CONNECT']
-Config.corsHeaders = ['content-type']
-Config.corsCredentials = true
-Config.corsMaxAge = 0 // seconds to cache the preflight req
-Config.corsExposedHeaders = [] // headers you need to access in client-side JS
+config.corsOrigins = ['*']
+config.corsMethods = ['GET', 'PUT', 'DELETE', 'POST', 'PATCH', 'HEAD', 'OPTIONS', 'TRACE', 'CONNECT']
+config.corsHeaders = ['content-type']
+config.corsCredentials = true
+config.corsMaxAge = 0 // seconds to cache the preflight req
+config.corsExposedHeaders = [] // headers you need to access in client-side JS
 ```
 
 
@@ -400,12 +400,12 @@ This defaults to trying to open the dashboard in your default browser in macOS a
 Windows. For a more cross-platform utility, you could `npm install open` and pass it.
 ```js
 import open from 'open'
-Config.onReady = open
+config.onReady = open
 ```
 
 If you don’t want to open a browser, pass a noop:
 ```js
-Config.onReady = () => {}
+config.onReady = () => {}
 ```
 
 
@@ -439,7 +439,7 @@ await mockaton.setRouteIsDelayed('GET', '/api/foo', true)
 ```
 
 ### Select a cookie
-In `Config.cookies`, each key is the label used for selecting it.
+In `config.cookies`, each key is the label used for selecting it.
 ```js
 await mockaton.selectCookie('My Normal User')
 ```
@@ -453,7 +453,7 @@ Pass an empty string to disable it.
 ### Reset
 Re-initialize the collection. So if you added or removed mocks they will
 be considered. The selected mocks, cookies, and delays go back to default,
-but `Config.proxyFallback` and `Config.corsAllowed` are not affected.
+but `config.proxyFallback` and `config.corsAllowed` are not affected.
 ```js
 await mockaton.reset()
 ```

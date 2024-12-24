@@ -66,10 +66,12 @@ node --import=tsx my-mockaton.js
 ## Running the Demo Example
 This demo uses the [sample-mocks/](./sample-mocks) directory of this repository.
 
-- `git clone https://github.com/ericfortis/mockaton.git`
-- `cd mockaton`
-- `npm install tsx` (optional)
-- `npm run demo:ts` it will open a dashboard
+```sh  
+git clone https://github.com/ericfortis/mockaton.git
+cd mockaton
+npm install tsx # (optional)
+npm run demo:ts
+```
 
 Experiment with the Dashboard:
 

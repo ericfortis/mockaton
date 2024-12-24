@@ -272,8 +272,7 @@ Defaults to `/(\.DS_Store|~)$/`
 
 
 ### `delay?: number` 🕓
-The clock icon next to the mock selector is a checkbox for delaying a particular
-response. The delay is globally configurable via `config.delay = 1200` (milliseconds).
+The delay is globally configurable, it defaults to `1200` (milliseconds).
 
 
 ### `proxyFallback?: string`
@@ -434,7 +433,7 @@ await mockaton.select('api/foo.200.GET.json')
 ```js
 await mockaton.bulkSelectByComment('(demo-a)')
 ```
-Parentheses are optional. You can pass a partial match.
+Parentheses are optional, so you can pass a partial match.
 For example, passing `'demo-'` (without the final `a`), selects the
 first mock in alphabetical order that matches.
 

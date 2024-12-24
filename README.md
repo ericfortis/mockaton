@@ -69,7 +69,7 @@ This demo uses the [sample-mocks/](./sample-mocks) directory of this repository.
 ```sh  
 git clone https://github.com/ericfortis/mockaton.git
 cd mockaton
-npm install tsx # (optional)
+npm install tsx
 npm run demo:ts
 ```
 

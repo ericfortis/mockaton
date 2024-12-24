@@ -30,8 +30,8 @@ Each route can have many mocks, which could either be:
 ## Dashboard UI
 
 In the dashboard, you can select a mock variant for a particular
-route. On the other hand, they can be selected programmatically
-for instance, for setting up tests  (see **Commander API** below).
+route, among other options. But there’s also a programmatic API,
+which is handy for setting up tests  (see **Commander API** below).
 
 <picture>
   <source media="(prefers-color-scheme: light)" srcset="./README-dashboard-light.png">
@@ -108,8 +108,8 @@ filename, such as `(demo-part1)`, `(demo-part2)`.
 
 ## Motivation
 - Avoids spinning up and maintaining hefty backends when developing UIs.
-- For a deterministic and comprehensive backend state. For example, having all the possible
-  state variants of a collection helps for spotting inadvertent bugs.
+- For a deterministic, comprehensive, and consistent backend state. For example, having
+  a collection with all the possible state variants helps for spotting inadvertent bugs.
 - Sometimes, frontend progress is blocked waiting for some backend API. Similarly,
   it’s often delayed due to missing data or inconvenient contracts. Therefore,
   many meetings can be saved by prototyping frontend features with mocks, and
@@ -146,7 +146,8 @@ export default [{ foo: 'bar' }]
 Return a `string | Buffer | Uint8Array`, but don’t call `response.end()`
 
 ```js
-export default (request, response) => JSON.stringify({ foo: 'bar' })
+export default (request, response) => 
+  JSON.stringify({ foo: 'bar' })
 ```
 
 Think of these functions as HTTP handlers, so you can
@@ -238,13 +239,13 @@ permitted](https://learn.microsoft.com/en-us/windows/win32/fileio/naming-a-file)
 For instance, if you have `api/foo/bar` and
 `api/foo`. For the latter you have two options:
 
-**Option A.** Place it outside the directory:
+**Option A.** 
 ```
-api/foo/
 api/foo.GET.200.json
+api/foo/bar.GET.200.json
 ```
 
-**Option B.** Omit the filename:
+**Option B.** Omit the filename.
 ```text
 api/foo/.GET.200.json
 ```
@@ -274,7 +275,7 @@ response. The delay is globally configurable via `config.delay = 1200` (millisec
 
 ### `proxyFallback?: string`
 Lets you specify a target server for serving routes you don’t have mocks for.
-For example, `config.proxyFallback = 'http://example.com:8080'`
+For example, `config.proxyFallback = 'http://example.com'`
 
 
 ### `staticDir?: string`
@@ -292,13 +293,6 @@ my-mocks-dir/foo/bar.jpg.GET.200.jpg // Unreacheable
 
 
 ### `cookies?: { [label: string]: string }`
-The selected cookie is sent in every response in the `Set-Cookie` header.
-The key is just a label used for selecting a particular cookie in the
-dashboard. In the dashboard, only one cookie can be selected. If you need more
-cookies you can inject additional cookies globally in `config.extraHeaders`.
-
-By the way, there’s a `jwtCookie` helper, which has a hardcoded header and
-signature. In other words, it’s useful if you only care about its payload.
 
 ```js
 import { jwtCookie } from 'mockaton'
@@ -312,6 +306,14 @@ config.cookies = {
   })
 }
 ```
+The selected cookie is sent in every response in a `Set-Cookie` header.
+
+By the way, the `jwtCookie` helper has a hardcoded header and signature.
+In other words, it’s useful only if you care about the payload.
+
+If you need to send more than one cookie,
+inject them globally in `config.extraHeaders`.
+
 
 
 ### `extraHeaders?: string[]`

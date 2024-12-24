@@ -239,17 +239,18 @@ permitted](https://learn.microsoft.com/en-us/windows/win32/fileio/naming-a-file)
 
 ### Index-like route
 For instance, if you have `api/foo/bar` and
-`api/foo`. For the latter you have two options:
+`api/foo`, you have two options:
 
-**Option A.** 
+**Option A:** 
 ```
 api/foo.GET.200.json
 api/foo/bar.GET.200.json
 ```
 
-**Option B.** Omit the filename.
+**Option B:** Omit the filename.
 ```text
 api/foo/.GET.200.json
+api/foo/bar.GET.200.json
 ```
 
 ---

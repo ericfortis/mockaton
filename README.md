@@ -17,20 +17,21 @@ By the way, [this browser
 extension](https://github.com/ericfortis/devtools-ext-tar-http-requests)
 can create a TAR of your requests following that convention.
 
-Nonetheless, you don’t need to mock all your APIs. Mockaton can request from your backend
-the routes you don’t have mocks for. That’s done with `config.proxyFallback = 'http://mybackend'`
+Nonetheless, you don’t need to mock all your APIs. If you don’t add
+a mock for some route, Mockaton can request it from your backend.
+That’s done with `config.proxyFallback = 'http://mybackend'`
 
 ## Multiple Mock Variants
 Each route can have many mocks, which could either be:
 - Different response __status code__. For example, for triggering errors.
 - __Comment__ on the filename, which is anything within parentheses.
-  For example, `api/login(locked out user).POST.423.json`
+  - e.g. `api/login(locked out user).POST.423.json`
 
 
 ## Dashboard UI
 
 In the dashboard, you can select a mock variant for a particular
-route, among other options. But there’s also a programmatic API,
+route, among other options. In addition, there’s a programmatic API,
 which is handy for setting up tests  (see **Commander API** below).
 
 <picture>
@@ -64,7 +65,7 @@ node --import=tsx my-mockaton.js
 
 
 ## Running the Demo Example
-This demo uses the [sample-mocks/](./sample-mocks) directory of this repository.
+This demo uses the [sample-mocks/](./sample-mocks) of this repository.
 
 ```sh  
 git clone https://github.com/ericfortis/mockaton.git
@@ -95,9 +96,9 @@ The _Reset_ button is for registering newly added, removed, or renamed mocks.
   - slow to build assets
 
 ### Time Travel
-If you commit the mocks in the repo, when bisecting a bug, you don’t
-have to sync the frontend with many backend repos. Similarly, it
-allows for checking out long-lived branches with old API contracts.
+If you commit the mocks to your repo, it’s straightforward to bisect bugs and
+checking out long-lived branches. In other words, you don’t have to downgrade
+backends to old API contracts or databases.
 
 ### Deterministic Standalone Demo Server
 Perhaps you need to demo your app, but the ideal flow is too complex to

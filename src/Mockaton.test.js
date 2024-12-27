@@ -98,6 +98,7 @@ const fixtures = [
 	],
 
 	// Query String
+	// TODO ignore on Windows (because of ?)
 	[
 		'/api/my-query-string?foo=[foo]&bar=[bar]',
 		'api/my-query-string?foo=[foo]&bar=[bar].GET.200.json',

@@ -308,7 +308,7 @@ config.cookies = {
   })
 }
 ```
-The selected cookie, which is the first key by default, is sent in every
+The selected cookie, which is the first one by default, is sent in every
 response in a `Set-Cookie` header. If you need to send more
 cookies, inject them globally in `config.extraHeaders`.
 

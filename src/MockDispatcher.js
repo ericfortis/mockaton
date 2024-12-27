@@ -3,7 +3,7 @@ import { join } from 'node:path'
 import { proxy } from './ProxyRelay.js'
 import { cookie } from './cookie.js'
 import { Config } from './Config.js'
-import { preprocessPlugins } from './MockDispatcherPlugins.js'
+import { applyPlugins } from './MockDispatcherPlugins.js'
 import * as mockBrokerCollection from './mockBrokersCollection.js'
 import { JsonBodyParserError } from './utils/http-request.js'
 import { sendInternalServerError, sendNotFound, sendBadRequest } from './utils/http-response.js'
@@ -31,7 +31,7 @@ export async function dispatchMock(req, response) {
 
 		const { mime, body } = broker.isTemp500
 			? { mime: '', body: '' }
-			: await preprocessPlugins(join(Config.mocksDir, broker.file), req, response)
+			: await applyPlugins(join(Config.mocksDir, broker.file), req, response)
 
 		response.setHeader('Content-Type', mime)
 		setTimeout(() => response.end(body), broker.delay)

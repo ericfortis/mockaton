@@ -3,7 +3,7 @@ import { mimeFor } from './utils/mime.js'
 import { Config } from './Config.js'
 
 
-export async function preprocessPlugins(filePath, req, response) {
+export async function applyPlugins(filePath, req, response) {
 	for (const [regex, plugin] of Config.plugins) // TESTME capitalizePlugin
 		if (regex.test(filePath))
 			return await plugin(filePath, req, response)

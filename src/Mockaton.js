@@ -13,10 +13,8 @@ import { apiPatchRequests, apiGetRequests } from './Api.js'
 export function Mockaton(options) {
 	setup(options)
 	mockBrokerCollection.init()
-
-	const server = createServer(onRequest)
-	server.listen(Config.port, Config.host, (error) => {
-		const { address, port } = server.address()
+	return createServer(onRequest).listen(Config.port, Config.host, function (error) {
+		const { address, port } = this.address()
 		const url = `http://${address}:${port}`
 		console.log('Listening', url)
 		console.log('Dashboard', url + API.dashboard)
@@ -25,7 +23,6 @@ export function Mockaton(options) {
 		else
 			Config.onReady(url + API.dashboard)
 	})
-	return server
 }
 
 async function onRequest(req, response) {

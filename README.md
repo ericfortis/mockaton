@@ -334,6 +334,8 @@ config.extraMimes = {
   jpe: 'application/jpeg'
 }
 ```
+These media types take precedence over the built-in
+[utils/mime.js](src/utils/mime.js), so you can override them.
 
 
 ### `plugins?: [filenameTester: RegExp, plugin: Plugin][]`

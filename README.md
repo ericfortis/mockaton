@@ -308,14 +308,12 @@ config.cookies = {
   })
 }
 ```
-The selected cookie is sent in every response in a `Set-Cookie` header.
+The selected cookie, which is the first key by default, is sent in every
+response in a `Set-Cookie` header. If you need to send more
+cookies, inject them globally in `config.extraHeaders`.
 
 By the way, the `jwtCookie` helper has a hardcoded header and signature.
 In other words, it’s useful only if you care about the payload.
-
-If you need to send more than one cookie,
-inject them globally in `config.extraHeaders`.
-
 
 
 ### `extraHeaders?: string[]`

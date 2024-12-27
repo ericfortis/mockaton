@@ -60,8 +60,7 @@ init()
 
 function App(apiResponses) {
 	empty(document.body)
-	createRoot(document.body)
-		.render(DevPanel(apiResponses))
+	document.body.appendChild(DevPanel(apiResponses))
 }
 
 function DevPanel([brokersByMethod, cookies, comments, corsAllowed, fallbackAddress, staticFiles]) {
@@ -403,14 +402,6 @@ function empty(node) {
 
 // These are simplified React-compatible implementations.
 // IOW, for switching to React, remove the `createRoot`, `createElement`, `useRef`
-
-function createRoot(root) {
-	return {
-		render(app) {
-			root.appendChild(app)
-		}
-	}
-}
 
 function createElement(elem, props = null, ...children) {
 	if (typeof elem === 'function')

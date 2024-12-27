@@ -365,7 +365,7 @@ import { readFileSync } from 'node:js'
 import { jsToJsonPlugin } from 'mockaton'
 
 config.plugins = [
-  [/\.(js|ts)$/, jsToJsonPlugin], // Default 
+  [/\.(js|ts)$/, jsToJsonPlugin], // Default but you need to add this line if you add plugins
   [/\.yml$/, yamlToJsonPlugin],
   [/foo\.GET\.200\.txt$/, capitalizePlugin], // e.g. GET /api/foo would be capitalized
 ]

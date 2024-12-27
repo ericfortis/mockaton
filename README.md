@@ -124,15 +124,6 @@ filename, such as `(demo-part1)`, `(demo-part2)`.
 - [Mock Server Worker](https://mswjs.io)
 
 ---
-## Default Mock for a Route
-You can add the comment: `(default)` to a filename.
-Otherwise, the first file in **alphabetical order** wins.
-
-```
-api/user(default).GET.200.json
-```
-
----
 
 ## You can write JSON mocks in JavaScript or TypeScript
 For example, `api/foo.GET.200.js`
@@ -227,6 +218,15 @@ api/foo<b>(my comment)</b>.GET.200.json
 api/foo.GET.200.json
 </pre>
 
+### Default Mock for a Route
+You can add the comment: `(default)`. 
+Otherwise, the first file in **alphabetical order** wins.
+
+<pre>
+api/user<b>(default)</b>.GET.200.json
+</pre>
+
+
 ### Query String Params
 The query string is ignored when routing to it. In other words, it’s only used for
 documenting the URL contract.
@@ -238,9 +238,8 @@ Speaking of which, on Windows filenames containing "?" are [not
 permitted](https://learn.microsoft.com/en-us/windows/win32/fileio/naming-a-file), but since that’s part of the query string, it’s ignored anyway.
 
 
-### Index-like route
-For instance, if you have `api/foo/bar` and
-`api/foo`, you have two options:
+### Index-like routes
+If you have `api/foo` and `api/foo/bar`, you have two options:
 
 **Option A:** 
 ```

@@ -17,8 +17,8 @@ By the way, [this browser
 extension](https://github.com/ericfortis/devtools-ext-tar-http-requests)
 can create a TAR of your requests following that convention.
 
-Nonetheless, you don’t need to mock all your APIs. If you don’t add
-a mock for some route, Mockaton can request it from your backend.
+Nonetheless, you don’t need to mock all your APIs. Mockaton
+can request from your backend the routes you don’t have mocks for.
 That’s done with `config.proxyFallback = 'http://mybackend'`
 
 ## Multiple Mock Variants
@@ -400,7 +400,7 @@ config.corsExposedHeaders = [] // headers you need to access in client-side JS
 
 
 ### `onReady?: (dashboardUrl: string) => void`
-This defaults to trying to open the dashboard in your default browser in macOS and
+This defaults to trying to open the dashboard in your default browser on macOS and
 Windows. For a more cross-platform utility, you could `npm install open` and pass it.
 ```js
 import open from 'open'

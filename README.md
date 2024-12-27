@@ -351,7 +351,7 @@ type Plugin = (
 ```
 Plugins are for processing mocks before sending them.
 
-Note: don’t call `response.end()`
+Note: don’t call `response.end()` on them.
 
 <details>
 <summary><b> See Plugin Examples </b></summary>
@@ -365,7 +365,7 @@ import { readFileSync } from 'node:js'
 import { jsToJsonPlugin } from 'mockaton'
 
 config.plugins = [
-  [/\.(js|ts)$/, jsToJsonPlugin], // Default but you need to add this line if you add plugins
+  [/\.(js|ts)$/, jsToJsonPlugin], // Default but you need to add it to your list if you need it
   [/\.yml$/, yamlToJsonPlugin],
   [/foo\.GET\.200\.txt$/, capitalizePlugin], // e.g. GET /api/foo would be capitalized
 ]

@@ -218,7 +218,6 @@ main {
 .MockSelector {
 	width: 300px;
 	height: 30px;
-	padding: 8px 1px;
 	border: 0;
 	border-left: 3px solid transparent;
 	text-align: right;

@@ -6,7 +6,7 @@ export function openInBrowser(address) {
 		case 'darwin':
 			exec(`open ${address}`)
 			break
-		case 'win32': // TESTME
+		case 'win32':
 			exec(`start ${address}`)
 			break
 	}

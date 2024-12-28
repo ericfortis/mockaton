@@ -39,6 +39,8 @@ export const apiPatchRequests = new Map([
 	[API.cors, setCorsAllowed]
 ])
 
+/* GET */
+
 function serveDashboard(_, response) { sendFile(response, join(import.meta.dirname, 'Dashboard.html')) }
 function serveDashboardAsset(req, response) { sendFile(response, join(import.meta.dirname, req.url)) }
 
@@ -48,12 +50,25 @@ function listMockBrokers(_, response) { sendJSON(response, mockBrokersCollection
 function getProxyFallback(_, response) { sendJSON(response, Config.proxyFallback) }
 function getIsCorsAllowed(_, response) { sendJSON(response, Config.corsAllowed) }
 
+async function listStaticFiles(req, response) { // TESTME
+	try {
+		const files = Config.staticDir
+			? listFilesRecursively(Config.staticDir).filter(f => !Config.ignore.test(f))
+			: []
+		sendJSON(response, files)
+	}
+	catch (error) {
+		sendBadRequest(response, error)
+	}
+}
+
+
+/* PATCH */
 
 function reinitialize(_, response) {
 	mockBrokersCollection.init()
 	sendOK(response)
 }
-
 
 async function selectCookie(req, response) {
 	try {
@@ -65,14 +80,12 @@ async function selectCookie(req, response) {
 	}
 }
 
-
 async function selectMock(req, response) {
 	try {
 		const file = await parseJSON(req)
 		const broker = mockBrokersCollection.getBrokerByFilename(file)
 		if (!broker || !broker.mockExists(file))
 			throw `Missing Mock: ${file}`
-
 		broker.updateFile(file)
 		sendOK(response)
 	}
@@ -81,17 +94,14 @@ async function selectMock(req, response) {
 	}
 }
 
-
 async function setRouteIsDelayed(req, response) {
 	try {
 		const body = await parseJSON(req)
 		const broker = mockBrokersCollection.getBrokerForUrl(
 			body[DF.routeMethod],
 			body[DF.routeUrlMask])
-
 		if (!broker)
 			throw `Route does not exist: ${body[DF.routeUrlMask]} ${body[DF.routeUrlMask]}`
-
 		broker.updateDelay(body[DF.delayed])
 		sendOK(response)
 	}
@@ -99,7 +109,6 @@ async function setRouteIsDelayed(req, response) {
 		sendBadRequest(response, error)
 	}
 }
-
 
 async function updateProxyFallback(req, response) {
 	try {
@@ -116,7 +125,6 @@ async function updateProxyFallback(req, response) {
 	}
 }
 
-
 async function bulkUpdateBrokersByCommentTag(req, response) {
 	try {
 		mockBrokersCollection.setMocksMatchingComment(await parseJSON(req))
@@ -126,7 +134,6 @@ async function bulkUpdateBrokersByCommentTag(req, response) {
 		sendBadRequest(response, error)
 	}
 }
-
 
 async function setCorsAllowed(req, response) {
 	try {
@@ -138,16 +145,3 @@ async function setCorsAllowed(req, response) {
 	}
 }
 
-
-// TESTME
-async function listStaticFiles(req, response) {
-	try {
-		const files = Config.staticDir
-			? listFilesRecursively(Config.staticDir).filter(f => !Config.ignore.test(f))
-			: []
-		sendJSON(response, files)
-	}
-	catch (error) {
-		sendBadRequest(response, error)
-	}
-}

@@ -272,7 +272,7 @@ Defaults to `/(\.DS_Store|~)$/`
 
 
 ### `delay?: number` 🕓
-The delay is globally configurable, it defaults to `1200` (milliseconds).
+The response delay. It’s globally configurable, and it defaults to `1200` milliseconds.
 
 
 ### `proxyFallback?: string`

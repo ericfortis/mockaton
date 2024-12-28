@@ -7,6 +7,16 @@ export class Commander {
 		this.#addr = addr
 	}
 
+	#get(api) {
+		return fetch(this.#addr + api)
+	}
+	#patch(api, body) {
+		return fetch(this.#addr + api, {
+			method: 'PATCH',
+			body: JSON.stringify(body)
+		})
+	}
+
 	listMocks() {
 		return this.#get(API.mocks)
 	}
@@ -57,16 +67,5 @@ export class Commander {
 
 	listStaticFiles() {
 		return this.#get(API.static)
-	}
-
-
-	#get(api) {
-		return fetch(this.#addr + api)
-	}
-	#patch(api, body) {
-		return fetch(this.#addr + api, {
-			method: 'PATCH',
-			body: JSON.stringify(body)
-		})
 	}
 }

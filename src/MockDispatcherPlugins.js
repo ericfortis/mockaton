@@ -7,10 +7,6 @@ export async function applyPlugins(filePath, req, response) {
 	for (const [regex, plugin] of Config.plugins) // TESTME capitalizePlugin
 		if (regex.test(filePath))
 			return await plugin(filePath, req, response)
-	return defaultPlugin(filePath)
-}
-
-export function defaultPlugin(filePath) {
 	return {
 		mime: mimeFor(filePath),
 		body: read(filePath)

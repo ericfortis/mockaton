@@ -6,7 +6,7 @@
 
 _Mockaton_ is a mock server for improving the frontend development and testing experience.
 
-With Mockaton, you don’t need to write code for wiring your mocks. Instead, it
+With Mockaton you don’t need to write code for wiring your mocks. Instead, it
 scans a given directory for filenames following a convention similar to the
 URL paths. For example, the following file will be served on `/api/user/1234`
 ```
@@ -37,7 +37,7 @@ which is handy for setting up tests  (see **Commander API** below).
 <picture>
   <source media="(prefers-color-scheme: light)" srcset="./README-dashboard-light.png">
   <source media="(prefers-color-scheme: dark)" srcset="./README-dashboard-dark.png">
-  <img alt="Mockaton Dashboard Demo" src="./README-dashboard-light.png" style="max-width: 860px">
+  <img alt="Mockaton Dashboard Demo" src="./README-dashboard-light.png">
 </picture>
 
 
@@ -93,7 +93,7 @@ The _Reset_ button is for registering newly added, removed, or renamed mocks.
 - Polled resources (for triggering their different states)
   - alerts
   - notifications
-  - slow to build assets
+  - slow to build resources
 
 ### Time Travel
 If you commit the mocks to your repo, it’s straightforward to bisect bugs and
@@ -103,8 +103,8 @@ backends to old API contracts or databases.
 ### Deterministic Standalone Demo Server
 Perhaps you need to demo your app, but the ideal flow is too complex to
 simulate from the actual backend. In this case, compile your frontend app and
-put its built assets in `config.staticDir`. Then, from the Mockaton dashboard
-you can "Bulk Select" mocks to simulate the complete states you want to demo.
+put its built assets in `config.staticDir`. Then, on the dashboard
+"Bulk Select" mocks to simulate the complete states you want to demo.
 For bulk-selecting, you just need to add a comment to the mock
 filename, such as `(demo-part1)`, `(demo-part2)`.
 
@@ -113,7 +113,7 @@ filename, such as `(demo-part1)`, `(demo-part2)`.
 - Avoids spinning up and maintaining hefty backends when developing UIs.
 - For a deterministic, comprehensive, and consistent backend state. For example, having
   a collection with all the possible state variants helps for spotting inadvertent bugs.
-- Sometimes, frontend progress is blocked waiting for some backend API. Similarly,
+- Sometimes frontend progress is blocked waiting for some backend API. Similarly,
   it’s often delayed due to missing data or inconvenient contracts. Therefore,
   many meetings can be saved by prototyping frontend features with mocks, and
   then showing those contracts to the backend team.
@@ -271,8 +271,9 @@ Defaults to `0`, which means auto-assigned
 Defaults to `/(\.DS_Store|~)$/`
 
 
-### `delay?: number` 🕓
-The response delay. It’s globally configurable, and it defaults to `1200` milliseconds.
+### `delay?: number` 
+Routes can individually be delayed with the 🕓 checkbox. On the other hand, 
+the amount is globally configurable. It defaults to `config.delay=1200` milliseconds.
 
 
 ### `proxyFallback?: string`
@@ -349,9 +350,10 @@ type Plugin = (
   body: string | Uint8Array
 }>
 ```
-Plugins are for processing mocks before sending them.
+Plugins are for processing mocks before sending them. If no regex matches the filename,
+it fallbacks to reading the file from disk and computing the MIME from the extension.
 
-Note: don’t call `response.end()` on them.
+Note: don’t call `response.end()` on any plugin.
 
 <details>
 <summary><b> See Plugin Examples </b></summary>
@@ -365,7 +367,11 @@ import { readFileSync } from 'node:js'
 import { jsToJsonPlugin } from 'mockaton'
 
 config.plugins = [
-  [/\.(js|ts)$/, jsToJsonPlugin], // Default but you need to add it to your list if you need it
+  
+  // Although `jsToJsonPlugin` is set by default, you need to add it to your list if you need it.
+  // In other words, your plugins array overwrites the default list. This way you can remove it.
+  [/\.(js|ts)$/, jsToJsonPlugin], 
+  
   [/\.yml$/, yamlToJsonPlugin],
   [/foo\.GET\.200\.txt$/, capitalizePlugin], // e.g. GET /api/foo would be capitalized
 ]

@@ -1,4 +1,5 @@
 import { Config } from '../Config.js'
+import { EXT_FOR_UNKNOWN_MIME } from '../ApiConstants.js'
 
 // https://developer.mozilla.org/en-US/docs/Web/HTTP/Basics_of_HTTP/MIME_types/Common_types
 // m = {}; 
@@ -92,4 +93,23 @@ export function mimeFor(filename) {
 	if (!mime)
 		console.info(`Missing MIME for ${filename}`)
 	return mime
+}
+
+export function extFor(mime) {
+	const ext = findExt(mime)
+	if (!ext) {
+		console.info(`Missing extension for ${mime}`)
+		return EXT_FOR_UNKNOWN_MIME
+	}
+	return ext
+}
+
+function findExt(targetMime) {
+	for (const [ext, mime] of Object.entries(Config.extraMimes))
+		if (targetMime === mime)
+			return ext
+	for (const [ext, mime] of Object.entries(mimes))
+		if (targetMime === mime)
+			return ext
+	return ''
 }

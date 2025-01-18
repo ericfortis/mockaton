@@ -21,3 +21,5 @@ export const DF = { // Dashboard Fields (XHR)
 
 export const DEFAULT_500_COMMENT = '(Mockaton 500)'
 export const DEFAULT_MOCK_COMMENT = '(default)'
+
+export const EXT_FOR_UNKNOWN_MIME = 'unknown'

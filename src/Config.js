@@ -14,6 +14,7 @@ export const Config = Object.seal({
 	host: '127.0.0.1',
 	port: 0, // auto-assigned
 	proxyFallback: '', // e.g. http://localhost:9999
+	collectProxied: false,
 
 	delay: 1200, // milliseconds
 	cookies: {}, // defaults to the first kv
@@ -47,6 +48,7 @@ export function setup(options) {
 		host: is(String),
 		port: port => Number.isInteger(port) && port >= 0 && port < 2 ** 16,
 		proxyFallback: optional(URL.canParse),
+		collectProxied: is(Boolean),
 
 		delay: ms => Number.isInteger(ms) && ms > 0,
 		cookies: is(Object),

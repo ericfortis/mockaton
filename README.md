@@ -13,13 +13,10 @@ URL paths. For example, the following file will be served on `/api/user/1234`
 my-mocks-dir/api/user/[user-id].GET.200.json
 ```
 
-By the way, [this browser
-extension](https://github.com/ericfortis/devtools-ext-tar-http-requests)
-can create a TAR of your requests following that convention.
-
-Nonetheless, you don’t need to mock all your APIs. Mockaton
-can request from your backend the routes you don’t have mocks for.
-That’s done with `config.proxyFallback = 'http://mybackend'`
+By the way, you don’t need to mock all your APIs. Mockaton can request
+from your backend the routes you don’t have mocks for. That’s done
+with `config.proxyFallback = 'http://mybackend'`. For convenience, you
+can save mocks for those responses with `config.collectProxied = true`
 
 ## Multiple Mock Variants
 Each route can have many mocks, which could either be:
@@ -279,6 +276,31 @@ the amount is globally configurable. It defaults to `config.delay=1200` millisec
 ### `proxyFallback?: string`
 Lets you specify a target server for serving routes you don’t have mocks for.
 For example, `config.proxyFallback = 'http://example.com'`
+
+### `collectProxied?: boolean`
+Defaults to `false`. With this flag you can save mocks that hit
+your proxy fallback to `config.mocksDir`. If there are UUIDv4 in the
+URL the filename will have `[id]` in their place. For example,
+
+```
+/api/user/d14e09c8-d970-4b07-be42-b2f4ee22f0a6/likes =>
+my-mocks-dir/api/user/[id]/likes.GET.200.json
+```
+
+Note that newly saved mocks won’t be served until you
+**register them** by reinitializing Mockaton or clicking "Reset".
+
+Registered mocks won’t be overwritten (they don’t hit the fallback server).
+On the other hand, newly saved mocks get overwritten while they are unregistered.
+
+<details>
+  <summary>Extension Details</summary>
+<p>
+If you see an <code>.unknown</code> extension, that’s because the
+<code>Content-Type</code> sent by your backend is either missing or not present
+in the predefined list. For the latter, add it to <code>config.extraMimes</code>
+</p>
+</details>
 
 
 ### `staticDir?: string`

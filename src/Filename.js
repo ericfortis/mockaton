@@ -44,7 +44,6 @@ export function parseFilename(file) {
 	}
 }
 
-
 function removeTrailingSlash(url = '') {
 	return url
 		.replace(/\/$/, '')
@@ -59,5 +58,14 @@ function responseStatusIsValid(status) {
 }
 
 
+export function makeMockFilename(url, method, status, ext) {
+	const urlMask = replaceIds(removeTrailingSlash(url))
+	return [urlMask, method, status, ext].join('.')
+}
+
+const reUuidV4 = /([0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12})/gi
+function replaceIds(filename) {
+	return filename.replaceAll(reUuidV4, '[id]')
+}
 
 

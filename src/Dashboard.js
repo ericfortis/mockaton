@@ -423,7 +423,7 @@ function createElement(elem, props = null, ...children) {
 				node[key] = value
 			else
 				node.setAttribute(key, value)
-	node.append(...children.flat())
+	node.append(...children.flat().filter(a => a))
 	return node
 }
 
@@ -431,7 +431,7 @@ function createSvgElement(tagName, props, ...children) {
 	const elem = document.createElementNS('http://www.w3.org/2000/svg', tagName)
 	for (const [key, value] of Object.entries(props))
 		elem.setAttribute(key, value)
-	elem.append(...children.flat())
+	elem.append(...children.flat().filter(a => a))
 	return elem
 }
 

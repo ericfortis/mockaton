@@ -10,12 +10,14 @@ export async function proxy(req, response) {
 	const proxyResponse = await fetch(Config.proxyFallback + req.url, {
 		method: req.method,
 		headers: req.headers,
-		body: req.method === 'GET' || req.method === 'HEAD' // TESTME
+		body: req.method === 'GET' || req.method === 'HEAD'
 			? undefined
 			: await readBody(req)
 	})
-	// TODO investigate how to include many repeated headers such as set-cookie
-	response.writeHead(proxyResponse.status, Object.fromEntries(proxyResponse.headers))
+
+	const headers = Object.fromEntries(proxyResponse.headers)
+	headers['set-cookie'] = proxyResponse.headers.getSetCookie() // parses multiple into an array
+	response.writeHead(proxyResponse.status, headers)
 	const body = await proxyResponse.text()
 	response.end(body)
 

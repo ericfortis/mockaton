@@ -9,6 +9,7 @@ import { writeFileSync, mkdtempSync, mkdirSync } from 'node:fs'
 import { Config } from './Config.js'
 import { mimeFor } from './utils/mime.js'
 import { Mockaton } from './Mockaton.js'
+import { readBody } from './utils/http-request.js'
 import { Commander } from './Commander.js'
 import { parseFilename } from './Filename.js'
 import { CorsHeader } from './utils/http-cors.js'
@@ -421,19 +422,28 @@ async function testInvalidFilenamesAreIgnored() {
 
 async function testEnableFallbackSoRoutesWithoutMocksGetRelayed() {
 	await describe('Fallback', async () => {
-		const fallbackServer = createServer((_, response) => {
-			response.setHeader('custom_header', 'my_custom_header')
-			response.statusCode = 423
-			response.end('From_Fallback_Server')
+		const fallbackServer = createServer(async (req, response) => {
+			response.writeHead(423, {
+				'custom_header': 'my_custom_header',
+				'set-cookie': [
+					'cookieA=A',
+					'cookieB=B'
+				]
+			})
+			response.end(await readBody(req)) // echoes they req body payload
 		})
 		await promisify(fallbackServer.listen).bind(fallbackServer, 0, '127.0.0.1')()
 
 		await commander.setProxyFallback(`http://localhost:${fallbackServer.address().port}`)
 		await it('Relays to fallback server', async () => {
-			const res = await request('/non-existing-mock')
-			equal(res.headers.get('custom_header'), 'my_custom_header')
+			const res = await request('/non-existing-mock', {
+				method: 'POST',
+				body: 'text_body'
+			})
 			equal(res.status, 423)
-			equal(await res.text(), 'From_Fallback_Server')
+			equal(res.headers.get('custom_header'), 'my_custom_header')
+			equal(res.headers.get('set-cookie'), ['cookieA=A', 'cookieB=B'].join(', '))
+			equal(await res.text(), 'text_body')
 			fallbackServer.close()
 		})
 	})

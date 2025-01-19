@@ -51,7 +51,7 @@ import { Mockaton } from 'mockaton'
 
 // See the Config section for more options
 Mockaton({
-  mocksDir: resolve('my-mocks-dir'),
+  mocksDir: resolve('my-mocks-dir'), // must exist
   port: 2345
 })
 ```

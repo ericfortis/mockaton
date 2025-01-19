@@ -494,7 +494,3 @@ await mockaton.reset()
   <img src="./sample-mocks/api/user/avatar.GET.200.png" width="170"/>
   <p style="font-size: 18px">“Use Mockaton”</p>
 </div>
-
-
-## TODO
-- Refactor Tests

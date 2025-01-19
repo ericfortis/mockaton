@@ -5,7 +5,7 @@ import { cookie } from './cookie.js'
 import { Config } from './Config.js'
 import { applyPlugins } from './MockDispatcherPlugins.js'
 import * as mockBrokerCollection from './mockBrokersCollection.js'
-import { JsonBodyParserError } from './utils/http-request.js'
+import { BodyReaderError } from './utils/http-request.js'
 import { sendInternalServerError, sendNotFound, sendBadRequest } from './utils/http-response.js'
 
 
@@ -37,7 +37,7 @@ export async function dispatchMock(req, response) {
 		setTimeout(() => response.end(body), broker.delay)
 	}
 	catch (error) {
-		if (error instanceof JsonBodyParserError)
+		if (error instanceof BodyReaderError)
 			sendBadRequest(response, error)
 		else if (error.code === 'ENOENT') // mock-file has been deleted
 			sendNotFound(response)

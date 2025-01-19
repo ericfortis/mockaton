@@ -296,9 +296,13 @@ On the other hand, newly saved mocks get overwritten while they are unregistered
 <details>
   <summary>Extension Details</summary>
 <p>
-If you see an <code>.unknown</code> extension, that’s because the
-<code>Content-Type</code> sent by your backend is either missing or not present
-in the predefined list. For the latter, add it to <code>config.extraMimes</code>
+An <code>.empty</code> extension means the <code>Content-Type</code>
+header was not sent by your backend.
+</p>
+
+<p>
+An <code>.unknown</code> extension means the <code>Content-Type</code> is not in
+Mockaton’s predefined list. For that, you can add it to <code>config.extraMimes</code>
 </p>
 </details>
 

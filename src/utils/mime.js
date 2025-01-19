@@ -89,19 +89,13 @@ const mimes = {
 
 export function mimeFor(filename) {
 	const ext = filename.replace(/.*\./, '').toLowerCase()
-	const mime = Config.extraMimes[ext] || mimes[ext] || ''
-	if (!mime)
-		console.info(`Missing MIME for ${filename}`)
-	return mime
+	return Config.extraMimes[ext] || mimes[ext] || ''
 }
 
 export function extFor(mime) {
-	const ext = findExt(mime)
-	if (!ext) {
-		console.info(`Missing extension for ${mime}`)
-		return EXT_FOR_UNKNOWN_MIME
-	}
-	return ext
+	return mime
+		? findExt(mime)
+		: 'empty'
 }
 
 function findExt(targetMime) {
@@ -111,5 +105,5 @@ function findExt(targetMime) {
 	for (const [ext, mime] of Object.entries(mimes))
 		if (targetMime === mime)
 			return ext
-	return ''
+	return EXT_FOR_UNKNOWN_MIME
 }

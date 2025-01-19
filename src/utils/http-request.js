@@ -3,10 +3,11 @@ export const StandardMethods = [
 	'HEAD', 'OPTIONS', 'TRACE', 'CONNECT'
 ]
 
+export class BodyReaderError extends Error {}
 
-export class JsonBodyParserError extends Error {}
+export const parseJSON = req => readBody(req, JSON.parse)
 
-export function parseJSON(req) {
+export function readBody(req, parser = a => a) {
 	return new Promise((resolve, reject) => {
 		const MAX_BODY_SIZE = 200 * 1024
 		const expectedLength = req.headers['content-length'] | 0
@@ -29,13 +30,13 @@ export function parseJSON(req) {
 			req.removeListener('end', onEnd)
 			req.removeListener('error', onEnd)
 			if (lengthSoFar !== expectedLength)
-				reject(new JsonBodyParserError())
+				reject(new BodyReaderError())
 			else
 				try {
-					resolve(JSON.parse(Buffer.concat(body).toString()))
+					resolve(parser(Buffer.concat(body).toString()))
 				}
 				catch (_) {
-					reject(new JsonBodyParserError())
+					reject(new BodyReaderError())
 				}
 		}
 	})

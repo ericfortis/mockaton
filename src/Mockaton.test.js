@@ -143,6 +143,7 @@ const staticFiles = [
 	['assets/app.js', 'const app = 1'],
 	['another-entry/index.html', '<h1>Another</h1>']
 ]
+writeStatic('ignored.js~', 'ignored_file_body')
 for (const [file, body] of staticFiles)
 	writeStatic(file, body)
 
@@ -258,6 +259,10 @@ async function test404() {
 	})
 	await it('Ignores files ending in ~ by default, e.g. JetBrains temp files', async () => {
 		const res = await request('/api/ignored')
+		equal(res.status, 404)
+	})
+	await it('Ignores static files ending in ~ by default, e.g. JetBrains temp files', async () => {
+		const res = await request('/ignored.js~')
 		equal(res.status, 404)
 	})
 }

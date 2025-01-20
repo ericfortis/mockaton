@@ -7,10 +7,8 @@ import { sendFile, sendPartialContent, sendNotFound } from './utils/http-respons
 export function isStatic(req) {
 	if (!config.staticDir)
 		return false
-
 	const f = resolvePath(req.url)
-	return !config.ignore.test(f) // TESTME
-		&& Boolean(f)
+	return !config.ignore.test(f) && Boolean(f)
 }
 
 export async function dispatchStatic(req, response) {

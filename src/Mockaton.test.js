@@ -13,8 +13,8 @@ import { readBody } from './utils/http-request.js'
 import { Commander } from './Commander.js'
 import { CorsHeader } from './utils/http-cors.js'
 import { parseFilename } from './Filename.js'
-import { API, DEFAULT_500_COMMENT, DEFAULT_MOCK_COMMENT } from './ApiConstants.js'
 import { listFilesRecursively } from './utils/fs.js'
+import { API, DEFAULT_500_COMMENT, DEFAULT_MOCK_COMMENT } from './ApiConstants.js'
 
 
 const tmpDir = mkdtempSync(tmpdir()) + '/'
@@ -161,7 +161,8 @@ const server = Mockaton({
 	extraMimes: {
 		my_custom_extension: 'my_custom_mime'
 	},
-	corsOrigins: ['http://example.com']
+	corsOrigins: ['http://example.com'],
+	corsExposedHeaders: ['Content-Encoding']
 })
 server.on('listening', runTests)
 
@@ -487,7 +488,7 @@ async function testValidatesProxyFallbackURL() {
 }
 
 async function testCorsAllowed() {
-	await it('cors', async () => {
+	await it('cors preflight', async () => {
 		await commander.setCorsAllowed(true)
 		const res = await request('/does-not-matter', {
 			method: 'OPTIONS',
@@ -499,6 +500,16 @@ async function testCorsAllowed() {
 		equal(res.status, 204)
 		equal(res.headers.get(CorsHeader.AccessControlAllowOrigin), 'http://example.com')
 		equal(res.headers.get(CorsHeader.AccessControlAllowMethods), 'GET')
+	})
+	await it('cors actual response', async () => {
+		const res = await request(fixtureDefaultInName[0], {
+			headers: {
+				[CorsHeader.Origin]: 'http://example.com'
+			}
+		})
+		equal(res.status, 200)
+		equal(res.headers.get(CorsHeader.AccessControlAllowOrigin), 'http://example.com')
+		equal(res.headers.get(CorsHeader.AccessControlExposeHeaders), 'Content-Encoding')
 	})
 }
 

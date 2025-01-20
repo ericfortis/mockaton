@@ -29,7 +29,7 @@ export const CorsHeader = {
 	AccessControlAllowOrigin: 'Access-Control-Allow-Origin', // '*' | Space delimited | null
 	AccessControlAllowMethods: 'Access-Control-Allow-Methods', // '*' | Comma delimited
 	AccessControlAllowHeaders: 'Access-Control-Allow-Headers', // '*' | Comma delimited 
-	AccessControlExposeHeaders: 'Access-Control-Expose-Headers', // '*' | Comma delimited 
+	AccessControlExposeHeaders: 'Access-Control-Expose-Headers', // '*' | Comma delimited (headers client-side JS can read)
 	AccessControlAllowCredentials: 'Access-Control-Allow-Credentials' // 'true'
 }
 const CH = CorsHeader
@@ -61,25 +61,16 @@ export function setCorsHeaders(req, response, {
 
 	if (req.headers[CH.AccessControlRequestMethod])
 		setPreflightSpecificHeaders(req, response, methods, headers, maxAge)
-	else
-		setActualRequestHeaders(response, exposedHeaders)
+	else if (exposedHeaders.length)
+		response.setHeader(CH.AccessControlExposeHeaders, exposedHeaders.join(','))
 }
-
 
 function setPreflightSpecificHeaders(req, response, methods, headers, maxAge) {
 	const methodAskingFor = req.headers[CH.AccessControlRequestMethod]
 	if (!methods.includes(methodAskingFor))
 		return
-
 	response.setHeader(CH.AccessControlMaxAge, maxAge)
 	response.setHeader(CH.AccessControlAllowMethods, methodAskingFor)
 	if (headers.length)
 		response.setHeader(CH.AccessControlAllowHeaders, headers.join(','))
-}
-
-
-// TESTME
-function setActualRequestHeaders(response, exposedHeaders) {
-	if (exposedHeaders.length) // Exposed means client-side JavaScript can read them
-		response.setHeader(CH.AccessControlExposeHeaders, exposedHeaders.join(','))
 }

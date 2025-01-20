@@ -228,7 +228,7 @@ async function runTests() {
 	await testMockDispatching(...fixtureCustomMime, 'my_custom_mime')
 	await testJsFunctionMocks()
 
-	await testItUpdatesUserRole()
+	await testItUpdatesCookie()
 	await testStaticFileServing()
 	await testStaticFileList()
 	await testInvalidFilenamesAreIgnored()
@@ -347,7 +347,7 @@ async function testItBulkSelectsByComment(comment, tests) {
 }
 
 
-async function testItUpdatesUserRole() {
+async function testItUpdatesCookie() {
 	await describe('Cookie', () => {
 		it('Defaults to the first key:value', async () => {
 			const res = await commander.listCookies()
@@ -357,13 +357,18 @@ async function testItUpdatesUserRole() {
 			])
 		})
 
-		it('Update the selected cookie', async () => {
+		it('Updates selected cookie', async () => {
 			await commander.selectCookie('userB')
 			const res = await commander.listCookies()
 			deepEqual(await res.json(), [
 				['userA', false],
 				['userB', true]
 			])
+		})
+
+		it('422 when trying to select non-existing cookie', async () => {
+			const res = await commander.selectCookie('non-existing-cookie-key')
+			equal(res.status, 422)
 		})
 	})
 }

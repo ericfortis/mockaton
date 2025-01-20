@@ -17,7 +17,7 @@ export const cookie = new class {
 		if (key in this.#cookies)
 			this.#currentKey = key
 		else
-			throw 'Cookie key not found' // TESTME
+			return 'Cookie key not found'
 	}
 
 	list() {

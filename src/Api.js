@@ -72,8 +72,11 @@ function reinitialize(_, response) {
 
 async function selectCookie(req, response) {
 	try {
-		cookie.setCurrent(await parseJSON(req))
-		sendOK(response)
+		const error = cookie.setCurrent(await parseJSON(req))
+		if (error)
+			sendUnprocessableContent(response, error)
+		else
+			sendOK(response)
 	}
 	catch (error) {
 		sendBadRequest(response, error)

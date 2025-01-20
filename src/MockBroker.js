@@ -38,7 +38,7 @@ export class MockBroker {
 
 	selectDefaultFile() {
 		const userSpecifiedDefault = this.#findMockWithDefaultComment()
-		if (userSpecifiedDefault) // Sort for dashboard list TESTME
+		if (userSpecifiedDefault) // Sort for dashboard list
 			this.mocks = [
 				userSpecifiedDefault,
 				...this.mocks.filter(m => m !== userSpecifiedDefault)

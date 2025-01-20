@@ -11,8 +11,8 @@ import { mimeFor } from './utils/mime.js'
 import { Mockaton } from './Mockaton.js'
 import { readBody } from './utils/http-request.js'
 import { Commander } from './Commander.js'
-import { parseFilename } from './Filename.js'
 import { CorsHeader } from './utils/http-cors.js'
+import { parseFilename } from './Filename.js'
 import { API, DEFAULT_500_COMMENT, DEFAULT_MOCK_COMMENT } from './ApiConstants.js'
 
 
@@ -27,7 +27,7 @@ const fixtureCustomMime = [
 ]
 const fixtureNonDefaultInName = [
 	'/api/the-route',
-	'api/the-route(default).GET.200.json',
+	'api/the-route.GET.200.json',
 	'default my route body content'
 ]
 const fixtureDefaultInName = [
@@ -285,6 +285,13 @@ async function testMockDispatching(url, file, expectedBody, forcedMime = undefin
 
 async function testDefaultMock() {
 	await testMockDispatching(...fixtureDefaultInName)
+	await it('sorts mocks list with the user specified default first for dashboard display', async () => {
+		const res = await commander.listMocks()
+		const body = await res.json()
+		const { mocks } = body.GET[fixtureDefaultInName[0]]
+		equal(mocks[0], fixtureDefaultInName[1])
+		equal(mocks[1], fixtureNonDefaultInName[1])
+	})
 }
 
 async function testItUpdatesTheCurrentSelectedMock(url, file, expectedStatus, expectedBody) {

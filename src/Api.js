@@ -39,7 +39,7 @@ export const apiPatchRequests = new Map([
 	[API.cors, setCorsAllowed]
 ])
 
-/* GET */
+/* === GET === */
 
 function serveDashboard(_, response) { sendFile(response, join(import.meta.dirname, 'Dashboard.html')) }
 function serveDashboardAsset(req, response) { sendFile(response, join(import.meta.dirname, req.url)) }
@@ -50,7 +50,7 @@ function listMockBrokers(_, response) { sendJSON(response, mockBrokersCollection
 function getProxyFallback(_, response) { sendJSON(response, config.proxyFallback) }
 function getIsCorsAllowed(_, response) { sendJSON(response, config.corsAllowed) }
 
-async function listStaticFiles(req, response) {
+function listStaticFiles(req, response) {
 	try {
 		const files = config.staticDir
 			? listFilesRecursively(config.staticDir).filter(f => !config.ignore.test(f))
@@ -63,7 +63,7 @@ async function listStaticFiles(req, response) {
 }
 
 
-/* PATCH */
+/* === PATCH === */
 
 function reinitialize(_, response) {
 	mockBrokersCollection.init()

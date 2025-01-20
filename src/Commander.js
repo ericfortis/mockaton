@@ -54,6 +54,10 @@ export class Commander {
 		return this.#patch(API.fallback, proxyAddr)
 	}
 
+	setCollectProxied(shouldCollect) {
+		return this.#patch(API.collectProxied, shouldCollect)
+	}
+
 	reset() {
 		return this.#patch(API.reset)
 	}

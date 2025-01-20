@@ -35,6 +35,7 @@ export const apiPatchRequests = new Map([
 	[API.reset, reinitialize],
 	[API.cookies, selectCookie],
 	[API.fallback, updateProxyFallback],
+	[API.collectProxied, setCollectProxied],
 	[API.bulkSelect, bulkUpdateBrokersByCommentTag],
 	[API.cors, setCorsAllowed]
 ])
@@ -122,6 +123,16 @@ async function updateProxyFallback(req, response) {
 			config.proxyFallback = fallback
 			sendOK(response)
 		}
+	}
+	catch (error) {
+		sendBadRequest(response, error)
+	}
+}
+
+async function setCollectProxied(req, response) {
+	try {
+		config.collectProxied = await parseJSON(req)
+		sendOK(response)
 	}
 	catch (error) {
 		sendBadRequest(response, error)

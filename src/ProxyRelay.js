@@ -21,7 +21,7 @@ export async function proxy(req, response) {
 	const body = await proxyResponse.text()
 	response.end(body)
 
-	if (config.collectProxied) { // TESTME
+	if (config.collectProxied) {
 		const ext = extFor(proxyResponse.headers.get('content-type'))
 		const filename = makeMockFilename(req.url, req.method, proxyResponse.status, ext)
 		write(join(config.mocksDir, filename), body)

@@ -1,5 +1,5 @@
 import { tmpdir } from 'node:os'
-import { dirname } from 'node:path'
+import { dirname, join } from 'node:path'
 import { promisify } from 'node:util'
 import { describe, it } from 'node:test'
 import { createServer } from 'node:http'
@@ -13,7 +13,7 @@ import { readBody } from './utils/http-request.js'
 import { Commander } from './Commander.js'
 import { CorsHeader } from './utils/http-cors.js'
 import { parseFilename } from './Filename.js'
-import { listFilesRecursively } from './utils/fs.js'
+import { listFilesRecursively, read } from './utils/fs.js'
 import { API, DEFAULT_500_COMMENT, DEFAULT_MOCK_COMMENT } from './ApiConstants.js'
 
 
@@ -456,6 +456,7 @@ async function testEnableFallbackSoRoutesWithoutMocksGetRelayed() {
 		const fallbackServer = createServer(async (req, response) => {
 			response.writeHead(423, {
 				'custom_header': 'my_custom_header',
+				'content-type': mimeFor('txt'),
 				'set-cookie': [
 					'cookieA=A',
 					'cookieB=B'
@@ -466,15 +467,21 @@ async function testEnableFallbackSoRoutesWithoutMocksGetRelayed() {
 		await promisify(fallbackServer.listen).bind(fallbackServer, 0, '127.0.0.1')()
 
 		await commander.setProxyFallback(`http://localhost:${fallbackServer.address().port}`)
-		await it('Relays to fallback server', async () => {
-			const res = await request('/non-existing-mock', {
+		await commander.setCollectProxied(true)
+		await it('Relays to fallback server and saves the mock', async () => {
+			const reqBodyPayload = 'text_req_body'
+			const res = await request('/api/non-existing-mock', {
 				method: 'POST',
-				body: 'text_body'
+				body: reqBodyPayload
 			})
 			equal(res.status, 423)
 			equal(res.headers.get('custom_header'), 'my_custom_header')
 			equal(res.headers.get('set-cookie'), ['cookieA=A', 'cookieB=B'].join(', '))
-			equal(await res.text(), 'text_body')
+			equal(await res.text(), reqBodyPayload)
+
+			const savedBody = read(join(tmpDir, 'api/non-existing-mock.POST.423.txt'))
+			equal(savedBody, reqBodyPayload)
+
 			fallbackServer.close()
 		})
 	})

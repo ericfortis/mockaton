@@ -9,6 +9,7 @@ export const API = {
 	reset: MOUNT + '/reset',
 	cookies: MOUNT + '/cookies',
 	fallback: MOUNT + '/fallback',
+	collectProxied: MOUNT + '/collect-proxied',
 	cors: MOUNT + '/cors',
 	static: MOUNT + '/static'
 }

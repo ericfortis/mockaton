@@ -50,7 +50,7 @@ function listMockBrokers(_, response) { sendJSON(response, mockBrokersCollection
 function getProxyFallback(_, response) { sendJSON(response, Config.proxyFallback) }
 function getIsCorsAllowed(_, response) { sendJSON(response, Config.corsAllowed) }
 
-async function listStaticFiles(req, response) { // TESTME
+async function listStaticFiles(req, response) {
 	try {
 		const files = Config.staticDir
 			? listFilesRecursively(Config.staticDir).filter(f => !Config.ignore.test(f))

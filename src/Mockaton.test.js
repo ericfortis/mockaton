@@ -138,11 +138,13 @@ write('api/ignored.GET.200.json~', '')
 // JavaScript to JSON
 write('/api/object.GET.200.js', 'export default { JSON_FROM_JS: true }')
 
-writeStatic('index.html', '<h1>Static</h1>')
-writeStatic('assets/app.js', 'const app = 1')
-writeStatic('another-entry/index.html', '<h1>Another</h1>')
-
-
+const staticFiles = [
+	['index.html', '<h1>Static</h1>'],
+	['assets/app.js', 'const app = 1'],
+	['another-entry/index.html', '<h1>Another</h1>']
+]
+for (const [file, body] of staticFiles)
+	writeStatic(file, body)
 
 const server = Mockaton({
 	mocksDir: tmpDir,
@@ -228,6 +230,7 @@ async function runTests() {
 
 	await testItUpdatesUserRole()
 	await testStaticFileServing()
+	await testStaticFileList()
 	await testInvalidFilenamesAreIgnored()
 	await testEnableFallbackSoRoutesWithoutMocksGetRelayed()
 	await testCorsAllowed()
@@ -402,6 +405,13 @@ async function testStaticFileServing() {
 			equal(body, 'const app = 1')
 			equal(res.status, 200)
 		})
+	})
+}
+
+async function testStaticFileList() {
+	await it('Static File List', async () => {
+		const res = await commander.listStaticFiles()
+		deepEqual((await res.json()).sort(), staticFiles.map(([file]) => file).sort())
 	})
 }
 

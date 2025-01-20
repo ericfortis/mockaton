@@ -1,4 +1,4 @@
-import { Config } from '../Config.js'
+import { config } from '../config.js'
 import { EXT_FOR_UNKNOWN_MIME } from '../ApiConstants.js'
 
 // https://developer.mozilla.org/en-US/docs/Web/HTTP/Basics_of_HTTP/MIME_types/Common_types
@@ -89,7 +89,7 @@ const mimes = {
 
 export function mimeFor(filename) {
 	const ext = filename.replace(/.*\./, '').toLowerCase()
-	return Config.extraMimes[ext] || mimes[ext] || ''
+	return config.extraMimes[ext] || mimes[ext] || ''
 }
 
 export function extFor(mime) {
@@ -99,7 +99,7 @@ export function extFor(mime) {
 }
 
 function findExt(targetMime) {
-	for (const [ext, mime] of Object.entries(Config.extraMimes))
+	for (const [ext, mime] of Object.entries(config.extraMimes))
 		if (targetMime === mime)
 			return ext
 	for (const [ext, mime] of Object.entries(mimes))

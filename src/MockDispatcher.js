@@ -2,7 +2,7 @@ import { join } from 'node:path'
 
 import { proxy } from './ProxyRelay.js'
 import { cookie } from './cookie.js'
-import { Config } from './Config.js'
+import { config } from './config.js'
 import { applyPlugins } from './MockDispatcherPlugins.js'
 import * as mockBrokerCollection from './mockBrokersCollection.js'
 import { BodyReaderError } from './utils/http-request.js'
@@ -13,7 +13,7 @@ export async function dispatchMock(req, response) {
 	try {
 		const broker = mockBrokerCollection.getBrokerForUrl(req.method, req.url)
 		if (!broker) {
-			if (Config.proxyFallback)
+			if (config.proxyFallback)
 				await proxy(req, response)
 			else
 				sendNotFound(response)
@@ -26,12 +26,12 @@ export async function dispatchMock(req, response) {
 		if (cookie.getCurrent())
 			response.setHeader('Set-Cookie', cookie.getCurrent())
 
-		for (let i = 0; i < Config.extraHeaders.length; i += 2)
-			response.setHeader(Config.extraHeaders[i], Config.extraHeaders[i + 1])
+		for (let i = 0; i < config.extraHeaders.length; i += 2)
+			response.setHeader(config.extraHeaders[i], config.extraHeaders[i + 1])
 
 		const { mime, body } = broker.isTemp500
 			? { mime: '', body: '' }
-			: await applyPlugins(join(Config.mocksDir, broker.file), req, response)
+			: await applyPlugins(join(config.mocksDir, broker.file), req, response)
 
 		response.setHeader('Content-Type', mime)
 		setTimeout(() => response.end(body), broker.delay)

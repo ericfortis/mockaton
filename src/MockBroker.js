@@ -1,4 +1,4 @@
-import { Config } from './Config.js'
+import { config } from './config.js'
 import { DEFAULT_500_COMMENT, DEFAULT_MOCK_COMMENT } from './ApiConstants.js'
 import { includesComment, extractComments, parseFilename } from './Filename.js'
 
@@ -53,7 +53,7 @@ export class MockBroker {
 
 	mockExists(file) { return this.mocks.includes(file) }
 	updateFile(filename) { this.currentMock.file = filename }
-	updateDelay(delayed) { this.currentMock.delay = Number(delayed) * Config.delay }
+	updateDelay(delayed) { this.currentMock.delay = Number(delayed) * config.delay }
 
 	setByMatchingComment(comment) {
 		for (const file of this.mocks)

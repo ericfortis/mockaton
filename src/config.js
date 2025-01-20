@@ -5,7 +5,7 @@ import { StandardMethods } from './utils/http-request.js'
 import { validate, is, optional } from './utils/validate.js'
 
 
-export const Config = Object.seal({
+export const config = Object.seal({
 	mocksDir: '',
 	ignore: /(\.DS_Store|~)$/,
 
@@ -38,8 +38,8 @@ export const Config = Object.seal({
 
 
 export function setup(options) {
-	Object.assign(Config, options)
-	validate(Config, {
+	Object.assign(config, options)
+	validate(config, {
 		mocksDir: isDirectory,
 		ignore: is(RegExp),
 

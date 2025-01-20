@@ -1,10 +1,10 @@
 import { readFileSync as read } from 'node:fs'
 import { mimeFor } from './utils/mime.js'
-import { Config } from './Config.js'
+import { config } from './config.js'
 
 
 export async function applyPlugins(filePath, req, response) {
-	for (const [regex, plugin] of Config.plugins) // TESTME capitalizePlugin
+	for (const [regex, plugin] of config.plugins)
 		if (regex.test(filePath))
 			return await plugin(filePath, req, response)
 	return {

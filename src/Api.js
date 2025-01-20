@@ -5,7 +5,7 @@
 
 import { join } from 'node:path'
 import { cookie } from './cookie.js'
-import { Config } from './Config.js'
+import { config } from './config.js'
 import { DF, API } from './ApiConstants.js'
 import { parseJSON } from './utils/http-request.js'
 import { listFilesRecursively } from './utils/fs.js'
@@ -47,13 +47,13 @@ function serveDashboardAsset(req, response) { sendFile(response, join(import.met
 function listCookies(_, response) { sendJSON(response, cookie.list()) }
 function listComments(_, response) { sendJSON(response, mockBrokersCollection.extractAllComments()) }
 function listMockBrokers(_, response) { sendJSON(response, mockBrokersCollection.getAll()) }
-function getProxyFallback(_, response) { sendJSON(response, Config.proxyFallback) }
-function getIsCorsAllowed(_, response) { sendJSON(response, Config.corsAllowed) }
+function getProxyFallback(_, response) { sendJSON(response, config.proxyFallback) }
+function getIsCorsAllowed(_, response) { sendJSON(response, config.corsAllowed) }
 
 async function listStaticFiles(req, response) {
 	try {
-		const files = Config.staticDir
-			? listFilesRecursively(Config.staticDir).filter(f => !Config.ignore.test(f))
+		const files = config.staticDir
+			? listFilesRecursively(config.staticDir).filter(f => !config.ignore.test(f))
 			: []
 		sendJSON(response, files)
 	}
@@ -119,7 +119,7 @@ async function updateProxyFallback(req, response) {
 		if (fallback && !URL.canParse(fallback))
 			sendUnprocessableContent(response)
 		else {
-			Config.proxyFallback = fallback
+			config.proxyFallback = fallback
 			sendOK(response)
 		}
 	}
@@ -140,7 +140,7 @@ async function bulkUpdateBrokersByCommentTag(req, response) {
 
 async function setCorsAllowed(req, response) {
 	try {
-		Config.corsAllowed = await parseJSON(req)
+		config.corsAllowed = await parseJSON(req)
 		sendOK(response)
 	}
 	catch (error) {

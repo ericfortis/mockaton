@@ -2,7 +2,7 @@ import { createServer } from 'node:http'
 
 import { API } from './ApiConstants.js'
 import { dispatchMock } from './MockDispatcher.js'
-import { Config, setup } from './Config.js'
+import { config, setup } from './config.js'
 import { sendNoContent } from './utils/http-response.js'
 import * as mockBrokerCollection from './mockBrokersCollection.js'
 import { dispatchStatic, isStatic } from './StaticDispatcher.js'
@@ -13,7 +13,7 @@ import { apiPatchRequests, apiGetRequests } from './Api.js'
 export function Mockaton(options) {
 	setup(options)
 	mockBrokerCollection.init()
-	return createServer(onRequest).listen(Config.port, Config.host, function (error) {
+	return createServer(onRequest).listen(config.port, config.host, function (error) {
 		const { address, port } = this.address()
 		const url = `http://${address}:${port}`
 		console.log('Listening', url)
@@ -21,21 +21,21 @@ export function Mockaton(options) {
 		if (error)
 			console.error(error)
 		else
-			Config.onReady(url + API.dashboard)
+			config.onReady(url + API.dashboard)
 	})
 }
 
 async function onRequest(req, response) {
 	response.setHeader('Server', 'Mockaton')
 
-	if (Config.corsAllowed)
+	if (config.corsAllowed)
 		setCorsHeaders(req, response, {
-			origins: Config.corsOrigins,
-			headers: Config.corsHeaders,
-			methods: Config.corsMethods,
-			maxAge: Config.corsMaxAge,
-			credentials: Config.corsCredentials,
-			exposedHeaders: Config.corsExposedHeaders
+			origins: config.corsOrigins,
+			headers: config.corsHeaders,
+			methods: config.corsMethods,
+			maxAge: config.corsMaxAge,
+			credentials: config.corsCredentials,
+			exposedHeaders: config.corsExposedHeaders
 		})
 
 	const { url, method } = req

@@ -1,4 +1,4 @@
-import { Config } from './Config.js'
+import { config } from './config.js'
 import { cookie } from './cookie.js'
 import { MockBroker } from './MockBroker.js'
 import { listFilesRecursively } from './utils/fs.js'
@@ -19,11 +19,11 @@ let collection = {}
 
 export function init() {
 	collection = {}
-	cookie.init(Config.cookies)
+	cookie.init(config.cookies)
 
-	const files = listFilesRecursively(Config.mocksDir)
+	const files = listFilesRecursively(config.mocksDir)
 		.sort()
-		.filter(f => !Config.ignore.test(f) && filenameIsValid(f))
+		.filter(f => !config.ignore.test(f) && filenameIsValid(f))
 
 	for (const file of files) {
 		const { method, urlMask } = parseFilename(file)

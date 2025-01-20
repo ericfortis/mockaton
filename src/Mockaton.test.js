@@ -6,7 +6,7 @@ import { createServer } from 'node:http'
 import { equal, deepEqual, match } from 'node:assert/strict'
 import { writeFileSync, mkdtempSync, mkdirSync } from 'node:fs'
 
-import { Config } from './Config.js'
+import { config } from './config.js'
 import { mimeFor } from './utils/mime.js'
 import { Mockaton } from './Mockaton.js'
 import { readBody } from './utils/http-request.js'
@@ -300,7 +300,7 @@ async function testItUpdatesRouteDelay(url, file, expectedBody) {
 	const body = await res.text()
 	await describe('url: ' + url, () => {
 		it('body is: ' + expectedBody, () => equal(body, JSON.stringify(expectedBody)))
-		it('delay', () => equal((new Date()).getTime() - now.getTime() > Config.delay, true))
+		it('delay', () => equal((new Date()).getTime() - now.getTime() > config.delay, true))
 	})
 }
 

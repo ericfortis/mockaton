@@ -1,15 +1,15 @@
 import { join } from 'node:path'
-import { Config } from './Config.js'
+import { config } from './config.js'
 import { isDirectory, isFile } from './utils/fs.js'
 import { sendFile, sendPartialContent, sendNotFound } from './utils/http-response.js'
 
 
 export function isStatic(req) {
-	if (!Config.staticDir)
+	if (!config.staticDir)
 		return false
 
 	const f = resolvePath(req.url)
-	return !Config.ignore.test(f) // TESTME
+	return !config.ignore.test(f) // TESTME
 		&& Boolean(f)
 }
 
@@ -24,7 +24,7 @@ export async function dispatchStatic(req, response) {
 }
 
 function resolvePath(url) {
-	let candidate = join(Config.staticDir, url)
+	let candidate = join(config.staticDir, url)
 	if (isDirectory(candidate))
 		candidate += '/index.html'
 	if (isFile(candidate))

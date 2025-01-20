@@ -138,7 +138,6 @@ function ProxyFallbackField({ fallbackAddress = '' }) {
 			mockaton.setProxyFallback(input.value)
 				.catch(onError)
 	}
-
 	return (
 		r('label', null,
 			r('span', null, Strings.fallback_server),

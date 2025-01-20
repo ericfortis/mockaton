@@ -2,7 +2,6 @@ import { isDirectory } from './utils/fs.js'
 import { openInBrowser } from './utils/openInBrowser.js'
 import { jsToJsonPlugin } from './MockDispatcherPlugins.js'
 import { StandardMethods } from './utils/http-request.js'
-import { validate, is, optional } from './utils/validate.js'
 import { validateCorsAllowedMethods, validateCorsAllowedOrigins } from './utils/http-cors.js'
 
 
@@ -68,4 +67,19 @@ export function setup(options) {
 
 		onReady: is(Function)
 	})
+}
+
+
+function validate(obj, shape) {
+	for (const [field, value] of Object.entries(obj))
+		if (!shape[field](value))
+			throw new TypeError(`Config.${field}=${JSON.stringify(value)} is invalid`)
+}
+
+function is(ctor) {
+	return val => val.constructor === ctor
+}
+
+function optional(tester) {
+	return val => !val || tester(val)
 }

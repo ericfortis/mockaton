@@ -1,4 +1,4 @@
-import path, { join } from 'node:path'
+import { join, dirname, sep, posix } from 'node:path'
 import { lstatSync, readFileSync, readdirSync, writeFileSync, mkdirSync } from 'node:fs'
 
 
@@ -11,11 +11,11 @@ export const read = path => readFileSync(path)
 export const listFilesRecursively = dir => {
 	const files = readdirSync(dir, { recursive: true }).filter(f => isFile(join(dir, f)))
 	return process.platform === 'win32'
-		? files.map(f => f.replaceAll(path.sep, path.posix.sep)) // TESTME
+		? files.map(f => f.replaceAll(sep, posix.sep)) // TESTME
 		: files
 }
 
-export const write = (fPath, body) => {
-	mkdirSync(path.dirname(fPath), { recursive: true })
-	writeFileSync(fPath, body)
+export const write = (path, body) => {
+	mkdirSync(dirname(path), { recursive: true })
+	writeFileSync(path, body)
 }

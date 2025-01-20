@@ -233,6 +233,7 @@ async function runTests() {
 	await testStaticFileList()
 	await testInvalidFilenamesAreIgnored()
 	await testEnableFallbackSoRoutesWithoutMocksGetRelayed()
+	await testValidatesProxyFallbackURL()
 	await testCorsAllowed()
 
 	server.close()
@@ -456,6 +457,13 @@ async function testEnableFallbackSoRoutesWithoutMocksGetRelayed() {
 			equal(await res.text(), 'text_body')
 			fallbackServer.close()
 		})
+	})
+}
+
+async function testValidatesProxyFallbackURL() {
+	await it('422 when value is not a valid URL', async () => {
+		const res = await commander.setProxyFallback('bad url')
+		equal(res.status, 422)
 	})
 }
 

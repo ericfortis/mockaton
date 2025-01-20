@@ -113,7 +113,7 @@ async function setRouteIsDelayed(req, response) {
 async function updateProxyFallback(req, response) {
 	try {
 		const fallback = await parseJSON(req)
-		if (fallback && !URL.canParse(fallback)) // TESTME
+		if (fallback && !URL.canParse(fallback))
 			sendUnprocessableContent(response)
 		else {
 			Config.proxyFallback = fallback

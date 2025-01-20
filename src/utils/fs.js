@@ -11,7 +11,7 @@ export const read = path => readFileSync(path)
 export const listFilesRecursively = dir => {
 	const files = readdirSync(dir, { recursive: true }).filter(f => isFile(join(dir, f)))
 	return process.platform === 'win32'
-		? files.map(f => f.replaceAll(sep, posix.sep)) // TESTME
+		? files.map(f => f.replaceAll(sep, posix.sep))
 		: files
 }
 

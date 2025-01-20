@@ -14,6 +14,7 @@ import { Commander } from './Commander.js'
 import { CorsHeader } from './utils/http-cors.js'
 import { parseFilename } from './Filename.js'
 import { API, DEFAULT_500_COMMENT, DEFAULT_MOCK_COMMENT } from './ApiConstants.js'
+import { listFilesRecursively } from './utils/fs.js'
 
 
 const tmpDir = mkdtempSync(tmpdir()) + '/'
@@ -236,6 +237,7 @@ async function runTests() {
 	await testEnableFallbackSoRoutesWithoutMocksGetRelayed()
 	await testValidatesProxyFallbackURL()
 	await testCorsAllowed()
+	testWindowsPaths()
 
 	server.close()
 }
@@ -497,6 +499,13 @@ async function testCorsAllowed() {
 		equal(res.status, 204)
 		equal(res.headers.get(CorsHeader.AccessControlAllowOrigin), 'http://example.com')
 		equal(res.headers.get(CorsHeader.AccessControlAllowMethods), 'GET')
+	})
+}
+
+function testWindowsPaths() {
+	it('normalizes backslashes with forward ones', () => {
+		const files = listFilesRecursively(config.mocksDir)
+		equal(files[0], 'api/.GET.200.json')
 	})
 }
 

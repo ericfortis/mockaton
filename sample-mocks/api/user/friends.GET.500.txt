@@ -2,6 +2,6 @@ This is a plain text response for (/api/friends).
 
 In this case, it’s for mocking up a 500 - Internal Server Error.
 
-This file could have been empty, or some JSON if it had a `.json` extension.
+This file could have been empty (optionally, you can use the `.empty` extension).
 
 By the way, on initialization an 500 is auto-generated for routes that don’t have a 500.

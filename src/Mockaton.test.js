@@ -190,7 +190,7 @@ async function runTests() {
 
 	await testAutogenerates500(
 		'/api/alternative',
-		`api/alternative${DEFAULT_500_COMMENT}.GET.500.txt`)
+		`api/alternative${DEFAULT_500_COMMENT}.GET.500.empty`)
 
 	await testPreservesExiting500(
 		'/api',

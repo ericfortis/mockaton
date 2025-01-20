@@ -79,8 +79,8 @@ export class MockBroker {
 	}
 	#registerTemp500() {
 		const { urlMask, method } = parseFilename(this.mocks[0])
-		const file = urlMask.replace(/^\//, '') // Removes leading slash TESTME
-		this.register(`${file}${DEFAULT_500_COMMENT}.${method}.500.txt`)
+		const file = urlMask.replace(/^\//, '') // Removes leading slash
+		this.register(`${file}${DEFAULT_500_COMMENT}.${method}.500.empty`)
 	}
 }
 

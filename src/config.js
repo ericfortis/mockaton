@@ -3,6 +3,7 @@ import { openInBrowser } from './utils/openInBrowser.js'
 import { jsToJsonPlugin } from './MockDispatcherPlugins.js'
 import { StandardMethods } from './utils/http-request.js'
 import { validate, is, optional } from './utils/validate.js'
+import { validateCorsAllowedMethods, validateCorsAllowedOrigins } from './utils/http-cors.js'
 
 
 export const config = Object.seal({
@@ -67,23 +68,4 @@ export function setup(options) {
 
 		onReady: is(Function)
 	})
-}
-
-
-function validateCorsAllowedOrigins(arr) {
-	if (!Array.isArray(arr))
-		return false
-
-	if (arr.length === 1 && arr[0] === '*')
-		return true
-
-	return arr.every(o => URL.canParse(o))
-}
-
-
-function validateCorsAllowedMethods(arr) {
-	if (!Array.isArray(arr))
-		return false
-
-	return arr.every(m => StandardMethods.includes(m))
 }

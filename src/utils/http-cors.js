@@ -1,14 +1,30 @@
 import { StandardMethods } from './http-request.js'
 
-// https://www.w3.org/TR/2020/SPSD-cors-20200602/#resource-processing-model
+
+/* https://www.w3.org/TR/2020/SPSD-cors-20200602/#resource-processing-model */
+
+
+export function validateCorsAllowedOrigins(arr) {
+	if (!Array.isArray(arr))
+		return false
+	if (arr.length === 1 && arr[0] === '*')
+		return true
+	return arr.every(o => URL.canParse(o))
+}
+
+export function validateCorsAllowedMethods(arr) {
+	return Array.isArray(arr)
+		&& arr.every(m => StandardMethods.includes(m))
+}
+
 
 export const CorsHeader = {
-	// request
+	// Request
 	Origin: 'origin',
 	AccessControlRequestMethod: 'access-control-request-method',
 	AccessControlRequestHeaders: 'access-control-request-headers', // Comma separated
 
-	// response
+	// Response
 	AccessControlMaxAge: 'Access-Control-Max-Age',
 	AccessControlAllowOrigin: 'Access-Control-Allow-Origin', // '*' | Space delimited | null
 	AccessControlAllowMethods: 'Access-Control-Allow-Methods', // '*' | Comma delimited
@@ -64,7 +80,6 @@ function setPreflightSpecificHeaders(req, response, methods, headers, maxAge) {
 
 // TESTME
 function setActualRequestHeaders(response, exposedHeaders) {
-	// Exposed means the client-side JavaScript can read them
-	if (exposedHeaders.length)
+	if (exposedHeaders.length) // Exposed means client-side JavaScript can read them
 		response.setHeader(CH.AccessControlExposeHeaders, exposedHeaders.join(','))
 }

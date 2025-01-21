@@ -3,8 +3,10 @@ import { dirname, join } from 'node:path'
 import { promisify } from 'node:util'
 import { describe, it } from 'node:test'
 import { createServer } from 'node:http'
+import { randomUUID } from 'node:crypto'
 import { equal, deepEqual, match } from 'node:assert/strict'
 import { writeFileSync, mkdtempSync, mkdirSync } from 'node:fs'
+
 
 import { config } from './config.js'
 import { mimeFor } from './utils/mime.js'
@@ -470,7 +472,8 @@ async function testEnableFallbackSoRoutesWithoutMocksGetRelayed() {
 		await commander.setCollectProxied(true)
 		await it('Relays to fallback server and saves the mock', async () => {
 			const reqBodyPayload = 'text_req_body'
-			const res = await request('/api/non-existing-mock', {
+
+			const res = await request(`/api/non-existing-mock/${randomUUID()}`, {
 				method: 'POST',
 				body: reqBodyPayload
 			})
@@ -479,7 +482,7 @@ async function testEnableFallbackSoRoutesWithoutMocksGetRelayed() {
 			equal(res.headers.get('set-cookie'), ['cookieA=A', 'cookieB=B'].join(', '))
 			equal(await res.text(), reqBodyPayload)
 
-			const savedBody = read(join(tmpDir, 'api/non-existing-mock.POST.423.txt'))
+			const savedBody = read(join(tmpDir, 'api/non-existing-mock/[id].POST.423.txt'))
 			equal(savedBody, reqBodyPayload)
 
 			fallbackServer.close()

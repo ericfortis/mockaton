@@ -54,6 +54,13 @@ body {
 	margin: 0;
 	font-family: system-ui, sans-serif;
 	font-size: 100%;
+	outline: 0
+}
+
+select, a, input, button, summary {
+	&:focus-visible {
+		outline: 2px solid var(--colorAccent);
+	}
 }
 
 select {
@@ -116,7 +123,6 @@ menu {
 		}
 
 		input[type=url] {
-			outline: 0;
 			padding: 0 6px;
 			box-shadow: var(--boxShadow1);
 			color: var(--colorText);
@@ -244,7 +250,14 @@ main {
 	cursor: pointer;
 
 	> input {
-		display: none;
+		appearance: none;
+
+		&:focus-visible {
+			outline: 0;
+			& ~ svg {
+				outline: 2px solid var(--colorAccent)
+			}
+		}
 
 		&:checked ~ svg {
 			background: var(--colorAccent);
@@ -274,7 +287,14 @@ main {
 	cursor: pointer;
 
 	> input {
-		display: none;
+		appearance: none;
+
+		&:focus-visible {
+			outline: 0;
+			& ~ span {
+				outline: 2px solid var(--colorAccent)
+			}
+		}
 
 		&:checked ~ span {
 			color: white;
@@ -331,9 +351,15 @@ main {
 	margin-top: 40px;
 
 	summary {
+		width: max-content;
 		margin-bottom: 8px;
 		cursor: pointer;
 		font-weight: bold;
+	}
+
+	ul {
+		position: relative;
+		left: -6px;
 	}
 
 	li {
@@ -342,7 +368,8 @@ main {
 
 	a {
 		display: inline-block;
-		padding: 6px 0;
+		border-radius: 6px;
+		padding: 6px;
 		color: var(--colorAccentAlt);
 		text-decoration: none;
 

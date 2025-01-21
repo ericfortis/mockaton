@@ -7,9 +7,8 @@ import { validateCorsAllowedMethods, validateCorsAllowedOrigins } from './utils/
 
 export const config = Object.seal({
 	mocksDir: '',
-	ignore: /(\.DS_Store|~)$/,
-
 	staticDir: '',
+	ignore: /(\.DS_Store|~)$/,
 
 	host: '127.0.0.1',
 	port: 0, // auto-assigned
@@ -41,9 +40,8 @@ export function setup(options) {
 	Object.assign(config, options)
 	validate(config, {
 		mocksDir: isDirectory,
-		ignore: is(RegExp),
-
 		staticDir: optional(isDirectory),
+		ignore: is(RegExp),
 
 		host: is(String),
 		port: port => Number.isInteger(port) && port >= 0 && port < 2 ** 16,
@@ -73,7 +71,7 @@ export function setup(options) {
 function validate(obj, shape) {
 	for (const [field, value] of Object.entries(obj))
 		if (!shape[field](value))
-			throw new TypeError(`Config.${field}=${JSON.stringify(value)} is invalid`)
+			throw new TypeError(`config.${field}=${JSON.stringify(value)} is invalid`)
 }
 
 function is(ctor) {

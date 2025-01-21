@@ -11,9 +11,8 @@ type Plugin = (
 
 interface Config {
 	mocksDir: string
-	ignore?: RegExp
-
 	staticDir?: string
+	ignore?: RegExp
 
 	host?: string,
 	port?: number

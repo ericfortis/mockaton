@@ -24,7 +24,7 @@ export const config = Object.seal({
 		[/\.(js|ts)$/, jsToJsonPlugin]
 	],
 
-	corsAllowed: false,
+	corsAllowed: true,
 	corsOrigins: ['*'],
 	corsMethods: StandardMethods,
 	corsHeaders: ['content-type'],

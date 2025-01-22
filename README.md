@@ -13,10 +13,13 @@ URL paths. For example, the following file will be served on `/api/user/1234`
 my-mocks-dir/api/user/[user-id].GET.200.json
 ```
 
-By the way, you don’t need to mock all your APIs. Mockaton can request
-from your backend the routes you don’t have mocks for. That’s done
-with `config.proxyFallback = 'http://mybackend'`. For convenience, you
-can save mocks for those responses with `config.collectProxied = true`
+## Scraping Mocks
+You don’t need to mock all your APIs. Mockaton can request
+from your backend the routes you don’t have mocks for. That’s done with:
+
+`config.proxyFallback = 'http://mybackend'`
+
+`config.collectProxied = true` lets you save those responses as mocks following the filename convention.
 
 ## Multiple Mock Variants
 Each route can have many mocks, which could either be:
@@ -420,7 +423,7 @@ function capitalizePlugin(filePath) {
 
 
 ### `corsAllowed?: boolean`
-Defaults to `corsAllowed = false`. When `config.corsAllowed === true`, these are the default options:
+Defaults to `true`. When `true`, these are the default options:
 ```js
 config.corsOrigins = ['*']
 config.corsMethods = ['GET', 'PUT', 'DELETE', 'POST', 'PATCH', 'HEAD', 'OPTIONS', 'TRACE', 'CONNECT']

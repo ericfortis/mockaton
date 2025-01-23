@@ -3,8 +3,10 @@
 ![NPM Version](https://img.shields.io/npm/v/mockaton)
 ![NPM Version](https://img.shields.io/npm/l/mockaton)
 
+## Mock your APIs, Enhance your Development Workflow
 
-_Mockaton_ is a mock server for improving the frontend development and testing experience.
+_Mockaton_ is an HTTP mock server built for improving the frontend 
+development and testing experience.
 
 With Mockaton you don’t need to write code for wiring your mocks. Instead, it
 scans a given directory for filenames following a convention similar to the
@@ -13,13 +15,15 @@ URL paths. For example, the following file will be served on `/api/user/1234`
 my-mocks-dir/api/user/[user-id].GET.200.json
 ```
 
-## Scraping Mocks
-You don’t need to mock all your APIs. Mockaton can request
-from your backend the routes you don’t have mocks for. That’s done with:
+By the way, you don’t need to mock all your APIs. You can request from
+your backend the routes you don’t have mocks for. That’s done with:
 
 `config.proxyFallback = 'http://mybackend'`
 
-`config.collectProxied = true` lets you save those responses as mocks following the filename convention.
+## Scraping Mocks
+`config.collectProxied = true` lets you save mocks following the
+filename convention for the routes that reached your `proxyFallback`.
+
 
 ## Multiple Mock Variants
 Each route can have many mocks, which could either be:
@@ -28,7 +32,7 @@ Each route can have many mocks, which could either be:
   - e.g. `api/login(locked out user).POST.423.json`
 
 
-## Dashboard UI
+## Dashboard
 
 In the dashboard, you can select a mock variant for a particular
 route, among other options. In addition, there’s a programmatic API,
@@ -64,7 +68,7 @@ node --import=tsx my-mockaton.js
 ```
 
 
-## Running the Demo Example
+## Running the Built-in Demo
 This demo uses the [sample-mocks/](./sample-mocks) of this repository.
 
 ```sh  

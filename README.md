@@ -21,8 +21,10 @@ your backend the routes you don’t have mocks for. That’s done with:
 `config.proxyFallback = 'http://mybackend'`
 
 ## Scraping Mocks
-`config.collectProxied = true` lets you save mocks following the
-filename convention for the routes that reached your `proxyFallback`.
+You can save mocks following the filename convention
+for the routes that reached your `proxyFallback` with:
+
+`config.collectProxied = true` 
 
 
 ## Multiple Mock Variants
@@ -34,7 +36,7 @@ Each route can have many mocks, which could either be:
 
 ## Dashboard
 
-In the dashboard, you can select a mock variant for a particular
+In the dashboard you can select a mock variant for a particular
 route, among other options. In addition, there’s a programmatic API,
 which is handy for setting up tests  (see **Commander API** below).
 
@@ -187,9 +189,7 @@ export default function listColors() {
 ```
 </details>
 
----
-
-If you are wondering, what if I need to serve a static `.js`?
+**What if I need to serve a static .js?**
 Put it in your `config.staticDir` without the mock filename convention.
 
 ---
@@ -198,8 +198,8 @@ Put it in your `config.staticDir` without the mock filename convention.
 
 ### Extension
 
-The last 3 dots are reserved for the HTTP Method,
-Response Status Code, and the File Extension.
+The last three dots are reserved for the HTTP Method,
+Response Status Code, and File Extension.
 
 ```
 api/user.GET.200.json
@@ -239,7 +239,7 @@ api/video<b>?limit=[limit]</b>.GET.200.json
 </pre>
 
 Speaking of which, on Windows filenames containing "?" are [not
-permitted](https://learn.microsoft.com/en-us/windows/win32/fileio/naming-a-file), but since that’s part of the query string, it’s ignored anyway.
+permitted](https://learn.microsoft.com/en-us/windows/win32/fileio/naming-a-file), but since that’s part of the query string it’s ignored anyway.
 
 
 ### Index-like routes
@@ -276,8 +276,10 @@ Defaults to `/(\.DS_Store|~)$/`
 
 
 ### `delay?: number` 
-Routes can individually be delayed with the 🕓 checkbox. On the other hand, 
-the amount is globally configurable. It defaults to `config.delay=1200` milliseconds.
+Defaults to `config.delay=1200` milliseconds.
+
+Although routes can individually be delayed with the 🕓
+checkbox, delay the amount is globally configurable.
 
 
 ### `proxyFallback?: string`
@@ -347,7 +349,7 @@ response in a `Set-Cookie` header. If you need to send more
 cookies, inject them globally in `config.extraHeaders`.
 
 By the way, the `jwtCookie` helper has a hardcoded header and signature.
-In other words, it’s useful only if you care about the payload.
+In other words, it’s useful only if you care about its payload.
 
 
 ### `extraHeaders?: string[]`

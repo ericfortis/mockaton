@@ -86,8 +86,7 @@ Experiment with the Dashboard:
 - Toggle the 🕓 _Delay Responses_ button, (e.g. for testing spinners)
 - Toggle the _500_ button, which sends and _Internal Server Error_ on that endpoint
 
-Finally, edit a mock file in your IDE. You don’t need to restart Mockaton for that.
-The _Reset_ button is for registering newly added, removed, or renamed mocks.
+Finally, edit a mock file in your IDE. You don’t need to restart Mockaton.
 
 
 ## Use Cases
@@ -296,11 +295,7 @@ URL the filename will have `[id]` in their place. For example,
 my-mocks-dir/api/user/[id]/likes.GET.200.json
 ```
 
-Note that newly saved mocks won’t be served until you
-**register them** by reinitializing Mockaton or clicking "Reset".
-
-Registered mocks won’t be overwritten (they don’t hit the fallback server).
-On the other hand, newly saved mocks get overwritten while they are unregistered.
+Your existing mocks won’t be overwritten (they don’t hit the fallback server).
 
 <details>
   <summary>Extension Details</summary>
@@ -496,9 +491,8 @@ await mockaton.setProxyFallback('http://example.com')
 Pass an empty string to disable it.
 
 ### Reset
-Re-initialize the collection. So if you added or removed mocks they will
-be considered. The selected mocks, cookies, and delays go back to default,
-but `config.proxyFallback` and `config.corsAllowed` are not affected.
+Re-initialize the collection. The selected mocks, cookies, and delays go back to
+default, but `config.proxyFallback` and `config.corsAllowed` are not affected.
 ```js
 await mockaton.reset()
 ```

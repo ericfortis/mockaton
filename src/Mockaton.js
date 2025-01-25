@@ -1,4 +1,6 @@
+import { join } from 'node:path'
 import { createServer } from 'node:http'
+import { watch, existsSync } from 'node:fs'
 
 import { API } from './ApiConstants.js'
 import { dispatchMock } from './MockDispatcher.js'
@@ -13,6 +15,16 @@ import { apiPatchRequests, apiGetRequests } from './Api.js'
 export function Mockaton(options) {
 	setup(options)
 	mockBrokerCollection.init()
+
+	watch(config.mocksDir, { recursive: true, persistent: false }, (_, filename) => {
+		if (existsSync(join(config.mocksDir, filename))) {
+			const broker = mockBrokerCollection.registerMock(filename)
+			broker.ensureItHas500()
+		}
+		else
+			mockBrokerCollection.unregisterMock(filename)
+	})
+
 	return createServer(onRequest).listen(config.port, config.host, function (error) {
 		const { address, port } = this.address()
 		const url = `http://${address}:${port}`

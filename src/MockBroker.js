@@ -18,7 +18,37 @@ export class MockBroker {
 		this.register(file)
 	}
 
-	register(file) { this.mocks.push(file) }
+	register(file) {
+		if (this.mockExists(file))
+			return
+		const { status } = parseFilename(file)
+		if (status === 500) {
+			this.#deleteTemp500()
+			if (this.temp500IsSelected)
+				this.updateFile(file)
+		}
+		this.mocks.push(file)
+		this.sortMocks()
+	}
+
+	#deleteTemp500() {
+		this.mocks = this.mocks.filter(file => !this.#isTemp500(file))
+	}
+
+	#registerTemp500() {
+		const { urlMask, method } = parseFilename(this.mocks[0])
+		const file = urlMask.replace(/^\//, '') // Removes leading slash
+		this.mocks.push(`${file}${DEFAULT_500_COMMENT}.${method}.500.empty`)
+	}
+
+	unregister(file) {
+		this.mocks = this.mocks.filter(f => f !== file)
+		const isEmpty = !this.mocks.length
+			|| this.mocks.length === 1 && this.#isTemp500(this.mocks[0])
+		if (!isEmpty && this.file === file)
+			this.selectDefaultFile()
+		return isEmpty
+	}
 
 	// Appending a '/' so URLs ending with variables don't match
 	// URLs that have a path after that variable. For example,
@@ -34,21 +64,24 @@ export class MockBroker {
 	get file() { return this.currentMock.file }
 	get delay() { return this.currentMock.delay }
 	get status() { return parseFilename(this.file).status }
-	get isTemp500() { return includesComment(this.file, DEFAULT_500_COMMENT) }
+	get temp500IsSelected() { return this.#isTemp500(this.file) }
+
+	#isTemp500(file) { return includesComment(file, DEFAULT_500_COMMENT) }
+
+	sortMocks() {
+		this.mocks.sort()
+		const defaults = this.mocks.filter(file => includesComment(file, DEFAULT_MOCK_COMMENT))
+		const temp500 = this.mocks.filter(file => includesComment(file, DEFAULT_500_COMMENT))
+		this.mocks = this.mocks.filter(file => !defaults.includes(file) && !temp500.includes(file))
+		this.mocks = [
+			...defaults,
+			...this.mocks,
+			...temp500
+		]
+	}
 
 	selectDefaultFile() {
-		const userSpecifiedDefault = this.#findMockWithDefaultComment()
-		if (userSpecifiedDefault) // Sort for dashboard list
-			this.mocks = [
-				userSpecifiedDefault,
-				...this.mocks.filter(m => m !== userSpecifiedDefault)
-			]
-		this.updateFile(userSpecifiedDefault || this.mocks[0])
-	}
-	#findMockWithDefaultComment() {
-		for (const f of this.mocks)
-			if (includesComment(f, DEFAULT_MOCK_COMMENT))
-				return f
+		this.updateFile(this.mocks[0])
 	}
 
 	mockExists(file) { return this.mocks.includes(file) }
@@ -76,11 +109,6 @@ export class MockBroker {
 	}
 	#has500() {
 		return this.mocks.some(mock => parseFilename(mock).status === 500)
-	}
-	#registerTemp500() {
-		const { urlMask, method } = parseFilename(this.mocks[0])
-		const file = urlMask.replace(/^\//, '') // Removes leading slash
-		this.register(`${file}${DEFAULT_500_COMMENT}.${method}.500.empty`)
 	}
 }
 

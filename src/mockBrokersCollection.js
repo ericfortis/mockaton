@@ -21,39 +21,58 @@ export function init() {
 	collection = {}
 	cookie.init(config.cookies)
 
-	const files = listFilesRecursively(config.mocksDir)
+	listFilesRecursively(config.mocksDir)
 		.sort()
 		.filter(f => !config.ignore.test(f) && filenameIsValid(f))
-
-	for (const file of files) {
-		const { method, urlMask } = parseFilename(file)
-		collection[method] ??= {}
-		if (!collection[method][urlMask])
-			collection[method][urlMask] = new MockBroker(file)
-		else
-			collection[method][urlMask].register(file)
-	}
+		.forEach(registerMock)
 
 	forEachBroker(broker => {
-		broker.selectDefaultFile()
 		broker.ensureItHas500()
+		broker.selectDefaultFile()
 	})
 }
 
+/** @returns {MockBroker} */
+export function registerMock(file) {
+	const { method, urlMask } = parseFilename(file)
+	collection[method] ??= {}
+	if (!collection[method][urlMask])
+		collection[method][urlMask] = new MockBroker(file)
+	else
+		collection[method][urlMask].register(file)
+	return collection[method][urlMask]
+}
+
+export function unregisterMock(file) {
+	const broker = getBrokerByFilename(file)
+	if (!broker)
+		return
+	const isEmpty = broker.unregister(file)
+	if (isEmpty) {
+		const { method, urlMask } = parseFilename(file)
+		delete collection[method][urlMask]
+		if (!Object.keys(collection[method]).length)
+			delete collection[method]
+	}
+}
 
 export const getAll = () => collection
 
-export const getBrokerByFilename = file => {
+
+/** @returns {MockBroker | undefined} */
+export function getBrokerByFilename(file) {
 	const { method, urlMask } = parseFilename(file)
 	if (collection[method])
 		return collection[method][urlMask]
 }
 
-// Searching the routes in reverse order so dynamic params (e.g.
-// /user/[id]) don’t take precedence over exact paths (e.g.
-// /user/name). That’s because "[]" chars are lower than alphanumeric ones.
-// BTW, `urlMasks` always start with "/", so there’s no need to
-// worry about the primacy of array-like keys when iterating.
+/**
+ * Searching the routes in reverse order so dynamic params (e.g.
+ * /user/[id]) don’t take precedence over exact paths (e.g.
+ * /user/name). That’s because "[]" chars are lower than alphanumeric ones.
+ * BTW, `urlMasks` always start with "/", so there’s no need to
+ * worry about the primacy of array-like keys when iterating.
+ @returns {MockBroker | undefined} */
 export function getBrokerForUrl(method, url) {
 	if (!collection[method])
 		return

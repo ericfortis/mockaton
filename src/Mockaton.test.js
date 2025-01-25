@@ -1,12 +1,11 @@
 import { tmpdir } from 'node:os'
-import { dirname, join } from 'node:path'
 import { promisify } from 'node:util'
 import { describe, it } from 'node:test'
 import { createServer } from 'node:http'
+import { dirname, join } from 'node:path'
 import { randomUUID } from 'node:crypto'
 import { equal, deepEqual, match } from 'node:assert/strict'
-import { writeFileSync, mkdtempSync, mkdirSync } from 'node:fs'
-
+import { writeFileSync, mkdtempSync, mkdirSync, unlinkSync } from 'node:fs'
 
 import { config } from './config.js'
 import { mimeFor } from './utils/mime.js'
@@ -21,7 +20,6 @@ import { API, DEFAULT_500_COMMENT, DEFAULT_MOCK_COMMENT } from './ApiConstants.j
 
 const tmpDir = mkdtempSync(tmpdir()) + '/'
 const staticTmpDir = mkdtempSync(tmpdir()) + '/'
-console.log(tmpDir)
 
 const fixtureCustomMime = [
 	'/api/custom-mime',
@@ -43,6 +41,29 @@ const fixtureDelayed = [
 	'api/delayed.GET.200.json',
 	'Route_To_Be_Delayed'
 ]
+
+/* Only fixtures with PUT */
+const fixtureForRegisteringPutA = [
+	'/api/register',
+	'api/register(a).PUT.200.json',
+	'fixture_for_registering_a'
+]
+const fixtureForRegisteringPutB = [
+	'/api/register',
+	'api/register(b).PUT.200.json',
+	'fixture_for_registering_b'
+]
+const fixtureForRegisteringPutA500 = [
+	'/api/register',
+	'api/register.PUT.500.json',
+	'fixture_for_registering_500'
+]
+const fixtureForUnregisteringPutC = [
+	'/api/unregister',
+	'api/unregister.PUT.200.json',
+	'fixture_for_unregistering'
+]
+
 
 const fixtures = [
 	[
@@ -242,6 +263,8 @@ async function runTests() {
 	await testCorsAllowed()
 	testWindowsPaths()
 
+	await testRegistering()
+
 	server.close()
 }
 
@@ -291,13 +314,81 @@ async function testMockDispatching(url, file, expectedBody, forcedMime = undefin
 async function testDefaultMock() {
 	await testMockDispatching(...fixtureDefaultInName)
 	await it('sorts mocks list with the user specified default first for dashboard display', async () => {
-		const res = await commander.listMocks()
-		const body = await res.json()
-		const { mocks } = body.GET[fixtureDefaultInName[0]]
+		const body = await (await commander.listMocks()).json()
+		const { mocks } = body['GET'][fixtureDefaultInName[0]]
 		equal(mocks[0], fixtureDefaultInName[1])
 		equal(mocks[1], fixtureNonDefaultInName[1])
 	})
 }
+
+async function testRegistering() {
+	await describe('Registering', async () => {
+		const temp500 = `api/register${DEFAULT_500_COMMENT}.PUT.500.empty`
+
+		await it('registering new route creates temp 500 as well and re-registering is a noop', async () => {
+			write(fixtureForRegisteringPutA[1], '')
+			await sleep()
+			write(fixtureForRegisteringPutB[1], '')
+			await sleep()
+			write(fixtureForRegisteringPutA[1], '')
+			await sleep()
+			const collection = await (await commander.listMocks()).json()
+			deepEqual(collection['PUT'][fixtureForRegisteringPutA[0]].mocks, [
+				fixtureForRegisteringPutA[1],
+				fixtureForRegisteringPutB[1],
+				temp500
+			])
+		})
+		await it('registering a 500 removes the temp 500 (and selects the new 500)', async () => {
+			await commander.select(temp500)
+			write(fixtureForRegisteringPutA500[1], '')
+			await sleep()
+			const collection = await (await commander.listMocks()).json()
+			const { mocks, currentMock } = collection['PUT'][fixtureForRegisteringPutA[0]]
+			deepEqual(mocks, [
+				fixtureForRegisteringPutA[1],
+				fixtureForRegisteringPutB[1],
+				fixtureForRegisteringPutA500[1]
+			])
+			deepEqual(currentMock, {
+				file: fixtureForRegisteringPutA500[1],
+				delay: 0
+			})
+		})
+		await it('unregisters selected', async () => {
+			await commander.select(fixtureForRegisteringPutA[1])
+			remove(fixtureForRegisteringPutA[1])
+			await sleep()
+			const collection = await (await commander.listMocks()).json()
+			const { mocks, currentMock } = collection['PUT'][fixtureForRegisteringPutA[0]]
+			deepEqual(mocks, [
+				fixtureForRegisteringPutB[1],
+				fixtureForRegisteringPutA500[1]
+			])
+			deepEqual(currentMock, {
+				file: fixtureForRegisteringPutB[1],
+				delay: 0
+			})
+		})
+		await it('unregistering the last mock removes broker', async () => {
+			write(fixtureForUnregisteringPutC[1], '') // Register another PUT so it doesn't delete PUT from collection
+			await sleep()
+			remove(fixtureForUnregisteringPutC[1])
+			await sleep()
+			const collection = await (await commander.listMocks()).json()
+			equal(collection['PUT'][fixtureForUnregisteringPutC[0]], undefined)
+		})
+
+		await it('unregistering the last PUT mock removes PUT from collection', async () => {
+			remove(fixtureForRegisteringPutB[1])
+			remove(fixtureForRegisteringPutA500[1])
+			await sleep()
+			const collection = await (await commander.listMocks()).json()
+			equal(collection['PUT'], undefined)
+		})
+	})
+}
+
 
 async function testItUpdatesTheCurrentSelectedMock(url, file, expectedStatus, expectedBody) {
 	await commander.select(file)
@@ -537,6 +628,10 @@ function write(filename, data) {
 	_write(tmpDir + filename, data)
 }
 
+function remove(filename) {
+	unlinkSync(tmpDir + filename)
+}
+
 function writeStatic(filename, data) {
 	_write(staticTmpDir + filename, data)
 }
@@ -546,3 +641,6 @@ function _write(absPath, data) {
 	writeFileSync(absPath, data, 'utf8')
 }
 
+async function sleep(ms = 50) {
+	return new Promise(resolve => setTimeout(resolve, ms))
+}

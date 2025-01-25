@@ -43,7 +43,7 @@ const refPayloadViewerFileTitle = useRef()
 
 const mockaton = new Commander(window.location.origin)
 
-
+window.onfocus = init
 function init() {
 	Promise.all([
 		mockaton.listMocks(),
@@ -204,7 +204,8 @@ function SectionByMethod({ method, brokers }) {
 		r('tbody', null,
 			r('th', null, method),
 			Object.entries(brokers)
-				.filter(([, broker]) => broker.mocks.length > 1) // Excludes Markdown only routes (>1 because of the autogen500)
+				.filter(([, broker]) => broker.mocks.length > 1) // >1 because of autogen500
+				.sort((a, b) => a[0].localeCompare(b[0]))
 				.map(([urlMask, broker]) =>
 					r('tr', null,
 						r('td', null, r(PreviewLink, { method, urlMask })),

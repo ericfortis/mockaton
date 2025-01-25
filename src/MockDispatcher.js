@@ -29,7 +29,7 @@ export async function dispatchMock(req, response) {
 		for (let i = 0; i < config.extraHeaders.length; i += 2)
 			response.setHeader(config.extraHeaders[i], config.extraHeaders[i + 1])
 
-		const { mime, body } = broker.isTemp500
+		const { mime, body } = broker.temp500IsSelected
 			? { mime: '', body: '' }
 			: await applyPlugins(join(config.mocksDir, broker.file), req, response)
 

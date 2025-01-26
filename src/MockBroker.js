@@ -28,7 +28,7 @@ export class MockBroker {
 				this.updateFile(file)
 		}
 		this.mocks.push(file)
-		this.sortMocks()
+		this.#sortMocks()
 	}
 
 	#deleteTemp500() {
@@ -68,7 +68,7 @@ export class MockBroker {
 
 	#isTemp500(file) { return includesComment(file, DEFAULT_500_COMMENT) }
 
-	sortMocks() {
+	#sortMocks() {
 		this.mocks.sort()
 		const defaults = this.mocks.filter(file => includesComment(file, DEFAULT_MOCK_COMMENT))
 		const temp500 = this.mocks.filter(file => includesComment(file, DEFAULT_500_COMMENT))

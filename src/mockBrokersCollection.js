@@ -23,8 +23,7 @@ export function init() {
 
 	listFilesRecursively(config.mocksDir)
 		.sort()
-		.filter(f => !config.ignore.test(f) && filenameIsValid(f))
-		.forEach(registerMock)
+		.forEach(f => registerMock(f))
 
 	forEachBroker(broker => {
 		broker.ensureItHas500()
@@ -32,15 +31,19 @@ export function init() {
 	})
 }
 
-/** @returns {MockBroker} */
-export function registerMock(file) {
+export function registerMock(file, shouldEnsure500) {
+	if (config.ignore.test(file) || !filenameIsValid(file))
+		return
+
 	const { method, urlMask } = parseFilename(file)
 	collection[method] ??= {}
 	if (!collection[method][urlMask])
 		collection[method][urlMask] = new MockBroker(file)
 	else
 		collection[method][urlMask].register(file)
-	return collection[method][urlMask]
+
+	if (shouldEnsure500)
+		collection[method][urlMask].ensureItHas500()
 }
 
 export function unregisterMock(file) {

@@ -17,10 +17,8 @@ export function Mockaton(options) {
 	mockBrokerCollection.init()
 
 	watch(config.mocksDir, { recursive: true, persistent: false }, (_, filename) => {
-		if (existsSync(join(config.mocksDir, filename))) {
-			const broker = mockBrokerCollection.registerMock(filename)
-			broker.ensureItHas500()
-		}
+		if (existsSync(join(config.mocksDir, filename)))
+			mockBrokerCollection.registerMock(filename, 'ensureItHas500')
 		else
 			mockBrokerCollection.unregisterMock(filename)
 	})

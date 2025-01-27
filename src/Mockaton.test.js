@@ -19,7 +19,7 @@ import { API, DEFAULT_500_COMMENT, DEFAULT_MOCK_COMMENT } from './ApiConstants.j
 
 
 const tmpDir = mkdtempSync(tmpdir() + '/mocks') + '/'
-const staticTmpDir = mkdtempSync(tmpdir + '/static') + '/'
+const staticTmpDir = mkdtempSync(tmpdir() + '/static') + '/'
 
 const fixtureCustomMime = [
 	'/api/custom-mime',

@@ -18,8 +18,6 @@ import { listFilesRecursively, read } from './utils/fs.js'
 import { API, DEFAULT_500_COMMENT, DEFAULT_MOCK_COMMENT } from './ApiConstants.js'
 
 
-console.log('TMP', tmpdir())
-
 const tmpDir = mkdtempSync(tmpdir() + '/mocks') + '/'
 const staticTmpDir = mkdtempSync(tmpdir + '/static') + '/'
 

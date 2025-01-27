@@ -16,12 +16,15 @@ export function Mockaton(options) {
 	setup(options)
 	mockBrokerCollection.init()
 
-	watch(config.mocksDir, { recursive: true, persistent: false }, (_, filename) => {
-		if (existsSync(join(config.mocksDir, filename)))
-			mockBrokerCollection.registerMock(filename, 'ensureItHas500')
-		else
-			mockBrokerCollection.unregisterMock(filename)
-	})
+	watch(config.mocksDir, { recursive: true, persistent: false },
+		function handleAddedOrDeletedMocks(_, filename) {
+			if (!filename)
+				return
+			if (existsSync(join(config.mocksDir, filename)))
+				mockBrokerCollection.registerMock(filename, 'ensureItHas500')
+			else
+				mockBrokerCollection.unregisterMock(filename)
+		})
 
 	return createServer(onRequest).listen(config.port, config.host, function (error) {
 		const { address, port } = this.address()

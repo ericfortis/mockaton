@@ -18,8 +18,8 @@ import { listFilesRecursively, read } from './utils/fs.js'
 import { API, DEFAULT_500_COMMENT, DEFAULT_MOCK_COMMENT } from './ApiConstants.js'
 
 
-const tmpDir = mkdtempSync(tmpdir()) + '/'
-const staticTmpDir = mkdtempSync(tmpdir()) + '/'
+const tmpDir = mkdtempSync(tmpdir() + '/mocks') + '/'
+const staticTmpDir = mkdtempSync(tmpdir + '/static') + '/'
 
 const fixtureCustomMime = [
 	'/api/custom-mime',

@@ -1,19 +1,28 @@
-name: Build
-on: push
+name: Test
+
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
 
 jobs:
   build:
+
     runs-on: ubuntu-latest
+
+    strategy:
+      matrix:
+        node-version: [22.x]
     steps:
-      - uses: actions/checkout@v4
-      - name: Build with logs
-        run: |
-          mkdir ${{ runner.temp }}/build_logs
-          echo "Logs from building" > ${{ runner.temp }}/build_logs/build.logs
-          exit 1
-      - name: Upload logs on fail
-        if: ${{ failure() }}
-        uses: actions/upload-artifact@v4
-        with:
-          name: Build failure logs
-          path: ${{ runner.temp }}/build_logs
+    - uses: actions/checkout@v4
+    - name: Use Node.js ${{ matrix.node-version }}
+      uses: actions/setup-node@v4
+      with:
+        node-version: ${{ matrix.node-version }}
+      env:
+        TMPDIR: ${{ runner.temp }}
+      run: 
+        mkdir ${{ runner.temp }}/test_bar
+        ls ${{ runner.temp }}
+        node --test src/**.test.js

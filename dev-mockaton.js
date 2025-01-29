@@ -1,10 +1,11 @@
 import { join } from 'node:path'
-import { Mockaton, jwtCookie } from './index.js' // from 'mockaton'
+import { Mockaton, jwtCookie } from './index.js'
+
 
 Mockaton({
 	port: 2345,
-	mocksDir: join(import.meta.dirname, 'sample-mocks'),
-	staticDir: join(import.meta.dirname, 'sample-static'),
+	mocksDir: join(import.meta.dirname, 'fixtures-mocks'),
+	staticDir: join(import.meta.dirname, 'fixtures-static-mocks'),
 	cookies: {
 		'My Admin User': 'my-cookie=1;Path=/;SameSite=strict',
 		'My Normal User': 'my-cookie=0;Path=/;SameSite=strict',

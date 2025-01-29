@@ -1,0 +1,23 @@
+{
+	"name": "demo-app-vite",
+	"private": true,
+	"version": "0.0.1",
+	"type": "module",
+	"scripts": {
+		"mockaton": "./mockaton.js --port=2345",
+		"start": "export BACKEND=http://localhost:2345; vite",
+		"outdated": "npm outdated --parseable | awk -F: '{ printf \"npm i %-30s ;# %s\\n\", $4, $2 }'"
+	},
+	"dependencies": {
+		"react": "18.3.1",
+		"react-cookie": "7.2.2",
+		"react-dom": "18.3.1"
+	},
+	"devDependencies": {
+		"@vitejs/plugin-react": "4.3.4",
+		"mockaton": "8.4.1",
+		"react-cookies": "0.1.1",
+		"tsx": "4.19.2",
+		"vite": "6.0.5"
+	}
+}

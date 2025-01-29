@@ -1,0 +1,19 @@
+#!/bin/sh
+
+# Runs Mockaton and Vite in different Terminal windows
+
+MOCKATON_PORT=2345
+MOCKATON_ADDR=http://localhost:${MOCKATON_PORT}
+
+HERE=$(dirname $(realpath $0)) # For running this script from any dir
+
+osascript << EOF
+tell app "Terminal" to do script "
+  cd ${HERE}
+  ./mockaton.js --port=${MOCKATON_PORT}
+"
+EOF
+
+export BACKEND=${MOCKATON_ADDR}
+cd "${HERE}"
+npx vite

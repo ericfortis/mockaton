@@ -1,0 +1,10 @@
+.Header {
+	background: black;
+	color: white;
+	padding: 8px 16px;
+
+	.roleBadge {
+		opacity: .7;
+		font-size: 12px;
+	}
+}

@@ -49,8 +49,8 @@ which is handy for setting up tests  (see **Commander API** below).
 
 ## Basic Usage
 `tsx` is only needed if you want to write mocks in TypeScript
-```
-npm install mockaton tsx
+```sh
+npm install mockaton tsx --save-dev
 ```
 
 Create a `my-mockaton.js` file
@@ -70,23 +70,19 @@ node --import=tsx my-mockaton.js
 ```
 
 
-## Running the Built-in Demo
-This demo uses the [sample-mocks/](./sample-mocks) of this repository.
+## Running the demo app (Vite)
+
+This is a minimal React + Vite + Mockaton app.
 
 ```sh  
 git clone https://github.com/ericfortis/mockaton.git
-cd mockaton
-npm install tsx
-npm run demo:ts
+cd mockaton/demo-app-vite
+npm install 
+npm run mockaton
+npm run start
 ```
 
-Experiment with the Dashboard:
-
-- Pick a mock variant from the _Mock dropdown_ 
-- Toggle the 🕓 _Delay Responses_ button, (e.g. for testing spinners)
-- Toggle the _500_ button, which sends and _Internal Server Error_ on that endpoint
-
-Finally, edit a mock file in your IDE. You don’t need to restart Mockaton.
+By the way, that directory has a script for opening Mockaton and Vite in one command.
 
 
 ## Use Cases
@@ -175,7 +171,7 @@ export default async function insertColor(request, response) {
 }
 ```
 
-`api/colors.GET.200.js`
+`api/colors(assorted)(default).GET.200.ts`
 ```js
 import colorsFixture from './colors.json' with { type: 'json' }
 
@@ -334,14 +330,16 @@ config.cookies = {
   'My Admin User': 'my-cookie=1;Path=/;SameSite=strict',
   'My Normal User': 'my-cookie=0;Path=/;SameSite=strict',
   'My JWT': jwtCookie('my-cookie', {
-    email: 'john.doe@example.com',
+    name: 'John Doe',
     picture: 'https://cdn.auth0.com/avatars/jd.png'
   })
 }
 ```
 The selected cookie, which is the first one by default, is sent in every
-response in a `Set-Cookie` header. If you need to send more
-cookies, inject them globally in `config.extraHeaders`.
+response in a `Set-Cookie` header. 
+
+If you need to send more cookies, you can either inject them globally
+in `config.extraHeaders`, or in function `.js` or `.ts` mock.
 
 By the way, the `jwtCookie` helper has a hardcoded header and signature.
 In other words, it’s useful only if you care about its payload.
@@ -436,8 +434,8 @@ config.corsExposedHeaders = [] // headers you need to access in client-side JS
 
 
 ### `onReady?: (dashboardUrl: string) => void`
-This defaults to trying to open the dashboard in your default browser on macOS and
-Windows. For a more cross-platform utility, you could `npm install open` and pass it.
+By default, it will open the dashboard in your default browser on macOS and
+Windows. But for a more cross-platform utility, you could `npm install open` and pass it.
 ```js
 import open from 'open'
 config.onReady = open
@@ -448,6 +446,7 @@ If you don’t want to open a browser, pass a noop:
 config.onReady = () => {}
 ```
 
+Nonetheless, you can trigger any command besides opening a browser.
 
 ---
 
@@ -498,6 +497,6 @@ await mockaton.reset()
 ```
 
 <div style="display: flex; align-items: center; gap: 20px">
-  <img src="./sample-mocks/api/user/avatar.GET.200.png" width="170"/>
+  <img src="fixtures-mocks/api/user/avatar.GET.200.png" width="170"/>
   <p style="font-size: 18px">“Use Mockaton”</p>
 </div>

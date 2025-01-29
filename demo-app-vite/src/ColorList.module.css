@@ -1,0 +1,84 @@
+.Spinner,
+.Error,
+.Empty {
+	position: absolute;
+	top: 0;
+	right: 0;
+	bottom: 0;
+	left: 0;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+}
+
+.Error {
+	color: var(--colorRedP500);
+}
+
+.ColorList {
+	display: grid;
+	padding: 12px;
+	--minCardWidth: 230px;
+	grid-template-columns: repeat(auto-fit, minmax(var(--minCardWidth), 1fr));
+}
+
+.ColorCard {
+	padding: 16px;
+	box-shadow: var(--boxShadow1);
+	line-height: 140%;
+	font-size: 12px;
+	list-style: none;
+
+	h2 {
+		overflow: hidden;
+		margin-bottom: 4px;
+		text-overflow: ellipsis;
+		text-wrap: nowrap;
+		font-size: 14px;
+	}
+
+	.foot {
+		display: flex;
+		margin-top: 12px;
+
+		.newBadge,
+		.discontinuedBadge,
+		.outOfStockBadge {
+			padding: 2px 8px;
+			border: 1px solid rgba(255, 255, 255, 0.5);
+			color: white;
+			border-radius: 16px;
+			font-size: 10px;
+		}
+
+		.newBadge {
+			background: var(--colorBlueP500);
+		}
+		.discontinuedBadge {
+			background: var(--colorBlack);
+		}
+
+		.outOfStockBadge {
+			margin-left: auto;
+			background: var(--colorRedP500);
+		}
+
+		.stock {
+			align-self: flex-end;
+			margin-left: auto;
+			opacity: .8;
+		}
+	}
+
+	.adminFoot {
+		margin-top: 12px;
+
+		button {
+			padding: 8px 16px;
+			background: var(--colorRedP500);
+			box-shadow: var(--boxShadow1);
+			color: var(--colorWhite);
+		}
+	}
+}
+

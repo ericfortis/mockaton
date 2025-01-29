@@ -16,6 +16,7 @@ const Strings = {
 	fallback_server_placeholder: 'Type Server Address',
 	internal_server_error: 'Internal Server Error',
 	mock: 'Mock',
+	no_mocks_found: 'No mocks found',
 	reset: 'Reset',
 	select_one: 'Select One',
 	static: 'Static'
@@ -43,7 +44,6 @@ const refPayloadViewerFileTitle = useRef()
 
 const mockaton = new Commander(window.location.origin)
 
-window.onfocus = init
 function init() {
 	Promise.all([
 		mockaton.listMocks(),
@@ -64,6 +64,7 @@ function App(apiResponses) {
 }
 
 function DevPanel([brokersByMethod, cookies, comments, corsAllowed, fallbackAddress, staticFiles]) {
+	const isEmpty = Object.keys(brokersByMethod).length === 0
 	return (
 		r('div', null,
 			r('menu', null,
@@ -73,13 +74,15 @@ function DevPanel([brokersByMethod, cookies, comments, corsAllowed, fallbackAddr
 				r(ProxyFallbackField, { fallbackAddress }),
 				r(CorsCheckbox, { corsAllowed }),
 				r(ResetButton)),
-			r('main', null,
-				r('table', null, Object.entries(brokersByMethod).map(([method, brokers]) =>
-					r(SectionByMethod, { method, brokers }))),
-				r('div', { className: CSS.PayloadViewer },
-					r('h2', { ref: refPayloadViewerFileTitle }, Strings.mock),
-					r('pre', null,
-						r('code', { ref: refPayloadViewer }, Strings.click_link_to_preview)))),
+			isEmpty
+				? r('main', null, Strings.no_mocks_found)
+				: r('main', null,
+					r('table', null, Object.entries(brokersByMethod).map(([method, brokers]) =>
+						r(SectionByMethod, { method, brokers }))),
+					r('div', { className: CSS.PayloadViewer },
+						r('h2', { ref: refPayloadViewerFileTitle }, Strings.mock),
+						r('pre', null,
+							r('code', { ref: refPayloadViewer }, Strings.click_link_to_preview)))),
 			r(StaticFilesList, { staticFiles })))
 }
 

@@ -1,0 +1,18 @@
+#!/bin/sh
+
+# Runs Mockaton and Vite in different tmux panes
+
+MOCKATON_PORT=2345
+MOCKATON_ADDR=http://localhost:${MOCKATON_PORT}
+
+HERE=$(dirname $(realpath $0)) # For running this script from any dir
+
+tmux new-session -s mysession -c $HERE -d
+
+tmux send-keys "./mockaton.js --port=$MOCKATON_PORT" Enter 
+tmux split-window -v -c $HERE
+tmux send-keys "BACKEND=${MOCKATON_ADDR} npx vite" Enter
+
+tmux attach -t mysession 
+
+# macOS Tip: `brew install reattach-to-user-namespace` to allow copying text from tmux

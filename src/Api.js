@@ -26,6 +26,7 @@ export const apiGetRequests = new Map([
 	[API.comments, listComments],
 	[API.fallback, getProxyFallback],
 	[API.cors, getIsCorsAllowed],
+	[API.collectProxied, getCollectProxied],
 	[API.static, listStaticFiles]
 ])
 
@@ -50,6 +51,7 @@ function listComments(_, response) { sendJSON(response, mockBrokersCollection.ex
 function listMockBrokers(_, response) { sendJSON(response, mockBrokersCollection.getAll()) }
 function getProxyFallback(_, response) { sendJSON(response, config.proxyFallback) }
 function getIsCorsAllowed(_, response) { sendJSON(response, config.corsAllowed) }
+function getCollectProxied(_, response) { sendJSON(response, config.collectProxied) }
 
 function listStaticFiles(req, response) {
 	try {

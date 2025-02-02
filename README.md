@@ -41,9 +41,9 @@ route, among other options. In addition, there’s a programmatic API,
 which is handy for setting up tests  (see **Commander API** below).
 
 <picture>
-  <source media="(prefers-color-scheme: light)" srcset="./README-dashboard-light.png">
-  <source media="(prefers-color-scheme: dark)" srcset="./README-dashboard-dark.png">
-  <img alt="Mockaton Dashboard Demo" src="./README-dashboard-light.png">
+  <source media="(prefers-color-scheme: light)" srcset="./pixaton-tests/pic-for-readme.vp1024x800.light.gold.png">
+  <source media="(prefers-color-scheme: dark)" srcset="./pixaton-tests/pic-for-readme.vp1024x800.dark.gold.png">
+  <img alt="Mockaton Dashboard" src="./pixaton-tests/pic-for-readme.vp1024x800.light.gold.png">
 </picture>
 
 
@@ -83,6 +83,8 @@ npm run start
 ```
 
 By the way, that directory has a script for opening Mockaton and Vite in one command.
+
+<img src="./demo-app-vite/README-screenshot.png" alt="Mockaton Demo App Screenshot" style="max-width: 600px" />
 
 
 ## Use Cases

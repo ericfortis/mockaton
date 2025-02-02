@@ -4,7 +4,6 @@ import { DEFAULT_500_COMMENT } from '/ApiConstants.js'
 
 
 const Strings = {
-	allow_cors: 'Allow CORS',
 	bulk_select_by_comment: 'Bulk Select by Comment',
 	bulk_select_by_comment_disabled_title: 'No mock files have comments, which are anything within parentheses on the filename.',
 	click_link_to_preview: 'Click a link to preview it',
@@ -18,19 +17,22 @@ const Strings = {
 	mock: 'Mock',
 	no_mocks_found: 'No mocks found',
 	reset: 'Reset',
+	save_proxied: 'Save Mocks',
 	select_one: 'Select One',
 	static: 'Static'
 }
 
 const CSS = {
-	ResetButton: 'ResetButton',
-	CorsCheckbox: 'CorsCheckbox',
 	DelayToggler: 'DelayToggler',
+	FallbackBackend: 'FallbackBackend',
+	Field: 'Field',
 	InternalServerErrorToggler: 'InternalServerErrorToggler',
 	MockSelector: 'MockSelector',
 	PayloadViewer: 'PayloadViewer',
 	PreviewLink: 'PreviewLink',
 	ProgressBar: 'ProgressBar',
+	ResetButton: 'ResetButton',
+	SaveProxiedCheckbox: 'SaveProxiedCheckbox',
 	StaticFilesList: 'StaticFilesList',
 
 	bold: 'bold',
@@ -49,7 +51,7 @@ function init() {
 		mockaton.listMocks(),
 		mockaton.listCookies(),
 		mockaton.listComments(),
-		mockaton.getCorsAllowed(),
+		mockaton.getCollectProxied(),
 		mockaton.getProxyFallback(),
 		mockaton.listStaticFiles()
 	].map(api => api.then(response => response.ok && response.json())))
@@ -63,7 +65,7 @@ function App(apiResponses) {
 	document.body.appendChild(DevPanel(apiResponses))
 }
 
-function DevPanel([brokersByMethod, cookies, comments, corsAllowed, fallbackAddress, staticFiles]) {
+function DevPanel([brokersByMethod, cookies, comments, collectProxied, fallbackAddress, staticFiles]) {
 	const isEmpty = Object.keys(brokersByMethod).length === 0
 	return (
 		r('div', null,
@@ -71,8 +73,7 @@ function DevPanel([brokersByMethod, cookies, comments, corsAllowed, fallbackAddr
 				r('img', { src: '/mockaton-logo.svg', width: 160, alt: Strings.title }),
 				r(CookieSelector, { list: cookies }),
 				r(BulkSelector, { comments }),
-				r(ProxyFallbackField, { fallbackAddress }),
-				r(CorsCheckbox, { corsAllowed }),
+				r(ProxyFallbackField, { fallbackAddress, collectProxied }),
 				r(ResetButton)),
 			isEmpty
 				? r('main', null, Strings.no_mocks_found)
@@ -94,7 +95,7 @@ function CookieSelector({ list }) {
 	}
 	const disabled = list.length <= 1
 	return (
-		r('label', null,
+		r('label', { className: CSS.Field },
 			r('span', null, Strings.cookie),
 			r('select', {
 					autocomplete: 'off',
@@ -118,7 +119,7 @@ function BulkSelector({ comments }) {
 		? []
 		: [Strings.select_one].concat(comments)
 	return (
-		r('label', null,
+		r('label', { className: CSS.Field },
 			r('span', null, Strings.bulk_select_by_comment),
 			r('select', {
 					'data-qaid': 'BulkSelector',
@@ -132,41 +133,51 @@ function BulkSelector({ comments }) {
 }
 
 
-function ProxyFallbackField({ fallbackAddress = '' }) {
+function ProxyFallbackField({ fallbackAddress = '', collectProxied }) {
+	const refSaveProxiedCheckbox = useRef()
 	function onChange(event) {
 		const input = event.currentTarget
+		refSaveProxiedCheckbox.current.disabled = !input.validity.valid || !input.value.trim()
 		if (!input.validity.valid)
 			input.reportValidity()
 		else
-			mockaton.setProxyFallback(input.value)
+			mockaton.setProxyFallback(input.value.trim())
 				.catch(onError)
 	}
 	return (
-		r('label', null,
-			r('span', null, Strings.fallback_server),
-			r('input', {
-				type: 'url',
-				autocomplete: 'none',
-				placeholder: Strings.fallback_server_placeholder,
-				value: fallbackAddress,
-				onChange
+		r('div', { className: CSS.Field + ' ' + CSS.FallbackBackend },
+			r('label', null,
+				r('span', null, Strings.fallback_server),
+				r('input', {
+					type: 'url',
+					autocomplete: 'none',
+					placeholder: Strings.fallback_server_placeholder,
+					value: fallbackAddress,
+					onChange
+				})),
+			r(SaveProxiedCheckbox, {
+				collectProxied,
+				disabled: !fallbackAddress,
+				ref: refSaveProxiedCheckbox
 			})))
 }
 
 
-function CorsCheckbox({ corsAllowed }) {
+function SaveProxiedCheckbox({ ref, disabled, collectProxied }) {
 	function onChange(event) {
-		mockaton.setCorsAllowed(event.currentTarget.checked)
+		mockaton.setCollectProxied(event.currentTarget.checked)
 			.catch(onError)
 	}
 	return (
-		r('label', { className: CSS.CorsCheckbox },
+		r('label', { className: CSS.SaveProxiedCheckbox },
 			r('input', {
+				ref,
 				type: 'checkbox',
-				checked: corsAllowed,
+				disabled,
+				checked: collectProxied,
 				onChange
 			}),
-			Strings.allow_cors))
+			r('span', null, Strings.save_proxied)))
 }
 
 

@@ -8,7 +8,7 @@ import {
 import { Commander } from '../index.js'
 
 // Before running these tests you need to spin up the demo:
-//   npm run demo
+//   npm run start
 
 const MOCKATON_ADDR = 'http://localhost:2345'
 const mockaton = new Commander(MOCKATON_ADDR)
@@ -25,7 +25,11 @@ after(() => {
 })
 
 export function testPixels(testFileName, options = {}) {
-	options.beforeSuite = async () => await mockaton.reset()
+	options.beforeSuite = async () => {
+		await mockaton.reset()
+		await mockaton.setProxyFallback('')
+		await mockaton.setCollectProxied(false)
+	}
 	options.viewports ??= [{
 		width: 1024,
 		height: 800,

@@ -9,14 +9,14 @@
 		--colorAccentAlt: #009c71;
 		--colorBackground: #fff;
 		--colorHeaderBackground: #f7f7f7;
-		--colorComboBoxBackground: #fafafa;
+		--colorComboBoxBackground: #f7f7f7;
+		--colorSecondaryButtonBackground: #f5f5f5;
 		--colorComboBoxHeaderBackground: #fff;
 		--colorDisabled: #444;
 		--colorHover: #dfefff;
 		--colorLabel: #444;
 		--colorLightRed: #ffe4ee;
 		--colorRed: #da0f00;
-		--colorSecondaryButtonBackground: #fafafa;
 		--colorText: #000;
 	}
 }
@@ -28,13 +28,13 @@
 		--colorBackground: #161616;
 		--colorHeaderBackground: #090909;
 		--colorComboBoxBackground: #252525;
+		--colorSecondaryButtonBackground: #444;
 		--colorComboBoxHeaderBackground: #222;
 		--colorDisabled: #bbb;
 		--colorHover: #023661;
 		--colorLabel: #aaa;
 		--colorLightRed: #ffe4ee;
 		--colorRed: #f41606;
-		--colorSecondaryButtonBackground: #444;
 		--colorText: #fff;
 	}
 }
@@ -49,12 +49,13 @@ body {
 	color: var(--colorText);
 }
 * {
+	box-sizing: border-box;
 	padding: 0;
 	border: 0;
 	margin: 0;
 	font-family: system-ui, sans-serif;
 	font-size: 100%;
-	outline: 0
+	outline: 0;
 }
 
 select, a, input, button, summary {
@@ -91,7 +92,7 @@ menu {
 	display: flex;
 	width: 100%;
 	align-items: flex-end;
-	padding: 16px;
+	padding: 15px 16px;
 	border-bottom: 1px solid rgba(127, 127, 127, 0.1);
 	background: var(--colorHeaderBackground);
 	box-shadow: var(--boxShadow1);
@@ -103,7 +104,9 @@ menu {
 		margin-right: 18px;
 	}
 
-	label {
+	.Field {
+		min-width: 150px;
+
 		span {
 			display: block;
 			color: var(--colorLabel);
@@ -112,27 +115,48 @@ menu {
 
 		input[type=url],
 		select {
+			width: 100%;
 			height: 28px;
-			width: 150px;
 			padding: 4px 2px;
 			border-right: 3px solid transparent;
-			margin-top: 2px;
+			margin-top: 4px;
 			font-size: 11px;
 			background: var(--colorComboBoxHeaderBackground);
 			border-radius: 6px;
 		}
 
-		input[type=url] {
-			padding: 0 6px;
-			box-shadow: var(--boxShadow1);
-			color: var(--colorText);
+		&.FallbackBackend {
+			position: relative;
+			width: 194px;
+
+			input[type=url] {
+				padding: 0 6px;
+				box-shadow: var(--boxShadow1);
+				color: var(--colorText);
+			}
+
+			.SaveProxiedCheckbox {
+				position: absolute;
+				top: 0;
+				right: 0;
+				display: flex;
+				width: auto;
+				min-width: unset;
+				align-items: center;
+				font-size: 11px;
+				gap: 4px;
+
+				input:disabled + span {
+					opacity: 0.7;
+				}
+			}
 		}
 	}
 
 	.ResetButton {
 		padding: 4px 12px;
-		margin-bottom: 4px;
 		border: 1px solid var(--colorRed);
+		margin-bottom: 4px;
 		background: transparent;
 		color: var(--colorRed);
 		border-radius: 50px;
@@ -143,13 +167,6 @@ menu {
 			color: white;
 			box-shadow: var(--boxShadow1);
 		}
-	}
-
-	.CorsCheckbox {
-		display: flex;
-		align-items: center;
-		margin-bottom: 8px;
-		gap: 4px;
 	}
 }
 
@@ -368,8 +385,8 @@ main {
 
 	a {
 		display: inline-block;
-		border-radius: 6px;
 		padding: 6px;
+		border-radius: 6px;
 		color: var(--colorAccentAlt);
 		text-decoration: none;
 

@@ -54,12 +54,11 @@ export class Commander {
 		return this.#patch(API.fallback, proxyAddr)
 	}
 
+	getCollectProxied() {
+		return this.#get(API.collectProxied)
+	}
 	setCollectProxied(shouldCollect) {
 		return this.#patch(API.collectProxied, shouldCollect)
-	}
-
-	reset() {
-		return this.#patch(API.reset)
 	}
 
 	getCorsAllowed() {
@@ -71,5 +70,9 @@ export class Commander {
 
 	listStaticFiles() {
 		return this.#get(API.static)
+	}
+
+	reset() {
+		return this.#patch(API.reset)
 	}
 }

@@ -1,6 +1,8 @@
-.idea
-ui-tests/
-sample-mocks/
-sample-static/
-README-*.png
 .editorconfig
+.github
+.idea
+README-*.png
+demo-app-vite/
+fixtures-mocks/
+fixtures-static-mocks/
+ui-tests/

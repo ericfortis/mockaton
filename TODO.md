@@ -1,5 +1,5 @@
 # TODO
 
 - Refactor tests
-- Add Collect Proxied checkbox to the dashboard
-- Dashboard refresh (poll?)
+- Add Collect Proxied checkbox to the dashboard (remove Allow CORS)
+- Dashboard refresh (long polling ?)

@@ -8,5 +8,11 @@ testPixels(import.meta.filename, {
 		await typeFallbackBackend('http://mybackend')
 		await clickSaveProxiedCheckbox()
 		await clickLinkByText('/api/user/likes')
-	}
+	},
+
+	viewports: [{
+		width: 860,
+		height: 800,
+		deviceScaleFactor: 1.5
+	}]
 })

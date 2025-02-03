@@ -41,9 +41,9 @@ route, among other options. In addition, there’s a programmatic API,
 which is handy for setting up tests  (see **Commander API** below).
 
 <picture>
-  <source media="(prefers-color-scheme: light)" srcset="./pixaton-tests/pic-for-readme.vp1024x800.light.gold.png">
-  <source media="(prefers-color-scheme: dark)" srcset="./pixaton-tests/pic-for-readme.vp1024x800.dark.gold.png">
-  <img alt="Mockaton Dashboard" src="./pixaton-tests/pic-for-readme.vp1024x800.light.gold.png">
+  <source media="(prefers-color-scheme: light)" srcset="./pixaton-tests/pic-for-readme.vp860x800.light.gold.png">
+  <source media="(prefers-color-scheme: dark)" srcset="./pixaton-tests/pic-for-readme.vp860x800.dark.gold.png">
+  <img alt="Mockaton Dashboard" src="./pixaton-tests/pic-for-readme.vp860x800.light.gold.png">
 </picture>
 
 

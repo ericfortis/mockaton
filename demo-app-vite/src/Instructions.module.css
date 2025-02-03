@@ -1,16 +1,17 @@
 .Instructions {
 	padding: 16px;
-	line-height: 1.6;
+	line-height: 1.5;
 
 	h2 {
 		font-size: 20px;
 	}
 
 	li {
+		margin-top: 6px;
 		margin-left: 24px;
 	}
 
 	p {
-		margin-top: 8px;
+		margin-top: 12px;
 	}
 }

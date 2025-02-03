@@ -21,9 +21,8 @@ And hey, no need to mock everything. If you don’t have a mock for
 a certain API, Mockaton can fallback to your real backend. Just
 type your backend address in the **Fallback Backend** field.
 
-And there’s one more cool thing—you can collect those responses
-by clicking the **Save Mocks** checkbox. Those mocks will
-be saved to your `config.mocksDir` following the filename convention.
+By the way, you can collect those responses by clicking the **Save Mocks** checkbox.
+Those mocks will be saved to your `config.mocksDir` following the filename convention.
 
 
 ## Multiple Mock Variants

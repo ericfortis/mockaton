@@ -84,7 +84,7 @@ npm run start
 
 By the way, that directory has a script for opening Mockaton and Vite in one command.
 
-<img src="./demo-app-vite/README-screenshot.png" alt="Mockaton Demo App Screenshot" style="max-width: 600px" />
+<img src="./demo-app-vite/README-screenshot.png" alt="Mockaton Demo App Screenshot" style="max-width: 440px" />
 
 
 ## Use Cases

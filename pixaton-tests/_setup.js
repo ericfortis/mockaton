@@ -33,9 +33,59 @@ export function testPixels(testFileName, options = {}) {
 	options.viewports ??= [{
 		width: 1024,
 		height: 800,
-		deviceScaleFactor: 1.5 // for better screenshots
+		deviceScaleFactor: 1.5 // For higher quality screenshots
 	}]
 	options.colorSchemes ??= ['light', 'dark']
 	options.screenshotOptions ??= {}
 	_testPixels(page, testFileName, MOCKATON_ADDR + '/mockaton', 'body', options)
+}
+
+
+export async function selectFromDropdown({ qaId, target }) {
+	const selector = `select[data-qaid="${qaId}"]`
+	await page.waitForSelector(selector)
+	await page.click(selector) // Just for showing focus state
+	await page.select(selector, target)
+}
+
+export async function clickLinkByText(linkText) {
+	const selector = `a ::-p-text(${linkText})`
+	await page.waitForSelector(selector)
+	await page.locator(selector).click()
+}
+
+
+export async function clickDelayCheckbox(checkboxNamePrefix) {
+	await clickCheckbox({
+		parentClassName: 'DelayToggler',
+		checkboxNamePrefix
+	})
+}
+
+export async function click500Checkbox(checkboxNamePrefix) {
+	await clickCheckbox({
+		parentClassName: 'InternalServerErrorToggler',
+		checkboxNamePrefix
+	})
+}
+
+export async function clickSaveProxiedCheckbox() {
+	await clickCheckbox({
+		parentClassName: 'FallbackBackend'
+	})
+}
+
+async function clickCheckbox({ parentClassName, checkboxNamePrefix = '' }) {
+	const checkbox = checkboxNamePrefix
+		? `.${parentClassName} input[type=checkbox][name^="${checkboxNamePrefix}"]`
+		: `.${parentClassName} input[type=checkbox]`
+	await page.waitForSelector(checkbox)
+	await page.$eval(checkbox, el => el.click())
+}
+
+export async function typeFallbackBackend(serverAddress) {
+	const input = '.FallbackBackend input[type=url]'
+	await page.waitForSelector(input)
+	await page.type(input, serverAddress)
+	await page.$eval(input, el => el.blur())
 }

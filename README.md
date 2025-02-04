@@ -26,8 +26,7 @@ The mocks will be saved to your `config.mocksDir` following the filename convent
 
 
 ## Multiple Mock Variants
-You can have many mocks for any route. For example, you might want mocks with different
-response status codes (like triggering errors). Here are a couple of ways to do it:
+Here’s how you can create multiple mocks for a particular route: 
 
 ### Adding comments in filenames
 Want to mock a locked-out user or an invalid login attempt? You

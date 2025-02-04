@@ -1,6 +1,7 @@
 import { useState, useEffect, useContext } from 'react'
 import { UserContext } from './UserContext.jsx'
 import { ColorModel } from './ColorModel.js'
+import { QaId } from './QaId.js'
 import CSS from './ColorList.module.css'
 
 
@@ -38,16 +39,28 @@ export function ColorList() {
 	}, [])
 
 	if (!loaded)
-		return <div className={CSS.Spinner}>{Strings.loading}</div>
+		return (
+			<div className={CSS.Spinner} data-qaid={QaId.ColorListPreloader}>
+				{Strings.loading}
+			</div>
+		)
 
 	if (error)
-		return <div className={CSS.Error}>{error}</div>
+		return (
+			<div className={CSS.Error} data-qaid={QaId.ColorListErrorMsg}>
+				{error}
+			</div>
+		)
 
 	if (!colors.length)
-		return <div className={CSS.Empty}>{Strings.no_colors_found}</div>
+		return (
+			<div className={CSS.Empty} data-qaid={QaId.ColorListEmpty}>
+				{Strings.no_colors_found}
+			</div>
+		)
 
 	return (
-		<ul className={CSS.ColorList}>
+		<ul className={CSS.ColorList} data-qaid={QaId.ColorList}>
 			{colors.map(c => <ColorCard key={c.color} {...c} />)}
 		</ul>
 	)

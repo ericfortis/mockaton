@@ -6,10 +6,10 @@ export function Instructions() {
 		<section className={CSS.Instructions}>
 			<h2>Mockaton Demo App</h2>
 
-			<p>Here are a couple of things you can play with to get started. In the dashboard:</p>
+			<p>Here are a couple of things you can play with to get started with Mockaton’s dashboard:</p>
 			<ul>
-				<li>Pick the <strong>(empty)</strong> mock variant from the mock dropdown and refresh this page</li>
-				<li>Click the 🕓 <strong>Delay</strong> response checkbox (refresh and expect a Loading… indicator)</li>
+				<li>Pick the <strong>(empty)</strong> mock variant and refresh this page</li>
+				<li>Click the 🕓 <strong>Delay</strong> response checkbox (expect a Loading… indicator)</li>
 				<li>Click the <strong>500</strong> checkbox (expect an error message)</li>
 				<li>Select the <strong>Admin User</strong> cookie (expect a delete button on each card)</li>
 			</ul>

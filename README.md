@@ -17,19 +17,17 @@ For example, for this route `/api/user/1234`, the mock filename would be:
 my-mocks-dir/api/user/[user-id].GET.200.json
 ```
 
-And hey, no need to mock everything. If you don’t have a mock for
-a certain API, Mockaton can fallback to your real backend. Just
+And hey, no need to mock everything. Mockaton can fallback
+to your real backend on routes you don’t have mocks for. Just
 type your backend address in the **Fallback Backend** field.
 
-By the way, you can collect those responses by clicking the **Save Mocks** checkbox.
-Those mocks will be saved to your `config.mocksDir` following the filename convention.
+By checking **Save Mocks**, you can collect responses that hit your fallback backend.
+The mocks will be saved to your `config.mocksDir` following the filename convention.
 
 
 ## Multiple Mock Variants
-
-You can have many mocks for any route. For example, you might
-want different mocks with different response status codes
-(like triggering errors). Here are a couple of ways to do it:
+You can have many mocks for any route. For example, you might want mocks with different
+response status codes (like triggering errors). Here are a couple of ways to do it:
 
 ### Adding comments in filenames
 Want to mock a locked-out user or an invalid login attempt? You
@@ -100,7 +98,7 @@ By the way, that directory has scripts for opening Mockaton and Vite in one comm
 
 The app looks like this:
 
-<img src="./demo-app-vite/README-screenshot.png" alt="Mockaton Demo App Screenshot" width="580" />
+<img src="./demo-app-vite/pixaton-tests/pic-for-readme.vp500x800.light.gold.png" alt="Mockaton Demo App Screenshot" width="500" />
 
 
 ## Use Cases

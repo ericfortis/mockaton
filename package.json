@@ -17,5 +17,8 @@
 	"optionalDependencies": {
 		"pixaton": ">=1.0.2",
 		"puppeteer": ">=24.1.1"
+	},
+	"devDependencies": {
+		"pixaton": "1.0.2"
 	}
 }

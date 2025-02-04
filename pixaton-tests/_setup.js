@@ -36,7 +36,6 @@ export function testPixels(testFileName, options = {}) {
 		deviceScaleFactor: 1.5 // For higher quality screenshots
 	}]
 	options.colorSchemes ??= ['light', 'dark']
-	options.screenshotOptions ??= {}
 	_testPixels(page, testFileName, MOCKATON_ADDR + '/mockaton', 'body', options)
 }
 

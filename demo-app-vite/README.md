@@ -2,7 +2,7 @@
 
 This a minimal React + Vite + Mockaton app you can play with.
 
-<img src="./README-screenshot.png" alt="Mockaton Demo App Screenshot" width="580" />
+<img src="./pixaton-tests/pic-for-readme.vp500x800.light.gold.png" alt="Mockaton Demo App Screenshot" width="500" />
 
 
 ## Install Dependencies

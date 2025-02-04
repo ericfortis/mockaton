@@ -2,3 +2,5 @@
 node_modules/
 pixaton-tests/*.candidate.png
 pixaton-tests/*.diff.png
+demo-app-vite/pixaton-tests/*.candidate.png
+demo-app-vite/pixaton-tests/*.diff.png

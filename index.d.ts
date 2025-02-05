@@ -27,12 +27,12 @@ interface Config {
 	plugins?: [filenameTester: RegExp, plugin: Plugin][]
 
 	corsAllowed?: boolean,
-	corsOrigins: string[]
-	corsMethods: string[]
-	corsHeaders: string[]
-	corsExposedHeaders: string[]
-	corsCredentials: boolean
-	corsMaxAge: number
+	corsOrigins?: string[]
+	corsMethods?: string[]
+	corsHeaders?: string[]
+	corsExposedHeaders?: string[]
+	corsCredentials?: boolean
+	corsMaxAge?: number
 
 	onReady?: (address: string) => void
 }

@@ -90,7 +90,7 @@ async function selectMock(req, response) {
 	try {
 		const file = await parseJSON(req)
 		const broker = mockBrokersCollection.getBrokerByFilename(file)
-		if (!broker || !broker.mockExists(file))
+		if (!broker || !broker.hasMock(file))
 			throw `Missing Mock: ${file}`
 		broker.updateFile(file)
 		sendOK(response)

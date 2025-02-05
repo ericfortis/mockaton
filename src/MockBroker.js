@@ -19,10 +19,7 @@ export class MockBroker {
 	}
 
 	register(file) {
-		if (this.mockExists(file))
-			return
-		const { status } = parseFilename(file)
-		if (status === 500) {
+		if (parseFilename(file).status === 500) {
 			this.#deleteTemp500()
 			if (this.temp500IsSelected)
 				this.updateFile(file)
@@ -84,7 +81,7 @@ export class MockBroker {
 		this.updateFile(this.mocks[0])
 	}
 
-	mockExists(file) { return this.mocks.includes(file) }
+	hasMock(file) { return this.mocks.includes(file) }
 	updateFile(filename) { this.currentMock.file = filename }
 	updateDelay(delayed) { this.currentMock.delay = Number(delayed) * config.delay }
 

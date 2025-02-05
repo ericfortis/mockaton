@@ -47,7 +47,7 @@ const refPayloadViewerFileTitle = useRef()
 const mockaton = new Commander(window.location.origin)
 
 function init() {
-	Promise.all([
+	return Promise.all([
 		mockaton.listMocks(),
 		mockaton.listCookies(),
 		mockaton.listComments(),
@@ -98,13 +98,12 @@ function CookieSelector({ list }) {
 		r('label', { className: CSS.Field },
 			r('span', null, Strings.cookie),
 			r('select', {
-					autocomplete: 'off',
-					disabled,
-					title: disabled ? Strings.cookie_disabled_title : '',
-					onChange
-				},
-				list.map(([value, selected]) =>
-					r('option', { value, selected }, value)))))
+				autocomplete: 'off',
+				disabled,
+				title: disabled ? Strings.cookie_disabled_title : '',
+				onChange
+			}, list.map(([value, selected]) =>
+				r('option', { value, selected }, value)))))
 }
 
 
@@ -122,14 +121,13 @@ function BulkSelector({ comments }) {
 		r('label', { className: CSS.Field },
 			r('span', null, Strings.bulk_select_by_comment),
 			r('select', {
-					'data-qaid': 'BulkSelector',
-					autocomplete: 'off',
-					disabled,
-					title: disabled ? Strings.bulk_select_by_comment_disabled_title : '',
-					onChange
-				},
-				list.map(value =>
-					r('option', { value }, value)))))
+				'data-qaid': 'BulkSelector',
+				autocomplete: 'off',
+				disabled,
+				title: disabled ? Strings.bulk_select_by_comment_disabled_title : '',
+				onChange
+			}, list.map(value =>
+				r('option', { value }, value)))))
 }
 
 
@@ -145,7 +143,7 @@ function ProxyFallbackField({ fallbackAddress = '', collectProxied }) {
 				.catch(onError)
 	}
 	return (
-		r('div', { className: CSS.Field + ' ' + CSS.FallbackBackend },
+		r('div', { className: cssClass(CSS.Field, CSS.FallbackBackend) },
 			r('label', null,
 				r('span', null, Strings.fallback_server),
 				r('input', {
@@ -203,13 +201,9 @@ function StaticFilesList({ staticFiles }) {
 				className: CSS.StaticFilesList
 			},
 			r('summary', null, Strings.static),
-			r('ul', null,
-				staticFiles.map(f =>
-					r('li', null,
-						r('a', {
-							href: f,
-							target: '_blank'
-						}, f))))))
+			r('ul', null, staticFiles.map(f =>
+				r('li', null,
+					r('a', { href: f, target: '_blank' }, f))))))
 }
 
 
@@ -221,7 +215,7 @@ function SectionByMethod({ method, brokers }) {
 				.filter(([, broker]) => broker.mocks.length > 1) // >1 because of autogen500
 				.sort((a, b) => a[0].localeCompare(b[0]))
 				.map(([urlMask, broker]) =>
-					r('tr', null,
+					r('tr', { 'data-method': method, 'data-urlMask': urlMask },
 						r('td', null, r(PreviewLink, { method, urlMask })),
 						r('td', null, r(MockSelector, { broker })),
 						r('td', null, r(DelayRouteToggler, { broker })),
@@ -237,9 +231,7 @@ function PreviewLink({ method, urlMask }) {
 				empty(refPayloadViewer.current)
 				refPayloadViewer.current.append(ProgressBar())
 			}, 180)
-			const res = await fetch(this.href, {
-				method: this.getAttribute('data-method')
-			})
+			const res = await fetch(this.href, { method })
 			document.querySelector(`.${CSS.PreviewLink}.${CSS.chosen}`)?.classList.remove(CSS.chosen)
 			this.classList.add(CSS.chosen)
 			clearTimeout(spinner)
@@ -252,7 +244,7 @@ function PreviewLink({ method, urlMask }) {
 
 			empty(refPayloadViewerFileTitle.current)
 			refPayloadViewerFileTitle.current.append(PayloadViewerTitle({
-				file: this.closest('tr').querySelector('select').value
+				file: mockSelectorFor(method, urlMask).value
 			}))
 		}
 		catch (error) {
@@ -263,7 +255,6 @@ function PreviewLink({ method, urlMask }) {
 		r('a', {
 			className: CSS.PreviewLink,
 			href: urlMask,
-			'data-method': method,
 			onClick
 		}, urlMask))
 }
@@ -301,14 +292,14 @@ function updatePayloadViewer(body, mime) {
 
 function MockSelector({ broker }) {
 	function onChange() {
-		const { status } = parseFilename(this.value)
+		const { status, urlMask, method } = parseFilename(this.value)
 		this.style.fontWeight = this.value === this.options[0].value // default is selected
 			? 'normal'
 			: 'bold'
 		mockaton.select(this.value)
 			.then(() => {
-				this.closest('tr').querySelector('a').click()
-				this.closest('tr').querySelector(`.${CSS.InternalServerErrorToggler}>[type=checkbox]`).checked = status === 500
+				linkFor(method, urlMask)?.click()
+				checkbox500For(method, urlMask).checked = status === 500
 				this.className = className(this.value === this.options[0].value, status)
 			})
 			.catch(onError)
@@ -329,17 +320,16 @@ function MockSelector({ broker }) {
 
 	return (
 		r('select', {
-				'data-qaid': urlMask,
-				autocomplete: 'off',
-				className: className(selected === files[0], status),
-				disabled: files.length <= 1,
-				onChange
-			},
-			files.map(file =>
-				r('option', {
-					value: file,
-					selected: file === selected
-				}, file))))
+			'data-qaid': urlMask,
+			autocomplete: 'off',
+			className: className(selected === files[0], status),
+			disabled: files.length <= 1,
+			onChange
+		}, files.map(file =>
+			r('option', {
+				value: file,
+				selected: file === selected
+			}, file))))
 }
 
 
@@ -373,10 +363,12 @@ function TimerIcon() {
 
 function InternalServerErrorToggler({ broker }) {
 	function onChange(event) {
+		const { urlMask, method } = parseFilename(broker.mocks[0])
 		mockaton.select(event.currentTarget.checked
 			? broker.mocks.find(f => parseFilename(f).status === 500)
 			: broker.mocks[0])
 			.then(init)
+			.then(() => linkFor(method, urlMask)?.click())
 			.catch(onError)
 	}
 	return (
@@ -393,6 +385,19 @@ function InternalServerErrorToggler({ broker }) {
 			r('span', null, '500')
 		)
 	)
+}
+
+function trFor(method, urlMask) {
+	return document.querySelector(`tr[data-method="${method}"][data-urlMask="${urlMask}"]`)
+}
+function linkFor(method, urlMask) {
+	return trFor(method, urlMask)?.querySelector(`a.${CSS.PreviewLink}`)
+}
+function checkbox500For(method, urlMask) {
+	return trFor(method, urlMask)?.querySelector(`.${CSS.InternalServerErrorToggler} > input`)
+}
+function mockSelectorFor(method, urlMask) {
+	return trFor(method, urlMask)?.querySelector(`select.${CSS.MockSelector}`)
 }
 
 

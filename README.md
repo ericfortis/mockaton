@@ -17,12 +17,11 @@ For example, for this route `/api/user/1234`, the mock filename would be:
 my-mocks-dir/api/user/[user-id].GET.200.json
 ```
 
-And hey, no need to mock everything. Mockaton can fallback
-to your real backend on routes you don’t have mocks for. Just
-type your backend address in the **Fallback Backend** field.
-
-By checking **Save Mocks**, you can collect responses that hit your fallback backend.
-The mocks will be saved to your `config.mocksDir` following the filename convention.
+And hey, no need to mock everything. Mockaton can fallback to your real
+backend on routes you don’t have mocks for. Just type your backend
+address in the **Fallback Backend** field. Check **Save Mocks** so you
+can collect those responses that hit your fallback server. The mocks will
+be saved to your `config.mocksDir` following the filename convention.
 
 
 ## Multiple Mock Variants
@@ -120,7 +119,7 @@ backends to old API contracts or databases.
 Perhaps you need to demo your app, but the ideal flow is too complex to
 simulate from the actual backend. In this case, compile your frontend app and
 put its built assets in `config.staticDir`. Then, on the dashboard
-"Bulk Select" mocks to simulate the complete states you want to demo.
+**Bulk Select** mocks to simulate the complete states you want to demo.
 For bulk-selecting, you just need to add a comment to the mock
 filename, such as `(demo-part1)`, `(demo-part2)`.
 
@@ -466,7 +465,7 @@ Nonetheless, you can trigger any command besides opening a browser.
 ---
 
 ## Commander API
-`Commander` is a wrapper for the Mockaton HTTP API.
+`Commander` is a client for Mockaton’s HTTP API.
 All of its methods return their `fetch` response promise.
 ```js
 import { Commander } from 'mockaton'

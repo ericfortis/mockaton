@@ -5,6 +5,7 @@ import { StandardMethods } from './utils/http-request.js'
 import { validateCorsAllowedMethods, validateCorsAllowedOrigins } from './utils/http-cors.js'
 
 
+/** @type {Config} */
 export const config = Object.seal({
 	mocksDir: '',
 	staticDir: '',

@@ -6,11 +6,15 @@ import { parseFilename, filenameIsValid } from './Filename.js'
 
 
 /**
+ * @type {{
+ * [method: string]:
+ *   { [route: string]: MockBroker }
+ * }}
  * @example
  * {
  *   GET: {
- *     /api/route-a: <MockBroker>
- *     /api/route-b: <MockBroker>
+ *     '/api/route-a': mockBrokerA,
+ *     '/api/route-b': mockBrokerB
  *   },
  *   POST: {…}
  * }
@@ -32,7 +36,9 @@ export function init() {
 }
 
 export function registerMock(file, shouldEnsure500) {
-	if (config.ignore.test(file) || !filenameIsValid(file))
+	if (getBrokerByFilename(file)?.hasMock(file)
+		|| config.ignore.test(file)
+		|| !filenameIsValid(file))
 		return
 
 	const { method, urlMask } = parseFilename(file)

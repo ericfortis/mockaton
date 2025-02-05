@@ -1,6 +1,7 @@
 import { API, DF } from './ApiConstants.js'
 
 
+// Client for controlling Mockaton via its HTTP API
 export class Commander {
 	#addr = ''
 	constructor(addr) {

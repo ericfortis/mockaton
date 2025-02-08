@@ -214,6 +214,9 @@ Response Status Code, and File Extension.
 api/user.GET.200.json
 ```
 
+You can also use `.empty` if you don’t want the response to have a 
+`Content-Type` header.
+
 
 ### Dynamic Parameters
 Anything within square brackets is always matched. For example, for this route
@@ -269,7 +272,7 @@ api/foo/bar.GET.200.json
 ---
 ## Config
 ### `mocksDir: string`
-This is the only required field
+This is the only required field. The directory must exist.
 
 
 ### `host?: string`
@@ -285,10 +288,10 @@ Defaults to `/(\.DS_Store|~)$/`
 
 
 ### `delay?: number` 
-Defaults to `config.delay=1200` milliseconds.
+Defaults to `1200` milliseconds.
 
 Although routes can individually be delayed with the 🕓
-checkbox, delay the amount is globally configurable.
+checkbox, the delay amount is globally configurable.
 
 
 ### `proxyFallback?: string`
@@ -298,7 +301,7 @@ For example, `config.proxyFallback = 'http://example.com'`
 ### `collectProxied?: boolean`
 Defaults to `false`. With this flag you can save mocks that hit
 your proxy fallback to `config.mocksDir`. If there are UUIDv4 in the
-URL the filename will have `[id]` in their place. For example,
+URL, the filename will have `[id]` in their place. For example,
 
 ```
 /api/user/d14e09c8-d970-4b07-be42-b2f4ee22f0a6/likes =>
@@ -377,7 +380,7 @@ config.extraMimes = {
   jpe: 'application/jpeg'
 }
 ```
-These media types take precedence over the built-in
+Those extra media types take precedence over the built-in
 [utils/mime.js](src/utils/mime.js), so you can override them.
 
 
@@ -392,8 +395,9 @@ type Plugin = (
   body: string | Uint8Array
 }>
 ```
-Plugins are for processing mocks before sending them. If no regex matches the filename,
-it fallbacks to reading the file from disk and computing the MIME from the extension.
+Plugins are for processing mocks before sending them. If no
+regex matches the filename, the fallback plugin will read
+the file from disk and compute the MIME from the extension.
 
 Note: don’t call `response.end()` on any plugin.
 

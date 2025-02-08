@@ -26,7 +26,9 @@ const CSS = {
 	DelayToggler: 'DelayToggler',
 	FallbackBackend: 'FallbackBackend',
 	Field: 'Field',
+	Header: 'Header',
 	InternalServerErrorToggler: 'InternalServerErrorToggler',
+	MockList: 'MockList',
 	MockSelector: 'MockSelector',
 	PayloadViewer: 'PayloadViewer',
 	PreviewLink: 'PreviewLink',
@@ -36,6 +38,7 @@ const CSS = {
 	StaticFilesList: 'StaticFilesList',
 
 	bold: 'bold',
+	empty: 'empty',
 	chosen: 'chosen',
 	status4xx: 'status4xx'
 }
@@ -55,45 +58,50 @@ function init() {
 		mockaton.getProxyFallback(),
 		mockaton.listStaticFiles()
 	].map(api => api.then(response => response.ok && response.json())))
-		.then(App)
+		.then(data => {
+			empty(document.body)
+			document.body.append(...App(data))
+		})
 		.catch(onError)
 }
 init()
 
-function App(apiResponses) {
-	empty(document.body)
-	document.body.appendChild(DevPanel(apiResponses))
+function App([brokersByMethod, cookies, comments, collectProxied, fallbackAddress, staticFiles]) {
+	return [
+		r(Header, { cookies, comments, fallbackAddress, collectProxied }),
+		r(MockList, { brokersByMethod }),
+		r(StaticFilesList, { staticFiles })
+	]
 }
 
-function DevPanel([brokersByMethod, cookies, comments, collectProxied, fallbackAddress, staticFiles]) {
-	const isEmpty = Object.keys(brokersByMethod).length === 0
+
+// Header ===============
+
+function Header({ cookies, comments, fallbackAddress, collectProxied }) {
 	return (
-		r('div', null,
-			r('menu', null,
-				r('img', { src: '/mockaton-logo.svg', width: 160, alt: Strings.title }),
-				r(CookieSelector, { list: cookies }),
-				r(BulkSelector, { comments }),
-				r(ProxyFallbackField, { fallbackAddress, collectProxied }),
-				r(ResetButton)),
-			isEmpty
-				? r('main', null, Strings.no_mocks_found)
-				: r('main', null,
-					r('table', null, Object.entries(brokersByMethod).map(([method, brokers]) =>
-						r(SectionByMethod, { method, brokers }))),
-					r('div', { className: CSS.PayloadViewer },
-						r('h2', { ref: refPayloadViewerFileTitle }, Strings.mock),
-						r('pre', null,
-							r('code', { ref: refPayloadViewer }, Strings.click_link_to_preview)))),
-			r(StaticFilesList, { staticFiles })))
+		r('menu', { className: CSS.Header },
+			r(Logo),
+			r(CookieSelector, { cookies }),
+			r(BulkSelector, { comments }),
+			r(ProxyFallbackField, { fallbackAddress, collectProxied }),
+			r(ResetButton)))
 }
 
+function Logo() {
+	return (
+		r('img', {
+			alt: Strings.title,
+			src: '/mockaton-logo.svg',
+			width: 160
+		}))
+}
 
-function CookieSelector({ list }) {
+function CookieSelector({ cookies }) {
 	function onChange() {
 		mockaton.selectCookie(this.value)
 			.catch(onError)
 	}
-	const disabled = list.length <= 1
+	const disabled = cookies.length <= 1
 	return (
 		r('label', { className: CSS.Field },
 			r('span', null, Strings.cookie),
@@ -102,10 +110,9 @@ function CookieSelector({ list }) {
 				disabled,
 				title: disabled ? Strings.cookie_disabled_title : '',
 				onChange
-			}, list.map(([value, selected]) =>
+			}, cookies.map(([value, selected]) =>
 				r('option', { value, selected }, value)))))
 }
-
 
 function BulkSelector({ comments }) {
 	function onChange() {
@@ -130,7 +137,6 @@ function BulkSelector({ comments }) {
 				r('option', { value }, value)))))
 }
 
-
 function ProxyFallbackField({ fallbackAddress = '', collectProxied }) {
 	const refSaveProxiedCheckbox = useRef()
 	function onChange(event) {
@@ -139,8 +145,7 @@ function ProxyFallbackField({ fallbackAddress = '', collectProxied }) {
 		if (!input.validity.valid)
 			input.reportValidity()
 		else
-			mockaton.setProxyFallback(input.value.trim())
-				.catch(onError)
+			mockaton.setProxyFallback(input.value.trim()).catch(onError)
 	}
 	return (
 		r('div', { className: cssClass(CSS.Field, CSS.FallbackBackend) },
@@ -160,7 +165,6 @@ function ProxyFallbackField({ fallbackAddress = '', collectProxied }) {
 			})))
 }
 
-
 function SaveProxiedCheckbox({ ref, disabled, collectProxied }) {
 	function onChange(event) {
 		mockaton.setCollectProxied(event.currentTarget.checked)
@@ -178,7 +182,6 @@ function SaveProxiedCheckbox({ ref, disabled, collectProxied }) {
 			r('span', null, Strings.save_proxied)))
 }
 
-
 function ResetButton() {
 	return (
 		r('button', {
@@ -192,18 +195,20 @@ function ResetButton() {
 }
 
 
-function StaticFilesList({ staticFiles }) {
-	if (!staticFiles.length)
-		return null
+
+// MockList ===============
+
+function MockList({ brokersByMethod }) {
+	const hasMocks = Object.keys(brokersByMethod).length
+	if (!hasMocks)
+		return (
+			r('main', { className: cssClass(CSS.MockList, CSS.empty) },
+				Strings.no_mocks_found))
 	return (
-		r('details', {
-				open: true,
-				className: CSS.StaticFilesList
-			},
-			r('summary', null, Strings.static),
-			r('ul', null, staticFiles.map(f =>
-				r('li', null,
-					r('a', { href: f, target: '_blank' }, f))))))
+		r('main', { className: CSS.MockList },
+			r('table', null, Object.entries(brokersByMethod).map(([method, brokers]) =>
+				r(SectionByMethod, { method, brokers }))),
+			r(PayloadViewer)))
 }
 
 
@@ -227,25 +232,16 @@ function PreviewLink({ method, urlMask }) {
 	async function onClick(event) {
 		event.preventDefault()
 		try {
-			const spinner = setTimeout(() => {
+			const preloader = setTimeout(() => {
 				empty(refPayloadViewer.current)
-				refPayloadViewer.current.append(ProgressBar())
+				refPayloadViewer.current.append(PayloadViewerProgressBar())
 			}, 180)
-			const res = await fetch(this.href, { method })
+
+			const response = await fetch(this.href, { method })
+			clearTimeout(preloader)
+			await updatePayloadViewer(method, urlMask, this.href, response)
 			document.querySelector(`.${CSS.PreviewLink}.${CSS.chosen}`)?.classList.remove(CSS.chosen)
 			this.classList.add(CSS.chosen)
-			clearTimeout(spinner)
-
-			const mime = res.headers.get('content-type') || ''
-			if (mime.startsWith('image/')) // naively assumes GET.200
-				renderPayloadImage(this.href)
-			else
-				updatePayloadViewer(await res.text() || Strings.empty_response_body, mime)
-
-			empty(refPayloadViewerFileTitle.current)
-			refPayloadViewerFileTitle.current.append(PayloadViewerTitle({
-				file: mockSelectorFor(method, urlMask).value
-			}))
 		}
 		catch (error) {
 			onError(error)
@@ -260,37 +256,14 @@ function PreviewLink({ method, urlMask }) {
 }
 
 
-function PayloadViewerTitle({ file }) {
-	const { urlMask, method, status, ext } = parseFilename(file)
-	return (
-		r('span', null,
-			urlMask + '.' + method + '.',
-			r('abbr', { title: HttpStatus[status] }, status),
-			'.' + ext))
-}
-
-
-function ProgressBar() {
-	return (
-		r('div', { className: CSS.ProgressBar },
-			r('div', { style: { animationDuration: '1000ms' } }))) // TODO from Config.delay - 180
-}
-
-
-function renderPayloadImage(href) {
-	empty(refPayloadViewer.current)
-	refPayloadViewer.current.append(r('img', { src: href }))
-}
-
-function updatePayloadViewer(body, mime) {
-	if (mime === 'application/json' && window?.Prism.languages)
-		refPayloadViewer.current.innerHTML = window.Prism.highlight(body, window.Prism.languages.json, 'json')
-	else
-		refPayloadViewer.current.innerText = body
-}
-
-
 function MockSelector({ broker }) {
+	function className(defaultIsSelected, status) {
+		return cssClass(
+			CSS.MockSelector,
+			!defaultIsSelected && CSS.bold,
+			status >= 400 && status < 500 && CSS.status4xx)
+	}
+
 	function onChange() {
 		const { status, urlMask, method } = parseFilename(this.value)
 		this.style.fontWeight = this.value === this.options[0].value // default is selected
@@ -303,13 +276,6 @@ function MockSelector({ broker }) {
 				this.className = className(this.value === this.options[0].value, status)
 			})
 			.catch(onError)
-	}
-
-	function className(defaultIsSelected, status) {
-		return cssClass(
-			CSS.MockSelector,
-			!defaultIsSelected && CSS.bold,
-			status >= 400 && status < 500 && CSS.status4xx)
 	}
 
 	const selected = broker.currentMock.file
@@ -351,13 +317,12 @@ function DelayRouteToggler({ broker }) {
 				onChange
 			}),
 			TimerIcon()))
-}
 
-
-function TimerIcon() {
-	return (
-		r('svg', { viewBox: '0 0 24 24' },
-			r('path', { d: 'M12 7H11v6l5 3.2.75-1.23-4.5-3z' })))
+	function TimerIcon() {
+		return (
+			r('svg', { viewBox: '0 0 24 24' },
+				r('path', { d: 'M12 7H11v6l5 3.2.75-1.23-4.5-3z' })))
+	}
 }
 
 
@@ -387,6 +352,54 @@ function InternalServerErrorToggler({ broker }) {
 	)
 }
 
+function PayloadViewerProgressBar() {
+	return (
+		r('div', { className: CSS.ProgressBar },
+			r('div', { style: { animationDuration: '1000ms' } }))) // TODO from Config.delay - 180
+}
+
+function PayloadViewer() {
+	return (
+		r('div', { className: CSS.PayloadViewer },
+			r('h2', { ref: refPayloadViewerFileTitle }, Strings.mock),
+			r('pre', null,
+				r('code', { ref: refPayloadViewer }, Strings.click_link_to_preview))))
+}
+
+function PayloadViewerTitle({ file }) {
+	const { urlMask, method, status, ext } = parseFilename(file)
+	return (
+		r('span', null,
+			urlMask + '.' + method + '.',
+			r('abbr', { title: HttpStatus[status] }, status),
+			'.' + ext))
+}
+
+async function updatePayloadViewer(method, urlMask, imgSrc, response) {
+	empty(refPayloadViewerFileTitle.current)
+	refPayloadViewerFileTitle.current.append(PayloadViewerTitle({
+		file: mockSelectorFor(method, urlMask).value
+	}))
+
+	const mime = response.headers.get('content-type') || ''
+	if (mime.startsWith('image/')) // naively assumes GET.200
+		renderPayloadImage(imgSrc) // TESTME in pixaton
+	else
+		renderPayloadBody(await response.text() || Strings.empty_response_body, mime)
+
+	function renderPayloadImage(src) {
+		empty(refPayloadViewer.current)
+		refPayloadViewer.current.append(r('img', { src }))
+	}
+	function renderPayloadBody(body, mime) {
+		if (mime === 'application/json' && window?.Prism.languages)
+			refPayloadViewer.current.innerHTML = window.Prism.highlight(body, window.Prism.languages.json, 'json')
+		else
+			refPayloadViewer.current.innerText = body
+	}
+}
+
+
 function trFor(method, urlMask) {
 	return document.querySelector(`tr[data-method="${method}"][data-urlMask="${urlMask}"]`)
 }
@@ -401,6 +414,25 @@ function mockSelectorFor(method, urlMask) {
 }
 
 
+
+// StaticFilesList ===============
+
+function StaticFilesList({ staticFiles }) {
+	if (!staticFiles.length)
+		return null
+	return (
+		r('details', {
+				open: true,
+				className: CSS.StaticFilesList
+			},
+			r('summary', null, Strings.static),
+			r('ul', null, staticFiles.map(f =>
+				r('li', null,
+					r('a', { href: f, target: '_blank' }, f))))))
+}
+
+
+
 function onError(error) {
 	if (error?.message === 'Failed to fetch')
 		alert('Looks like the Mockaton server is not running')
@@ -408,7 +440,9 @@ function onError(error) {
 }
 
 
-/* === Utils === */
+
+// Utils ============
+
 function cssClass(...args) {
 	return args.filter(a => a).join(' ')
 }

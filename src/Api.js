@@ -38,6 +38,7 @@ export const apiGetRequests = new Map([
 export const apiPatchRequests = new Map([
 	[API.select, selectMock],
 	[API.delay, setRouteIsDelayed],
+	[API.proxied, setRouteIsProxied],
 	[API.reset, reinitialize],
 	[API.cookies, selectCookie],
 	[API.fallback, updateProxyFallback],
@@ -118,13 +119,43 @@ async function selectMock(req, response) {
 async function setRouteIsDelayed(req, response) {
 	try {
 		const body = await parseJSON(req)
+		const delayed = body[DF.delayed]
 		const broker = mockBrokersCollection.getBrokerForUrl(
 			body[DF.routeMethod],
 			body[DF.routeUrlMask])
+
+		if (!broker) // TESTME
+			sendUnprocessableContent(response, `Route does not exist: ${body[DF.routeUrlMask]} ${body[DF.routeUrlMask]}`)
+		else if (typeof delayed !== 'boolean')
+			sendUnprocessableContent(response, `Expected a boolean for "delayed"`) // TESTME
+		else {
+			broker.updateDelay(body[DF.delayed])
+			sendOK(response)
+		}
+	}
+	catch (error) {
+		sendBadRequest(response, error)
+	}
+}
+
+async function setRouteIsProxied(req, response) { // TESTME
+	try {
+		const body = await parseJSON(req)
+		const proxied = body[DF.proxied]
+		const broker = mockBrokersCollection.getBrokerForUrl(
+			body[DF.routeMethod],
+			body[DF.routeUrlMask])
+
 		if (!broker)
-			throw `Route does not exist: ${body[DF.routeUrlMask]} ${body[DF.routeUrlMask]}`
-		broker.updateDelay(body[DF.delayed])
-		sendOK(response)
+			sendUnprocessableContent(response, `Route does not exist: ${body[DF.routeUrlMask]} ${body[DF.routeUrlMask]}`)
+		else if (typeof proxied !== 'boolean')
+			sendUnprocessableContent(response, `Expected a boolean for "proxied"`)
+		else if (proxied && !config.proxyFallback)
+			sendUnprocessableContent(response, `There’s no proxy fallback`)
+		else {
+			broker.updateProxied(proxied)
+			sendOK(response)
+		}
 	}
 	catch (error) {
 		sendBadRequest(response, error)
@@ -134,12 +165,14 @@ async function setRouteIsDelayed(req, response) {
 async function updateProxyFallback(req, response) {
 	try {
 		const fallback = await parseJSON(req)
-		if (fallback && !URL.canParse(fallback))
+		if (fallback && !URL.canParse(fallback)) {
 			sendUnprocessableContent(response)
-		else {
-			config.proxyFallback = fallback
-			sendOK(response)
+			return
 		}
+		if (!fallback) // TESTME
+			mockBrokersCollection.ensureAllRoutesHaveSelectedMock()
+		config.proxyFallback = fallback
+		sendOK(response)
 	}
 	catch (error) {
 		sendBadRequest(response, error)

@@ -3,8 +3,6 @@
 ![NPM Version](https://img.shields.io/npm/v/mockaton)
 ![NPM Version](https://img.shields.io/npm/l/mockaton)
 
-## Mock your APIs, Enhance your Development Workflow
-
 Mockaton is an HTTP mock server with the goal of making
 your frontend development and testing easier—and a lot more fun.
 
@@ -17,11 +15,16 @@ For example, for `/api/user/1234` the mock filename would be:
 my-mocks-dir/api/user/[user-id].GET.200.json
 ```
 
-## Scrapping Mocks from you Backend
+## No Need to Mock Everything
+Mockaton can fallback to your real backend on routes you don’t have mocks
+for. For that, type your backend address in the **Fallback Backend** field.
 
-Mockaton can fallback to your real backend on routes you don’t have mocks for. For that,
-type your backend address in the **Fallback Backend** field. And if you
-check **Save Mocks**, it will collect those responses that hit your backend.
+Similarly, if already have mocks for a route you can check the ☁️ **Cloud
+checkbox** and Mockaton will request it from your backend.
+
+
+## Scrapping Mocks from you Backend
+If you check **Save Mocks**, Mockaton will collect the responses that hit your backend.
 Those mocks will be saved to your `config.mocksDir` following the filename convention.
 
 
@@ -31,7 +34,9 @@ Those mocks will be saved to your `config.mocksDir` following the filename conve
 Want to mock a locked-out user or an invalid login attempt? 
 Add a comment to the filename in parentheses. For example:
 
-`api/login(locked out user).POST.423.json`
+<pre>
+api/login<b>(locked out user)</b>.POST.423.json
+</pre>
 
 ### Different response status code
 For instance, you can have mocks with a `4xx` or `5xx` status code for triggering
@@ -295,8 +300,10 @@ checkbox, the delay amount is globally configurable.
 
 
 ### `proxyFallback?: string`
-Lets you specify a target server for serving routes you don’t have mocks for.
 For example, `config.proxyFallback = 'http://example.com'`
+
+Lets you specify a target server for serving routes you don’t have mocks for,
+or that you manually picked with the ☁️ **Cloud Checkbox**.
 
 ### `collectProxied?: boolean`
 Defaults to `false`. With this flag you can save mocks that hit
@@ -308,7 +315,10 @@ URL, the filename will have `[id]` in their place. For example,
   my-mocks-dir/api/user/[id]/likes.GET.200.json
 ```
 
-Your existing mocks won’t be overwritten (because they don’t hit the fallback server).
+Your existing mocks won’t be overwritten. That is, the routes you manually
+selected for using your backend with the ☁️ **Cloud Checkbox**, will have
+a unique filename comment.
+
 
 <details>
   <summary>Extension Details</summary>
@@ -495,6 +505,11 @@ first mock in alphabetical order that matches.
 await mockaton.setRouteIsDelayed('GET', '/api/foo', true)
 ```
 
+### Set Route is Proxied
+```js
+await mockaton.setRouteIsProxied('GET', '/api/foo', true)
+```
+
 ### Select a cookie
 In `config.cookies`, each key is the label used for selecting it.
 ```js
@@ -521,5 +536,5 @@ await mockaton.reset()
 
 <div style="display: flex; align-items: center; gap: 20px">
   <img src="fixtures-mocks/api/user/avatar.GET.200.png" width="170"/>
-  <p style="font-size: 18px">“Use Mockaton”</p>
+  <p style="font-size: 18px">“Mockaton”</p>
 </div>

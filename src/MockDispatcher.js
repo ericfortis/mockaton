@@ -12,7 +12,7 @@ import { sendInternalServerError, sendNotFound, sendBadRequest } from './utils/h
 export async function dispatchMock(req, response) {
 	try {
 		const broker = mockBrokerCollection.getBrokerForUrl(req.method, req.url)
-		if (!broker) {
+		if (!broker || broker.proxied) {
 			if (config.proxyFallback)
 				await proxy(req, response)
 			else

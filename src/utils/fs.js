@@ -14,6 +14,11 @@ export const listFilesRecursively = dir => {
 }
 
 export const write = (path, body) => {
-	mkdirSync(dirname(path), { recursive: true })
-	writeFileSync(path, body)
+	try {
+		mkdirSync(dirname(path), { recursive: true })
+		writeFileSync(path, body)
+	}
+	catch (err) {
+		console.error('Write access denied', err)
+	}
 }

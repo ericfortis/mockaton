@@ -174,7 +174,7 @@ for (const [file, body] of staticFiles)
 const server = Mockaton({
 	mocksDir: tmpDir,
 	staticDir: staticTmpDir,
-	delay: 40,
+	delay: 80,
 	onReady: () => {},
 	cookies: {
 		userA: 'CookieA',

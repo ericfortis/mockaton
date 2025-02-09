@@ -66,6 +66,12 @@ export async function click500Checkbox(checkboxNamePrefix) {
 		checkboxNamePrefix
 	})
 }
+export async function clickProxiedCheckbox(checkboxNamePrefix) {
+	await clickCheckbox({
+		parentClassName: 'ProxyToggler',
+		checkboxNamePrefix
+	})
+}
 
 export async function clickSaveProxiedCheckbox() {
 	await clickCheckbox({

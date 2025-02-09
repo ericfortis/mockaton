@@ -10,6 +10,7 @@ export const API = {
 	cookies: MOUNT + '/cookies',
 	fallback: MOUNT + '/fallback',
 	collectProxied: MOUNT + '/collect-proxied',
+	proxied: MOUNT + '/proxied',
 	cors: MOUNT + '/cors',
 	static: MOUNT + '/static'
 }
@@ -17,7 +18,8 @@ export const API = {
 export const DF = { // Dashboard Fields (XHR)
 	routeMethod: 'route_method',
 	routeUrlMask: 'route_url_mask',
-	delayed: 'delayed'
+	delayed: 'delayed',
+	proxied: 'proxied'
 }
 
 export const DEFAULT_500_COMMENT = '(Mockaton 500)'

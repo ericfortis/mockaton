@@ -60,6 +60,7 @@ export class MockBroker {
 
 	get file() { return this.currentMock.file }
 	get delay() { return this.currentMock.delay }
+	get proxied() { return !this.currentMock.file }
 	get status() { return parseFilename(this.file).status }
 	get temp500IsSelected() { return this.#isTemp500(this.file) }
 
@@ -84,6 +85,13 @@ export class MockBroker {
 	hasMock(file) { return this.mocks.includes(file) }
 	updateFile(filename) { this.currentMock.file = filename }
 	updateDelay(delayed) { this.currentMock.delay = Number(delayed) * config.delay }
+
+	updateProxied(proxied) {
+		if (proxied)
+			this.updateFile('')
+		else
+			this.selectDefaultFile()
+	}
 
 	setByMatchingComment(comment) {
 		for (const file of this.mocks)

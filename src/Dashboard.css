@@ -1,5 +1,5 @@
 :root {
-	--boxShadow1: 0 2px 1px -1px rgba(0, 0, 0, 0.1), 0 1px 1px 0 rgba(0, 0, 0, 0.1), 0 1px 3px 0 rgba(0, 0, 0, 0.08);
+	--boxShadow1: 0 2px 1px -1px rgba(0, 0, 0, 0.15), 0 1px 1px 0 rgba(0, 0, 0, 0.15), 0 1px 3px 0 rgba(0, 0, 0, 0.1);
 	--radius: 6px
 }
 
@@ -7,13 +7,14 @@
 	:root {
 		--color4xxBackground: #ffedd1;
 		--colorAccent: #0075db;
-		--colorAccentAlt: #008664;
+		--colorAccentAlt: #068564;
 		--colorBackground: #fff;
 		--colorComboBoxHeaderBackground: #fff;
 		--colorComboBoxBackground: #f7f7f7;
 		--colorHeaderBackground: #f3f3f3;
-		--colorSecondaryButtonBackground: #f3f3f3;
-		--colorDisabled: #444;
+		--colorSecondaryButtonBackground: transparent;
+		--colorSecondaryAction: #555;
+		--colorDisabledMockSelector: #444;
 		--colorHover: #dfefff;
 		--colorLabel: #444;
 		--colorLightRed: #ffe4ee;
@@ -29,9 +30,10 @@
 		--colorBackground: #161616;
 		--colorHeaderBackground: #090909;
 		--colorComboBoxBackground: #252525;
-		--colorSecondaryButtonBackground: #444;
+		--colorSecondaryButtonBackground: #202020;
+		--colorSecondaryAction: #bbb;
 		--colorComboBoxHeaderBackground: #222;
-		--colorDisabled: #bbb;
+		--colorDisabledMockSelector: #b9b9b9;
 		--colorHover: #023661;
 		--colorLabel: #aaa;
 		--colorLightRed: #ffe4ee;
@@ -101,11 +103,11 @@ select {
 	display: flex;
 	width: 100%;
 	align-items: flex-end;
-	padding: 15px 16px;
+	padding: 16px;
 	border-bottom: 1px solid rgba(127, 127, 127, 0.1);
 	background: var(--colorHeaderBackground);
 	box-shadow: var(--boxShadow1);
-	gap: 12px;
+	gap: 8px;
 
 	img {
 		width: 130px;
@@ -114,12 +116,14 @@ select {
 	}
 
 	.Field {
-		min-width: 150px;
+		width: 120px;
 
 		span {
-			display: block;
+			display: flex;
+			align-items: center;
 			color: var(--colorLabel);
 			font-size: 11px;
+			gap: 4px;
 		}
 
 		input[type=url],
@@ -140,7 +144,14 @@ select {
 
 		&.FallbackBackend {
 			position: relative;
-			width: 194px;
+			width: 210px;
+
+			svg {
+				width: 14px;
+				height: 14px;
+				fill: var(--colorLabel);
+				opacity: 0.6;
+			}
 
 			input[type=url] {
 				padding: 0 6px;
@@ -244,7 +255,7 @@ select {
 	position: relative;
 	left: -6px;
 	display: inline-block;
-	width: 280px;
+	width: 300px;
 	padding: 8px 6px;
 	border-radius: var(--radius);
 	color: var(--colorAccent);
@@ -260,7 +271,7 @@ select {
 }
 
 .MockSelector {
-	width: 300px;
+	width: 260px;
 	height: 30px;
 	border: 0;
 	border-left: 3px solid transparent;
@@ -277,12 +288,13 @@ select {
 		appearance: none;
 		background: transparent;
 		cursor: default;
-		color: var(--colorDisabled);
+		color: var(--colorDisabledMockSelector);
 		opacity: 1;
 	}
 }
 
-.DelayToggler {
+.DelayToggler,
+.ProxyToggler {
 	display: flex;
 	margin-left: 8px;
 	cursor: pointer;
@@ -297,9 +309,19 @@ select {
 			}
 		}
 
+		&:enabled:hover:not(:checked) ~ svg {
+			background: var(--colorHover);
+			fill: var(--colorText);
+		}
+
 		&:checked ~ svg {
 			background: var(--colorAccent);
 			fill: white;
+		}
+
+		&:disabled ~ svg {
+			opacity: .5;
+			cursor: not-allowed;
 		}
 	}
 
@@ -307,15 +329,18 @@ select {
 		width: 20px;
 		height: 20px;
 		vertical-align: bottom;
-		fill: var(--colorText);
+		fill: var(--colorSecondaryAction);
 		border-radius: 50%;
 		background: var(--colorSecondaryButtonBackground);
 		box-shadow: var(--boxShadow1);
+	}
+}
 
-		&:hover {
-			background: var(--colorHover);
-			fill: var(--colorText);
-		}
+.ProxyToggler {
+	> svg {
+		width: 24px;
+		padding: 3px;
+		border-radius: 4px;
 	}
 }
 
@@ -344,8 +369,8 @@ select {
 		padding: 5px 4px;
 		box-shadow: var(--boxShadow1);
 		font-size: 10px;
-		color: var(--colorText);
-		border-radius: 2px;
+		color: var(--colorSecondaryAction);
+		border-radius: 4px;
 		background: var(--colorSecondaryButtonBackground);
 
 		&:hover {

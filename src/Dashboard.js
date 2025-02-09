@@ -12,8 +12,8 @@ function syntaxHighlightJson(textBody) {
 
 
 const Strings = {
-	bulk_select_by_comment: 'Bulk Select by Comment',
-	bulk_select_by_comment_disabled_title: 'No mock files have comments, which are anything within parentheses on the filename.',
+	bulk_select: 'Bulk Select',
+	bulk_select_disabled_title: 'No mock files have comments, which are anything within parentheses on the filename.',
 	click_link_to_preview: 'Click a link to preview it',
 	cookie: 'Cookie',
 	cookie_disabled_title: 'No cookies specified in Config.cookies',
@@ -24,7 +24,9 @@ const Strings = {
 	internal_server_error: 'Internal Server Error',
 	mock: 'Mock',
 	no_mocks_found: 'No mocks found',
-	pick: 'Pick…',
+	pick_comment: 'Pick Comment…',
+	proxied: 'Proxied',
+	proxy_toggler: 'Proxy Toggler',
 	reset: 'Reset',
 	save_proxied: 'Save Mocks',
 	static_get: 'Static GET'
@@ -42,6 +44,7 @@ const CSS = {
 	PayloadViewer: 'PayloadViewer',
 	PreviewLink: 'PreviewLink',
 	ProgressBar: 'ProgressBar',
+	ProxyToggler: 'ProxyToggler',
 	ResetButton: 'ResetButton',
 	SaveProxiedCheckbox: 'SaveProxiedCheckbox',
 	StaticFilesList: 'StaticFilesList',
@@ -73,7 +76,7 @@ init()
 function App([brokersByMethod, cookies, comments, collectProxied, fallbackAddress, staticFiles]) {
 	return [
 		r(Header, { cookies, comments, fallbackAddress, collectProxied }),
-		r(MockList, { brokersByMethod }),
+		r(MockList, { brokersByMethod, canProxy: Boolean(fallbackAddress) }),
 		r(StaticFilesList, { staticFiles })
 	]
 }
@@ -121,7 +124,7 @@ function CookieSelector({ cookies }) {
 function BulkSelector({ comments }) {
 	// UX wise this should be a menu instead of this `select`.
 	// But this way is easier to implement, with a few hacks.
-	const firstOption = Strings.pick
+	const firstOption = Strings.pick_comment
 	function onChange() {
 		const value = this.value
 		this.value = firstOption // Hack 
@@ -135,19 +138,19 @@ function BulkSelector({ comments }) {
 		: [firstOption].concat(comments)
 	return (
 		r('label', { className: CSS.Field },
-			r('span', null, Strings.bulk_select_by_comment),
+			r('span', null, Strings.bulk_select),
 			r('select', {
 				className: CSS.BulkSelector,
 				'data-qaid': 'BulkSelector',
 				autocomplete: 'off',
 				disabled,
-				title: disabled ? Strings.bulk_select_by_comment_disabled_title : '',
+				title: disabled ? Strings.bulk_select_disabled_title : '',
 				onChange
 			}, list.map(value =>
 				r('option', { value }, value)))))
 }
 
-function ProxyFallbackField({ fallbackAddress = '', collectProxied }) {
+function ProxyFallbackField({ fallbackAddress, collectProxied }) {
 	function onChange() {
 		const saveCheckbox = this.closest(`.${CSS.FallbackBackend}`).querySelector('[type=checkbox]')
 		saveCheckbox.disabled = !this.validity.valid || !this.value.trim()
@@ -155,12 +158,16 @@ function ProxyFallbackField({ fallbackAddress = '', collectProxied }) {
 		if (!this.validity.valid)
 			this.reportValidity()
 		else
-			mockaton.setProxyFallback(this.value.trim()).catch(onError)
+			mockaton.setProxyFallback(this.value.trim())
+				.then(init)
+				.catch(onError)
 	}
 	return (
 		r('div', { className: cssClass(CSS.Field, CSS.FallbackBackend) },
 			r('label', null,
-				r('span', null, Strings.fallback_server),
+				r('span', null,
+					r(CloudIcon),
+					Strings.fallback_server),
 				r('input', {
 					type: 'url',
 					autocomplete: 'none',
@@ -205,7 +212,7 @@ function ResetButton() {
 
 // MockList ===============
 
-function MockList({ brokersByMethod }) {
+function MockList({ brokersByMethod, canProxy }) {
 	const hasMocks = Object.keys(brokersByMethod).length
 	if (!hasMocks)
 		return (
@@ -214,12 +221,12 @@ function MockList({ brokersByMethod }) {
 	return (
 		r('main', { className: CSS.MockList },
 			r('table', null, Object.entries(brokersByMethod).map(([method, brokers]) =>
-				r(SectionByMethod, { method, brokers }))),
+				r(SectionByMethod, { method, brokers, canProxy }))),
 			r(PayloadViewer)))
 }
 
 
-function SectionByMethod({ method, brokers }) {
+function SectionByMethod({ method, brokers, canProxy }) {
 	return (
 		r('tbody', null,
 			r('th', null, method),
@@ -231,7 +238,8 @@ function SectionByMethod({ method, brokers }) {
 						r('td', null, r(PreviewLink, { method, urlMask })),
 						r('td', null, r(MockSelector, { broker })),
 						r('td', null, r(DelayRouteToggler, { broker })),
-						r('td', null, r(InternalServerErrorToggler, { broker }))))))
+						r('td', null, r(InternalServerErrorToggler, { broker })),
+						r('td', null, r(ProxyToggler, { broker, disabled: !canProxy }))))))
 }
 
 
@@ -257,38 +265,35 @@ function PreviewLink({ method, urlMask }) {
 
 
 function MockSelector({ broker }) {
-	function className(defaultIsSelected, status) {
-		return cssClass(
-			CSS.MockSelector,
-			!defaultIsSelected && CSS.bold,
-			status >= 400 && status < 500 && CSS.status4xx)
-	}
-
 	function onChange() {
-		const { status, urlMask, method } = parseFilename(this.value)
+		const { urlMask, method } = parseFilename(this.value)
 		this.style.fontWeight = this.value === this.options[0].value // default is selected
 			? 'normal'
 			: 'bold'
 		mockaton.select(this.value)
-			.then(() => {
-				linkFor(method, urlMask)?.click()
-				checkbox500For(method, urlMask).checked = status === 500
-				this.className = className(this.value === this.options[0].value, status)
-			})
+			.then(init)
+			.then(() => linkFor(method, urlMask)?.click())
 			.catch(onError)
 	}
 
-	const selected = broker.currentMock.file
+	let selected = broker.currentMock.file
 	const { status, urlMask } = parseFilename(selected)
 	const files = broker.mocks.filter(item =>
 		status === 500 ||
 		!item.includes(DEFAULT_500_COMMENT))
+	if (!selected) {
+		selected = Strings.proxied
+		files.push(selected)
+	}
 
 	return (
 		r('select', {
 			'data-qaid': urlMask,
 			autocomplete: 'off',
-			className: className(selected === files[0], status),
+			className: cssClass(
+				CSS.MockSelector,
+				selected !== files[0] && CSS.bold,
+				status >= 400 && status < 500 && CSS.status4xx),
 			disabled: files.length <= 1,
 			onChange
 		}, files.map(file =>
@@ -317,12 +322,6 @@ function DelayRouteToggler({ broker }) {
 				onChange
 			}),
 			TimerIcon()))
-
-	function TimerIcon() {
-		return (
-			r('svg', { viewBox: '0 0 24 24' },
-				r('path', { d: 'M12 7H11v6l5 3.2.75-1.23-4.5-3z' })))
-	}
 }
 
 
@@ -352,6 +351,30 @@ function InternalServerErrorToggler({ broker }) {
 		)
 	)
 }
+
+function ProxyToggler({ broker, disabled }) {
+	function onChange() {
+		const { urlMask, method } = parseFilename(this.name)
+		mockaton.setRouteIsProxied(method, urlMask, this.checked)
+			.then(init)
+			.then(() => linkFor(method, urlMask)?.click())
+			.catch(onError)
+	}
+	return (
+		r('label', {
+				className: CSS.ProxyToggler,
+				title: Strings.proxy_toggler
+			},
+			r('input', {
+				type: 'checkbox',
+				disabled,
+				name: broker.currentMock.file,
+				checked: !broker.currentMock.file,
+				onChange
+			}),
+			r(CloudIcon)))
+}
+
 
 
 // Payload Preview ===============
@@ -455,6 +478,19 @@ function onError(error) {
 	if (error?.message === 'Failed to fetch')
 		alert('Looks like the Mockaton server is not running')
 	console.error(error)
+}
+
+
+function TimerIcon() {
+	return (
+		r('svg', { viewBox: '0 0 24 24' },
+			r('path', { d: 'M12 7H11v6l5 3.2.75-1.23-4.5-3z' })))
+}
+
+function CloudIcon() {
+	return (
+		r('svg', { viewBox: '0 0 24 24' },
+			r('path', { d: 'M19.35 10.04C18.67 6.59 15.64 4 12 4 9.11 4 6.61 5.64 5.36 8.04 2.35 8.36 0 10.9 0 14c0 3.31 2.69 6 6 6h13c2.76 0 5-2.24 5-5 0-2.64-2.05-4.78-4.65-4.96M19 18H6c-2.21 0-4-1.79-4-4s1.79-4 4-4 4 1.79 4 4h2c0-2.76-1.86-5.08-4.4-5.78C8.61 6.88 10.2 6 12 6c3.03 0 5.5 2.47 5.5 5.5v.5H19c1.65 0 3 1.35 3 3s-1.35 3-3 3' })))
 }
 
 

@@ -37,6 +37,14 @@ export class Commander {
 		})
 	}
 
+	setRouteIsProxied(routeMethod, routeUrlMask, proxied) {
+		return this.#patch(API.proxied, {
+			[DF.routeMethod]: routeMethod,
+			[DF.routeUrlMask]: routeUrlMask,
+			[DF.proxied]: proxied
+		})
+	}
+
 	listCookies() {
 		return this.#get(API.cookies)
 	}

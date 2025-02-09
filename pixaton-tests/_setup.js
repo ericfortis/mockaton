@@ -32,8 +32,7 @@ export function testPixels(testFileName, options = {}) {
 	}
 	options.viewports ??= [{
 		width: 1024,
-		height: 800,
-		deviceScaleFactor: 1.5 // For higher quality screenshots
+		height: 800
 	}]
 	options.colorSchemes ??= ['light', 'dark']
 	_testPixels(page, testFileName, MOCKATON_ADDR + '/mockaton', 'body', options)

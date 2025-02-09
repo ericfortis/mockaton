@@ -378,24 +378,29 @@ async function previewMock(method, urlMask, href) {
 	const timer = setTimeout(renderProgressBar, 180)
 	const response = await fetch(href, { method })
 	clearTimeout(timer)
-	await updatePayloadViewer(method, urlMask, href, response)
+	await updatePayloadViewer(method, urlMask, response)
 
 	function renderProgressBar() {
 		payloadViewerRef.current.replaceChildren(PayloadViewerProgressBar())
 	}
 }
 
-async function updatePayloadViewer(method, urlMask, imgSrc, response) {
+async function updatePayloadViewer(method, urlMask, response) {
 	payloadViewerTitleRef.current.replaceChildren(
 		PayloadViewerTitle({ file: mockSelectorFor(method, urlMask).value }))
 
 	const mime = response.headers.get('content-type') || ''
-	if (mime.startsWith('image/')) // naively assumes GET.200
-		payloadViewerRef.current.replaceChildren(r('img', { src: imgSrc })) // TESTME in pixaton (and fix double delay when delayed)
+	if (mime.startsWith('image/')) { // Naively assumes GET.200
+		payloadViewerRef.current.replaceChildren(
+			r('img', {
+				src: URL.createObjectURL(await response.blob())
+			}))
+	}
 	else {
+		const prism = window.Prism
 		const body = await response.text() || Strings.empty_response_body
-		if (mime === 'application/json' && window.Prism?.highlight && window.Prism?.languages)
-			payloadViewerRef.current.innerHTML = window.Prism.highlight(body, window.Prism.languages.json, 'json')
+		if (mime === 'application/json' && prism?.highlight && prism?.languages)
+			payloadViewerRef.current.innerHTML = prism.highlight(body, prism.languages.json, 'json')
 		else
 			payloadViewerRef.current.innerText = body
 	}

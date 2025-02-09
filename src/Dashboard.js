@@ -45,8 +45,6 @@ const CSS = {
 }
 
 const r = createElement
-const refPayloadViewer = useRef()
-const refPayloadViewerFileTitle = useRef()
 
 const mockaton = new Commander(window.location.origin)
 
@@ -59,10 +57,7 @@ function init() {
 		mockaton.getProxyFallback(),
 		mockaton.listStaticFiles()
 	].map(api => api.then(response => response.ok && response.json())))
-		.then(data => {
-			empty(document.body)
-			document.body.append(...App(data))
-		})
+		.then(data => document.body.replaceChildren(...App(data)))
 		.catch(onError)
 }
 init()
@@ -118,9 +113,10 @@ function CookieSelector({ cookies }) {
 function BulkSelector({ comments }) {
 	// UX wise this should be a menu instead of this `select`.
 	// But this way is easier to implement, with a few hacks.
+	const firstOption = Strings.pick
 	function onChange() {
 		const value = this.value
-		this.value = Strings.pick // Hack 
+		this.value = firstOption // Hack 
 		mockaton.bulkSelectByComment(value)
 			.then(init)
 			.catch(onError)
@@ -128,7 +124,7 @@ function BulkSelector({ comments }) {
 	const disabled = !comments.length
 	const list = disabled
 		? []
-		: [Strings.pick].concat(comments)
+		: [firstOption].concat(comments)
 	return (
 		r('label', { className: CSS.Field },
 			r('span', null, Strings.bulk_select_by_comment),
@@ -144,14 +140,14 @@ function BulkSelector({ comments }) {
 }
 
 function ProxyFallbackField({ fallbackAddress = '', collectProxied }) {
-	const refSaveProxiedCheckbox = useRef()
-	function onChange(event) {
-		const input = event.currentTarget
-		refSaveProxiedCheckbox.current.disabled = !input.validity.valid || !input.value.trim()
-		if (!input.validity.valid)
-			input.reportValidity()
+	function onChange() {
+		const saveCheckbox = this.closest(`.${CSS.FallbackBackend}`).querySelector('[type=checkbox]')
+		saveCheckbox.disabled = !this.validity.valid || !this.value.trim()
+
+		if (!this.validity.valid)
+			this.reportValidity()
 		else
-			mockaton.setProxyFallback(input.value.trim()).catch(onError)
+			mockaton.setProxyFallback(this.value.trim()).catch(onError)
 	}
 	return (
 		r('div', { className: cssClass(CSS.Field, CSS.FallbackBackend) },
@@ -166,20 +162,17 @@ function ProxyFallbackField({ fallbackAddress = '', collectProxied }) {
 				})),
 			r(SaveProxiedCheckbox, {
 				collectProxied,
-				disabled: !fallbackAddress,
-				ref: refSaveProxiedCheckbox
+				disabled: !fallbackAddress
 			})))
 }
 
-function SaveProxiedCheckbox({ ref, disabled, collectProxied }) {
-	function onChange(event) {
-		mockaton.setCollectProxied(event.currentTarget.checked)
-			.catch(onError)
+function SaveProxiedCheckbox({ disabled, collectProxied }) {
+	function onChange() {
+		mockaton.setCollectProxied(this.checked).catch(onError)
 	}
 	return (
 		r('label', { className: CSS.SaveProxiedCheckbox },
 			r('input', {
-				ref,
 				type: 'checkbox',
 				disabled,
 				checked: collectProxied,
@@ -238,14 +231,7 @@ function PreviewLink({ method, urlMask }) {
 	async function onClick(event) {
 		event.preventDefault()
 		try {
-			const preloader = setTimeout(() => {
-				empty(refPayloadViewer.current)
-				refPayloadViewer.current.append(PayloadViewerProgressBar())
-			}, 180)
-
-			const response = await fetch(this.href, { method })
-			clearTimeout(preloader)
-			await updatePayloadViewer(method, urlMask, this.href, response)
+			await previewMock(method, urlMask, this.href)
 			document.querySelector(`.${CSS.PreviewLink}.${CSS.chosen}`)?.classList.remove(CSS.chosen)
 			this.classList.add(CSS.chosen)
 		}
@@ -306,9 +292,9 @@ function MockSelector({ broker }) {
 
 
 function DelayRouteToggler({ broker }) {
-	function onChange(event) {
+	function onChange() {
 		const { method, urlMask } = parseFilename(this.name)
-		mockaton.setRouteIsDelayed(method, urlMask, event.currentTarget.checked)
+		mockaton.setRouteIsDelayed(method, urlMask, this.checked)
 			.catch(onError)
 	}
 	return (
@@ -333,11 +319,12 @@ function DelayRouteToggler({ broker }) {
 
 
 function InternalServerErrorToggler({ broker }) {
-	function onChange(event) {
+	function onChange() {
 		const { urlMask, method } = parseFilename(broker.mocks[0])
-		mockaton.select(event.currentTarget.checked
-			? broker.mocks.find(f => parseFilename(f).status === 500)
-			: broker.mocks[0])
+		mockaton.select(
+			this.checked
+				? broker.mocks.find(f => parseFilename(f).status === 500)
+				: broker.mocks[0])
 			.then(init)
 			.then(() => linkFor(method, urlMask)?.click())
 			.catch(onError)
@@ -358,18 +345,24 @@ function InternalServerErrorToggler({ broker }) {
 	)
 }
 
-function PayloadViewerProgressBar() {
-	return (
-		r('div', { className: CSS.ProgressBar },
-			r('div', { style: { animationDuration: '1000ms' } }))) // TODO from Config.delay - 180
-}
+
+// Payload Preview ===============
+
+const payloadViewerTitleRef = useRef()
+const payloadViewerRef = useRef()
 
 function PayloadViewer() {
 	return (
 		r('div', { className: CSS.PayloadViewer },
-			r('h2', { ref: refPayloadViewerFileTitle }, Strings.mock),
+			r('h2', { ref: payloadViewerTitleRef }, Strings.mock),
 			r('pre', null,
-				r('code', { ref: refPayloadViewer }, Strings.click_link_to_preview))))
+				r('code', { ref: payloadViewerRef }, Strings.click_link_to_preview))))
+}
+
+function PayloadViewerProgressBar() {
+	return (
+		r('div', { className: CSS.ProgressBar },
+			r('div', { style: { animationDuration: '1000ms' } }))) // TODO from Config.delay - 180
 }
 
 function PayloadViewerTitle({ file }) {
@@ -381,27 +374,30 @@ function PayloadViewerTitle({ file }) {
 			'.' + ext))
 }
 
+async function previewMock(method, urlMask, href) {
+	const timer = setTimeout(renderProgressBar, 180)
+	const response = await fetch(href, { method })
+	clearTimeout(timer)
+	await updatePayloadViewer(method, urlMask, href, response)
+
+	function renderProgressBar() {
+		payloadViewerRef.current.replaceChildren(PayloadViewerProgressBar())
+	}
+}
+
 async function updatePayloadViewer(method, urlMask, imgSrc, response) {
-	empty(refPayloadViewerFileTitle.current)
-	refPayloadViewerFileTitle.current.append(PayloadViewerTitle({
-		file: mockSelectorFor(method, urlMask).value
-	}))
+	payloadViewerTitleRef.current.replaceChildren(
+		PayloadViewerTitle({ file: mockSelectorFor(method, urlMask).value }))
 
 	const mime = response.headers.get('content-type') || ''
 	if (mime.startsWith('image/')) // naively assumes GET.200
-		renderPayloadImage(imgSrc) // TESTME in pixaton
-	else
-		renderPayloadBody(await response.text() || Strings.empty_response_body, mime)
-
-	function renderPayloadImage(src) {
-		empty(refPayloadViewer.current)
-		refPayloadViewer.current.append(r('img', { src }))
-	}
-	function renderPayloadBody(body, mime) {
+		payloadViewerRef.current.replaceChildren(r('img', { src: imgSrc })) // TESTME in pixaton (and fix double delay when delayed)
+	else {
+		const body = await response.text() || Strings.empty_response_body
 		if (mime === 'application/json' && window.Prism?.highlight && window.Prism?.languages)
-			refPayloadViewer.current.innerHTML = window.Prism.highlight(body, window.Prism.languages.json, 'json')
+			payloadViewerRef.current.innerHTML = window.Prism.highlight(body, window.Prism.languages.json, 'json')
 		else
-			refPayloadViewer.current.innerText = body
+			payloadViewerRef.current.innerText = body
 	}
 }
 
@@ -451,11 +447,6 @@ function onError(error) {
 
 function cssClass(...args) {
 	return args.filter(a => a).join(' ')
-}
-
-function empty(node) {
-	while (node.firstChild)
-		node.removeChild(node.firstChild)
 }
 
 

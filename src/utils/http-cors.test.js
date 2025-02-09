@@ -40,7 +40,7 @@ await describe('CORS', async () => {
 
 	await describe('Identifies Preflight Requests', async () => {
 		const requiredRequestHeaders = {
-			[CH.Origin]: 'http://locahost:9999',
+			[CH.Origin]: 'http://localhost:9999',
 			[CH.AccessControlRequestMethod]: 'POST'
 		}
 

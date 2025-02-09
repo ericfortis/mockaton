@@ -16,13 +16,14 @@ const Strings = {
 	internal_server_error: 'Internal Server Error',
 	mock: 'Mock',
 	no_mocks_found: 'No mocks found',
+	pick: 'Pick…',
 	reset: 'Reset',
 	save_proxied: 'Save Mocks',
-	select_one: 'Select One',
 	static: 'Static'
 }
 
 const CSS = {
+	BulkSelector: 'BulkSelector',
 	DelayToggler: 'DelayToggler',
 	FallbackBackend: 'FallbackBackend',
 	Field: 'Field',
@@ -115,19 +116,24 @@ function CookieSelector({ cookies }) {
 }
 
 function BulkSelector({ comments }) {
+	// UX wise this should be a menu instead of this `select`.
+	// But this way is easier to implement, with a few hacks.
 	function onChange() {
-		mockaton.bulkSelectByComment(this.value)
+		const value = this.value
+		this.value = Strings.pick // Hack 
+		mockaton.bulkSelectByComment(value)
 			.then(init)
 			.catch(onError)
 	}
 	const disabled = !comments.length
 	const list = disabled
 		? []
-		: [Strings.select_one].concat(comments)
+		: [Strings.pick].concat(comments)
 	return (
 		r('label', { className: CSS.Field },
 			r('span', null, Strings.bulk_select_by_comment),
 			r('select', {
+				className: CSS.BulkSelector,
 				'data-qaid': 'BulkSelector',
 				autocomplete: 'off',
 				disabled,

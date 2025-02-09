@@ -153,6 +153,11 @@ select {
 		}
 	}
 
+	.BulkSelector {
+		appearance: none;
+		text-align: center;
+	}
+
 	.ResetButton {
 		padding: 4px 12px;
 		border: 1px solid var(--colorRed);

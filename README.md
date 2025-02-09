@@ -5,27 +5,27 @@
 
 ## Mock your APIs, Enhance your Development Workflow
 
-Welcome to developer experience tooling! Mockaton is here to help
-make your frontend development and testing easier—and a lot more fun.
+Mockaton is an HTTP mock server with the goal of making
+your frontend development and testing easier—and a lot more fun.
 
-With Mockaton you don’t need to write code for wiring your mocks. Instead, just
-place your mocks in a directory and let Mockaton do the rest. It will automatically
-scan the directory for filenames that follow a convention similar to the URL paths.
+With Mockaton you don’t need to write code for wiring your mocks.
+Instead, just place your mocks in a directory, and it will scan it
+for filenames that follow a convention similar to the URL paths.
 
 For example, for this route `/api/user/1234`, the mock filename would be:
 ```
 my-mocks-dir/api/user/[user-id].GET.200.json
 ```
 
-And hey, no need to mock everything. Mockaton can fallback to your real
-backend on routes you don’t have mocks for. Just type your backend
-address in the **Fallback Backend** field. Check **Save Mocks** so you
-can collect those responses that hit your fallback server. The mocks will
-be saved to your `config.mocksDir` following the filename convention.
+## Scrapping Mocks from you Backend
+
+Mockaton can fallback to your real backend on routes you don’t have mocks for. That’s
+done by typing your backend address in the **Fallback Backend** field. And if you
+check **Save Mocks**, you can collect those responses that hit your backend.
+Those mocks will be saved to your `config.mocksDir` following the filename convention.
 
 
 ## Multiple Mock Variants
-Here’s how you can create multiple mocks for a particular route: 
 
 ### Adding comments in filenames
 Want to mock a locked-out user or an invalid login attempt? You

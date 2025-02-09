@@ -3,6 +3,14 @@ import { Commander } from './Commander.js'
 import { DEFAULT_500_COMMENT } from './ApiConstants.js'
 
 
+function syntaxHighlightJson(textBody) {
+	const prism = window.Prism
+	return prism?.highlight && prism?.languages?.json
+		? prism.highlight(textBody, prism.languages.json, 'json')
+		: false
+}
+
+
 const Strings = {
 	bulk_select_by_comment: 'Bulk Select by Comment',
 	bulk_select_by_comment_disabled_title: 'No mock files have comments, which are anything within parentheses on the filename.',
@@ -19,7 +27,7 @@ const Strings = {
 	pick: 'Pick…',
 	reset: 'Reset',
 	save_proxied: 'Save Mocks',
-	static: 'Static'
+	static_get: 'Static GET'
 }
 
 const CSS = {
@@ -397,12 +405,15 @@ async function updatePayloadViewer(method, urlMask, response) {
 			}))
 	}
 	else {
-		const prism = window.Prism
 		const body = await response.text() || Strings.empty_response_body
-		if (mime === 'application/json' && prism?.highlight && prism?.languages)
-			payloadViewerRef.current.innerHTML = prism.highlight(body, prism.languages.json, 'json')
-		else
-			payloadViewerRef.current.innerText = body
+		if (mime === 'application/json') {
+			const hBody = syntaxHighlightJson(body)
+			if (hBody) {
+				payloadViewerRef.current.innerHTML = hBody
+				return
+			}
+		}
+		payloadViewerRef.current.innerText = body
 	}
 }
 
@@ -428,11 +439,11 @@ function StaticFilesList({ staticFiles }) {
 	if (!staticFiles.length)
 		return null
 	return (
-		r('details', {
+		r('section', {
 				open: true,
 				className: CSS.StaticFilesList
 			},
-			r('summary', null, Strings.static),
+			r('h2', null, Strings.static_get),
 			r('ul', null, staticFiles.map(f =>
 				r('li', null,
 					r('a', { href: f, target: '_blank' }, f))))))

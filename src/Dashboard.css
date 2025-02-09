@@ -1,17 +1,18 @@
 :root {
 	--boxShadow1: 0 2px 1px -1px rgba(0, 0, 0, 0.1), 0 1px 1px 0 rgba(0, 0, 0, 0.1), 0 1px 3px 0 rgba(0, 0, 0, 0.08);
+	--radius: 6px
 }
 
 @media (prefers-color-scheme: light) {
 	:root {
 		--color4xxBackground: #ffedd1;
-		--colorAccent: #0078e1;
-		--colorAccentAlt: #009c71;
+		--colorAccent: #0075db;
+		--colorAccentAlt: #008664;
 		--colorBackground: #fff;
-		--colorHeaderBackground: #f7f7f7;
-		--colorComboBoxBackground: #f7f7f7;
-		--colorSecondaryButtonBackground: #f5f5f5;
 		--colorComboBoxHeaderBackground: #fff;
+		--colorComboBoxBackground: #f7f7f7;
+		--colorHeaderBackground: #f3f3f3;
+		--colorSecondaryButtonBackground: #f3f3f3;
 		--colorDisabled: #444;
 		--colorHover: #dfefff;
 		--colorLabel: #444;
@@ -64,13 +65,21 @@ select, a, input, button, summary {
 	}
 }
 
+a, button, input[type=checkbox] {
+	cursor: pointer;
+
+	&:active {
+		cursor: grabbing;
+	}
+}
+
 select {
 	font-size: 100%;
 	background: var(--colorComboBoxBackground);
 	color: var(--colorText);
 	cursor: pointer;
 	outline: 0;
-	border-radius: 6px;
+	border-radius: var(--radius);
 
 	&:enabled {
 		box-shadow: var(--boxShadow1);
@@ -122,7 +131,11 @@ select {
 			margin-top: 4px;
 			font-size: 11px;
 			background: var(--colorComboBoxHeaderBackground);
-			border-radius: 6px;
+			border-radius: var(--radius);
+		}
+
+		select:enabled:hover {
+			background: var(--colorHover);
 		}
 
 		&.FallbackBackend {
@@ -165,7 +178,6 @@ select {
 		background: transparent;
 		color: var(--colorRed);
 		border-radius: 50px;
-		cursor: pointer;
 
 		&:hover {
 			background: var(--colorRed);
@@ -234,7 +246,7 @@ select {
 	display: inline-block;
 	width: 280px;
 	padding: 8px 6px;
-	border-radius: 6px;
+	border-radius: var(--radius);
 	color: var(--colorAccent);
 	text-decoration: none;
 
@@ -292,8 +304,8 @@ select {
 	}
 
 	> svg {
-		width: 16px;
-		height: 16px;
+		width: 20px;
+		height: 20px;
 		vertical-align: bottom;
 		fill: var(--colorText);
 		border-radius: 50%;
@@ -329,7 +341,7 @@ select {
 	}
 
 	> span {
-		padding: 4px;
+		padding: 5px 4px;
 		box-shadow: var(--boxShadow1);
 		font-size: 10px;
 		color: var(--colorText);
@@ -374,13 +386,10 @@ select {
 }
 
 .StaticFilesList {
-	margin-top: 40px;
+	margin-top: 20px;
 
-	summary {
-		width: max-content;
+	h2 {
 		margin-bottom: 8px;
-		cursor: pointer;
-		font-weight: bold;
 	}
 
 	ul {
@@ -395,7 +404,7 @@ select {
 	a {
 		display: inline-block;
 		padding: 6px;
-		border-radius: 6px;
+		border-radius: var(--radius);
 		color: var(--colorAccentAlt);
 		text-decoration: none;
 

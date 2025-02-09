@@ -464,7 +464,7 @@ If you don’t want to open a browser, pass a noop:
 config.onReady = () => {}
 ```
 
-Nonetheless, you can trigger any command besides opening a browser.
+At any rate, you can trigger any command besides opening a browser.
 
 ---
 
@@ -507,9 +507,14 @@ await mockaton.setProxyFallback('http://example.com')
 ```
 Pass an empty string to disable it.
 
+### Set Save Proxied Mocks
+```js
+await mockaton.setCollectProxied(true)
+```
+
 ### Reset
 Re-initialize the collection. The selected mocks, cookies, and delays go back to
-default, but `config.proxyFallback` and `config.corsAllowed` are not affected.
+default, but the `proxyFallback`, `colledProxied`, and `corsAllowed` are not affected.
 ```js
 await mockaton.reset()
 ```

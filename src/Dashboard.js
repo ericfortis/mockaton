@@ -1,6 +1,6 @@
-import { parseFilename } from '/Filename.js'
-import { Commander } from '/Commander.js'
-import { DEFAULT_500_COMMENT } from '/ApiConstants.js'
+import { parseFilename } from './Filename.js'
+import { Commander } from './Commander.js'
+import { DEFAULT_500_COMMENT } from './ApiConstants.js'
 
 
 const Strings = {
@@ -92,7 +92,7 @@ function Logo() {
 	return (
 		r('img', {
 			alt: Strings.title,
-			src: '/mockaton-logo.svg',
+			src: 'mockaton/mockaton-logo.svg',
 			width: 160
 		}))
 }

@@ -15,12 +15,12 @@ import { sendOK, sendBadRequest, sendJSON, sendFile, sendUnprocessableContent } 
 
 export const apiGetRequests = new Map([
 	[API.dashboard, serveDashboard],
-	['/Filename.js', serveDashboardAsset],
-	['/Dashboard.js', serveDashboardAsset],
-	['/Dashboard.css', serveDashboardAsset],
-	['/ApiConstants.js', serveDashboardAsset],
-	['/Commander.js', serveDashboardAsset],
-	['/mockaton-logo.svg', serveDashboardAsset],
+	[API.dashboard + '/ApiConstants.js', serveDashboardAsset],
+	[API.dashboard + '/Commander.js', serveDashboardAsset],
+	[API.dashboard + '/Dashboard.css', serveDashboardAsset],
+	[API.dashboard + '/Dashboard.js', serveDashboardAsset],
+	[API.dashboard + '/Filename.js', serveDashboardAsset],
+	[API.dashboard + '/mockaton-logo.svg', serveDashboardAsset],
 	[API.mocks, listMockBrokers],
 	[API.cookies, listCookies],
 	[API.comments, listComments],
@@ -43,8 +43,12 @@ export const apiPatchRequests = new Map([
 
 /* === GET === */
 
-function serveDashboard(_, response) { sendFile(response, join(import.meta.dirname, 'Dashboard.html')) }
-function serveDashboardAsset(req, response) { sendFile(response, join(import.meta.dirname, req.url)) }
+function serveDashboard(_, response) {
+	sendFile(response, join(import.meta.dirname, 'Dashboard.html'))
+}
+function serveDashboardAsset(req, response) {
+	sendFile(response, join(import.meta.dirname, req.url.replace(API.dashboard, '')))
+}
 
 function listCookies(_, response) { sendJSON(response, cookie.list()) }
 function listComments(_, response) { sendJSON(response, mockBrokersCollection.extractAllComments()) }

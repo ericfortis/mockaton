@@ -392,7 +392,7 @@ async function updatePayloadViewer(method, urlMask, imgSrc, response) {
 		refPayloadViewer.current.append(r('img', { src }))
 	}
 	function renderPayloadBody(body, mime) {
-		if (mime === 'application/json' && window?.Prism.languages)
+		if (mime === 'application/json' && window.Prism?.highlight && window.Prism?.languages)
 			refPayloadViewer.current.innerHTML = window.Prism.highlight(body, window.Prism.languages.json, 'json')
 		else
 			refPayloadViewer.current.innerText = body

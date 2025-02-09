@@ -9,27 +9,27 @@ Mockaton is an HTTP mock server with the goal of making
 your frontend development and testing easier—and a lot more fun.
 
 With Mockaton you don’t need to write code for wiring your mocks.
-Instead, just place your mocks in a directory, and it will scan it
-for filenames that follow a convention similar to the URL paths.
+Instead, just place your mocks in a directory and it will be scanned
+for filenames following a convention similar to the URLs.
 
-For example, for this route `/api/user/1234`, the mock filename would be:
+For example, for `/api/user/1234` the mock filename would be:
 ```
 my-mocks-dir/api/user/[user-id].GET.200.json
 ```
 
 ## Scrapping Mocks from you Backend
 
-Mockaton can fallback to your real backend on routes you don’t have mocks for. That’s
-done by typing your backend address in the **Fallback Backend** field. And if you
-check **Save Mocks**, you can collect those responses that hit your backend.
+Mockaton can fallback to your real backend on routes you don’t have mocks for. For that,
+type your backend address in the **Fallback Backend** field. And if you
+check **Save Mocks**, it will collect those responses that hit your backend.
 Those mocks will be saved to your `config.mocksDir` following the filename convention.
 
 
 ## Multiple Mock Variants
 
 ### Adding comments in filenames
-Want to mock a locked-out user or an invalid login attempt? You
-can just add a comment to the filename in parentheses. For example:
+Want to mock a locked-out user or an invalid login attempt? 
+Add a comment to the filename in parentheses. For example:
 
 `api/login(locked out user).POST.423.json`
 
@@ -214,8 +214,8 @@ Response Status Code, and File Extension.
 api/user.GET.200.json
 ```
 
-You can also use `.empty` if you don’t want the response to have a 
-`Content-Type` header.
+You can also use `.empty` or `.unknown` if you don’t
+want a `Content-Type` header in the response.
 
 
 ### Dynamic Parameters
@@ -305,10 +305,10 @@ URL, the filename will have `[id]` in their place. For example,
 
 ```
 /api/user/d14e09c8-d970-4b07-be42-b2f4ee22f0a6/likes =>
-my-mocks-dir/api/user/[id]/likes.GET.200.json
+  my-mocks-dir/api/user/[id]/likes.GET.200.json
 ```
 
-Your existing mocks won’t be overwritten (they don’t hit the fallback server).
+Your existing mocks won’t be overwritten (because they don’t hit the fallback server).
 
 <details>
   <summary>Extension Details</summary>

@@ -56,7 +56,7 @@ export async function sendPartialContent(response, range, file) {
 export function sendBadRequest(response, error) {
 	console.error(error)
 	response.statusCode = 400
-	response.end(error)
+	response.end()
 }
 
 export function sendNotFound(response) {
@@ -73,5 +73,5 @@ export function sendUnprocessableContent(response, error) {
 export function sendInternalServerError(response, error) {
 	console.error(error)
 	response.statusCode = 500
-	response.end(error?.code || '')
+	response.end()
 }

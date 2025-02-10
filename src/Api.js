@@ -95,9 +95,11 @@ async function selectMock(req, response) {
 		const file = await parseJSON(req)
 		const broker = mockBrokersCollection.getBrokerByFilename(file)
 		if (!broker || !broker.hasMock(file))
-			throw `Missing Mock: ${file}`
-		broker.updateFile(file)
-		sendOK(response)
+			sendUnprocessableContent(response, `Missing Mock: ${file}`)
+		else {
+			broker.updateFile(file)
+			sendOK(response)
+		}
 	}
 	catch (error) {
 		sendBadRequest(response, error)

@@ -416,7 +416,7 @@ async function testBadRequestWhenUpdatingNonExistingMockAlternative() {
 	await it('There are mocks for /api/the-route but not this one', async () => {
 		const missingFile = 'api/the-route(non-existing-variant).GET.200.json'
 		const res = await commander.select(missingFile)
-		equal(res.status, 400)
+		equal(res.status, 422)
 		equal(await res.text(), `Missing Mock: ${missingFile}`)
 	})
 }

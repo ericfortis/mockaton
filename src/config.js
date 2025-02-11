@@ -1,3 +1,4 @@
+import { resolve } from 'node:path'
 import { isDirectory } from './utils/fs.js'
 import { openInBrowser } from './utils/openInBrowser.js'
 import { jsToJsonPlugin } from './MockDispatcherPlugins.js'
@@ -66,6 +67,9 @@ export function setup(options) {
 
 		onReady: is(Function)
 	})
+
+	config.mocksDir = resolve(config.mocksDir)
+	config.staticDir = resolve(config.staticDir)
 }
 
 

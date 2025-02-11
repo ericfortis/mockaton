@@ -1,4 +1,4 @@
-import { join, isAbsolute } from 'node:path'
+import { join, resolve } from 'node:path'
 import fs, { readFileSync } from 'node:fs'
 
 import { config } from './config.js'
@@ -8,12 +8,15 @@ import { sendNotFound, sendInternalServerError } from './utils/http-response.js'
 
 
 export function isStatic(req) {
-	if (!config.staticDir)
-		return false
-	if (!isAbsolute(req.url)) // prevent sandbox escape
+	if (!config.staticDir || !isWithinStaticDir(req.url))
 		return false
 	const f = resolvePath(req.url)
-	return !config.ignore.test(f) && Boolean(f)
+	return f && !config.ignore.test(f)
+}
+
+function isWithinStaticDir(url) {
+	const candidate = resolve(join(config.staticDir, url))
+	return candidate.startsWith(config.staticDir)
 }
 
 export async function dispatchStatic(req, response) {
@@ -29,7 +32,7 @@ export async function dispatchStatic(req, response) {
 function resolvePath(url) {
 	let candidate = join(config.staticDir, url)
 	if (isDirectory(candidate))
-		candidate += '/index.html'
+		candidate = join(candidate, 'index.html')
 	if (isFile(candidate))
 		return candidate
 }

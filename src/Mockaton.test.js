@@ -500,6 +500,11 @@ export default function (req, response) {
 
 async function testStaticFileServing() {
 	await describe('Static File Serving', () => {
+		it('404 path traversal', async () => {
+			const res = await request('/../../../etc/passwd')
+			equal(res.status, 404)
+		})
+
 		it('Defaults to index.html', async () => {
 			const res = await request('/')
 			const body = await res.text()

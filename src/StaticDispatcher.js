@@ -4,7 +4,7 @@ import fs, { readFileSync, realpathSync } from 'node:fs'
 import { config } from './config.js'
 import { mimeFor } from './utils/mime.js'
 import { isDirectory, isFile } from './utils/fs.js'
-import { sendInternalServerError } from './utils/http-response.js'
+import { sendInternalServerError, sendForbidden } from './utils/http-response.js'
 
 
 export function isStatic(req) {
@@ -16,7 +16,9 @@ export function isStatic(req) {
 
 export async function dispatchStatic(req, response) {
 	const file = resolvedAllowedPath(req.url)
-	if (req.headers.range)
+	if (!realpathSync(file).startsWith(config.staticDir)) // Again but just for Github security scanner
+		sendForbidden(response)
+	else if (req.headers.range)
 		await sendPartialContent(response, req.headers.range, file)
 	else {
 		response.setHeader('Content-Type', mimeFor(file))
@@ -25,18 +27,16 @@ export async function dispatchStatic(req, response) {
 }
 
 function resolvedAllowedPath(url) {
-	let candidate = ''
 	try {
-		candidate = realpathSync(join(config.staticDir, url))
+		let candidate = realpathSync(join(config.staticDir, url))
+		if (!candidate.startsWith(config.staticDir))
+			return false
+		if (isDirectory(candidate))
+			candidate = join(candidate, 'index.html')
+		if (isFile(candidate))
+			return candidate
 	}
 	catch {}
-
-	if (!candidate.startsWith(config.staticDir))
-		return false
-	if (isDirectory(candidate))
-		candidate = join(candidate, 'index.html')
-	if (isFile(candidate))
-		return candidate
 }
 
 async function sendPartialContent(response, range, file) {

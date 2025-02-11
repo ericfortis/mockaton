@@ -20,7 +20,7 @@ export async function dispatchMock(req, response) {
 			return
 		}
 
-		console.log(decodeURIComponent(req.url), ' → ', broker.file)
+		console.log('%s → %s', decodeURIComponent(req.url), broker.file)
 		response.statusCode = broker.status
 
 		if (cookie.getCurrent())

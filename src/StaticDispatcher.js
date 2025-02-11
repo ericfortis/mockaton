@@ -1,4 +1,4 @@
-import { join, resolve } from 'node:path'
+import { join } from 'node:path'
 import fs, { readFileSync, realpathSync } from 'node:fs'
 
 import { config } from './config.js'
@@ -25,14 +25,16 @@ export async function dispatchStatic(req, response) {
 }
 
 function resolvedAllowedPath(url) {
-	let candidate = resolve(join(config.staticDir, url))
-	if (isDirectory(candidate))
-		candidate = join(candidate, 'index.html')
-	if (!isFile(candidate))
-		return false
-	candidate = realpathSync(candidate)
-	if (candidate.startsWith(config.staticDir))
-		return candidate
+	try {
+		let candidate = realpathSync(join(config.staticDir, url))
+		if (!candidate.startsWith(config.staticDir))
+			return false
+		if (isDirectory(candidate))
+			candidate = join(candidate, 'index.html')
+		if (isFile(candidate))
+			return candidate
+	}
+	catch {}
 }
 
 function sendFile(response, file) {

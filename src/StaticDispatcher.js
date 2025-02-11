@@ -1,5 +1,5 @@
 import { join, resolve } from 'node:path'
-import fs, { readFileSync } from 'node:fs'
+import fs, { readFileSync, realpathSync } from 'node:fs'
 
 import { config } from './config.js'
 import { mimeFor } from './utils/mime.js'
@@ -8,19 +8,14 @@ import { sendNotFound, sendInternalServerError } from './utils/http-response.js'
 
 
 export function isStatic(req) {
-	if (!config.staticDir || !isWithinStaticDir(req.url))
+	if (!config.staticDir)
 		return false
-	const f = resolvePath(req.url)
+	const f = resolvedAllowedPath(req.url)
 	return f && !config.ignore.test(f)
 }
 
-function isWithinStaticDir(url) {
-	const candidate = resolve(join(config.staticDir, url))
-	return candidate.startsWith(config.staticDir)
-}
-
 export async function dispatchStatic(req, response) {
-	const file = resolvePath(req.url)
+	const file = resolvedAllowedPath(req.url)
 	if (!file)
 		sendNotFound(response)
 	else if (req.headers.range)
@@ -29,11 +24,14 @@ export async function dispatchStatic(req, response) {
 		sendFile(response, file)
 }
 
-function resolvePath(url) {
-	let candidate = join(config.staticDir, url)
+function resolvedAllowedPath(url) {
+	let candidate = resolve(join(config.staticDir, url))
 	if (isDirectory(candidate))
 		candidate = join(candidate, 'index.html')
-	if (isFile(candidate))
+	if (!isFile(candidate))
+		return false
+	candidate = realpathSync(candidate)
+	if (candidate.startsWith(config.staticDir))
 		return candidate
 }
 

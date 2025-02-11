@@ -1,4 +1,4 @@
-import { resolve } from 'node:path'
+import { realpathSync } from 'node:fs'
 import { isDirectory } from './utils/fs.js'
 import { openInBrowser } from './utils/openInBrowser.js'
 import { jsToJsonPlugin } from './MockDispatcherPlugins.js'
@@ -68,8 +68,8 @@ export function setup(options) {
 		onReady: is(Function)
 	})
 
-	config.mocksDir = resolve(config.mocksDir)
-	config.staticDir = resolve(config.staticDir)
+	config.mocksDir = realpathSync(config.mocksDir)
+	config.staticDir = realpathSync(config.staticDir)
 }
 
 

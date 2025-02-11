@@ -409,6 +409,7 @@ async function testItUpdatesRouteDelay(url, file, expectedBody) {
 	await describe('url: ' + url, () => {
 		it('body is: ' + expectedBody, () => equal(body, JSON.stringify(expectedBody)))
 		it('delay', () => equal((new Date()).getTime() - now.getTime() > config.delay, true))
+		// TODO flaky test ^
 	})
 }
 
@@ -549,7 +550,7 @@ async function testEnableFallbackSoRoutesWithoutMocksGetRelayed() {
 		const fallbackServer = createServer(async (req, response) => {
 			response.writeHead(423, {
 				'custom_header': 'my_custom_header',
-				'content-type': mimeFor('txt'),
+				'content-type': mimeFor('.txt'),
 				'set-cookie': [
 					'cookieA=A',
 					'cookieB=B'

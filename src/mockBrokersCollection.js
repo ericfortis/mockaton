@@ -35,7 +35,7 @@ export function init() {
 	})
 }
 
-export function registerMock(file, shouldEnsure500) {
+export function registerMock(file, isFromWatcher) {
 	if (getBrokerByFilename(file)?.hasMock(file)
 		|| config.ignore.test(file)
 		|| !filenameIsValid(file))
@@ -48,8 +48,11 @@ export function registerMock(file, shouldEnsure500) {
 	else
 		collection[method][urlMask].register(file)
 
-	if (shouldEnsure500)
+	if (isFromWatcher) {
+		if (!this.file)
+			collection[method][urlMask].selectDefaultFile()
 		collection[method][urlMask].ensureItHas500()
+	}
 }
 
 export function unregisterMock(file) {

@@ -12,6 +12,8 @@ import { setCorsHeaders, isPreflight } from './utils/http-cors.js'
 import { apiPatchRequests, apiGetRequests } from './Api.js'
 
 
+process.on('unhandledRejection', error => { throw error })
+
 export function Mockaton(options) {
 	setup(options)
 	mockBrokerCollection.init()
@@ -21,7 +23,7 @@ export function Mockaton(options) {
 			if (!file)
 				return
 			if (existsSync(join(config.mocksDir, file)))
-				mockBrokerCollection.registerMock(file, 'ensureItHas500')
+				mockBrokerCollection.registerMock(file, 'isFromWatcher')
 			else
 				mockBrokerCollection.unregisterMock(file)
 		})
@@ -39,6 +41,8 @@ export function Mockaton(options) {
 }
 
 async function onRequest(req, response) {
+	req.on('error', console.error)
+	response.on('error', console.error)
 	response.setHeader('Server', 'Mockaton')
 
 	if (config.corsAllowed)

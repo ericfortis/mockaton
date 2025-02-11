@@ -351,7 +351,7 @@ async function testRegistering() {
 				fixtureForRegisteringPutA500[1]
 			])
 			deepEqual(currentMock, {
-				file: fixtureForRegisteringPutA500[1],
+				file: fixtureForRegisteringPutA[1],
 				delay: 0
 			})
 		})

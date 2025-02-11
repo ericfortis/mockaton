@@ -5,7 +5,7 @@ import { createServer } from 'node:http'
 import { dirname, join } from 'node:path'
 import { randomUUID } from 'node:crypto'
 import { equal, deepEqual, match } from 'node:assert/strict'
-import { writeFileSync, mkdtempSync, mkdirSync, unlinkSync } from 'node:fs'
+import { writeFileSync, mkdtempSync, mkdirSync, unlinkSync, readFileSync } from 'node:fs'
 
 import { config } from './config.js'
 import { mimeFor } from './utils/mime.js'
@@ -14,7 +14,7 @@ import { readBody } from './utils/http-request.js'
 import { Commander } from './Commander.js'
 import { CorsHeader } from './utils/http-cors.js'
 import { parseFilename } from './Filename.js'
-import { listFilesRecursively, read } from './utils/fs.js'
+import { listFilesRecursively } from './utils/fs.js'
 import { API, DEFAULT_500_COMMENT, DEFAULT_MOCK_COMMENT } from './ApiConstants.js'
 
 
@@ -574,7 +574,7 @@ async function testEnableFallbackSoRoutesWithoutMocksGetRelayed() {
 			equal(res.headers.get('set-cookie'), ['cookieA=A', 'cookieB=B'].join(', '))
 			equal(await res.text(), reqBodyPayload)
 
-			const savedBody = read(join(tmpDir, 'api/non-existing-mock/[id].POST.423.txt'))
+			const savedBody = readFileSync(join(tmpDir, 'api/non-existing-mock/[id].POST.423.txt'), 'utf8')
 			equal(savedBody, reqBodyPayload)
 
 			fallbackServer.close()

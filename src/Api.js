@@ -10,17 +10,22 @@ import { DF, API } from './ApiConstants.js'
 import { parseJSON } from './utils/http-request.js'
 import { listFilesRecursively } from './utils/fs.js'
 import * as mockBrokersCollection from './mockBrokersCollection.js'
-import { sendOK, sendBadRequest, sendJSON, sendFile, sendUnprocessableContent } from './utils/http-response.js'
+import { sendOK, sendBadRequest, sendJSON, sendUnprocessableContent, sendDashboardFile, sendForbidden } from './utils/http-response.js'
 
+
+const dashboardAssets = [
+	'/ApiConstants.js',
+	'/Commander.js',
+	'/Dashboard.css',
+	'/Dashboard.js',
+	'/Filename.js',
+	'/mockaton-logo.svg'
+]
 
 export const apiGetRequests = new Map([
 	[API.dashboard, serveDashboard],
-	[API.dashboard + '/ApiConstants.js', serveDashboardAsset],
-	[API.dashboard + '/Commander.js', serveDashboardAsset],
-	[API.dashboard + '/Dashboard.css', serveDashboardAsset],
-	[API.dashboard + '/Dashboard.js', serveDashboardAsset],
-	[API.dashboard + '/Filename.js', serveDashboardAsset],
-	[API.dashboard + '/mockaton-logo.svg', serveDashboardAsset],
+	...dashboardAssets.map(f =>
+		[API.dashboard + f, serveDashboardAsset]),
 	[API.mocks, listMockBrokers],
 	[API.cookies, listCookies],
 	[API.comments, listComments],
@@ -44,10 +49,14 @@ export const apiPatchRequests = new Map([
 /* === GET === */
 
 function serveDashboard(_, response) {
-	sendFile(response, join(import.meta.dirname, 'Dashboard.html'))
+	sendDashboardFile(response, join(import.meta.dirname, 'Dashboard.html'))
 }
 function serveDashboardAsset(req, response) {
-	sendFile(response, join(import.meta.dirname, req.url.replace(API.dashboard, '')))
+	const f = req.url.replace(API.dashboard, '')
+	if (dashboardAssets.includes(f))
+		sendDashboardFile(response, join(import.meta.dirname, f))
+	else
+		sendForbidden(response)
 }
 
 function listCookies(_, response) { sendJSON(response, cookie.list()) }

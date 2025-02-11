@@ -20,6 +20,7 @@ export function filenameIsValid(file) {
 	return !error
 }
 
+// TODO ThinkAbout 206 (reject, handle, or send in full?)
 function validateFilename(file) {
 	const tokens = file.replace(reComments, '').split('.')
 	if (tokens.length < 4)

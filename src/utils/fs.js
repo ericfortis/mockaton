@@ -1,11 +1,9 @@
 import { join, dirname, sep, posix } from 'node:path'
-import { lstatSync, readFileSync, readdirSync, writeFileSync, mkdirSync } from 'node:fs'
+import { lstatSync, readdirSync, writeFileSync, mkdirSync } from 'node:fs'
 
 
 export const isFile = path => lstatSync(path, { throwIfNoEntry: false })?.isFile()
 export const isDirectory = path => lstatSync(path, { throwIfNoEntry: false })?.isDirectory()
-
-export const read = path => readFileSync(path, 'utf8')
 
 /** @returns {Array<string>} paths relative to `dir` */
 export const listFilesRecursively = dir => {

@@ -34,8 +34,8 @@ which is handy for setting up tests  (see **Commander API** below).
 Mockaton can fallback to your real backend on routes you don’t have mocks
 for. For that, type your backend address in the **Fallback Backend** field.
 
-Similarly, if already have mocks for a route you can check the ☁️ **Cloud
-checkbox** and Mockaton will request it from your backend.
+Similarly, if you already have mocks for a route you can check the
+☁️ **Cloud checkbox** and that route will be requested from your backend.
 
 
 ## Scrapping Mocks from you Backend

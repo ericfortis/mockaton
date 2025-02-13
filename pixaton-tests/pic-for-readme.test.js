@@ -3,7 +3,7 @@ import { testPixels, clickLinkByText, click500Checkbox, clickDelayCheckbox, clic
 
 testPixels(import.meta.filename, {
 	async setup() {
-		await click500Checkbox('api/user/typescript-scores.GET')
+		await click500Checkbox('api/user/friends.GET')
 		await sleep()
 		await clickDelayCheckbox('api/user/links.GET')
 		await sleep()
@@ -16,7 +16,7 @@ testPixels(import.meta.filename, {
 	},
 
 	viewports: [{
-		width: 860,
+		width: 830,
 		height: 800,
 		deviceScaleFactor: 1.5
 	}]

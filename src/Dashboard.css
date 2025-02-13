@@ -1,13 +1,14 @@
 :root {
 	--boxShadow1: 0 2px 1px -1px rgba(0, 0, 0, 0.15), 0 1px 1px 0 rgba(0, 0, 0, 0.15), 0 1px 3px 0 rgba(0, 0, 0, 0.1);
-	--radius: 6px
+	--radius: 4px;
+	--radiusSmall: 2px;
 }
 
 @media (prefers-color-scheme: light) {
 	:root {
 		--color4xxBackground: #ffedd1;
 		--colorAccent: #0075db;
-		--colorAccentAlt: #068564;
+		--colorAccentAlt: #068185;
 		--colorBackground: #fff;
 		--colorComboBoxHeaderBackground: #fff;
 		--colorComboBoxBackground: #f7f7f7;
@@ -183,12 +184,13 @@ select {
 	}
 
 	.ResetButton {
-		padding: 4px 12px;
+		padding: 6px 12px;
 		border: 1px solid var(--colorRed);
-		margin-bottom: 4px;
+		margin-left: 4px;
 		background: transparent;
 		color: var(--colorRed);
 		border-radius: 50px;
+
 
 		&:hover {
 			background: var(--colorRed);
@@ -255,7 +257,7 @@ select {
 	position: relative;
 	left: -6px;
 	display: inline-block;
-	width: 300px;
+	width: 278px;
 	padding: 8px 6px;
 	border-radius: var(--radius);
 	color: var(--colorAccent);
@@ -280,6 +282,10 @@ select {
 	text-overflow: ellipsis;
 	font-size: 12px;
 
+	&.nonDefault {
+		font-weight: bold;
+		font-size: 0.92rem;
+	}
 	&.status4xx {
 		background: var(--color4xxBackground);
 	}
@@ -315,32 +321,37 @@ select {
 		}
 
 		&:checked ~ svg {
+			border-color: transparent;
 			background: var(--colorAccent);
 			fill: white;
+			box-shadow: var(--boxShadow1);
 		}
 
 		&:disabled ~ svg {
 			opacity: .5;
 			cursor: not-allowed;
+			box-shadow: none;
 		}
 	}
 
 	> svg {
-		width: 20px;
-		height: 20px;
+		width: 18px;
+		height: 18px;
+		border: 1px solid var(--colorSecondaryAction);
 		vertical-align: bottom;
 		fill: var(--colorSecondaryAction);
 		border-radius: 50%;
 		background: var(--colorSecondaryButtonBackground);
-		box-shadow: var(--boxShadow1);
 	}
 }
 
 .ProxyToggler {
+	margin-left: 4px;
 	> svg {
-		width: 24px;
-		padding: 3px;
-		border-radius: 4px;
+		width: 22px;
+		padding: 1px;
+		border-color: transparent;
+		border-radius: var(--radiusSmall);
 	}
 }
 
@@ -362,18 +373,19 @@ select {
 		&:checked ~ span {
 			color: white;
 			background: var(--colorRed);
+			box-shadow: var(--boxShadow1);
 		}
 	}
 
 	> span {
 		padding: 5px 4px;
-		box-shadow: var(--boxShadow1);
 		font-size: 10px;
 		color: var(--colorSecondaryAction);
-		border-radius: 4px;
+		border-radius: var(--radiusSmall);
 		background: var(--colorSecondaryButtonBackground);
 
 		&:hover {
+			box-shadow: var(--boxShadow1);
 			background: var(--colorLightRed);
 			color: var(--colorRed);
 		}
@@ -404,10 +416,6 @@ select {
 	100% {
 		width: 100%;
 	}
-}
-
-.bold {
-	font-weight: bold;
 }
 
 .StaticFilesList {

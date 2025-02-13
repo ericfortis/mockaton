@@ -16,7 +16,7 @@ const Strings = {
 	bulk_select_disabled_title: 'No mock files have comments, which are anything within parentheses on the filename.',
 	click_link_to_preview: 'Click a link to preview it',
 	cookie: 'Cookie',
-	cookie_disabled_title: 'No cookies specified in Config.cookies',
+	cookie_disabled_title: 'No cookies specified in config.cookies',
 	delay: 'Delay',
 	empty_response_body: '/* Empty Response Body */',
 	fallback_server: 'Fallback Backend',
@@ -50,10 +50,10 @@ const CSS = {
 	SaveProxiedCheckbox: 'SaveProxiedCheckbox',
 	StaticFilesList: 'StaticFilesList',
 
-	bold: 'bold',
 	empty: 'empty',
 	chosen: 'chosen',
-	status4xx: 'status4xx'
+	status4xx: 'status4xx',
+	nonDefault: 'nonDefault'
 }
 
 const r = createElement
@@ -106,8 +106,7 @@ function Logo() {
 
 function CookieSelector({ cookies }) {
 	function onChange() {
-		mockaton.selectCookie(this.value)
-			.catch(onError)
+		mockaton.selectCookie(this.value).catch(onError)
 	}
 	const disabled = cookies.length <= 1
 	return (
@@ -166,9 +165,7 @@ function ProxyFallbackField({ fallbackAddress, collectProxied }) {
 	return (
 		r('div', { className: cssClass(CSS.Field, CSS.FallbackBackend) },
 			r('label', null,
-				r('span', null,
-					r(CloudIcon),
-					Strings.fallback_server),
+				r('span', null, r(CloudIcon), Strings.fallback_server),
 				r('input', {
 					type: 'url',
 					autocomplete: 'none',
@@ -268,9 +265,6 @@ function PreviewLink({ method, urlMask }) {
 function MockSelector({ broker }) {
 	function onChange() {
 		const { urlMask, method } = parseFilename(this.value)
-		this.style.fontWeight = this.value === this.options[0].value // default is selected
-			? 'normal'
-			: 'bold'
 		mockaton.select(this.value)
 			.then(init)
 			.then(() => linkFor(method, urlMask)?.click())
@@ -289,14 +283,14 @@ function MockSelector({ broker }) {
 
 	return (
 		r('select', {
-			'data-qaid': urlMask,
+			onChange,
 			autocomplete: 'off',
+			'data-qaid': urlMask,
+			disabled: files.length <= 1,
 			className: cssClass(
 				CSS.MockSelector,
-				selected !== files[0] && CSS.bold,
-				status >= 400 && status < 500 && CSS.status4xx),
-			disabled: files.length <= 1,
-			onChange
+				selected !== files[0] && CSS.nonDefault,
+				status >= 400 && status < 500 && CSS.status4xx)
 		}, files.map(file =>
 			r('option', {
 				value: file,
@@ -308,8 +302,7 @@ function MockSelector({ broker }) {
 function DelayRouteToggler({ broker }) {
 	function onChange() {
 		const { method, urlMask } = parseFilename(this.name)
-		mockaton.setRouteIsDelayed(method, urlMask, this.checked)
-			.catch(onError)
+		mockaton.setRouteIsDelayed(method, urlMask, this.checked).catch(onError)
 	}
 	return (
 		r('label', {
@@ -348,9 +341,7 @@ function InternalServerErrorToggler({ broker }) {
 				checked: parseFilename(broker.currentMock.file).status === 500,
 				onChange
 			}),
-			r('span', null, '500')
-		)
-	)
+			r('span', null, '500')))
 }
 
 function ProxyToggler({ broker, disabled }) {
@@ -490,13 +481,13 @@ function StaticFilesList({ staticFiles }) {
 }
 
 
+// Misc ===============
 
 function onError(error) {
 	if (error?.message === 'Failed to fetch')
 		alert('Looks like the Mockaton server is not running')
 	console.error(error)
 }
-
 
 function TimerIcon() {
 	return (

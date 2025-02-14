@@ -3,14 +3,14 @@ import { testPixels, clickLinkByText, click500Checkbox, clickDelayCheckbox, clic
 
 testPixels(import.meta.filename, {
 	async setup() {
-		await click500Checkbox('api/user/friends.GET')
+		await click500Checkbox('GET', '/api/user/friends')
 		await sleep()
-		await clickDelayCheckbox('api/user/links.GET')
+		await clickDelayCheckbox('GET', '/api/user/links')
 		await sleep()
 		await typeFallbackBackend('http://mybackend')
 		await clickSaveProxiedCheckbox()
 		await sleep()
-		await clickProxiedCheckbox('api/video/[id].GET')
+		await clickProxiedCheckbox('GET', '/api/video/[id]')
 		await sleep()
 		await clickLinkByText('/api/user/likes')
 	},

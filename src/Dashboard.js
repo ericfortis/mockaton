@@ -298,10 +298,9 @@ function MockSelector({ broker }) {
 			}, file))))
 }
 
-
 function DelayRouteToggler({ broker }) {
 	function onChange() {
-		const { method, urlMask } = parseFilename(this.name)
+		const { method, urlMask } = parseFilename(broker.mocks[0])
 		mockaton.setRouteIsDelayed(method, urlMask, this.checked).catch(onError)
 	}
 	return (
@@ -311,7 +310,6 @@ function DelayRouteToggler({ broker }) {
 			},
 			r('input', {
 				type: 'checkbox',
-				name: broker.currentMock.file,
 				checked: Boolean(broker.currentMock.delay),
 				onChange
 			}),
@@ -344,9 +342,10 @@ function InternalServerErrorToggler({ broker }) {
 			r('span', null, '500')))
 }
 
+
 function ProxyToggler({ broker, disabled }) {
 	function onChange() {
-		const { urlMask, method } = parseFilename(this.name)
+		const { urlMask, method } = parseFilename(broker.mocks[0])
 		mockaton.setRouteIsProxied(method, urlMask, this.checked)
 			.then(init)
 			.then(() => linkFor(method, urlMask)?.click())
@@ -360,7 +359,6 @@ function ProxyToggler({ broker, disabled }) {
 			r('input', {
 				type: 'checkbox',
 				disabled,
-				name: broker.currentMock.file,
 				checked: !broker.currentMock.file,
 				onChange
 			}),

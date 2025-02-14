@@ -53,38 +53,27 @@ export async function clickLinkByText(linkText) {
 }
 
 
-export async function clickDelayCheckbox(checkboxNamePrefix) {
-	await clickCheckbox({
-		parentClassName: 'DelayToggler',
-		checkboxNamePrefix
-	})
+function selectorForCheckbox(method, urlMask, checkboxClass) {
+	return `tr[data-method="${method}"][data-urlMask="${urlMask}"] .${checkboxClass} input[type=checkbox]`
 }
 
-export async function click500Checkbox(checkboxNamePrefix) {
-	await clickCheckbox({
-		parentClassName: 'InternalServerErrorToggler',
-		checkboxNamePrefix
-	})
+export async function clickDelayCheckbox(method, urlMask) {
+	await clickCheckbox(selectorForCheckbox(method, urlMask, 'DelayToggler'))
 }
-export async function clickProxiedCheckbox(checkboxNamePrefix) {
-	await clickCheckbox({
-		parentClassName: 'ProxyToggler',
-		checkboxNamePrefix
-	})
+export async function click500Checkbox(method, urlMask) {
+	await clickCheckbox(selectorForCheckbox(method, urlMask, 'InternalServerErrorToggler'))
+}
+export async function clickProxiedCheckbox(method, urlMask) {
+	await clickCheckbox(selectorForCheckbox(method, urlMask, 'ProxyToggler'))
 }
 
 export async function clickSaveProxiedCheckbox() {
-	await clickCheckbox({
-		parentClassName: 'FallbackBackend'
-	})
+	await clickCheckbox(`.FallbackBackend input[type=checkbox]`)
 }
 
-async function clickCheckbox({ parentClassName, checkboxNamePrefix = '' }) {
-	const checkbox = checkboxNamePrefix
-		? `.${parentClassName} input[type=checkbox][name^="${checkboxNamePrefix}"]`
-		: `.${parentClassName} input[type=checkbox]`
-	await page.waitForSelector(checkbox)
-	await page.$eval(checkbox, el => el.click())
+async function clickCheckbox(selector) {
+	await page.waitForSelector(selector)
+	await page.$eval(selector, el => el.click())
 }
 
 export async function typeFallbackBackend(serverAddress) {

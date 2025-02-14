@@ -1,6 +1,6 @@
 import { config } from './config.js'
-import { DEFAULT_500_COMMENT, DEFAULT_MOCK_COMMENT } from './ApiConstants.js'
 import { includesComment, extractComments, parseFilename } from './Filename.js'
+import { DEFAULT_500_COMMENT, DEFAULT_MOCK_COMMENT } from './ApiConstants.js'
 
 
 // MockBroker is a state for a particular route. It knows the available mock files
@@ -70,10 +70,9 @@ export class MockBroker {
 		this.mocks.sort()
 		const defaults = this.mocks.filter(file => includesComment(file, DEFAULT_MOCK_COMMENT))
 		const temp500 = this.mocks.filter(file => includesComment(file, DEFAULT_500_COMMENT))
-		this.mocks = this.mocks.filter(file => !defaults.includes(file) && !temp500.includes(file))
 		this.mocks = [
 			...defaults,
-			...this.mocks,
+			...this.mocks.filter(file => !defaults.includes(file) && !temp500.includes(file)),
 			...temp500
 		]
 	}

@@ -9,7 +9,8 @@ import * as mockBrokerCollection from './mockBrokersCollection.js'
 import { dispatchStatic, isStatic } from './StaticDispatcher.js'
 import { setCorsHeaders, isPreflight } from './utils/http-cors.js'
 import { apiPatchRequests, apiGetRequests } from './Api.js'
-import { sendNoContent, sendInternalServerError } from './utils/http-response.js'
+import { sendNoContent, sendInternalServerError, sendUnprocessableContent } from './utils/http-response.js'
+import { BodyReaderError } from './utils/http-request.js'
 
 
 process.on('unhandledRejection', error => { throw error })
@@ -75,6 +76,9 @@ async function onRequest(req, response) {
 			await dispatchMock(req, response)
 	}
 	catch (error) {
-		sendInternalServerError(response, error)
+		if (error instanceof BodyReaderError)
+			sendUnprocessableContent(response, error)
+		else
+			sendInternalServerError(response, error)
 	}
 }

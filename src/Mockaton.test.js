@@ -501,7 +501,7 @@ export default function (req, response) {
 async function testStaticFileServing() {
 	await describe('Static File Serving', () => {
 		it('404 path traversal', async () => {
-			const res = await request('/../../../etc/passwd')
+			const res = await request('/../../../../../../../../../../../%2E%2E/etc/passwd')
 			equal(res.status, 404)
 		})
 

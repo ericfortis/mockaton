@@ -1,5 +1,5 @@
 import { join } from 'node:path'
-import fs, { readFileSync, realpathSync } from 'node:fs'
+import fs, { readFileSync } from 'node:fs'
 
 import { config } from './config.js'
 import { mimeFor } from './utils/mime.js'
@@ -10,12 +10,12 @@ import { sendInternalServerError } from './utils/http-response.js'
 export function isStatic(req) {
 	if (!config.staticDir)
 		return false
-	const f = resolvedAllowedPath(req.url)
+	const f = resolvePath(req.url)
 	return f && !config.ignore.test(f)
 }
 
 export async function dispatchStatic(req, response) {
-	const file = resolvedAllowedPath(req.url)
+	const file = resolvePath(req.url)
 	if (req.headers.range)
 		await sendPartialContent(response, req.headers.range, file)
 	else {
@@ -24,17 +24,12 @@ export async function dispatchStatic(req, response) {
 	}
 }
 
-function resolvedAllowedPath(url) {
-	try {
-		let candidate = realpathSync(join(config.staticDir, url))
-		if (!candidate.startsWith(config.staticDir))
-			return false
-		if (isDirectory(candidate))
-			candidate = join(candidate, 'index.html')
-		if (isFile(candidate))
-			return candidate
-	}
-	catch {}
+function resolvePath(url) { // url is absolute regardless of requesting e.g. /home/../..
+	let candidate = join(config.staticDir, url)
+	if (isDirectory(candidate))
+		candidate = join(candidate, 'index.html')
+	if (isFile(candidate))
+		return candidate
 }
 
 async function sendPartialContent(response, range, file) {

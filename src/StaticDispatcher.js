@@ -24,7 +24,7 @@ export async function dispatchStatic(req, response) {
 	}
 }
 
-function resolvePath(url) { // url is absolute regardless of requesting e.g. /home/../..
+function resolvePath(url) { // url is absolute e.g. /home/../.. => /
 	let candidate = join(config.staticDir, url)
 	if (isDirectory(candidate))
 		candidate = join(candidate, 'index.html')

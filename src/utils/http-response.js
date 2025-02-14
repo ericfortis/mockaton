@@ -26,12 +26,6 @@ export function sendDashboardFile(response, file) {
 	response.end(readFileSync(file, 'utf8'))
 }
 
-export function sendBadRequest(response, error) {
-	console.error(error)
-	response.statusCode = 400
-	response.end()
-}
-
 export function sendNotFound(response) {
 	response.statusCode = 404
 	response.end()

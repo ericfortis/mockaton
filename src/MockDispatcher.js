@@ -4,9 +4,9 @@ import { proxy } from './ProxyRelay.js'
 import { cookie } from './cookie.js'
 import { config } from './config.js'
 import { applyPlugins } from './MockDispatcherPlugins.js'
-import * as mockBrokerCollection from './mockBrokersCollection.js'
 import { BodyReaderError } from './utils/http-request.js'
-import { sendInternalServerError, sendNotFound, sendBadRequest } from './utils/http-response.js'
+import * as mockBrokerCollection from './mockBrokersCollection.js'
+import { sendInternalServerError, sendNotFound, sendUnprocessableContent } from './utils/http-response.js'
 
 
 export async function dispatchMock(req, response) {
@@ -38,7 +38,7 @@ export async function dispatchMock(req, response) {
 	}
 	catch (error) {
 		if (error instanceof BodyReaderError)
-			sendBadRequest(response, error)
+			sendUnprocessableContent(response, error)
 		else if (error.code === 'ENOENT') // mock-file has been deleted
 			sendNotFound(response)
 		else if (error.code === 'ERR_UNKNOWN_FILE_EXTENSION') {

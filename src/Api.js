@@ -10,7 +10,7 @@ import { DF, API } from './ApiConstants.js'
 import { parseJSON } from './utils/http-request.js'
 import { listFilesRecursively } from './utils/fs.js'
 import * as mockBrokersCollection from './mockBrokersCollection.js'
-import { sendOK, sendBadRequest, sendJSON, sendUnprocessableContent, sendDashboardFile, sendForbidden } from './utils/http-response.js'
+import { sendOK, sendJSON, sendUnprocessableContent, sendDashboardFile, sendForbidden } from './utils/http-response.js'
 
 
 const dashboardAssets = [
@@ -26,25 +26,25 @@ export const apiGetRequests = new Map([
 	[API.dashboard, serveDashboard],
 	...dashboardAssets.map(f =>
 		[API.dashboard + f, serveDashboardAsset]),
+	[API.cors, getIsCorsAllowed],
+	[API.static, listStaticFiles],
 	[API.mocks, listMockBrokers],
 	[API.cookies, listCookies],
-	[API.comments, listComments],
 	[API.fallback, getProxyFallback],
-	[API.cors, getIsCorsAllowed],
-	[API.collectProxied, getCollectProxied],
-	[API.static, listStaticFiles]
+	[API.comments, listComments],
+	[API.collectProxied, getCollectProxied]
 ])
 
 export const apiPatchRequests = new Map([
-	[API.select, selectMock],
+	[API.cors, setCorsAllowed],
 	[API.delay, setRouteIsDelayed],
-	[API.proxied, setRouteIsProxied],
 	[API.reset, reinitialize],
+	[API.select, selectMock],
+	[API.proxied, setRouteIsProxied],
 	[API.cookies, selectCookie],
 	[API.fallback, updateProxyFallback],
-	[API.collectProxied, setCollectProxied],
 	[API.bulkSelect, bulkUpdateBrokersByCommentTag],
-	[API.cors, setCorsAllowed]
+	[API.collectProxied, setCollectProxied]
 ])
 
 /* === GET === */
@@ -68,15 +68,10 @@ function getIsCorsAllowed(_, response) { sendJSON(response, config.corsAllowed) 
 function getCollectProxied(_, response) { sendJSON(response, config.collectProxied) }
 
 function listStaticFiles(req, response) {
-	try {
-		const files = config.staticDir
-			? listFilesRecursively(config.staticDir).filter(f => !config.ignore.test(f))
-			: []
-		sendJSON(response, files)
-	}
-	catch (error) {
-		sendBadRequest(response, error)
-	}
+	const files = config.staticDir
+		? listFilesRecursively(config.staticDir).filter(f => !config.ignore.test(f))
+		: []
+	sendJSON(response, files)
 }
 
 
@@ -88,124 +83,84 @@ function reinitialize(_, response) {
 }
 
 async function selectCookie(req, response) {
-	try {
-		const error = cookie.setCurrent(await parseJSON(req))
-		if (error)
-			sendUnprocessableContent(response, error)
-		else
-			sendOK(response)
-	}
-	catch (error) {
-		sendBadRequest(response, error)
-	}
+	const error = cookie.setCurrent(await parseJSON(req))
+	if (error)
+		sendUnprocessableContent(response, error)
+	else
+		sendOK(response)
 }
 
 async function selectMock(req, response) {
-	try {
-		const file = await parseJSON(req)
-		const broker = mockBrokersCollection.getBrokerByFilename(file)
-		if (!broker || !broker.hasMock(file))
-			sendUnprocessableContent(response, `Missing Mock: ${file}`)
-		else {
-			broker.updateFile(file)
-			sendOK(response)
-		}
-	}
-	catch (error) {
-		sendBadRequest(response, error)
+	const file = await parseJSON(req)
+	const broker = mockBrokersCollection.getBrokerByFilename(file)
+	if (!broker || !broker.hasMock(file))
+		sendUnprocessableContent(response, `Missing Mock: ${file}`)
+	else {
+		broker.updateFile(file)
+		sendOK(response)
 	}
 }
 
 async function setRouteIsDelayed(req, response) {
-	try {
-		const body = await parseJSON(req)
-		const delayed = body[DF.delayed]
-		const broker = mockBrokersCollection.getBrokerForUrl(
-			body[DF.routeMethod],
-			body[DF.routeUrlMask])
+	const body = await parseJSON(req)
+	const delayed = body[DF.delayed]
+	const broker = mockBrokersCollection.getBrokerForUrl(
+		body[DF.routeMethod],
+		body[DF.routeUrlMask])
 
-		if (!broker) // TESTME
-			sendUnprocessableContent(response, `Route does not exist: ${body[DF.routeUrlMask]} ${body[DF.routeUrlMask]}`)
-		else if (typeof delayed !== 'boolean')
-			sendUnprocessableContent(response, `Expected a boolean for "delayed"`) // TESTME
-		else {
-			broker.updateDelay(body[DF.delayed])
-			sendOK(response)
-		}
-	}
-	catch (error) {
-		sendBadRequest(response, error)
+	if (!broker) // TESTME
+		sendUnprocessableContent(response, `Route does not exist: ${body[DF.routeUrlMask]} ${body[DF.routeUrlMask]}`)
+	else if (typeof delayed !== 'boolean')
+		sendUnprocessableContent(response, `Expected a boolean for "delayed"`) // TESTME
+	else {
+		broker.updateDelay(body[DF.delayed])
+		sendOK(response)
 	}
 }
 
 async function setRouteIsProxied(req, response) { // TESTME
-	try {
-		const body = await parseJSON(req)
-		const proxied = body[DF.proxied]
-		const broker = mockBrokersCollection.getBrokerForUrl(
-			body[DF.routeMethod],
-			body[DF.routeUrlMask])
+	const body = await parseJSON(req)
+	const proxied = body[DF.proxied]
+	const broker = mockBrokersCollection.getBrokerForUrl(
+		body[DF.routeMethod],
+		body[DF.routeUrlMask])
 
-		if (!broker)
-			sendUnprocessableContent(response, `Route does not exist: ${body[DF.routeUrlMask]} ${body[DF.routeUrlMask]}`)
-		else if (typeof proxied !== 'boolean')
-			sendUnprocessableContent(response, `Expected a boolean for "proxied"`)
-		else if (proxied && !config.proxyFallback)
-			sendUnprocessableContent(response, `There’s no proxy fallback`)
-		else {
-			broker.updateProxied(proxied)
-			sendOK(response)
-		}
-	}
-	catch (error) {
-		sendBadRequest(response, error)
+	if (!broker)
+		sendUnprocessableContent(response, `Route does not exist: ${body[DF.routeUrlMask]} ${body[DF.routeUrlMask]}`)
+	else if (typeof proxied !== 'boolean')
+		sendUnprocessableContent(response, `Expected a boolean for "proxied"`)
+	else if (proxied && !config.proxyFallback)
+		sendUnprocessableContent(response, `There’s no proxy fallback`)
+	else {
+		broker.updateProxied(proxied)
+		sendOK(response)
 	}
 }
 
 async function updateProxyFallback(req, response) {
-	try {
-		const fallback = await parseJSON(req)
-		if (fallback && !URL.canParse(fallback)) {
-			sendUnprocessableContent(response)
-			return
-		}
-		if (!fallback) // TESTME
-			mockBrokersCollection.ensureAllRoutesHaveSelectedMock()
-		config.proxyFallback = fallback
-		sendOK(response)
+	const fallback = await parseJSON(req)
+	if (fallback && !URL.canParse(fallback)) {
+		sendUnprocessableContent(response)
+		return
 	}
-	catch (error) {
-		sendBadRequest(response, error)
-	}
+	if (!fallback) // TESTME
+		mockBrokersCollection.ensureAllRoutesHaveSelectedMock()
+	config.proxyFallback = fallback
+	sendOK(response)
 }
 
 async function setCollectProxied(req, response) {
-	try {
-		config.collectProxied = await parseJSON(req)
-		sendOK(response)
-	}
-	catch (error) {
-		sendBadRequest(response, error)
-	}
+	config.collectProxied = await parseJSON(req)
+	sendOK(response)
 }
 
 async function bulkUpdateBrokersByCommentTag(req, response) {
-	try {
-		mockBrokersCollection.setMocksMatchingComment(await parseJSON(req))
-		sendOK(response)
-	}
-	catch (error) {
-		sendBadRequest(response, error)
-	}
+	mockBrokersCollection.setMocksMatchingComment(await parseJSON(req))
+	sendOK(response)
 }
 
 async function setCorsAllowed(req, response) {
-	try {
-		config.corsAllowed = await parseJSON(req)
-		sendOK(response)
-	}
-	catch (error) {
-		sendBadRequest(response, error)
-	}
+	config.corsAllowed = await parseJSON(req)
+	sendOK(response)
 }
 

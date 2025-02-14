@@ -5,11 +5,11 @@ import { watch, existsSync } from 'node:fs'
 import { API } from './ApiConstants.js'
 import { dispatchMock } from './MockDispatcher.js'
 import { config, setup } from './config.js'
-import { sendNoContent } from './utils/http-response.js'
 import * as mockBrokerCollection from './mockBrokersCollection.js'
 import { dispatchStatic, isStatic } from './StaticDispatcher.js'
 import { setCorsHeaders, isPreflight } from './utils/http-cors.js'
 import { apiPatchRequests, apiGetRequests } from './Api.js'
+import { sendNoContent, sendInternalServerError } from './utils/http-response.js'
 
 
 process.on('unhandledRejection', error => { throw error })
@@ -43,32 +43,38 @@ export function Mockaton(options) {
 async function onRequest(req, response) {
 	req.on('error', console.error)
 	response.on('error', console.error)
-	response.setHeader('Server', 'Mockaton')
 
-	if (config.corsAllowed)
-		setCorsHeaders(req, response, {
-			origins: config.corsOrigins,
-			headers: config.corsHeaders,
-			methods: config.corsMethods,
-			maxAge: config.corsMaxAge,
-			credentials: config.corsCredentials,
-			exposedHeaders: config.corsExposedHeaders
-		})
+	try {
+		response.setHeader('Server', 'Mockaton')
 
-	const { url, method } = req
+		if (config.corsAllowed)
+			setCorsHeaders(req, response, {
+				origins: config.corsOrigins,
+				headers: config.corsHeaders,
+				methods: config.corsMethods,
+				maxAge: config.corsMaxAge,
+				credentials: config.corsCredentials,
+				exposedHeaders: config.corsExposedHeaders
+			})
 
-	if (isPreflight(req))
-		sendNoContent(response)
+		const { url, method } = req
 
-	else if (method === 'PATCH' && apiPatchRequests.has(url))
-		await apiPatchRequests.get(url)(req, response)
+		if (isPreflight(req))
+			sendNoContent(response)
 
-	else if (method === 'GET' && apiGetRequests.has(url))
-		apiGetRequests.get(url)(req, response)
+		else if (method === 'PATCH' && apiPatchRequests.has(url))
+			await apiPatchRequests.get(url)(req, response)
 
-	else if (method === 'GET' && isStatic(req))
-		await dispatchStatic(req, response)
+		else if (method === 'GET' && apiGetRequests.has(url))
+			apiGetRequests.get(url)(req, response)
 
-	else
-		await dispatchMock(req, response)
+		else if (method === 'GET' && isStatic(req))
+			await dispatchStatic(req, response)
+
+		else
+			await dispatchMock(req, response)
+	}
+	catch (error) {
+		sendInternalServerError(response, error)
+	}
 }

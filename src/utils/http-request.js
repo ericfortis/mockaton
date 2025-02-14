@@ -3,7 +3,7 @@ export const StandardMethods = [
 	'HEAD', 'OPTIONS', 'TRACE', 'CONNECT'
 ]
 
-export class BodyReaderError extends Error {}
+export class BodyReaderError extends Error {name = 'BodyReaderError'}
 
 export const parseJSON = req => readBody(req, JSON.parse)
 

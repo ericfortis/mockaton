@@ -38,7 +38,7 @@ export async function dispatchMock(req, response) {
 	}
 	catch (error) {
 		if (error instanceof BodyReaderError)
-			sendUnprocessableContent(response, error)
+			sendUnprocessableContent(response, error.name)
 		else if (error.code === 'ENOENT') // mock-file has been deleted
 			sendNotFound(response)
 		else if (error.code === 'ERR_UNKNOWN_FILE_EXTENSION') {

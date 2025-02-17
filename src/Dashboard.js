@@ -69,17 +69,17 @@ function init() {
 		mockaton.getProxyFallback(),
 		mockaton.listStaticFiles()
 	].map(api => api.then(response => response.ok && response.json())))
-		.then(data => document.body.replaceChildren(...App(data)))
+		.then(data => document.body.replaceChildren(App(data)))
 		.catch(onError)
 }
 init()
 
 function App([brokersByMethod, cookies, comments, collectProxied, fallbackAddress, staticFiles]) {
-	return [
-		r(Header, { cookies, comments, fallbackAddress, collectProxied }),
-		r(MockList, { brokersByMethod, canProxy: Boolean(fallbackAddress) }),
-		r(StaticFilesList, { staticFiles })
-	]
+	return (
+		r('div', null,
+			r(Header, { cookies, comments, fallbackAddress, collectProxied }),
+			r(MockList, { brokersByMethod, canProxy: Boolean(fallbackAddress) }),
+			r(StaticFilesList, { staticFiles })))
 }
 
 
@@ -504,7 +504,7 @@ function CloudIcon() {
 // Utils ============
 
 function cssClass(...args) {
-	return args.filter(a => a).join(' ')
+	return args.filter(Boolean).join(' ')
 }
 
 
@@ -531,7 +531,7 @@ function createElement(elem, props = null, ...children) {
 				node[key] = value
 			else
 				node.setAttribute(key, value)
-	node.append(...children.flat().filter(a => a))
+	node.append(...children.flat().filter(Boolean))
 	return node
 }
 
@@ -539,7 +539,7 @@ function createSvgElement(tagName, props, ...children) {
 	const elem = document.createElementNS('http://www.w3.org/2000/svg', tagName)
 	for (const [key, value] of Object.entries(props))
 		elem.setAttribute(key, value)
-	elem.append(...children.flat().filter(a => a))
+	elem.append(...children.flat().filter(Boolean))
 	return elem
 }
 

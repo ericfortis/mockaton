@@ -10,7 +10,6 @@ function syntaxHighlightJson(textBody) {
 		: false
 }
 
-
 const Strings = {
 	bulk_select: 'Bulk Select',
 	bulk_select_disabled_title: 'No mock files have comments, which are anything within parentheses on the filename.',
@@ -57,8 +56,14 @@ const CSS = {
 }
 
 const r = createElement
-
 const mockaton = new Commander(window.location.origin)
+
+init()
+pollAR_Events() // Add or Remove Mocks from File System
+document.addEventListener('visibilitychange', () => {
+	if (!document.hidden)
+		pollAR_Events()
+})
 
 function init() {
 	return Promise.all([
@@ -72,7 +77,6 @@ function init() {
 		.then(data => document.body.replaceChildren(App(data)))
 		.catch(onError)
 }
-init()
 
 function App([brokersByMethod, cookies, comments, collectProxied, fallbackAddress, staticFiles]) {
 	return (
@@ -81,7 +85,6 @@ function App([brokersByMethod, cookies, comments, collectProxied, fallbackAddres
 			r(MockList, { brokersByMethod, canProxy: Boolean(fallbackAddress) }),
 			r(StaticFilesList, { staticFiles })))
 }
-
 
 // Header ===============
 
@@ -499,6 +502,34 @@ function CloudIcon() {
 			r('path', { d: 'M19.35 10.04C18.67 6.59 15.64 4 12 4 9.11 4 6.61 5.64 5.36 8.04 2.35 8.36 0 10.9 0 14c0 3.31 2.69 6 6 6h13c2.76 0 5-2.24 5-5 0-2.64-2.05-4.78-4.65-4.96M19 18H6c-2.21 0-4-1.79-4-4s1.79-4 4-4 4 1.79 4 4h2c0-2.76-1.86-5.08-4.4-5.78C8.61 6.88 10.2 6 12 6c3.03 0 5.5 2.47 5.5 5.5v.5H19c1.65 0 3 1.35 3 3s-1.35 3-3 3' })))
 }
 
+
+// AR Events (Add or Remove mock) ============
+
+pollAR_Events.isPolling = false
+pollAR_Events.oldAR_EventsCount = 0
+async function pollAR_Events() {
+	if (pollAR_Events.isPolling || document.hidden)
+		return
+	try {
+		pollAR_Events.isPolling = true
+		const response = await mockaton.getAR_EventsCount()
+		if (response.ok) {
+			const nAR_Events = await response.json()
+			if (pollAR_Events.oldAR_EventsCount !== nAR_Events) { // because it could be < or >
+				pollAR_Events.oldAR_EventsCount = nAR_Events
+				await init()
+			}
+			pollAR_Events.isPolling = false
+			pollAR_Events()
+		}
+		else
+			throw response.status
+	}
+	catch (_) {
+		pollAR_Events.isPolling = false
+		setTimeout(pollAR_Events, 5000)
+	}
+}
 
 
 // Utils ============

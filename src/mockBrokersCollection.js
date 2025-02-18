@@ -35,24 +35,28 @@ export function init() {
 	})
 }
 
+/** @returns {boolean} registered */
 export function registerMock(file, isFromWatcher) {
 	if (getBrokerByFilename(file)?.hasMock(file)
 		|| config.ignore.test(file)
 		|| !filenameIsValid(file))
-		return
+		return false
 
 	const { method, urlMask } = parseFilename(file)
 	collection[method] ??= {}
+
 	if (!collection[method][urlMask])
 		collection[method][urlMask] = new MockBroker(file)
 	else
 		collection[method][urlMask].register(file)
 
-	if (isFromWatcher) {
-		if (!this.file)
-			collection[method][urlMask].selectDefaultFile()
+	if (isFromWatcher && !this.file)
+		collection[method][urlMask].selectDefaultFile()
+
+	if (isFromWatcher)
 		collection[method][urlMask].ensureItHas500()
-	}
+
+	return true
 }
 
 export function unregisterMock(file) {

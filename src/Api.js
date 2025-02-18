@@ -6,10 +6,11 @@
 import { join } from 'node:path'
 import { cookie } from './cookie.js'
 import { config } from './config.js'
-import { DF, API } from './ApiConstants.js'
 import { parseJSON } from './utils/http-request.js'
 import { listFilesRecursively } from './utils/fs.js'
 import * as mockBrokersCollection from './mockBrokersCollection.js'
+import { DF, API, LONG_POLL_SERVER_TIMEOUT } from './ApiConstants.js'
+import { countAR_Events, subscribeAR_EventListener, unsubscribeAR_EventListener } from './Watcher.js'
 import { sendOK, sendJSON, sendUnprocessableContent, sendDashboardFile, sendForbidden } from './utils/http-response.js'
 
 
@@ -31,6 +32,7 @@ export const apiGetRequests = new Map([
 	[API.mocks, listMockBrokers],
 	[API.cookies, listCookies],
 	[API.fallback, getProxyFallback],
+	[API.arEvents, longPollAR_Events],
 	[API.comments, listComments],
 	[API.collectProxied, getCollectProxied]
 ])
@@ -52,6 +54,7 @@ export const apiPatchRequests = new Map([
 function serveDashboard(_, response) {
 	sendDashboardFile(response, join(import.meta.dirname, 'Dashboard.html'))
 }
+
 function serveDashboardAsset(req, response) {
 	const f = req.url.replace(API.dashboard, '')
 	if (dashboardAssets.includes(f))
@@ -73,6 +76,20 @@ function listStaticFiles(req, response) {
 		: []
 	sendJSON(response, files)
 }
+
+function longPollAR_Events(req, response) {
+	function onAddOrRemoveMock() {
+		unsubscribeAR_EventListener(onAddOrRemoveMock)
+		sendJSON(response, countAR_Events())
+	}
+	response.setTimeout(LONG_POLL_SERVER_TIMEOUT, onAddOrRemoveMock)
+	req.on('error', () => {
+		unsubscribeAR_EventListener(onAddOrRemoveMock)
+		response.destroy()
+	})
+	subscribeAR_EventListener(onAddOrRemoveMock)
+}
+
 
 
 /* === PATCH === */

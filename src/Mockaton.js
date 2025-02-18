@@ -1,10 +1,9 @@
-import { join } from 'node:path'
 import { createServer } from 'node:http'
-import { watch, existsSync } from 'node:fs'
 
 import { API } from './ApiConstants.js'
-import { dispatchMock } from './MockDispatcher.js'
 import { config, setup } from './config.js'
+import { dispatchMock } from './MockDispatcher.js'
+import { watchMocksDir } from './Watcher.js'
 import { BodyReaderError } from './utils/http-request.js'
 import * as mockBrokerCollection from './mockBrokersCollection.js'
 import { dispatchStatic, isStatic } from './StaticDispatcher.js'
@@ -18,16 +17,7 @@ process.on('unhandledRejection', error => { throw error })
 export function Mockaton(options) {
 	setup(options)
 	mockBrokerCollection.init()
-
-	watch(config.mocksDir, { recursive: true, persistent: false },
-		function handleAddedOrDeletedMocks(_, file) {
-			if (!file)
-				return
-			if (existsSync(join(config.mocksDir, file)))
-				mockBrokerCollection.registerMock(file, 'isFromWatcher')
-			else
-				mockBrokerCollection.unregisterMock(file)
-		})
+	watchMocksDir()
 
 	return createServer(onRequest).listen(config.port, config.host, function (error) {
 		const { address, port } = this.address()
@@ -42,7 +32,6 @@ export function Mockaton(options) {
 }
 
 async function onRequest(req, response) {
-	req.on('error', console.error)
 	response.on('error', console.error)
 
 	try {

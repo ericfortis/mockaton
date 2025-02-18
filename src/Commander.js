@@ -1,4 +1,4 @@
-import { API, DF } from './ApiConstants.js'
+import { API, DF, LONG_POLL_SERVER_TIMEOUT } from './ApiConstants.js'
 
 
 // Client for controlling Mockaton via its HTTP API
@@ -83,5 +83,11 @@ export class Commander {
 
 	reset() {
 		return this.#patch(API.reset)
+	}
+
+	getAR_EventsCount() {
+		return fetch(API.arEvents, {
+			signal: AbortSignal.timeout(LONG_POLL_SERVER_TIMEOUT + 1000)
+		})
 	}
 }

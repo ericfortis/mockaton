@@ -13,7 +13,7 @@
 		--colorComboBoxHeaderBackground: #fff;
 		--colorComboBoxBackground: #f7f7f7;
 		--colorHeaderBackground: #f3f3f3;
-		--colorSecondaryButtonBackground: transparent;
+		--colorSecondaryButtonBackground: #f3f3f3;
 		--colorSecondaryAction: #555;
 		--colorDisabledMockSelector: #444;
 		--colorHover: #dfefff;
@@ -78,18 +78,22 @@ a, button, input[type=checkbox] {
 
 select {
 	font-size: 100%;
-	background: var(--colorComboBoxBackground);
 	color: var(--colorText);
 	cursor: pointer;
 	outline: 0;
 	border-radius: var(--radius);
+	appearance: none;
+	background: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%23888888'><path d='M16.59 8.59 12 13.17 7.41 8.59 6 10l6 6 6-6z'/></svg>") no-repeat;
+	background-color: var(--colorComboBoxBackground);
+	background-size: 16px;
+	background-position: 100% center;
 
 	&:enabled {
 		box-shadow: var(--boxShadow1);
 	}
 	&:enabled:hover {
 		cursor: pointer;
-		background: var(--colorHover);
+		background-color: var(--colorHover);
 	}
 	&:disabled {
 		cursor: not-allowed;
@@ -113,11 +117,11 @@ select {
 	img {
 		width: 130px;
 		align-self: center;
-		margin-right: 18px;
+		margin-right: 20px;
 	}
 
 	.Field {
-		width: 120px;
+		width: 132px;
 
 		span {
 			display: flex;
@@ -131,11 +135,11 @@ select {
 		select {
 			width: 100%;
 			height: 28px;
-			padding: 4px 2px;
+			padding: 4px 8px;
 			border-right: 3px solid transparent;
 			margin-top: 4px;
 			font-size: 11px;
-			background: var(--colorComboBoxHeaderBackground);
+			background-color: var(--colorComboBoxHeaderBackground);
 			border-radius: var(--radius);
 		}
 
@@ -172,15 +176,15 @@ select {
 				gap: 4px;
 
 				input:disabled + span {
-					opacity: 0.7;
+					opacity: 0.8;
 				}
 			}
 		}
 	}
 
 	.BulkSelector {
-		appearance: none;
-		text-align: center;
+		background-image: none;
+		text-align-last: center;
 	}
 
 	.ResetButton {
@@ -276,11 +280,12 @@ select {
 	width: 260px;
 	height: 30px;
 	border: 0;
-	border-left: 3px solid transparent;
+	padding-right: 5px;
 	text-align: right;
 	direction: rtl;
 	text-overflow: ellipsis;
 	font-size: 12px;
+	background-position: 2px center;
 
 	&.nonDefault {
 		font-weight: bold;
@@ -337,7 +342,6 @@ select {
 	> svg {
 		width: 18px;
 		height: 18px;
-		border: 1px solid var(--colorSecondaryAction);
 		vertical-align: bottom;
 		fill: var(--colorSecondaryAction);
 		border-radius: 50%;

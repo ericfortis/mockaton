@@ -20,7 +20,8 @@ export const DF = { // Dashboard Fields (XHR)
 	routeMethod: 'route_method',
 	routeUrlMask: 'route_url_mask',
 	delayed: 'delayed',
-	proxied: 'proxied'
+	proxied: 'proxied',
+	lastReceived_nAR: 'last_received_n_ar'
 }
 
 export const DEFAULT_500_COMMENT = '(Mockaton 500)'

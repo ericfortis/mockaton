@@ -78,6 +78,13 @@ function listStaticFiles(req, response) {
 }
 
 function longPollAR_Events(req, response) {
+	// e.g. tab was hidden while new mocks were added or removed
+	const clientIsOutOfSync = parseInt(req.headers[DF.lastReceived_nAR], 10) !== countAR_Events()
+	if (clientIsOutOfSync) {
+		sendJSON(response, countAR_Events())
+		return
+	}
+
 	function onAddOrRemoveMock() {
 		unsubscribeAR_EventListener(onAddOrRemoveMock)
 		sendJSON(response, countAR_Events())

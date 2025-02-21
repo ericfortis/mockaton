@@ -85,9 +85,12 @@ export class Commander {
 		return this.#patch(API.reset)
 	}
 
-	getAR_EventsCount() {
+	getAR_EventsCount(nAR_EventReceived) {
 		return fetch(API.arEvents, {
-			signal: AbortSignal.timeout(LONG_POLL_SERVER_TIMEOUT + 1000)
+			signal: AbortSignal.timeout(LONG_POLL_SERVER_TIMEOUT + 1000),
+			headers: {
+				[DF.lastReceived_nAR]: nAR_EventReceived
+			}
 		})
 	}
 }

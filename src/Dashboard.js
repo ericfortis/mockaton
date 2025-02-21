@@ -512,7 +512,7 @@ async function pollAR_Events() {
 		return
 	try {
 		pollAR_Events.isPolling = true
-		const response = await mockaton.getAR_EventsCount()
+		const response = await mockaton.getAR_EventsCount(pollAR_Events.oldAR_EventsCount)
 		if (response.ok) {
 			const nAR_Events = await response.json()
 			if (pollAR_Events.oldAR_EventsCount !== nAR_Events) { // because it could be < or >

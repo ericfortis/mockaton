@@ -112,7 +112,7 @@ select {
 	border-bottom: 1px solid rgba(127, 127, 127, 0.1);
 	background: var(--colorHeaderBackground);
 	box-shadow: var(--boxShadow1);
-	gap: 8px;
+	gap: 10px;
 
 	img {
 		width: 130px;
@@ -129,16 +129,26 @@ select {
 			color: var(--colorLabel);
 			font-size: 11px;
 			gap: 4px;
+
+			svg {
+				width: 14px;
+				height: 14px;
+				fill: var(--colorLabel);
+				opacity: 0.6;
+			}
 		}
 
 		input[type=url],
+		input[type=number],
 		select {
 			width: 100%;
 			height: 28px;
 			padding: 4px 8px;
 			border-right: 3px solid transparent;
 			margin-top: 4px;
+			color: var(--colorText);
 			font-size: 11px;
+			box-shadow: var(--boxShadow1);
 			background-color: var(--colorComboBoxHeaderBackground);
 			border-radius: var(--radius);
 		}
@@ -147,21 +157,26 @@ select {
 			background: var(--colorHover);
 		}
 
+		&.GlobalDelayField {
+			width: 82px;
+
+			input[type=number] {
+				padding-right: 0;
+			}
+
+			svg {
+				border: 1px solid var(--colorLabel);
+				border-radius: 50%;
+				transform: scale(.85);
+			}
+		}
+
 		&.FallbackBackend {
 			position: relative;
 			width: 210px;
 
-			svg {
-				width: 14px;
-				height: 14px;
-				fill: var(--colorLabel);
-				opacity: 0.6;
-			}
-
 			input[type=url] {
 				padding: 0 6px;
-				box-shadow: var(--boxShadow1);
-				color: var(--colorText);
 			}
 
 			.SaveProxiedCheckbox {
@@ -279,8 +294,8 @@ select {
 .MockSelector {
 	width: 260px;
 	height: 30px;
-	border: 0;
 	padding-right: 5px;
+	border: 0;
 	text-align: right;
 	direction: rtl;
 	text-overflow: ellipsis;
@@ -333,7 +348,7 @@ select {
 		}
 
 		&:disabled ~ svg {
-			opacity: .5;
+			fill-opacity: 0.4;
 			cursor: not-allowed;
 			box-shadow: none;
 		}
@@ -350,10 +365,9 @@ select {
 }
 
 .ProxyToggler {
-	margin-left: 4px;
 	> svg {
-		width: 22px;
-		padding: 1px;
+		width: 20px;
+		padding: 3px;
 		border-color: transparent;
 		border-radius: var(--radiusSmall);
 	}

@@ -77,6 +77,13 @@ export class Commander {
 		return this.#patch(API.cors, value)
 	}
 
+	getGlobalDelay() {
+		return this.#get(API.globalDelay)
+	}
+	setGlobalDelay(delay) {
+		return this.#patch(API.globalDelay, delay)
+	}
+
 	listStaticFiles() {
 		return this.#get(API.static)
 	}

@@ -14,7 +14,7 @@ export async function dispatchMock(req, response) {
 		const broker = mockBrokerCollection.getBrokerForUrl(req.method, req.url)
 		if (!broker || broker.proxied) {
 			if (config.proxyFallback)
-				await proxy(req, response)
+				await proxy(req, response, Number(Boolean(broker?.delayed)) * config.delay)
 			else
 				sendNotFound(response)
 			return
@@ -34,7 +34,7 @@ export async function dispatchMock(req, response) {
 			: await applyPlugins(join(config.mocksDir, broker.file), req, response)
 
 		response.setHeader('Content-Type', mime)
-		setTimeout(() => response.end(body), broker.delay)
+		setTimeout(() => response.end(body), Number(broker.delayed) * config.delay)
 	}
 	catch (error) {
 		if (error instanceof BodyReaderError)

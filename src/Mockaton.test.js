@@ -352,7 +352,7 @@ async function testRegistering() {
 			])
 			deepEqual(currentMock, {
 				file: fixtureForRegisteringPutA[1],
-				delay: 0
+				delayed: false
 			})
 		})
 		await it('unregisters selected', async () => {
@@ -367,7 +367,7 @@ async function testRegistering() {
 			])
 			deepEqual(currentMock, {
 				file: fixtureForRegisteringPutB[1],
-				delay: 0
+				delayed: false
 			})
 		})
 		await it('unregistering the last mock removes broker', async () => {

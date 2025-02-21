@@ -34,6 +34,7 @@ export const apiGetRequests = new Map([
 	[API.fallback, getProxyFallback],
 	[API.arEvents, longPollAR_Events],
 	[API.comments, listComments],
+	[API.globalDelay, getGlobalDelay],
 	[API.collectProxied, getCollectProxied]
 ])
 
@@ -46,6 +47,7 @@ export const apiPatchRequests = new Map([
 	[API.cookies, selectCookie],
 	[API.fallback, updateProxyFallback],
 	[API.bulkSelect, bulkUpdateBrokersByCommentTag],
+	[API.globalDelay, setGlobalDelay],
 	[API.collectProxied, setCollectProxied]
 ])
 
@@ -65,6 +67,7 @@ function serveDashboardAsset(req, response) {
 
 function listCookies(_, response) { sendJSON(response, cookie.list()) }
 function listComments(_, response) { sendJSON(response, mockBrokersCollection.extractAllComments()) }
+function getGlobalDelay(_, response) { sendJSON(response, config.delay) }
 function listMockBrokers(_, response) { sendJSON(response, mockBrokersCollection.getAll()) }
 function getProxyFallback(_, response) { sendJSON(response, config.proxyFallback) }
 function getIsCorsAllowed(_, response) { sendJSON(response, config.corsAllowed) }
@@ -137,7 +140,7 @@ async function setRouteIsDelayed(req, response) {
 	else if (typeof delayed !== 'boolean')
 		sendUnprocessableContent(response, `Expected a boolean for "delayed"`) // TESTME
 	else {
-		broker.updateDelay(body[DF.delayed])
+		broker.updateDelayed(body[DF.delayed])
 		sendOK(response)
 	}
 }
@@ -188,3 +191,7 @@ async function setCorsAllowed(req, response) {
 	sendOK(response)
 }
 
+async function setGlobalDelay(req, response) { // TESTME
+	config.delay = parseInt(await parseJSON(req), 10)
+	sendOK(response)
+}

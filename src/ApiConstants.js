@@ -5,6 +5,7 @@ export const API = {
 	comments: MOUNT + '/comments',
 	select: MOUNT + '/select',
 	delay: MOUNT + '/delay',
+	globalDelay: MOUNT + '/global-delay',
 	mocks: MOUNT + '/mocks',
 	reset: MOUNT + '/reset',
 	cookies: MOUNT + '/cookies',

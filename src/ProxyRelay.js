@@ -8,7 +8,7 @@ import { write, isFile } from './utils/fs.js'
 import { makeMockFilename } from './Filename.js'
 
 
-export async function proxy(req, response) {
+export async function proxy(req, response, delay) {
 	const proxyResponse = await fetch(config.proxyFallback + req.url, {
 		method: req.method,
 		headers: req.headers,
@@ -21,7 +21,7 @@ export async function proxy(req, response) {
 	headers['set-cookie'] = proxyResponse.headers.getSetCookie() // parses multiple into an array
 	response.writeHead(proxyResponse.status, headers)
 	const body = await proxyResponse.text()
-	response.end(body)
+	setTimeout(() => response.end(body), delay) // TESTME
 
 	if (config.collectProxied) {
 		const ext = extFor(proxyResponse.headers.get('content-type'))

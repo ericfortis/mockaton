@@ -17,6 +17,7 @@ const Strings = {
 	cookie: 'Cookie',
 	cookie_disabled_title: 'No cookies specified in config.cookies',
 	delay: 'Delay',
+	delay_ms: 'Delay (ms)',
 	empty_response_body: '/* Empty Response Body */',
 	fallback_server: 'Fallback Backend',
 	fallback_server_placeholder: 'Type Server Address',
@@ -46,6 +47,7 @@ const CSS = {
 	ProgressBar: 'ProgressBar',
 	ProxyToggler: 'ProxyToggler',
 	ResetButton: 'ResetButton',
+	GlobalDelayField: 'GlobalDelayField',
 	SaveProxiedCheckbox: 'SaveProxiedCheckbox',
 	StaticFilesList: 'StaticFilesList',
 
@@ -57,6 +59,10 @@ const CSS = {
 
 const r = createElement
 const mockaton = new Commander(window.location.origin)
+
+const PROGRESS_BAR_DELAY = 180
+let globalDelay = 1200
+
 
 init()
 pollAR_Events() // Add or Remove Mocks from File System
@@ -70,6 +76,7 @@ function init() {
 		mockaton.listMocks(),
 		mockaton.listCookies(),
 		mockaton.listComments(),
+		mockaton.getGlobalDelay(),
 		mockaton.getCollectProxied(),
 		mockaton.getProxyFallback(),
 		mockaton.listStaticFiles()
@@ -78,22 +85,24 @@ function init() {
 		.catch(onError)
 }
 
-function App([brokersByMethod, cookies, comments, collectProxied, fallbackAddress, staticFiles]) {
+function App([brokersByMethod, cookies, comments, delay, collectProxied, fallbackAddress, staticFiles]) {
+	globalDelay = delay
 	return (
 		r('div', null,
-			r(Header, { cookies, comments, fallbackAddress, collectProxied }),
+			r(Header, { cookies, comments, delay, fallbackAddress, collectProxied }),
 			r(MockList, { brokersByMethod, canProxy: Boolean(fallbackAddress) }),
 			r(StaticFilesList, { staticFiles })))
 }
 
 // Header ===============
 
-function Header({ cookies, comments, fallbackAddress, collectProxied }) {
+function Header({ cookies, comments, delay, fallbackAddress, collectProxied }) {
 	return (
 		r('menu', { className: CSS.Header },
 			r(Logo),
 			r(CookieSelector, { cookies }),
 			r(BulkSelector, { comments }),
+			r(GlobalDelayField, { delay }),
 			r(ProxyFallbackField, { fallbackAddress, collectProxied }),
 			r(ResetButton)))
 }
@@ -151,6 +160,24 @@ function BulkSelector({ comments }) {
 				onChange
 			}, list.map(value =>
 				r('option', { value }, value)))))
+}
+
+function GlobalDelayField({ delay }) {
+	function onChange() {
+		globalDelay = this.valueAsNumber
+		mockaton.setGlobalDelay(globalDelay).catch(onError)
+	}
+	return (
+		r('label', { className: cssClass(CSS.Field, CSS.GlobalDelayField) },
+			r('span', null, r(TimerIcon), Strings.delay_ms),
+			r('input', {
+				type: 'number',
+				min: 0,
+				step: 100,
+				autocomplete: 'none',
+				value: delay,
+				onChange
+			})))
 }
 
 function ProxyFallbackField({ fallbackAddress, collectProxied }) {
@@ -238,8 +265,8 @@ function SectionByMethod({ method, brokers, canProxy }) {
 					r('tr', { 'data-method': method, 'data-urlMask': urlMask },
 						r('td', null, r(PreviewLink, { method, urlMask })),
 						r('td', null, r(MockSelector, { broker })),
-						r('td', null, r(DelayRouteToggler, { broker })),
 						r('td', null, r(InternalServerErrorToggler, { broker })),
+						r('td', null, r(DelayRouteToggler, { broker })),
 						r('td', null, r(ProxyToggler, { broker, disabled: !canProxy }))))))
 }
 
@@ -313,7 +340,7 @@ function DelayRouteToggler({ broker }) {
 			},
 			r('input', {
 				type: 'checkbox',
-				checked: Boolean(broker.currentMock.delay),
+				checked: broker.currentMock.delayed,
 				onChange
 			}),
 			TimerIcon()))
@@ -386,7 +413,7 @@ function PayloadViewer() {
 function PayloadViewerProgressBar() {
 	return (
 		r('div', { className: CSS.ProgressBar },
-			r('div', { style: { animationDuration: '1000ms' } }))) // TODO from Config.delay - 180
+			r('div', { style: { animationDuration: globalDelay - PROGRESS_BAR_DELAY + 'ms' } })))
 }
 
 function PayloadViewerTitle({ file, status, statusText }) {
@@ -406,7 +433,7 @@ function PayloadViewerTitleWhenProxied({ mime, status, statusText }) {
 }
 
 async function previewMock(method, urlMask, href) {
-	const timer = setTimeout(renderProgressBar, 180)
+	const timer = setTimeout(renderProgressBar, PROGRESS_BAR_DELAY)
 	const response = await fetch(href, { method })
 	clearTimeout(timer)
 	await updatePayloadViewer(method, urlMask, response)

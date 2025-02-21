@@ -1,4 +1,3 @@
-import { config } from './config.js'
 import { includesComment, extractComments, parseFilename } from './Filename.js'
 import { DEFAULT_500_COMMENT, DEFAULT_MOCK_COMMENT } from './ApiConstants.js'
 
@@ -13,7 +12,7 @@ export class MockBroker {
 		this.mocks = []
 		this.currentMock = {
 			file: '',
-			delay: 0
+			delayed: false
 		}
 		this.register(file)
 	}
@@ -59,7 +58,7 @@ export class MockBroker {
 	}
 
 	get file() { return this.currentMock.file }
-	get delay() { return this.currentMock.delay }
+	get delayed() { return this.currentMock.delayed }
 	get proxied() { return !this.currentMock.file }
 	get status() { return parseFilename(this.file).status }
 	get temp500IsSelected() { return this.#isTemp500(this.file) }
@@ -83,7 +82,7 @@ export class MockBroker {
 
 	hasMock(file) { return this.mocks.includes(file) }
 	updateFile(filename) { this.currentMock.file = filename }
-	updateDelay(delayed) { this.currentMock.delay = Number(delayed) * config.delay }
+	updateDelayed(delayed) { this.currentMock.delayed = delayed }
 
 	updateProxied(proxied) {
 		if (proxied)

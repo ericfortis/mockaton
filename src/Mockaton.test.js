@@ -106,6 +106,12 @@ const fixtures = [
 		'Decodes URI'
 	],
 
+	[
+		'/api/uncommon-method',
+		'/api/uncommon-method.ACL.200.json',
+		'node.js doesn’t support arbitrary HTTP methods, but it does support a few non-standard ones'
+	],
+
 
 	// Dynamic Params
 	[

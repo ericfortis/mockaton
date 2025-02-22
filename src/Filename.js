@@ -1,7 +1,16 @@
-const httpMethods = [
-	'CONNECT', 'DELETE', 'GET',
-	'HEAD', 'OPTIONS', 'PATCH',
-	'POST', 'PUT', 'TRACE'
+const httpMethods = [ // node:http.METHODS
+	'ACL', 'BIND', 'CHECKOUT',
+	'CONNECT', 'COPY', 'DELETE',
+	'GET', 'HEAD', 'LINK',
+	'LOCK', 'M-SEARCH', 'MERGE',
+	'MKACTIVITY', 'MKCALENDAR', 'MKCOL',
+	'MOVE', 'NOTIFY', 'OPTIONS',
+	'PATCH', 'POST', 'PROPFIND',
+	'PROPPATCH', 'PURGE', 'PUT',
+	'QUERY', 'REBIND', 'REPORT',
+	'SEARCH', 'SOURCE', 'SUBSCRIBE',
+	'TRACE', 'UNBIND', 'UNLINK',
+	'UNLOCK', 'UNSUBSCRIBE'
 ]
 
 const reComments = /\(.*?\)/g // Anything within parentheses

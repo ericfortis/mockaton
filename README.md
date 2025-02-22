@@ -224,6 +224,24 @@ api/user.GET.200.json
 You can also use `.empty` or `.unknown` if you don’t
 want a `Content-Type` header in the response.
 
+<details>
+<summary>Supported Methods</summary>
+<p>From Node.js <code>http.METHODS</code></p>
+<p>
+	ACL, BIND, CHECKOUT,
+	CONNECT, COPY, DELETE,
+	GET, HEAD, LINK,
+	LOCK, M-SEARCH, MERGE,
+	MKACTIVITY, MKCALENDAR, MKCOL,
+	MOVE, NOTIFY, OPTIONS,
+	PATCH, POST, PROPFIND,
+	PROPPATCH, PURGE, PUT,
+	QUERY, REBIND, REPORT,
+	SEARCH, SOURCE, SUBSCRIBE,
+	TRACE, UNBIND, UNLINK,
+	UNLOCK, UNSUBSCRIBE
+</p>
+</details>
 
 ### Dynamic Parameters
 Anything within square brackets is always matched. For example, for this route

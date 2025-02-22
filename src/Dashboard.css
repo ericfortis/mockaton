@@ -12,7 +12,7 @@
 		--colorBackground: #fff;
 		--colorComboBoxHeaderBackground: #fff;
 		--colorComboBoxBackground: #f7f7f7;
-		--colorHeaderBackground: #f3f3f3;
+		--colorHeaderBackground: #eee;
 		--colorSecondaryButtonBackground: #f3f3f3;
 		--colorSecondaryAction: #555;
 		--colorDisabledMockSelector: #444;
@@ -31,8 +31,8 @@
 		--colorBackground: #161616;
 		--colorHeaderBackground: #090909;
 		--colorComboBoxBackground: #252525;
-		--colorSecondaryButtonBackground: #202020;
-		--colorSecondaryAction: #bbb;
+		--colorSecondaryButtonBackground: #282828;
+		--colorSecondaryAction: #999;
 		--colorComboBoxHeaderBackground: #222;
 		--colorDisabledMockSelector: #b9b9b9;
 		--colorHover: #023661;
@@ -68,7 +68,10 @@ select, a, input, button, summary {
 	}
 }
 
-a, button, input[type=checkbox] {
+a,
+button,
+input[type=checkbox],
+input[type=checkbox] ~ svg {
 	cursor: pointer;
 
 	&:active {
@@ -117,7 +120,7 @@ select {
 	img {
 		width: 130px;
 		align-self: center;
-		margin-right: 20px;
+		margin-right: 22px;
 	}
 
 	.Field {
@@ -133,8 +136,10 @@ select {
 			svg {
 				width: 14px;
 				height: 14px;
-				fill: var(--colorLabel);
-				opacity: 0.6;
+				stroke: var(--colorLabel);
+				stroke-width: 1.5px;
+				fill: none;
+				opacity: .7;
 			}
 		}
 
@@ -158,16 +163,18 @@ select {
 		}
 
 		&.GlobalDelayField {
-			width: 82px;
+			width: 84px;
 
 			input[type=number] {
 				padding-right: 0;
 			}
 
 			svg {
+				width: 12px;
+				height: 12px;
 				border: 1px solid var(--colorLabel);
+				stroke-width: 3px;
 				border-radius: 50%;
-				transform: scale(.85);
 			}
 		}
 
@@ -276,7 +283,7 @@ select {
 	position: relative;
 	left: -6px;
 	display: inline-block;
-	width: 278px;
+	width: 272px;
 	padding: 8px 6px;
 	border-radius: var(--radius);
 	color: var(--colorAccent);
@@ -295,6 +302,7 @@ select {
 	width: 260px;
 	height: 30px;
 	padding-right: 5px;
+	padding-left: 16px;
 	border: 0;
 	text-align: right;
 	direction: rtl;
@@ -323,7 +331,6 @@ select {
 .ProxyToggler {
 	display: flex;
 	margin-left: 8px;
-	cursor: pointer;
 
 	> input {
 		appearance: none;
@@ -334,48 +341,90 @@ select {
 				outline: 2px solid var(--colorAccent)
 			}
 		}
+	}
+
+	> svg {
+		vertical-align: bottom;
+		fill: none;
+		stroke: var(--colorSecondaryAction);
+	}
+}
+
+.DelayToggler {
+	> input {
+		&:checked ~ svg {
+			border: 1px solid var(--colorBackground);
+			fill: var(--colorAccent);
+			background: var(--colorAccent);
+			stroke: var(--colorBackground);
+		}
 
 		&:enabled:hover:not(:checked) ~ svg {
+			border-color: var(--colorText);
 			background: var(--colorHover);
-			fill: var(--colorText);
-		}
-
-		&:checked ~ svg {
-			border-color: transparent;
-			background: var(--colorAccent);
-			fill: white;
-			box-shadow: var(--boxShadow1);
-		}
-
-		&:disabled ~ svg {
-			fill-opacity: 0.4;
-			cursor: not-allowed;
-			box-shadow: none;
+			stroke: var(--colorText);
 		}
 	}
 
 	> svg {
 		width: 18px;
 		height: 18px;
-		vertical-align: bottom;
-		fill: var(--colorSecondaryAction);
+		stroke-width: 2.5px;
 		border-radius: 50%;
 		background: var(--colorSecondaryButtonBackground);
 	}
 }
 
 .ProxyToggler {
+	padding: 1px 3px;
+	background: var(--colorSecondaryButtonBackground);
+	border-radius: var(--radiusSmall);
+
+	&:has(input:checked),
+	&:has(input:disabled) {
+		background: transparent;
+	}
+
+	> input {
+		&:checked ~ svg {
+			fill: var(--colorAccent);
+			stroke: var(--colorAccent);
+
+			path:last-of-type { /* inner cloud curve */
+				stroke: var(--colorBackground);
+			}
+			transform: scale(1.2);
+		}
+
+		&:enabled:hover:not(:checked) ~ svg {
+			fill: var(--colorHover);
+			stroke: var(--colorText);
+		}
+
+		&:disabled ~ svg {
+			stroke-opacity: 0.5;
+			cursor: not-allowed;
+			box-shadow: none;
+			fill: transparent;
+
+			path:last-of-type {
+				stroke-opacity: 0;
+				stroke: transparent;
+			}
+		}
+	}
+
 	> svg {
-		width: 20px;
-		padding: 3px;
-		border-color: transparent;
+		width: 16px;
+		height: 16px;
+		stroke-width: 2px;
 		border-radius: var(--radiusSmall);
 	}
 }
 
 .InternalServerErrorToggler {
 	display: flex;
-	margin-left: 8px;
+	margin-left: 6px;
 	cursor: pointer;
 
 	> input {
@@ -391,19 +440,18 @@ select {
 		&:checked ~ span {
 			color: white;
 			background: var(--colorRed);
-			box-shadow: var(--boxShadow1);
 		}
 	}
 
 	> span {
-		padding: 5px 4px;
+		padding: 4px;
 		font-size: 10px;
+		font-weight: bold;
 		color: var(--colorSecondaryAction);
 		border-radius: var(--radiusSmall);
 		background: var(--colorSecondaryButtonBackground);
 
 		&:hover {
-			box-shadow: var(--boxShadow1);
 			background: var(--colorLightRed);
 			color: var(--colorRed);
 		}
@@ -530,7 +578,7 @@ select {
 		color: #9b71e8
 	}
 	.token.attr-name, .token.builtin, .token.char, .token.inserted, .token.selector, .token.string {
-		color: #459900
+		color: #3e8300
 	}
 	.language-css .token.string, .style .token.string, .token.entity, .token.operator, .token.url {
 		color: #9a6e3a;

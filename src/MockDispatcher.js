@@ -14,7 +14,7 @@ export async function dispatchMock(req, response) {
 		const broker = mockBrokerCollection.getBrokerForUrl(req.method, req.url)
 		if (!broker || broker.proxied) {
 			if (config.proxyFallback)
-				await proxy(req, response, Number(Boolean(broker?.delayed)) * config.delay)
+				await proxy(req, response, config.delay * Boolean(broker?.delayed))
 			else
 				sendNotFound(response)
 			return

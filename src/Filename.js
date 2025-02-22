@@ -61,6 +61,7 @@ function removeTrailingSlash(url = '') {
 		.replace('/#', '#')
 }
 
+// TODO ThinkAbout allowing custom status codes
 function responseStatusIsValid(status) {
 	return Number.isInteger(status)
 		&& status >= 100

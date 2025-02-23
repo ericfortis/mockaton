@@ -226,7 +226,7 @@ want a `Content-Type` header in the response.
 
 <details>
 <summary>Supported Methods</summary>
-<p>From Node.js <code>http.METHODS</code></p>
+<p>From <code>require('node:http').METHODS</code></p>
 <p>
 	ACL, BIND, CHECKOUT,
 	CONNECT, COPY, DELETE,
@@ -473,7 +473,7 @@ function capitalizePlugin(filePath) {
 Defaults to `true`. When `true`, these are the default options:
 ```js
 config.corsOrigins = ['*']
-config.corsMethods = ['GET', 'PUT', 'DELETE', 'POST', 'PATCH', 'HEAD', 'OPTIONS', 'TRACE', 'CONNECT']
+config.corsMethods = require('node:http').METHODS
 config.corsHeaders = ['content-type']
 config.corsCredentials = true
 config.corsMaxAge = 0 // seconds to cache the preflight req

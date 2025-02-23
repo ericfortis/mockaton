@@ -1,7 +1,8 @@
-export const StandardMethods = [
-	'GET', 'PUT', 'DELETE', 'POST', 'PATCH',
-	'HEAD', 'OPTIONS', 'TRACE', 'CONNECT'
-]
+import { METHODS } from 'node:http'
+
+
+export const SUPPORTED_METHODS = METHODS
+export const methodIsSupported = method => SUPPORTED_METHODS.includes(method)
 
 export class BodyReaderError extends Error {name = 'BodyReaderError'}
 

@@ -2,7 +2,7 @@ import { realpathSync } from 'node:fs'
 import { isDirectory } from './utils/fs.js'
 import { openInBrowser } from './utils/openInBrowser.js'
 import { jsToJsonPlugin } from './MockDispatcherPlugins.js'
-import { StandardMethods } from './utils/http-request.js'
+import { SUPPORTED_METHODS } from './utils/http-request.js'
 import { validateCorsAllowedMethods, validateCorsAllowedOrigins } from './utils/http-cors.js'
 
 
@@ -28,7 +28,7 @@ export const config = Object.seal({
 
 	corsAllowed: true,
 	corsOrigins: ['*'],
-	corsMethods: StandardMethods,
+	corsMethods: SUPPORTED_METHODS,
 	corsHeaders: ['content-type'],
 	corsExposedHeaders: [],
 	corsCredentials: true,

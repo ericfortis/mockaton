@@ -1,4 +1,4 @@
-const httpMethods = [ // node:http.METHODS
+const httpMethods = [ // @KeepSync with node:http.METHODS
 	'ACL', 'BIND', 'CHECKOUT',
 	'CONNECT', 'COPY', 'DELETE',
 	'GET', 'HEAD', 'LINK',

@@ -1,8 +1,6 @@
-import { StandardMethods } from './http-request.js'
-
+import { methodIsSupported } from './http-request.js'
 
 /* https://www.w3.org/TR/2020/SPSD-cors-20200602/#resource-processing-model */
-
 
 export function validateCorsAllowedOrigins(arr) {
 	if (!Array.isArray(arr))
@@ -13,8 +11,7 @@ export function validateCorsAllowedOrigins(arr) {
 }
 
 export function validateCorsAllowedMethods(arr) {
-	return Array.isArray(arr)
-		&& arr.every(m => StandardMethods.includes(m))
+	return Array.isArray(arr) && arr.every(methodIsSupported)
 }
 
 
@@ -38,7 +35,7 @@ const CH = CorsHeader
 export function isPreflight(req) {
 	return req.method === 'OPTIONS'
 		&& URL.canParse(req.headers[CH.Origin])
-		&& StandardMethods.includes(req.headers[CH.AccessControlRequestMethod])
+		&& methodIsSupported(req.headers[CH.AccessControlRequestMethod])
 }
 
 

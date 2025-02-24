@@ -37,7 +37,8 @@ export class MockBroker {
 	urlMaskMatches(url) {
 		let u = decodeURIComponent(url)
 		u = this.#removeQueryStringAndFragment(u)
-		return this.#urlRegex.test(u + '/')
+		u += '/'
+		return this.#urlRegex.test(u)
 	}
 
 

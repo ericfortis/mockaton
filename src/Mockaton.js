@@ -38,14 +38,7 @@ async function onRequest(req, response) {
 		response.setHeader('Server', 'Mockaton')
 
 		if (config.corsAllowed)
-			setCorsHeaders(req, response, {
-				origins: config.corsOrigins,
-				headers: config.corsHeaders,
-				methods: config.corsMethods,
-				maxAge: config.corsMaxAge,
-				credentials: config.corsCredentials,
-				exposedHeaders: config.corsExposedHeaders
-			})
+			setCorsHeaders(req, response, config)
 
 		const { url, method } = req
 

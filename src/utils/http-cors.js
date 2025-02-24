@@ -40,26 +40,26 @@ export function isPreflight(req) {
 
 
 export function setCorsHeaders(req, response, {
-	origins = [],
-	methods = [],
-	headers = [],
-	exposedHeaders = [],
-	credentials = false,
-	maxAge = 0
+	corsOrigins = [],
+	corsMethods = [],
+	corsHeaders = [],
+	corsExposedHeaders = [],
+	corsCredentials = false,
+	corsMaxAge = 0
 }) {
 	const reqOrigin = req.headers[CH.Origin]
-	const hasWildcard = origins.some(ao => ao === '*')
-	if (!reqOrigin || (!hasWildcard && !origins.includes(reqOrigin)))
+	const hasWildcard = corsOrigins.some(ao => ao === '*')
+	if (!reqOrigin || (!hasWildcard && !corsOrigins.includes(reqOrigin)))
 		return
 	response.setHeader(CH.AccessControlAllowOrigin, reqOrigin) // Never '*', so no need to `Vary` it
 
-	if (credentials)
+	if (corsCredentials)
 		response.setHeader(CH.AccessControlAllowCredentials, 'true')
 
 	if (req.headers[CH.AccessControlRequestMethod])
-		setPreflightSpecificHeaders(req, response, methods, headers, maxAge)
-	else if (exposedHeaders.length)
-		response.setHeader(CH.AccessControlExposeHeaders, exposedHeaders.join(','))
+		setPreflightSpecificHeaders(req, response, corsMethods, corsHeaders, corsMaxAge)
+	else if (corsExposedHeaders.length)
+		response.setHeader(CH.AccessControlExposeHeaders, corsExposedHeaders.join(','))
 }
 
 function setPreflightSpecificHeaders(req, response, methods, headers, maxAge) {

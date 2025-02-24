@@ -14,10 +14,10 @@ const AllowedDotCom = 'http://allowed.com'
 const NotAllowedDotCom = 'http://not-allowed.com'
 
 await describe('CORS', async () => {
-	let corsAllow = {}
+	let corsConfig = {}
 
 	const server = createServer((req, response) => {
-		setCorsHeaders(req, response, corsAllow)
+		setCorsHeaders(req, response, corsConfig)
 		if (isPreflight(req)) {
 			response.statusCode = 204
 			response.end()
@@ -82,9 +82,9 @@ await describe('CORS', async () => {
 
 	await describe('Preflight Response Headers', async () => {
 		await it('no origins allowed', async () => {
-			corsAllow = {
-				origins: [],
-				methods: ['GET']
+			corsConfig = {
+				corsOrigins: [],
+				corsMethods: ['GET']
 			}
 			const p = await preflight({
 				[CH.Origin]: FooDotCom,
@@ -98,9 +98,9 @@ await describe('CORS', async () => {
 		})
 
 		await it('not in allowed origins', async () => {
-			corsAllow = {
-				origins: [AllowedDotCom],
-				methods: ['GET']
+			corsConfig = {
+				corsOrigins: [AllowedDotCom],
+				corsMethods: ['GET']
 			}
 			const p = await preflight({
 				[CH.Origin]: NotAllowedDotCom,
@@ -113,9 +113,9 @@ await describe('CORS', async () => {
 		})
 
 		await it('origin and method match', async () => {
-			corsAllow = {
-				origins: [AllowedDotCom],
-				methods: ['GET']
+			corsConfig = {
+				corsOrigins: [AllowedDotCom],
+				corsMethods: ['GET']
 			}
 			const p = await preflight({
 				[CH.Origin]: AllowedDotCom,
@@ -128,9 +128,9 @@ await describe('CORS', async () => {
 		})
 
 		await it('origin matches from multiple', async () => {
-			corsAllow = {
-				origins: [AllowedDotCom, FooDotCom],
-				methods: ['GET']
+			corsConfig = {
+				corsOrigins: [AllowedDotCom, FooDotCom],
+				corsMethods: ['GET']
 			}
 			const p = await preflight({
 				[CH.Origin]: AllowedDotCom,
@@ -143,9 +143,9 @@ await describe('CORS', async () => {
 		})
 
 		await it('wildcard origin', async () => {
-			corsAllow = {
-				origins: ['*'],
-				methods: ['GET']
+			corsConfig = {
+				corsOrigins: ['*'],
+				corsMethods: ['GET']
 			}
 			const p = await preflight({
 				[CH.Origin]: FooDotCom,
@@ -158,10 +158,10 @@ await describe('CORS', async () => {
 		})
 
 		await it(`wildcard and credentials`, async () => {
-			corsAllow = {
-				origins: ['*'],
-				methods: ['GET'],
-				credentials: true
+			corsConfig = {
+				corsOrigins: ['*'],
+				corsMethods: ['GET'],
+				corsCredentials: true
 			}
 			const p = await preflight({
 				[CH.Origin]: FooDotCom,
@@ -174,11 +174,11 @@ await describe('CORS', async () => {
 		})
 
 		await it(`wildcard, credentials, and headers`, async () => {
-			corsAllow = {
-				origins: ['*'],
-				methods: ['GET'],
-				credentials: true,
-				headers: ['content-type', 'my-header']
+			corsConfig = {
+				corsOrigins: ['*'],
+				corsMethods: ['GET'],
+				corsCredentials: true,
+				corsHeaders: ['content-type', 'my-header']
 			}
 			const p = await preflight({
 				[CH.Origin]: FooDotCom,
@@ -193,9 +193,9 @@ await describe('CORS', async () => {
 
 	await describe('Non-Preflight (Actual Response) Headers', async () => {
 		await it('no origins allowed', async () => {
-			corsAllow = {
-				origins: [],
-				methods: ['GET']
+			corsConfig = {
+				corsOrigins: [],
+				corsMethods: ['GET']
 			}
 			const p = await request({
 				[CH.Origin]: NotAllowedDotCom
@@ -207,11 +207,11 @@ await describe('CORS', async () => {
 		})
 
 		await it('origin allowed', async () => {
-			corsAllow = {
-				origins: [AllowedDotCom],
-				methods: ['GET'],
-				credentials: true,
-				exposedHeaders: ['x-h1', 'x-h2']
+			corsConfig = {
+				corsOrigins: [AllowedDotCom],
+				corsMethods: ['GET'],
+				corsCredentials: true,
+				corsExposedHeaders: ['x-h1', 'x-h2']
 			}
 			const p = await request({
 				[CH.Origin]: AllowedDotCom

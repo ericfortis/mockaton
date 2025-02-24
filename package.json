@@ -8,7 +8,7 @@
 	"license": "MIT",
 	"repository": "https://github.com/ericfortis/mockaton",
 	"scripts": {
-		"test": "node --test src/**.test.js",
+		"test": "node --test \"src/**/*.test.js\"",
 		"start": "node dev-mockaton.js",
 		"start:ts": "node --import=tsx dev-mockaton.js",
 		"pixaton": "node --test --import=./pixaton-tests/_setup.js --experimental-test-isolation=none \"pixaton-tests/**/*.test.js\"",

@@ -7,8 +7,7 @@ import { DEFAULT_500_COMMENT, DEFAULT_MOCK_COMMENT } from './ApiConstants.js'
 export class MockBroker {
 	#urlRegex
 	constructor(file) {
-		const { urlMask } = parseFilename(file)
-		this.#urlRegex = new RegExp('^' + disregardVariables(removeQueryStringAndFragment(urlMask)) + '/*$')
+		this.#urlRegex = this.#buildUrlRegex(file)
 		this.mocks = []
 		this.currentMock = {
 			file: '',
@@ -16,6 +15,31 @@ export class MockBroker {
 		}
 		this.register(file)
 	}
+
+	#buildUrlRegex(file) {
+		let { urlMask } = parseFilename(file)
+		urlMask = this.#removeQueryStringAndFragment(urlMask)
+		urlMask = this.#disregardVariables(urlMask)
+		return new RegExp('^' + urlMask + '/*$')
+	}
+
+	#removeQueryStringAndFragment(str) { return str.replace(/[?#].*/, '') }
+
+	#disregardVariables(str) { return str.replace(/\[.*?]/g, '[^/]*') } // Stars out all parts that are in square brackets
+
+	// Appending a '/' so URLs ending with variables don't match
+	// URLs that have a path after that variable. For example,
+	// without it, the following regex would match both of these URLs:
+	//   api/foo/[route_id] => api/foo/.*  (wrong match because it’s too greedy)
+	//   api/foo/[route_id]/suffix => api/foo/.*/suffix
+	// By the same token, the regex handles many trailing
+	// slashes. For instance, for routing api/foo/[id]?qs…
+	urlMaskMatches(url) {
+		let u = decodeURIComponent(url)
+		u = this.#removeQueryStringAndFragment(u)
+		return this.#urlRegex.test(u + '/')
+	}
+
 
 	register(file) {
 		if (parseFilename(file).status === 500) {
@@ -44,17 +68,6 @@ export class MockBroker {
 		if (!isEmpty && this.file === file)
 			this.selectDefaultFile()
 		return isEmpty
-	}
-
-	// Appending a '/' so URLs ending with variables don't match
-	// URLs that have a path after that variable. For example,
-	// without it, the following regex would match both of these URLs:
-	//   api/foo/[route_id] => api/foo/.*  (wrong match because it’s too greedy)
-	//   api/foo/[route_id]/suffix => api/foo/.*/suffix
-	// By the same token, the regex handles many trailing
-	// slashes. For instance, for routing api/foo/[id]?qs…
-	urlMaskMatches(url) {
-		return this.#urlRegex.test(removeQueryStringAndFragment(decodeURIComponent(url)) + '/')
 	}
 
 	get file() { return this.currentMock.file }
@@ -114,13 +127,3 @@ export class MockBroker {
 		return this.mocks.some(mock => parseFilename(mock).status === 500)
 	}
 }
-
-// Stars out (for regex) all the paths that are in square brackets
-function disregardVariables(urlMask) {
-	return urlMask.replace(/\[.*?]/g, '[^/]*')
-}
-
-function removeQueryStringAndFragment(urlMask) {
-	return urlMask.replace(/[?#].*/, '')
-}
-

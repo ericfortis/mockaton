@@ -57,6 +57,10 @@ api/login<b>(locked out user)</b>.POST.423.json
 For instance, you can have mocks with a `4xx` or `5xx` status code for triggering
 error responses. Or with a `204` (No Content) for testing empty collections.
 
+<pre>
+api/videos.GET.<b>401</b>.json
+api/videos.GET.<b>500</b>.empty
+</pre>
 
 
 ## Basic Usage
@@ -89,7 +93,7 @@ colors, which contains all of their possible states. For example,
 permutations for out-of-stock, new-arrival, and discontinued.
 
 Also, if you select the **Admin User** from the Mockaton dashboard,
-the color cards will have a Delete button as well.
+the color cards will have a Delete button.
 
 ```sh  
 git clone https://github.com/ericfortis/mockaton.git
@@ -116,6 +120,7 @@ The app looks like this:
   - alerts
   - notifications
   - slow to build resources
+- Mocking third-party APIs
 
 ### Time Travel
 If you commit the mocks to your repo, it’s straightforward to bisect bugs and
@@ -556,5 +561,4 @@ await mockaton.reset()
 
 <div style="display: flex; align-items: center; gap: 20px">
   <img src="fixtures-mocks/api/user/avatar.GET.200.png" width="170"/>
-  <p style="font-size: 18px">“Mockaton”</p>
 </div>

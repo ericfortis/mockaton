@@ -34,7 +34,7 @@ export async function dispatchMock(req, response) {
 			: await applyPlugins(join(config.mocksDir, broker.file), req, response)
 
 		response.setHeader('Content-Type', mime)
-		setTimeout(() => response.end(body), Number(broker.delayed) * config.delay)
+		setTimeout(() => response.end(body), config.delay * broker.delayed)
 	}
 	catch (error) {
 		if (error instanceof BodyReaderError)

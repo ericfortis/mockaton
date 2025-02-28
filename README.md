@@ -17,8 +17,8 @@ For example, for <code>/<b>api/user</b>/1234</code> the mock filename would be:
 </pre>
 
 ## Multiple Mock Variants
-Each route can have different mocks. For that you
-can add comments or use different status codes.
+Each route can have different mocks. For that, you
+can add comments or use a different status code.
 
 
 ### Adding comments in filenames

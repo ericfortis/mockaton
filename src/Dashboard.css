@@ -1,7 +1,7 @@
 :root {
 	--boxShadow1: 0 2px 1px -1px rgba(0, 0, 0, 0.15), 0 1px 1px 0 rgba(0, 0, 0, 0.15), 0 1px 3px 0 rgba(0, 0, 0, 0.1);
 	--radius: 28px;
-	--radiusSmall: 2px;
+	--radiusSmall: 4px;
 }
 
 @media (prefers-color-scheme: light) {
@@ -120,7 +120,7 @@ select {
 	img {
 		width: 130px;
 		align-self: center;
-		margin-right: 28px;
+		margin-right: 20px;
 	}
 
 	.Field {
@@ -181,7 +181,7 @@ select {
 
 		&.FallbackBackend {
 			position: relative;
-			width: 210px;
+			width: 212px;
 
 			.SaveProxiedCheckbox {
 				position: absolute;
@@ -193,6 +193,10 @@ select {
 				align-items: center;
 				font-size: 11px;
 				gap: 4px;
+
+				span {
+					margin-left: 0;
+				}
 
 				input:disabled + span {
 					opacity: 0.8;
@@ -278,10 +282,10 @@ select {
 
 .PreviewLink {
 	position: relative;
-	left: -6px;
+	left: -10px;
 	display: inline-block;
-	width: 272px;
-	padding: 8px 6px;
+	width: 282px;
+	padding: 8px 11px;
 	border-radius: var(--radius);
 	color: var(--colorAccent);
 	text-decoration: none;

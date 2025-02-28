@@ -3,14 +3,12 @@
 ![NPM Version](https://img.shields.io/npm/v/mockaton)
 ![NPM Version](https://img.shields.io/npm/l/mockaton)
 
-Mockaton is an HTTP mock server with the goal of improving the frontend development
-and testing experience. And of the backend when dealing with third-party APIs.
+HTTP mock server for enhancing the development and testing experience.
 
----
+## Convention over Code
 
-With Mockaton you don’t need to write code for wiring mocks.
-Instead, place your mocks in a directory and it will be scanned
-for filenames following a convention similar to the URLs.
+With Mockaton you don’t need to write code for wiring mocks. Instead, it scans a
+given directory for mock filenames following a convention similar to the URLs.
 
 For example, for <code>/<b>api/user</b>/1234</code> the mock filename would be:
 <pre>

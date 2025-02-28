@@ -3,7 +3,7 @@
 ![NPM Version](https://img.shields.io/npm/v/mockaton)
 ![NPM Version](https://img.shields.io/npm/l/mockaton)
 
-HTTP mock server for enhancing the development and testing experience.
+HTTP mock server for developing and testing frontends.
 
 ## Convention over Code
 

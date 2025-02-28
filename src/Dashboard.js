@@ -58,6 +58,7 @@ const CSS = {
 }
 
 const r = createElement
+const s = createSvgElement
 const mockaton = new Commander(window.location.origin)
 
 const PROGRESS_BAR_DELAY = 180
@@ -519,16 +520,15 @@ function onError(error) {
 
 function TimerIcon() {
 	return (
-		r('svg', { viewBox: '0 0 24 24' },
-			r('path', { d: 'm11 5.6 0.14 7.2 6 3.7' })))
+		s('svg', { viewBox: '0 0 24 24' },
+			s('path', { d: 'm11 5.6 0.14 7.2 6 3.7' })))
 }
 
 function CloudIcon() {
 	return (
-		r('svg', { viewBox: '0 0 24 24' },
-			r('path', { d: 'm6.1 8.9c0.98-2.3 3.3-3.9 6-3.9 3.3-2e-7 6 2.5 6.4 5.7 0.018 0.15 0.024 0.18 0.026 0.23 0.0016 0.037 8.2e-4 0.084 0.098 0.14 0.097 0.054 0.29 0.05 0.48 0.05 2.2 0 4 1.8 4 4s-1.8 4-4 4c-4-0.038-9-0.038-13-0.018-2.8 0-5-2.2-5-5-2.2e-7 -2.8 2.2-5 5-5 2.8 2e-7 5 2.2 5 5' }),
-			r('path', { d: 'm6.1 9.1c2.8 0 5 2.3 5 5' })
-		))
+		s('svg', { viewBox: '0 0 24 24' },
+			s('path', { d: 'm6.1 8.9c0.98-2.3 3.3-3.9 6-3.9 3.3-2e-7 6 2.5 6.4 5.7 0.018 0.15 0.024 0.18 0.026 0.23 0.0016 0.037 8.2e-4 0.084 0.098 0.14 0.097 0.054 0.29 0.05 0.48 0.05 2.2 0 4 1.8 4 4s-1.8 4-4 4c-4-0.038-9-0.038-13-0.018-2.8 0-5-2.2-5-5-2.2e-7 -2.8 2.2-5 5-5 2.8 2e-7 5 2.2 5 5' }),
+			s('path', { d: 'm6.1 9.1c2.8 0 5 2.3 5 5' })))
 }
 
 
@@ -568,15 +568,11 @@ function cssClass(...args) {
 }
 
 
-// These are simplified React-compatible implementations.
-// IOW, for switching to React, remove the `createRoot`, `createElement`, `useRef`
+// These are simplified React-compatible implementations
 
 function createElement(elem, props = null, ...children) {
 	if (typeof elem === 'function')
 		return elem(props)
-
-	if (['svg', 'path'].includes(elem)) // Incomplete list
-		return createSvgElement(elem, props, children)
 
 	const node = document.createElement(elem)
 	if (props)

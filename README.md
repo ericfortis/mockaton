@@ -1,12 +1,8 @@
 <img src="src/mockaton-logo.svg" alt="Mockaton Logo" width="210" style="margin-top: 30px"/>
 
-HTTP Mock Server
-
 ![NPM Version](https://img.shields.io/npm/v/mockaton)
 ![NPM Version](https://img.shields.io/npm/l/mockaton)
 
-
-## Convention over Code
 
 With Mockaton you don’t need to write code for wiring mocks. Instead, it scans a
 given directory for filenames following a convention similar to the URLs.

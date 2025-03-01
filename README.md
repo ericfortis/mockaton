@@ -371,10 +371,11 @@ Mockaton’s predefined list. For that, you can add it to <code>config.extraMime
 Files under `config.staticDir` don’t use the filename convention.
 They take precedence over the `GET` mocks in `config.mocksDir`.
 For example, if you have two files for `GET /foo/bar.jpg`
-```
-my-static-dir/foo/bar.jpg
-my-mocks-dir/foo/bar.jpg.GET.200.jpg // Unreacheable
-```
+
+<pre>
+my-static-dir<b>/foo/bar.jpg</b>
+ my-mocks-dir<b>/foo/bar.jpg</b>.GET.200.jpg // Unreacheable
+</pre>
 
 
 ### `cookies?: { [label: string]: string }`

@@ -279,7 +279,7 @@ documenting the URL contract.
 api/video<b>?limit=[limit]</b>.GET.200.json
 </pre>
 
-Speaking of which, on Windows filenames containing "?" are [not
+On Windows filenames containing "?" are [not
 permitted](https://learn.microsoft.com/en-us/windows/win32/fileio/naming-a-file), but since that’s part of the query string it’s ignored anyway.
 
 

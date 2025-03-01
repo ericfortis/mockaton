@@ -26,7 +26,6 @@ Nonetheless, there’s a programmatic API see **Commander&nbsp;API** below.
 
 
 ## Multiple Mock Variants
-Each route can have different mocks. There’s two options for doing that:
 
 ### Adding comments to the filename
 Comments are anything within parentheses,

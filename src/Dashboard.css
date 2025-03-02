@@ -1,6 +1,6 @@
 :root {
 	--boxShadow1: 0 2px 1px -1px rgba(0, 0, 0, 0.15), 0 1px 1px 0 rgba(0, 0, 0, 0.15), 0 1px 3px 0 rgba(0, 0, 0, 0.1);
-	--radius: 28px;
+	--radius: 6px;
 	--radiusSmall: 4px;
 }
 
@@ -17,7 +17,7 @@
 		--colorSecondaryAction: #555;
 		--colorDisabledMockSelector: #444;
 		--colorHover: #dfefff;
-		--colorLabel: #555;
+		--colorLabel: #444;
 		--colorLightRed: #ffe4ee;
 		--colorRed: #da0f00;
 		--colorText: #000;
@@ -89,7 +89,7 @@ select {
 	background: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%23888888'><path d='M16.59 8.59 12 13.17 7.41 8.59 6 10l6 6 6-6z'/></svg>") no-repeat;
 	background-color: var(--colorComboBoxBackground);
 	background-size: 16px;
-	background-position: 98% center;
+	background-position: 100% center;
 
 	&:enabled {
 		box-shadow: var(--boxShadow1);
@@ -115,12 +115,12 @@ select {
 	border-bottom: 1px solid rgba(127, 127, 127, 0.1);
 	background: var(--colorHeaderBackground);
 	box-shadow: var(--boxShadow1);
-	gap: 6px;
+	gap: 10px;
 
 	img {
 		width: 130px;
 		align-self: center;
-		margin-right: 20px;
+		margin-right: 22px;
 	}
 
 	.Field {
@@ -129,7 +129,6 @@ select {
 		span {
 			display: flex;
 			align-items: center;
-			margin-left: 6px;
 			color: var(--colorLabel);
 			font-size: 11px;
 			gap: 4px;
@@ -149,9 +148,9 @@ select {
 		select {
 			width: 100%;
 			height: 28px;
-			padding: 4px 12px;
+			padding: 4px 8px;
 			border-right: 3px solid transparent;
-			margin-top: 3px;
+			margin-top: 4px;
 			color: var(--colorText);
 			font-size: 11px;
 			box-shadow: var(--boxShadow1);
@@ -164,7 +163,7 @@ select {
 		}
 
 		&.GlobalDelayField {
-			width: 88px;
+			width: 84px;
 
 			input[type=number] {
 				padding-right: 0;
@@ -181,7 +180,7 @@ select {
 
 		&.FallbackBackend {
 			position: relative;
-			width: 212px;
+			width: 210px;
 
 			.SaveProxiedCheckbox {
 				position: absolute;
@@ -193,10 +192,6 @@ select {
 				align-items: center;
 				font-size: 11px;
 				gap: 4px;
-
-				span {
-					margin-left: 0;
-				}
 
 				input:disabled + span {
 					opacity: 0.8;
@@ -243,7 +238,7 @@ select {
 		}
 
 		tr {
-			border-top: 1px solid transparent;
+			border-top: 2px solid transparent;
 		}
 	}
 
@@ -282,10 +277,10 @@ select {
 
 .PreviewLink {
 	position: relative;
-	left: -10px;
+	left: -6px;
 	display: inline-block;
-	width: 282px;
-	padding: 8px 11px;
+	width: 272px;
+	padding: 8px 6px;
 	border-radius: var(--radius);
 	color: var(--colorAccent);
 	text-decoration: none;
@@ -302,14 +297,14 @@ select {
 .MockSelector {
 	width: 260px;
 	height: 30px;
-	padding-right: 11px;
-	padding-left: 17px;
+	padding-right: 5px;
+	padding-left: 16px;
 	border: 0;
 	text-align: right;
 	direction: rtl;
 	text-overflow: ellipsis;
 	font-size: 12px;
-	background-position: 5px center;
+	background-position: 2px center;
 
 	&.nonDefault {
 		font-weight: bold;
@@ -319,7 +314,7 @@ select {
 		background: var(--color4xxBackground);
 	}
 	&:disabled {
-		padding-right: 10px;
+		padding-right: 4px;
 		appearance: none;
 		background: transparent;
 		cursor: default;
@@ -368,8 +363,8 @@ select {
 	}
 
 	> svg {
-		width: 20px;
-		height: 20px;
+		width: 18px;
+		height: 18px;
 		stroke-width: 2.5px;
 		border-radius: 50%;
 		background: var(--colorSecondaryButtonBackground);
@@ -377,7 +372,7 @@ select {
 }
 
 .ProxyToggler {
-	padding: 1px 4px;
+	padding: 1px 3px;
 	background: var(--colorSecondaryButtonBackground);
 	border-radius: var(--radiusSmall);
 
@@ -425,7 +420,7 @@ select {
 
 .InternalServerErrorToggler {
 	display: flex;
-	margin-left: 6px;
+	margin-left: 8px;
 	cursor: pointer;
 
 	> input {
@@ -445,7 +440,7 @@ select {
 	}
 
 	> span {
-		padding: 5px 4px;
+		padding: 4px;
 		font-size: 10px;
 		font-weight: bold;
 		color: var(--colorSecondaryAction);

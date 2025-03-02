@@ -3,19 +3,30 @@ import { randomUUID } from 'node:crypto'
 
 import { config } from './config.js'
 import { extFor } from './utils/mime.js'
-import { readBody } from './utils/http-request.js'
 import { write, isFile } from './utils/fs.js'
 import { makeMockFilename } from './Filename.js'
+import { readBody, BodyReaderError } from './utils/http-request.js'
+import { sendUnprocessableContent, sendBadGateway } from './utils/http-response.js'
 
 
 export async function proxy(req, response, delay) {
-	const proxyResponse = await fetch(config.proxyFallback + req.url, {
-		method: req.method,
-		headers: req.headers,
-		body: req.method === 'GET' || req.method === 'HEAD'
-			? undefined
-			: await readBody(req)
-	})
+	let proxyResponse
+	try {
+		proxyResponse = await fetch(config.proxyFallback + req.url, {
+			method: req.method,
+			headers: req.headers,
+			body: req.method === 'GET' || req.method === 'HEAD'
+				? undefined
+				: await readBody(req)
+		})
+	}
+	catch (error) { // TESTME
+		if (error instanceof BodyReaderError)
+			sendUnprocessableContent(response, error.name)
+		else
+			sendBadGateway(response, error)
+		return
+	}
 
 	const headers = Object.fromEntries(proxyResponse.headers)
 	headers['set-cookie'] = proxyResponse.headers.getSetCookie() // parses multiple into an array

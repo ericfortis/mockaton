@@ -103,6 +103,10 @@ select {
 	}
 }
 
+.red {
+	color: var(--colorRed);
+}
+
 .Header {
 	position: fixed;
 	z-index: 100;

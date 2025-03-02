@@ -1,4 +1,4 @@
-import { DEFAULT_500_COMMENT } from './ApiConstants.js'
+import { DEFAULT_500_COMMENT, HEADER_FOR_502 } from './ApiConstants.js'
 import { parseFilename } from './Filename.js'
 import { Commander } from './Commander.js'
 
@@ -20,6 +20,7 @@ const Strings = {
 	delay_ms: 'Delay (ms)',
 	empty_response_body: '/* Empty Response Body */',
 	fallback_server: 'Fallback Backend',
+	fallback_server_error: '⛔ Fallback Backend Error',
 	fallback_server_placeholder: 'Type Server Address',
 	got: 'Got',
 	internal_server_error: 'Internal Server Error',
@@ -51,6 +52,7 @@ const CSS = {
 	SaveProxiedCheckbox: 'SaveProxiedCheckbox',
 	StaticFilesList: 'StaticFilesList',
 
+	red: 'red',
 	empty: 'empty',
 	chosen: 'chosen',
 	status4xx: 'status4xx',
@@ -425,10 +427,12 @@ function PayloadViewerTitle({ file, status, statusText }) {
 			r('abbr', { title: statusText }, status),
 			'.' + ext))
 }
-function PayloadViewerTitleWhenProxied({ mime, status, statusText }) {
+function PayloadViewerTitleWhenProxied({ mime, status, statusText, gatewayIsBad }) {
 	return (
 		r('span', null,
-			Strings.got + ' ',
+			gatewayIsBad
+				? r('span', { className: CSS.red }, Strings.fallback_server_error + ' ')
+				: r('span', null, Strings.got + ' '),
 			r('abbr', { title: statusText }, status),
 			' ' + mime))
 }
@@ -452,7 +456,8 @@ async function updatePayloadViewer(method, urlMask, response) {
 		payloadViewerTitleRef.current.replaceChildren(PayloadViewerTitleWhenProxied({
 			status: response.status,
 			statusText: response.statusText,
-			mime
+			mime,
+			gatewayIsBad: response.headers.get(HEADER_FOR_502)
 		}))
 	else
 		payloadViewerTitleRef.current.replaceChildren(PayloadViewerTitle({

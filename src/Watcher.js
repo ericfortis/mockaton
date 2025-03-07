@@ -7,25 +7,20 @@ import { isFile } from './utils/fs.js'
 import * as mockBrokerCollection from './mockBrokersCollection.js'
 
 
-let nAR_Events = 0 // AR = Add or Remove Mock
+// AR = Add or Remove Mock
+export const arEvents = new class extends EventEmitter {
+	count = 0
 
-export function countAR_Events() {
-	return nAR_Events
-}
-
-
-const emitter = new EventEmitter()
-
-export function subscribeAR_EventListener(callback) {
-	emitter.on('AR', callback)
-}
-export function unsubscribeAR_EventListener(callback) {
-	emitter.removeListener('AR', callback)
-}
-
-function emitAddOrRemoveMock() {
-	nAR_Events++
-	emitter.emit('AR')
+	emit() {
+		this.count++
+		super.emit('AR')
+	}
+	subscribe(listener) {
+		this.on('AR', listener)
+	}
+	unsubscribe(listener) {
+		this.removeListener('AR', listener)
+	}
 }
 
 export function watchMocksDir() {
@@ -35,11 +30,11 @@ export function watchMocksDir() {
 			return
 		if (isFile(join(dir, file))) {
 			if (mockBrokerCollection.registerMock(file, 'isFromWatcher'))
-				emitAddOrRemoveMock()
+				arEvents.emit()
 		}
 		else {
 			mockBrokerCollection.unregisterMock(file)
-			emitAddOrRemoveMock()
+			arEvents.emit()
 		}
 	})
 }

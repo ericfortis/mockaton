@@ -6,11 +6,11 @@
 import { join } from 'node:path'
 import { cookie } from './cookie.js'
 import { config } from './config.js'
+import { arEvents } from './Watcher.js'
 import { parseJSON } from './utils/http-request.js'
 import { listFilesRecursively } from './utils/fs.js'
 import * as mockBrokersCollection from './mockBrokersCollection.js'
 import { DF, API, LONG_POLL_SERVER_TIMEOUT } from './ApiConstants.js'
-import { countAR_Events, subscribeAR_EventListener, unsubscribeAR_EventListener } from './Watcher.js'
 import { sendOK, sendJSON, sendUnprocessableContent, sendDashboardFile, sendForbidden } from './utils/http-response.js'
 
 
@@ -82,22 +82,22 @@ function listStaticFiles(req, response) {
 
 function longPollAR_Events(req, response) {
 	// e.g. tab was hidden while new mocks were added or removed
-	const clientIsOutOfSync = parseInt(req.headers[DF.lastReceived_nAR], 10) !== countAR_Events()
+	const clientIsOutOfSync = parseInt(req.headers[DF.lastReceived_nAR], 10) !== arEvents.count
 	if (clientIsOutOfSync) {
-		sendJSON(response, countAR_Events())
+		sendJSON(response, arEvents.count)
 		return
 	}
 
 	function onAddOrRemoveMock() {
-		unsubscribeAR_EventListener(onAddOrRemoveMock)
-		sendJSON(response, countAR_Events())
+		arEvents.unsubscribe(onAddOrRemoveMock)
+		sendJSON(response, arEvents.count)
 	}
 	response.setTimeout(LONG_POLL_SERVER_TIMEOUT, onAddOrRemoveMock)
 	req.on('error', () => {
-		unsubscribeAR_EventListener(onAddOrRemoveMock)
+		arEvents.unsubscribe(onAddOrRemoveMock)
 		response.destroy()
 	})
-	subscribeAR_EventListener(onAddOrRemoveMock)
+	arEvents.subscribe(onAddOrRemoveMock)
 }
 
 

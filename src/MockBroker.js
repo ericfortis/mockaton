@@ -33,7 +33,9 @@ export class MockBroker {
 		this.#sortMocks()
 	}
 
-	#deleteTemp500() { this.mocks = this.mocks.filter(file => !this.#isTemp500(file)) }
+	#deleteTemp500() {
+		this.mocks = this.mocks.filter(file => !this.#isTemp500(file))
+	}
 
 	#isTemp500(file) { return includesComment(file, DEFAULT_500_COMMENT) }
 

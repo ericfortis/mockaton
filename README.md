@@ -364,8 +364,8 @@ Mockaton’s predefined list. For that, you can add it to <code>config.extraMime
 - Use Case 2: For a standalone demo server. For example,
   build your frontend bundle, and serve it from Mockaton.
 
-Files under `config.staticDir` don’t use the filename convention.
-They take precedence over the `GET` mocks in `config.mocksDir`.
+Files under `config.staticDir` don’t use the filename convention, and
+they take precedence over `GET` mocks in `config.mocksDir`.
 For example, if you have two files for `GET /foo/bar.jpg`
 
 <pre>

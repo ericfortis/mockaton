@@ -123,7 +123,7 @@ async function selectMock(req, response) {
 	if (!broker || !broker.hasMock(file))
 		sendUnprocessableContent(response, `Missing Mock: ${file}`)
 	else {
-		broker.updateFile(file)
+		broker.selectFile(file)
 		sendOK(response)
 	}
 }

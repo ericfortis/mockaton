@@ -26,7 +26,7 @@ export class MockBroker {
 	register(file) {
 		if (parseFilename(file).status === 500) {
 			if (this.temp500IsSelected)
-				this.updateFile(file)
+				this.selectFile(file)
 			this.#deleteTemp500()
 		}
 		this.mocks.push(file)
@@ -37,7 +37,9 @@ export class MockBroker {
 		this.mocks = this.mocks.filter(file => !this.#isTemp500(file))
 	}
 
-	#isTemp500(file) { return includesComment(file, DEFAULT_500_COMMENT) }
+	#isTemp500(file) {
+		return includesComment(file, DEFAULT_500_COMMENT)
+	}
 
 	#sortMocks() {
 		this.mocks.sort()
@@ -71,10 +73,10 @@ export class MockBroker {
 	}
 
 	selectDefaultFile() {
-		this.updateFile(this.mocks[0])
+		this.selectFile(this.mocks[0])
 	}
 
-	updateFile(filename) {
+	selectFile(filename) {
 		this.currentMock.file = filename
 	}
 
@@ -84,7 +86,7 @@ export class MockBroker {
 
 	updateProxied(proxied) {
 		if (proxied)
-			this.updateFile('')
+			this.selectFile('')
 		else
 			this.selectDefaultFile()
 	}
@@ -92,7 +94,7 @@ export class MockBroker {
 	setByMatchingComment(comment) {
 		for (const file of this.mocks)
 			if (includesComment(file, comment)) {
-				this.updateFile(file)
+				this.selectFile(file)
 				break
 			}
 	}

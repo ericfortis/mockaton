@@ -607,12 +607,12 @@ async function testCorsAllowed() {
 			method: 'OPTIONS',
 			headers: {
 				[CorsHeader.Origin]: 'http://example.com',
-				[CorsHeader.AccessControlRequestMethod]: 'GET'
+				[CorsHeader.AcRequestMethod]: 'GET'
 			}
 		})
 		equal(res.status, 204)
-		equal(res.headers.get(CorsHeader.AccessControlAllowOrigin), 'http://example.com')
-		equal(res.headers.get(CorsHeader.AccessControlAllowMethods), 'GET')
+		equal(res.headers.get(CorsHeader.AcAllowOrigin), 'http://example.com')
+		equal(res.headers.get(CorsHeader.AcAllowMethods), 'GET')
 	})
 	await it('cors actual response', async () => {
 		const res = await request(fixtureDefaultInName[0], {
@@ -621,8 +621,8 @@ async function testCorsAllowed() {
 			}
 		})
 		equal(res.status, 200)
-		equal(res.headers.get(CorsHeader.AccessControlAllowOrigin), 'http://example.com')
-		equal(res.headers.get(CorsHeader.AccessControlExposeHeaders), 'Content-Encoding')
+		equal(res.headers.get(CorsHeader.AcAllowOrigin), 'http://example.com')
+		equal(res.headers.get(CorsHeader.AcExposeHeaders), 'Content-Encoding')
 	})
 }
 

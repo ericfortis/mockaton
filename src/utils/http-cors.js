@@ -18,16 +18,16 @@ export function validateCorsAllowedMethods(arr) {
 export const CorsHeader = {
 	// Request
 	Origin: 'origin',
-	AccessControlRequestMethod: 'access-control-request-method',
-	AccessControlRequestHeaders: 'access-control-request-headers', // Comma separated
+	AcRequestMethod: 'access-control-request-method',
+	AcRequestHeaders: 'access-control-request-headers', // Comma separated
 
 	// Response
-	AccessControlMaxAge: 'Access-Control-Max-Age',
-	AccessControlAllowOrigin: 'Access-Control-Allow-Origin', // '*' | Space delimited | null
-	AccessControlAllowMethods: 'Access-Control-Allow-Methods', // '*' | Comma delimited
-	AccessControlAllowHeaders: 'Access-Control-Allow-Headers', // '*' | Comma delimited 
-	AccessControlExposeHeaders: 'Access-Control-Expose-Headers', // '*' | Comma delimited (headers client-side JS can read)
-	AccessControlAllowCredentials: 'Access-Control-Allow-Credentials' // 'true'
+	AcMaxAge: 'Access-Control-Max-Age',
+	AcAllowOrigin: 'Access-Control-Allow-Origin', // '*' | Space delimited | null
+	AcAllowMethods: 'Access-Control-Allow-Methods', // '*' | Comma delimited
+	AcAllowHeaders: 'Access-Control-Allow-Headers', // '*' | Comma delimited 
+	AcExposeHeaders: 'Access-Control-Expose-Headers', // '*' | Comma delimited (headers client-side JS can read)
+	AcAllowCredentials: 'Access-Control-Allow-Credentials' // 'true'
 }
 const CH = CorsHeader
 
@@ -35,7 +35,7 @@ const CH = CorsHeader
 export function isPreflight(req) {
 	return req.method === 'OPTIONS'
 		&& URL.canParse(req.headers[CH.Origin])
-		&& methodIsSupported(req.headers[CH.AccessControlRequestMethod])
+		&& methodIsSupported(req.headers[CH.AcRequestMethod])
 }
 
 
@@ -51,23 +51,23 @@ export function setCorsHeaders(req, response, {
 	const hasWildcard = corsOrigins.some(ao => ao === '*')
 	if (!reqOrigin || (!hasWildcard && !corsOrigins.includes(reqOrigin)))
 		return
-	response.setHeader(CH.AccessControlAllowOrigin, reqOrigin) // Never '*', so no need to `Vary` it
+	response.setHeader(CH.AcAllowOrigin, reqOrigin) // Never '*', so no need to `Vary` it
 
 	if (corsCredentials)
-		response.setHeader(CH.AccessControlAllowCredentials, 'true')
+		response.setHeader(CH.AcAllowCredentials, 'true')
 
-	if (req.headers[CH.AccessControlRequestMethod])
+	if (req.headers[CH.AcRequestMethod])
 		setPreflightSpecificHeaders(req, response, corsMethods, corsHeaders, corsMaxAge)
 	else if (corsExposedHeaders.length)
-		response.setHeader(CH.AccessControlExposeHeaders, corsExposedHeaders.join(','))
+		response.setHeader(CH.AcExposeHeaders, corsExposedHeaders.join(','))
 }
 
 function setPreflightSpecificHeaders(req, response, methods, headers, maxAge) {
-	const methodAskingFor = req.headers[CH.AccessControlRequestMethod]
+	const methodAskingFor = req.headers[CH.AcRequestMethod]
 	if (!methods.includes(methodAskingFor))
 		return
-	response.setHeader(CH.AccessControlMaxAge, maxAge)
-	response.setHeader(CH.AccessControlAllowMethods, methodAskingFor)
+	response.setHeader(CH.AcMaxAge, maxAge)
+	response.setHeader(CH.AcAllowMethods, methodAskingFor)
 	if (headers.length)
-		response.setHeader(CH.AccessControlAllowHeaders, headers.join(','))
+		response.setHeader(CH.AcAllowHeaders, headers.join(','))
 }

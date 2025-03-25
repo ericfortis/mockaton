@@ -41,7 +41,7 @@ await describe('CORS', async () => {
 	await describe('Identifies Preflight Requests', async () => {
 		const requiredRequestHeaders = {
 			[CH.Origin]: 'http://localhost:9999',
-			[CH.AccessControlRequestMethod]: 'POST'
+			[CH.AcRequestMethod]: 'POST'
 		}
 
 		await it('Ignores non-OPTIONS requests', async () => {
@@ -58,17 +58,17 @@ await describe('CORS', async () => {
 			equal(await res.text(), 'NON_PREFLIGHT')
 		})
 
-		await it(`Ignores missing method in ${CH.AccessControlRequestMethod} header`, async () => {
+		await it(`Ignores missing method in ${CH.AcRequestMethod} header`, async () => {
 			const headers = { ...requiredRequestHeaders }
-			delete headers[CH.AccessControlRequestMethod]
+			delete headers[CH.AcRequestMethod]
 			const res = await preflight(headers)
 			equal(await res.text(), 'NON_PREFLIGHT')
 		})
 
-		await it(`Ignores non-standard method in ${CH.AccessControlRequestMethod} header`, async () => {
+		await it(`Ignores non-standard method in ${CH.AcRequestMethod} header`, async () => {
 			const headers = {
 				...requiredRequestHeaders,
-				[CH.AccessControlRequestMethod]: 'NON_STANDARD'
+				[CH.AcRequestMethod]: 'NON_STANDARD'
 			}
 			const res = await preflight(headers)
 			equal(await res.text(), 'NON_PREFLIGHT')
@@ -88,13 +88,13 @@ await describe('CORS', async () => {
 			}
 			const p = await preflight({
 				[CH.Origin]: FooDotCom,
-				[CH.AccessControlRequestMethod]: 'GET'
+				[CH.AcRequestMethod]: 'GET'
 			})
-			headerIs(p, CH.AccessControlAllowOrigin, null)
-			headerIs(p, CH.AccessControlAllowMethods, null)
-			headerIs(p, CH.AccessControlAllowCredentials, null)
-			headerIs(p, CH.AccessControlAllowHeaders, null)
-			headerIs(p, CH.AccessControlMaxAge, null)
+			headerIs(p, CH.AcAllowOrigin, null)
+			headerIs(p, CH.AcAllowMethods, null)
+			headerIs(p, CH.AcAllowCredentials, null)
+			headerIs(p, CH.AcAllowHeaders, null)
+			headerIs(p, CH.AcMaxAge, null)
 		})
 
 		await it('not in allowed origins', async () => {
@@ -104,12 +104,12 @@ await describe('CORS', async () => {
 			}
 			const p = await preflight({
 				[CH.Origin]: NotAllowedDotCom,
-				[CH.AccessControlRequestMethod]: 'GET'
+				[CH.AcRequestMethod]: 'GET'
 			})
-			headerIs(p, CH.AccessControlAllowOrigin, null)
-			headerIs(p, CH.AccessControlAllowMethods, null)
-			headerIs(p, CH.AccessControlAllowCredentials, null)
-			headerIs(p, CH.AccessControlAllowHeaders, null)
+			headerIs(p, CH.AcAllowOrigin, null)
+			headerIs(p, CH.AcAllowMethods, null)
+			headerIs(p, CH.AcAllowCredentials, null)
+			headerIs(p, CH.AcAllowHeaders, null)
 		})
 
 		await it('origin and method match', async () => {
@@ -119,12 +119,12 @@ await describe('CORS', async () => {
 			}
 			const p = await preflight({
 				[CH.Origin]: AllowedDotCom,
-				[CH.AccessControlRequestMethod]: 'GET'
+				[CH.AcRequestMethod]: 'GET'
 			})
-			headerIs(p, CH.AccessControlAllowOrigin, AllowedDotCom)
-			headerIs(p, CH.AccessControlAllowMethods, 'GET')
-			headerIs(p, CH.AccessControlAllowCredentials, null)
-			headerIs(p, CH.AccessControlAllowHeaders, null)
+			headerIs(p, CH.AcAllowOrigin, AllowedDotCom)
+			headerIs(p, CH.AcAllowMethods, 'GET')
+			headerIs(p, CH.AcAllowCredentials, null)
+			headerIs(p, CH.AcAllowHeaders, null)
 		})
 
 		await it('origin matches from multiple', async () => {
@@ -134,12 +134,12 @@ await describe('CORS', async () => {
 			}
 			const p = await preflight({
 				[CH.Origin]: AllowedDotCom,
-				[CH.AccessControlRequestMethod]: 'GET'
+				[CH.AcRequestMethod]: 'GET'
 			})
-			headerIs(p, CH.AccessControlAllowOrigin, AllowedDotCom)
-			headerIs(p, CH.AccessControlAllowMethods, 'GET')
-			headerIs(p, CH.AccessControlAllowCredentials, null)
-			headerIs(p, CH.AccessControlAllowHeaders, null)
+			headerIs(p, CH.AcAllowOrigin, AllowedDotCom)
+			headerIs(p, CH.AcAllowMethods, 'GET')
+			headerIs(p, CH.AcAllowCredentials, null)
+			headerIs(p, CH.AcAllowHeaders, null)
 		})
 
 		await it('wildcard origin', async () => {
@@ -149,12 +149,12 @@ await describe('CORS', async () => {
 			}
 			const p = await preflight({
 				[CH.Origin]: FooDotCom,
-				[CH.AccessControlRequestMethod]: 'GET'
+				[CH.AcRequestMethod]: 'GET'
 			})
-			headerIs(p, CH.AccessControlAllowOrigin, FooDotCom)
-			headerIs(p, CH.AccessControlAllowMethods, 'GET')
-			headerIs(p, CH.AccessControlAllowCredentials, null)
-			headerIs(p, CH.AccessControlAllowHeaders, null)
+			headerIs(p, CH.AcAllowOrigin, FooDotCom)
+			headerIs(p, CH.AcAllowMethods, 'GET')
+			headerIs(p, CH.AcAllowCredentials, null)
+			headerIs(p, CH.AcAllowHeaders, null)
 		})
 
 		await it(`wildcard and credentials`, async () => {
@@ -165,12 +165,12 @@ await describe('CORS', async () => {
 			}
 			const p = await preflight({
 				[CH.Origin]: FooDotCom,
-				[CH.AccessControlRequestMethod]: 'GET'
+				[CH.AcRequestMethod]: 'GET'
 			})
-			headerIs(p, CH.AccessControlAllowOrigin, FooDotCom)
-			headerIs(p, CH.AccessControlAllowMethods, 'GET')
-			headerIs(p, CH.AccessControlAllowCredentials, 'true')
-			headerIs(p, CH.AccessControlAllowHeaders, null)
+			headerIs(p, CH.AcAllowOrigin, FooDotCom)
+			headerIs(p, CH.AcAllowMethods, 'GET')
+			headerIs(p, CH.AcAllowCredentials, 'true')
+			headerIs(p, CH.AcAllowHeaders, null)
 		})
 
 		await it(`wildcard, credentials, and headers`, async () => {
@@ -182,12 +182,12 @@ await describe('CORS', async () => {
 			}
 			const p = await preflight({
 				[CH.Origin]: FooDotCom,
-				[CH.AccessControlRequestMethod]: 'GET'
+				[CH.AcRequestMethod]: 'GET'
 			})
-			headerIs(p, CH.AccessControlAllowOrigin, FooDotCom)
-			headerIs(p, CH.AccessControlAllowMethods, 'GET')
-			headerIs(p, CH.AccessControlAllowCredentials, 'true')
-			headerIs(p, CH.AccessControlAllowHeaders, 'content-type,my-header')
+			headerIs(p, CH.AcAllowOrigin, FooDotCom)
+			headerIs(p, CH.AcAllowMethods, 'GET')
+			headerIs(p, CH.AcAllowCredentials, 'true')
+			headerIs(p, CH.AcAllowHeaders, 'content-type,my-header')
 		})
 	})
 
@@ -201,9 +201,9 @@ await describe('CORS', async () => {
 				[CH.Origin]: NotAllowedDotCom
 			})
 			equal(p.status, 200)
-			headerIs(p, CH.AccessControlAllowOrigin, null)
-			headerIs(p, CH.AccessControlAllowCredentials, null)
-			headerIs(p, CH.AccessControlExposeHeaders, null)
+			headerIs(p, CH.AcAllowOrigin, null)
+			headerIs(p, CH.AcAllowCredentials, null)
+			headerIs(p, CH.AcExposeHeaders, null)
 		})
 
 		await it('origin allowed', async () => {
@@ -217,9 +217,9 @@ await describe('CORS', async () => {
 				[CH.Origin]: AllowedDotCom
 			})
 			equal(p.status, 200)
-			headerIs(p, CH.AccessControlAllowOrigin, AllowedDotCom)
-			headerIs(p, CH.AccessControlAllowCredentials, 'true')
-			headerIs(p, CH.AccessControlExposeHeaders, 'x-h1,x-h2')
+			headerIs(p, CH.AcAllowOrigin, AllowedDotCom)
+			headerIs(p, CH.AcAllowCredentials, 'true')
+			headerIs(p, CH.AcExposeHeaders, 'x-h1,x-h2')
 		})
 	})
 })

@@ -153,7 +153,10 @@ filename, such as `(demo-part1)`, `(demo-part2)`.
 ## Alternatives
 - Chrome DevTools allows for [overriding responses](https://developer.chrome.com/docs/devtools/overrides)
 - Reverse Proxies such as [Burp](https://portswigger.net/burp) are also handy for overriding responses.
-- [Mock Server Worker](https://mswjs.io)
+- [MSW (Mock Server Worker)](https://mswjs.io)
+- [Nock](https://github.com/nock/nock)
+- [Fetch Mock](https://github.com/wheresrhys/fetch-mock)
+- [Mentoss](https://github.com/humanwhocodes/mentoss)
 
 ---
 

@@ -69,7 +69,8 @@ export function setup(options) {
 	})
 
 	config.mocksDir = realpathSync(config.mocksDir)
-	config.staticDir = realpathSync(config.staticDir)
+	if (config.staticDir)
+		config.staticDir = realpathSync(config.staticDir)
 }
 
 

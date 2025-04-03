@@ -2,7 +2,7 @@
 	"name": "mockaton",
 	"description": "A deterministic server-side for developing and testing frontend clients",
 	"type": "module",
-	"version": "8.11.7",
+	"version": "8.11.8",
 	"main": "index.js",
 	"types": "index.d.ts",
 	"license": "MIT",
@@ -15,6 +15,7 @@
 		"outdated": "npm outdated --parseable | awk -F: '{ printf \"npm i %-30s ;# %s\\n\", $4, $2 }'"
 	},
 	"optionalDependencies": {
+		"open": "^10.0.0",
 		"pixaton": ">=1.0.2",
 		"puppeteer": ">=24.1.1"
 	}

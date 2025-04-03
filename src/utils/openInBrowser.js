@@ -1,7 +1,16 @@
 import { exec } from 'node:child_process'
 
 
-export function openInBrowser(address) {
+export const openInBrowser = (async () => {
+	try {
+		return (await import('open')).default
+	}
+	catch (error) {
+		return _openInBrowser
+	}
+})()
+
+function _openInBrowser(address) {
 	switch (process.platform) {
 		case 'darwin':
 			exec(`open ${address}`)

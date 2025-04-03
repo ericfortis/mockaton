@@ -34,7 +34,7 @@ export const config = Object.seal({
 	corsCredentials: true,
 	corsMaxAge: 0,
 
-	onReady: openInBrowser
+	onReady: await openInBrowser
 })
 
 

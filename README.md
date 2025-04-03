@@ -497,11 +497,8 @@ config.corsExposedHeaders = [] // headers you need to access in client-side JS
 
 ### `onReady?: (dashboardUrl: string) => void`
 By default, it will open the dashboard in your default browser on macOS and
-Windows. But for a more cross-platform utility, you could `npm install open` and pass it.
-```js
-import open from 'open'
-config.onReady = open
-```
+Windows. But for a more cross-platform utility you could `npm install open` and
+Mockaton will use that implementation instead.
 
 If you don’t want to open a browser, pass a noop:
 ```js

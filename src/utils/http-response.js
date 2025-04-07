@@ -17,12 +17,7 @@ export function sendJSON(response, payload) {
 	response.end(JSON.stringify(payload))
 }
 
-export function sendForbidden(response) {
-	response.statusCode = 403
-	response.end()
-}
-
-export function sendDashboardFile(response, file) {
+export function sendFile(response, file) {
 	response.setHeader('Content-Type', mimeFor(file))
 	response.end(readFileSync(file, 'utf8'))
 }

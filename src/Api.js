@@ -11,7 +11,7 @@ import { parseJSON } from './utils/http-request.js'
 import { listFilesRecursively } from './utils/fs.js'
 import * as mockBrokersCollection from './mockBrokersCollection.js'
 import { DF, API, LONG_POLL_SERVER_TIMEOUT } from './ApiConstants.js'
-import { sendOK, sendJSON, sendUnprocessableContent, sendDashboardFile, sendForbidden } from './utils/http-response.js'
+import { sendOK, sendJSON, sendUnprocessableContent, sendFile } from './utils/http-response.js'
 
 
 const dashboardAssets = [
@@ -25,8 +25,7 @@ const dashboardAssets = [
 
 export const apiGetRequests = new Map([
 	[API.dashboard, serveDashboard],
-	...dashboardAssets.map(f =>
-		[API.dashboard + f, serveDashboardAsset]),
+	...dashboardAssets.map(f => [API.dashboard + f, serveDashboardAsset(f)]),
 	[API.cors, getIsCorsAllowed],
 	[API.static, listStaticFiles],
 	[API.mocks, listMockBrokers],
@@ -54,15 +53,12 @@ export const apiPatchRequests = new Map([
 /* === GET === */
 
 function serveDashboard(_, response) {
-	sendDashboardFile(response, join(import.meta.dirname, 'Dashboard.html'))
+	sendFile(response, join(import.meta.dirname, 'Dashboard.html'))
 }
 
-function serveDashboardAsset(req, response) {
-	const f = req.url.replace(API.dashboard, '')
-	if (dashboardAssets.includes(f))
-		sendDashboardFile(response, join(import.meta.dirname, f))
-	else
-		sendForbidden(response)
+function serveDashboardAsset(f) {
+	return (req, response) =>
+		sendFile(response, join(import.meta.dirname, f))
 }
 
 function listCookies(_, response) { sendJSON(response, cookie.list()) }

@@ -18,6 +18,7 @@ interface Config {
 	port?: number
 	proxyFallback?: string
 	collectProxied?: boolean
+	formatCollectedJSON?: boolean
 
 	delay?: number
 	cookies?: { [label: string]: string }

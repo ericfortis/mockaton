@@ -367,6 +367,11 @@ Mockaton’s predefined list. For that, you can add it to <code>config.extraMime
 </details>
 
 
+### `formatCollectedJSON?: boolean`
+Defaults to `true`. Saves the mock with the formatting output
+of `JSON.stringify(data, null, '  ')` (two spaces indentation).
+
+
 ### `staticDir?: string`
 - Use Case 1: If you have a bunch of static assets you don’t want to add `.GET.200.ext`
 - Use Case 2: For a standalone demo server. For example,

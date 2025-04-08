@@ -39,6 +39,13 @@ export async function proxy(req, response, delay) {
 		let filename = makeMockFilename(req.url, req.method, proxyResponse.status, ext)
 		if (isFile(join(config.mocksDir, filename))) // TESTME
 			filename = makeMockFilename(req.url + `(${randomUUID()})`, req.method, proxyResponse.status, ext)
-		write(join(config.mocksDir, filename), body)
+
+		let data = body
+		if (config.formatCollectedJSON && ext === 'json') // TESTME
+			try {
+				data = JSON.stringify(JSON.parse(body), null, '  ')
+			}
+			catch {}
+		write(join(config.mocksDir, filename), data)
 	}
 }

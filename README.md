@@ -3,9 +3,9 @@
 ![NPM Version](https://img.shields.io/npm/v/mockaton)
 ![NPM Version](https://img.shields.io/npm/l/mockaton)
 
-Mockaton is an HTTP mock server for enhancing the development and testing experience.
+Mockaton is an HTTP mock server for developing and testing.
 
-## Convention over Code
+## Convention
 
 With Mockaton you don’t need to write code for wiring mocks. Instead, it scans a
 given directory for filenames following a convention similar to the URLs.
@@ -35,8 +35,7 @@ for setting up tests. See **Commander&nbsp;API** section.
 Each route can have different mocks. There’s two options for doing that:
 
 ### Adding comments to the filename
-Comments are anything within parentheses,
-including them. A filename can have many comments.
+Comments are anything within parentheses, including them.
 
 <pre>
 api/login<b>(locked out user)</b>.POST.423.json
@@ -121,34 +120,32 @@ The app looks like this:
 - Spinners by delaying responses
 - Errors such as _Bad Request_ and _Internal Server Error_
 - Setting up UI tests
+- Mocking third-party APIs
 - Polled resources (for triggering their different states)
   - alerts
   - notifications
   - slow to build resources
-- Mocking third-party APIs
 
 ### Time Travel
-If you commit the mocks to your repo, it’s straightforward to bisect bugs and
-checking out long-lived branches. In other words, you don’t have to downgrade
-backends to old API contracts or databases.
+If you commit the mocks to your repo, it’s straightforward to
+bisect bugs and checking out long-lived branches, so you don’t
+have to downgrade backends to old API contracts or databases.
 
-### Deterministic Standalone Demo Server
-Perhaps you need to demo your app, but the ideal flow is too complex to
-simulate from the actual backend. In this case, compile your frontend app and
-put its built assets in `config.staticDir`. Then, on the dashboard
-**Bulk Select** mocks to simulate the complete states you want to demo.
-For bulk-selecting, you just need to add a comment to the mock
-filename, such as `(demo-part1)`, `(demo-part2)`.
+### Simulating Complex Backend States
+Sometimes the ideal flow you need is too difficult to serve from your
+actual backend. For this, you can **Bulk Select** mocks to simulate the
+complete states you want. For bulk-selecting, you just need to add a
+comment to the mock filename, such as `(demo-part1)`, `(demo-part2)`.
+
+Similarly, you can deploy a **Standalone Demo Server** by compiling your frontend app and
+putting its built assets in `config.staticDir`. And then demoing by Bulk Selecting mocks.
 
 
 ## Motivation
 - Avoids spinning up and maintaining hefty backends when developing UIs.
 - For a deterministic, comprehensive, and consistent backend state. For example, having
   a collection with all the possible state variants helps for spotting inadvertent bugs.
-- Sometimes frontend progress is blocked waiting for some backend API. Similarly,
-  it’s often delayed due to missing data or inconvenient contracts. Therefore,
-  many meetings can be saved by prototyping frontend features with mocks, and
-  then showing those contracts to the backend team.
+- Sometimes frontend progress is blocked by waiting for backend APIs.
 
 ## Alternatives
 - Chrome DevTools allows for [overriding responses](https://developer.chrome.com/docs/devtools/overrides)
@@ -271,6 +268,8 @@ on the URL mask. For example, these two are for `/api/foo`
 api/foo<b>(my comment)</b>.GET.200.json
 api/foo.GET.200.json
 </pre>
+
+A filename can have many comments.
 
 ### Default Mock for a Route
 You can add the comment: `(default)`. 

@@ -132,10 +132,9 @@ bisect bugs and checking out long-lived branches, so you don’t
 have to downgrade backends to old API contracts or databases.
 
 ### Simulating Complex Backend States
-Sometimes the ideal flow you need is too difficult to serve from your
-actual backend. For this, you can **Bulk Select** mocks to simulate the
-complete states you want. For bulk-selecting, you just need to add a
-comment to the mock filename, such as `(demo-part1)`, `(demo-part2)`.
+Sometimes the ideal flow you need is too difficult to serve from your actual backend.
+For this, you can **Bulk Select** mocks by comments to simulate the complete states
+you want. For example, adding `(demo-part1)`, `(demo-part2)` to the filenames.
 
 Similarly, you can deploy a **Standalone Demo Server** by compiling your frontend app and
 putting its built assets in `config.staticDir`. And then demoing by Bulk Selecting mocks.

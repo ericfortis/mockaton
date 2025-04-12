@@ -32,6 +32,7 @@ for setting up tests. See **Commander&nbsp;API** section.
 
 
 <br/>
+<br/>
 
 ## Multiple Mock Variants
 Each route can have different mocks. There’s two options for doing that:
@@ -154,6 +155,8 @@ putting its built assets in `config.staticDir`. And simulate the flow by Bulk Se
 - Allows for a deterministic, comprehensive, and consistent backend state. For example, having
   a collection with all the possible state variants helps for spotting inadvertent bugs.
 - Sometimes frontend progress is blocked by waiting for backend APIs.
+
+<br/>
 
 ## Alternatives
 - Chrome DevTools allows for [overriding responses](https://developer.chrome.com/docs/devtools/overrides)

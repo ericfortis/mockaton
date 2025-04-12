@@ -113,6 +113,7 @@ The app looks like this:
 
 <img src="./demo-app-vite/pixaton-tests/pic-for-readme.vp500x800.light.gold.png" alt="Mockaton Demo App Screenshot" width="500" />
 
+---
 
 ## Use Cases
 ### Testing
@@ -134,15 +135,18 @@ have to downgrade backends to old API contracts or databases.
 ### Simulating Complex Backend States
 Sometimes the ideal flow you need is too difficult to serve from your actual backend.
 For this, you can **Bulk Select** mocks by comments to simulate the complete states
-you want. For example, adding `(demo-part1)`, `(demo-part2)` to the filenames.
+you want. For example, by adding `(demo-part1)`, `(demo-part2)` to the filenames.
 
-Similarly, you can deploy a **Standalone Demo Server** by compiling your frontend app and
-putting its built assets in `config.staticDir`. And then demoing by Bulk Selecting mocks.
+Similarly, you can deploy a **Standalone Demo Server** by compiling the frontend app and
+putting its built assets in `config.staticDir`. And simulate the flow by Bulk Selecting mocks.
 
+
+---
+<br/>
 
 ## Motivation
-- Avoids spinning up and maintaining hefty backends when developing UIs.
-- For a deterministic, comprehensive, and consistent backend state. For example, having
+- Avoids spinning up and updating hefty backends when developing UIs.
+- Allows for a deterministic, comprehensive, and consistent backend state. For example, having
   a collection with all the possible state variants helps for spotting inadvertent bugs.
 - Sometimes frontend progress is blocked by waiting for backend APIs.
 
@@ -154,7 +158,9 @@ putting its built assets in `config.staticDir`. And then demoing by Bulk Selecti
 - [Fetch Mock](https://github.com/wheresrhys/fetch-mock)
 - [Mentoss](https://github.com/humanwhocodes/mentoss)
 
+
 ---
+<br/>
 
 ## You can write JSON mocks in JavaScript or TypeScript
 For example, `api/foo.GET.200.js`
@@ -218,6 +224,7 @@ export default function listColors() {
 Put it in your `config.staticDir` without the mock filename convention.
 
 ---
+<br/>
 
 ## Mock Filename Convention
 
@@ -306,6 +313,8 @@ api/foo/bar.GET.200.json
 ```
 
 ---
+<br/>
+
 ## Config
 ### `mocksDir: string`
 This is the only required field. The directory must exist.
@@ -511,6 +520,7 @@ config.onReady = () => {}
 At any rate, you can trigger any command besides opening a browser.
 
 ---
+<br/>
 
 ## Commander API
 `Commander` is a client for Mockaton’s HTTP API.

@@ -56,6 +56,7 @@ api/videos.GET.<b>500</b>.txt
 
 
 <br/>
+
 ## Fallback to your Backend
 No need to mock everything. Mockaton can request from your backend the routes
 you don’t have mocks for, or routes that have the ☁️ **Cloud Checkbox** checked.
@@ -66,7 +67,6 @@ If you check **Save Mocks**, Mockaton will collect the responses that hit your b
 They will be saved on your `config.mocksDir` following the filename convention.
 
 
----
 <br/>
 
 
@@ -119,7 +119,6 @@ The app looks like this:
 
 <img src="./demo-app-vite/pixaton-tests/pic-for-readme.vp500x800.light.gold.png" alt="Mockaton Demo App Screenshot" width="500" />
 
----
 <br/>
 
 ## Use Cases
@@ -148,7 +147,6 @@ Similarly, you can deploy a **Standalone Demo Server** by compiling the frontend
 putting its built assets in `config.staticDir`. And simulate the flow by Bulk Selecting mocks.
 
 
----
 <br/>
 
 ## Motivation
@@ -166,7 +164,6 @@ putting its built assets in `config.staticDir`. And simulate the flow by Bulk Se
 - [Mentoss](https://github.com/humanwhocodes/mentoss)
 
 
----
 <br/>
 
 ## You can write JSON mocks in JavaScript or TypeScript
@@ -230,7 +227,6 @@ export default function listColors() {
 **What if I need to serve a static .js?**
 Put it in your `config.staticDir` without the mock filename convention.
 
----
 <br/>
 
 ## Mock Filename Convention
@@ -319,7 +315,6 @@ api/foo/.GET.200.json
 api/foo/bar.GET.200.json
 ```
 
----
 <br/>
 
 ## Config
@@ -526,7 +521,6 @@ config.onReady = () => {}
 
 At any rate, you can trigger any command besides opening a browser.
 
----
 <br/>
 
 ## Commander API

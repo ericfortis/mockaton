@@ -31,6 +31,8 @@ for setting up tests. See **Commander&nbsp;API** section.
 </picture>
 
 
+<br/>
+
 ## Multiple Mock Variants
 Each route can have different mocks. There’s two options for doing that:
 
@@ -53,7 +55,7 @@ api/videos.GET.<b>500</b>.txt
 </pre>
 
 
-
+<br/>
 ## Fallback to your Backend
 No need to mock everything. Mockaton can request from your backend the routes
 you don’t have mocks for, or routes that have the ☁️ **Cloud Checkbox** checked.
@@ -63,6 +65,9 @@ you don’t have mocks for, or routes that have the ☁️ **Cloud Checkbox** ch
 If you check **Save Mocks**, Mockaton will collect the responses that hit your backend.
 They will be saved on your `config.mocksDir` following the filename convention.
 
+
+---
+<br/>
 
 
 ## Basic Usage
@@ -90,6 +95,7 @@ Mockaton({
 node --import=tsx my-mockaton.js
 ```
 
+<br/>
 
 ## Demo App (Vite)
 
@@ -114,6 +120,7 @@ The app looks like this:
 <img src="./demo-app-vite/pixaton-tests/pic-for-readme.vp500x800.light.gold.png" alt="Mockaton Demo App Screenshot" width="500" />
 
 ---
+<br/>
 
 ## Use Cases
 ### Testing
@@ -577,7 +584,3 @@ default, but the `proxyFallback`, `colledProxied`, and `corsAllowed` are not aff
 ```js
 await mockaton.reset()
 ```
-
-<div style="display: flex; align-items: center; gap: 20px">
-  <img src="fixtures-mocks/api/user/avatar.GET.200.png" width="170"/>
-</div>

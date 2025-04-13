@@ -3,9 +3,10 @@
 ![NPM Version](https://img.shields.io/npm/v/mockaton)
 ![NPM Version](https://img.shields.io/npm/l/mockaton)
 
-HTTP mock server for development and testing workflows
+An HTTP mock server for simulating APIs with minimal setup
+&mdash; ideal for testing edge cases and prototyping UIs.
 
-## Convention over Code
+## Convention Over Code
 With Mockaton you don’t need to write code for wiring mocks. Instead, it scans a
 given directory for filenames following a convention similar to the URLs.
 
@@ -34,7 +35,7 @@ for setting up tests. See **Commander&nbsp;API** section.
 <br/>
 
 ## Multiple Mock Variants
-Each route can have different mocks. There’s two options for doing that:
+Each route can have different mocks. There are two options for doing that:
 
 ### Adding comments to the filename
 Comments are anything within parentheses, including them.
@@ -45,8 +46,8 @@ api/login<b>(invalid login attempt)</b>.POST.401.json
 </pre>
 
 ### Different response status code
-For instance, using a `4xx` or `5xx` status code for triggering error
-responses. Or a `2xx` such as `204` (No Content) for testing empty collections.
+For instance, you can use a `4xx` or `5xx` status code for triggering error
+responses, or a `2xx` such as `204` (No Content) for testing empty collections.
 
 <pre>
 api/videos(empty list).GET.<b>204</b>.json
@@ -57,14 +58,14 @@ api/videos.GET.<b>500</b>.txt
 
 <br/>
 
-## Fallback to your Backend
-No need to mock everything. Mockaton can request from your backend the routes
+## Fallback to Your Backend
+No need to mock everything. Mockaton can forward requests to your backend for routes
 you don’t have mocks for, or routes that have the ☁️ **Cloud Checkbox** checked.
 
 
-### Scrapping Mocks from your Backend
+### Scraping mocks from your backend
 If you check **Save Mocks**, Mockaton will collect the responses that hit your backend.
-They will be saved on your `config.mocksDir` following the filename convention.
+They will be saved in your `config.mocksDir` following the filename convention.
 
 
 <br/>
@@ -100,7 +101,7 @@ node --import=tsx my-mockaton.js
 ## Demo App (Vite)
 
 This is a minimal React + Vite + Mockaton app. It’s a list of
-colors, which contains all of their possible states. For example,
+colors containing all of their possible states. For example,
 permutations for out-of-stock, new-arrival, and discontinued.
 
 ```sh  
@@ -133,13 +134,13 @@ The app looks like this:
   - notifications
   - slow to build resources
 
-### Time Travel
+### Time travel
 If you commit the mocks to your repo, it’s straightforward to
-bisect bugs and checking out long-lived branches, so you don’t
+bisect bugs and check out long-lived branches, so you don’t
 have to downgrade backends to old API contracts or databases.
 
-### Simulating Complex Backend States
-Sometimes the ideal flow you need is too difficult to serve from your actual backend.
+### Simulating complex backend states
+Sometimes, the ideal flow you need is too difficult to reproduce from your actual backend.
 For this, you can **Bulk Select** mocks by comments to simulate the complete states
 you want. For example, by adding `(demo-part1)`, `(demo-part2)` to the filenames.
 
@@ -187,7 +188,7 @@ export default (request, response) =>
   JSON.stringify({ foo: 'bar' })
 ```
 
-Think of these functions as HTTP handlers, so you can
+Think of these functions as HTTP handlers that allow you to
 intercept requests. For example, for writing to a database.
 
 <details>
@@ -264,7 +265,7 @@ want a `Content-Type` header in the response.
 </p>
 </details>
 
-### Dynamic Parameters
+### Dynamic parameters
 Anything within square brackets is always matched. For example, for this route
 `/api/company/1234/user/5678`
 <pre>
@@ -273,7 +274,7 @@ api/company/<b>[id]</b>/user/<b>[uid]</b>.GET.200.json
 
 ### Comments
 Comments are anything within parentheses, including them.
-They are ignored for URL purposes, so they have no effect
+They are ignored for routing purposes, so they have no effect
 on the URL mask. For example, these two are for `/api/foo`
 <pre>
 api/foo<b>(my comment)</b>.GET.200.json
@@ -282,7 +283,7 @@ api/foo.GET.200.json
 
 A filename can have many comments.
 
-### Default Mock for a Route
+### Default mock for a route
 You can add the comment: `(default)`. 
 Otherwise, the first file in **alphabetical order** wins.
 
@@ -291,7 +292,7 @@ api/user<b>(default)</b>.GET.200.json
 </pre>
 
 
-### Query String Params
+### Query string params
 The query string is ignored when routing to it. In other words, it’s only used for
 documenting the URL contract.
 <pre>
@@ -365,7 +366,7 @@ a unique filename comment.
 
 
 <details>
-  <summary>Extension Details</summary>
+  <summary>Extension details</summary>
 <p>
 An <code>.empty</code> extension means the <code>Content-Type</code>
 header was not sent by your backend.
@@ -389,12 +390,12 @@ of `JSON.stringify(data, null, '  ')` (two spaces indentation).
   build your frontend bundle, and serve it from Mockaton.
 
 Files under `config.staticDir` don’t use the filename convention, and
-they take precedence over `GET` mocks in `config.mocksDir`.
+they take precedence over corresponding `GET` mocks in `config.mocksDir`.
 For example, if you have two files for `GET /foo/bar.jpg`
 
 <pre>
 my-static-dir<b>/foo/bar.jpg</b>
- my-mocks-dir<b>/foo/bar.jpg</b>.GET.200.jpg // Unreacheable
+ my-mocks-dir<b>/foo/bar.jpg</b>.GET.200.jpg // Unreachable
 </pre>
 
 
@@ -423,7 +424,7 @@ In other words, it’s useful only if you care about its payload.
 
 
 ### `extraHeaders?: string[]`
-Note it’s a unidimensional array. The header name goes at even indices.
+Note: it’s a one-dimensional array. The header name goes at even indices.
 
 ```js
 config.extraHeaders = [
@@ -462,7 +463,7 @@ the file from disk and compute the MIME from the extension.
 Note: don’t call `response.end()` on any plugin.
 
 <details>
-<summary><b> See Plugin Examples </b></summary>
+<summary><b> See plugin examples </b></summary>
 
 ```shell
 npm install yaml
@@ -547,12 +548,12 @@ Parentheses are optional, so you can pass a partial match.
 For example, passing `'demo-'` (without the final `a`), selects the
 first mock in alphabetical order that matches.
 
-### Set Route is Delayed Flag
+### Set route is delayed flag
 ```js
 await mockaton.setRouteIsDelayed('GET', '/api/foo', true)
 ```
 
-### Set Route is Proxied
+### Set route is proxied
 ```js
 await mockaton.setRouteIsProxied('GET', '/api/foo', true)
 ```
@@ -563,13 +564,13 @@ In `config.cookies`, each key is the label used for selecting it.
 await mockaton.selectCookie('My Normal User')
 ```
 
-### Set Fallback Proxy
+### Set fallback proxy
 ```js
 await mockaton.setProxyFallback('http://example.com')
 ```
 Pass an empty string to disable it.
 
-### Set Save Proxied Mocks
+### Set save proxied mocks
 ```js
 await mockaton.setCollectProxied(true)
 ```

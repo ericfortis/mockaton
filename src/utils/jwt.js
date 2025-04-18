@@ -1,7 +1,7 @@
-export function jwtCookie(cookieName, payload) {
+export function jwtCookie(cookieName, payload, path = '/') {
 	return [
 		`${cookieName}=${jwt(payload)}`,
-		'Path=/',
+		`Path=${path}`,
 		'SameSite=strict'
 	].join(';')
 }

@@ -1,4 +1,5 @@
 import { createRoot } from 'react-dom/client'
+import { CookiesProvider } from 'react-cookie'
 import { UserContextProvider } from './UserContext.jsx'
 import { QaId } from './QaId.js'
 import { Header } from './Header.jsx'
@@ -14,10 +15,12 @@ createRoot(root).render(<App />)
 
 function App() {
 	return (
-		<UserContextProvider>
-			<Header />
-			<Instructions />
-			<ColorList />
-		</UserContextProvider>
+		<CookiesProvider>
+			<UserContextProvider>
+				<Header />
+				<Instructions />
+				<ColorList />
+			</UserContextProvider>
+		</CookiesProvider>
 	)
 }

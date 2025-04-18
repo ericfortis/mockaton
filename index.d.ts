@@ -46,7 +46,7 @@ export const jsToJsonPlugin: Plugin
 
 // Utils
 
-export function jwtCookie(cookieName: string, payload: any): string
+export function jwtCookie(cookieName: string, payload: any, path?: string): string
 
 export function parseJSON(request: IncomingMessage): Promise<any>
 

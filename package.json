@@ -2,7 +2,7 @@
 	"name": "mockaton",
 	"description": "A deterministic server-side for developing and testing APIs",
 	"type": "module",
-	"version": "8.12.0",
+	"version": "8.12.1",
 	"main": "index.js",
 	"types": "index.d.ts",
 	"license": "MIT",

@@ -20,14 +20,15 @@ export function Mockaton(options) {
 	watchMocksDir()
 
 	return createServer(onRequest).listen(config.port, config.host, function (error) {
+		if (error) {
+			console.error(error)
+			return
+		}
 		const { address, port } = this.address()
 		const url = `http://${address}:${port}`
 		console.log('Listening', url)
 		console.log('Dashboard', url + API.dashboard)
-		if (error)
-			console.error(error)
-		else
-			config.onReady(url + API.dashboard)
+		config.onReady(url + API.dashboard)
 	})
 }
 

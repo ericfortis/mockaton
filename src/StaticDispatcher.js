@@ -20,7 +20,7 @@ export async function dispatchStatic(req, response) {
 		await sendPartialContent(response, req.headers.range, file)
 	else {
 		response.setHeader('Content-Type', mimeFor(file))
-		response.end(readFileSync(file, 'utf8'))
+		response.end(readFileSync(file))
 	}
 }
 
@@ -57,7 +57,3 @@ async function sendPartialContent(response, range, file) {
 		})
 	}
 }
-
-
-
-

@@ -21,8 +21,11 @@ export const config = Object.seal({
 	formatCollectedJSON: true,
 
 	delay: 1200, // milliseconds
+
 	cookies: {}, // defaults to the first kv
+
 	extraHeaders: [],
+
 	extraMimes: {},
 
 	plugins: [
@@ -40,7 +43,9 @@ export const config = Object.seal({
 	onReady: await openInBrowser
 })
 
+
 export const fileIsAllowed = f => !config.ignore.test(f)
+
 
 export function setup(options) {
 	Object.assign(config, options)
@@ -57,8 +62,11 @@ export function setup(options) {
 		formatCollectedJSON: is(Boolean),
 
 		delay: ms => Number.isInteger(ms) && ms >= 0,
+
 		cookies: is(Object),
+
 		extraHeaders: val => Array.isArray(val) && val.length % 2 === 0,
+
 		extraMimes: is(Object),
 
 		plugins: Array.isArray,

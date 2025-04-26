@@ -50,6 +50,7 @@ export const apiPatchRequests = new Map([
 	[API.collectProxied, setCollectProxied]
 ])
 
+
 /* === GET === */
 
 function serveDashboard(_, response) {
@@ -70,10 +71,9 @@ function getIsCorsAllowed(_, response) { sendJSON(response, config.corsAllowed) 
 function getCollectProxied(_, response) { sendJSON(response, config.collectProxied) }
 
 function listStaticFiles(req, response) {
-	const files = config.staticDir
+	sendJSON(response, config.staticDir
 		? listFilesRecursively(config.staticDir).filter(fileIsAllowed)
-		: []
-	sendJSON(response, files)
+		: [])
 }
 
 function longPollAR_Events(req, response) {
@@ -126,7 +126,7 @@ async function selectMock(req, response) {
 async function setRouteIsDelayed(req, response) {
 	const body = await parseJSON(req)
 	const delayed = body[DF.delayed]
-	const broker = mockBrokersCollection.getBrokerForUrl(
+	const broker = mockBrokersCollection.getBrokerByRoute(
 		body[DF.routeMethod],
 		body[DF.routeUrlMask])
 
@@ -143,7 +143,7 @@ async function setRouteIsDelayed(req, response) {
 async function setRouteIsProxied(req, response) { // TESTME
 	const body = await parseJSON(req)
 	const proxied = body[DF.proxied]
-	const broker = mockBrokersCollection.getBrokerForUrl(
+	const broker = mockBrokersCollection.getBrokerByRoute(
 		body[DF.routeMethod],
 		body[DF.routeUrlMask])
 

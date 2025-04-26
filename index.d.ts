@@ -22,8 +22,11 @@ interface Config {
 	formatCollectedJSON?: boolean
 
 	delay?: number
+
 	cookies?: { [label: string]: string }
+
 	extraHeaders?: string[]
+
 	extraMimes?: { [fileExt: string]: string }
 
 	plugins?: [filenameTester: RegExp, plugin: Plugin][]

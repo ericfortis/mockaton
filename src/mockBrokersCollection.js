@@ -89,7 +89,7 @@ export function getBrokerByFilename(file) {
  * BTW, `urlMasks` always start with "/", so there’s no need to
  * worry about the primacy of array-like keys when iterating.
  @returns {MockBroker | undefined} */
-export function getBrokerForUrl(method, url) {
+export function getBrokerByRoute(method, url) {
 	if (!collection[method])
 		return
 	const brokers = Object.values(collection[method])

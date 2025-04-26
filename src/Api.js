@@ -83,7 +83,6 @@ function longPollAR_Events(req, response) {
 		sendJSON(response, arEvents.count)
 		return
 	}
-
 	function onAddOrRemoveMock() {
 		arEvents.unsubscribe(onAddOrRemoveMock)
 		sendJSON(response, arEvents.count)

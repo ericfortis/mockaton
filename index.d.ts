@@ -16,6 +16,7 @@ interface Config {
 
 	host?: string,
 	port?: number
+
 	proxyFallback?: string
 	collectProxied?: boolean
 	formatCollectedJSON?: boolean

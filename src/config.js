@@ -2,6 +2,7 @@ import { realpathSync } from 'node:fs'
 import { isDirectory } from './utils/fs.js'
 import { openInBrowser } from './utils/openInBrowser.js'
 import { jsToJsonPlugin } from './MockDispatcherPlugins.js'
+import { optional, is, validate } from './utils/validate.js'
 import { SUPPORTED_METHODS } from './utils/http-request.js'
 import { validateCorsAllowedMethods, validateCorsAllowedOrigins } from './utils/http-cors.js'
 
@@ -14,6 +15,7 @@ export const config = Object.seal({
 
 	host: '127.0.0.1',
 	port: 0, // auto-assigned
+
 	proxyFallback: '', // e.g. http://localhost:9999
 	collectProxied: false,
 	formatCollectedJSON: true,
@@ -48,11 +50,12 @@ export function setup(options) {
 
 		host: is(String),
 		port: port => Number.isInteger(port) && port >= 0 && port < 2 ** 16,
+
 		proxyFallback: optional(URL.canParse),
 		collectProxied: is(Boolean),
 		formatCollectedJSON: is(Boolean),
 
-		delay: ms => Number.isInteger(ms) && ms > 0,
+		delay: ms => Number.isInteger(ms) && ms >= 0,
 		cookies: is(Object),
 		extraHeaders: val => Array.isArray(val) && val.length % 2 === 0,
 		extraMimes: is(Object),
@@ -73,19 +76,4 @@ export function setup(options) {
 	config.mocksDir = realpathSync(config.mocksDir)
 	if (config.staticDir)
 		config.staticDir = realpathSync(config.staticDir)
-}
-
-
-function validate(obj, shape) {
-	for (const [field, value] of Object.entries(obj))
-		if (!shape[field](value))
-			throw new TypeError(`config.${field}=${JSON.stringify(value)} is invalid`)
-}
-
-function is(ctor) {
-	return val => val.constructor === ctor
-}
-
-function optional(tester) {
-	return val => !val || tester(val)
 }

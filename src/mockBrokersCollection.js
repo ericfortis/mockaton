@@ -1,7 +1,7 @@
-import { config } from './config.js'
 import { cookie } from './cookie.js'
 import { MockBroker } from './MockBroker.js'
 import { listFilesRecursively } from './utils/fs.js'
+import { config, fileIsAllowed } from './config.js'
 import { parseFilename, filenameIsValid } from './Filename.js'
 
 
@@ -38,7 +38,7 @@ export function init() {
 /** @returns {boolean} registered */
 export function registerMock(file, isFromWatcher) {
 	if (getBrokerByFilename(file)?.hasMock(file)
-		|| config.ignore.test(file)
+		|| !fileIsAllowed(file)
 		|| !filenameIsValid(file))
 		return false
 

@@ -40,6 +40,7 @@ export const config = Object.seal({
 	onReady: await openInBrowser
 })
 
+export const fileIsAllowed = f => !config.ignore.test(f)
 
 export function setup(options) {
 	Object.assign(config, options)

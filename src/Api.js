@@ -5,10 +5,10 @@
 
 import { join } from 'node:path'
 import { cookie } from './cookie.js'
-import { config } from './config.js'
 import { arEvents } from './Watcher.js'
 import { parseJSON } from './utils/http-request.js'
 import { listFilesRecursively } from './utils/fs.js'
+import { config, fileIsAllowed } from './config.js'
 import * as mockBrokersCollection from './mockBrokersCollection.js'
 import { DF, API, LONG_POLL_SERVER_TIMEOUT } from './ApiConstants.js'
 import { sendOK, sendJSON, sendUnprocessableContent, sendFile } from './utils/http-response.js'
@@ -71,7 +71,7 @@ function getCollectProxied(_, response) { sendJSON(response, config.collectProxi
 
 function listStaticFiles(req, response) {
 	const files = config.staticDir
-		? listFilesRecursively(config.staticDir).filter(f => !config.ignore.test(f))
+		? listFilesRecursively(config.staticDir).filter(fileIsAllowed)
 		: []
 	sendJSON(response, files)
 }

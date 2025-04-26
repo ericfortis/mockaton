@@ -1,9 +1,9 @@
 import { join } from 'node:path'
 import fs, { readFileSync } from 'node:fs'
 
-import { config } from './config.js'
 import { mimeFor } from './utils/mime.js'
 import { isDirectory, isFile } from './utils/fs.js'
+import { config, fileIsAllowed } from './config.js'
 import { sendInternalServerError } from './utils/http-response.js'
 
 
@@ -11,7 +11,7 @@ export function isStatic(req) {
 	if (!config.staticDir)
 		return false
 	const f = resolvePath(req.url)
-	return f && !config.ignore.test(f)
+	return f && fileIsAllowed(f)
 }
 
 export async function dispatchStatic(req, response) {

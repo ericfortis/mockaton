@@ -324,25 +324,41 @@ api/foo/bar.GET.200.json
 ### `mocksDir: string`
 This is the only required field. The directory must exist.
 
+### `staticDir?: string`
+- Use Case 1: If you have a bunch of static assets you don’t want to add `.GET.200.ext`
+- Use Case 2: For a standalone demo server. For example,
+  build your frontend bundle, and serve it from Mockaton.
+
+Files under `config.staticDir` don’t use the filename convention, and
+they take precedence over corresponding `GET` mocks in `config.mocksDir`.
+For example, if you have two files for `GET /foo/bar.jpg`
+
+<pre>
+my-static-dir<b>/foo/bar.jpg</b>
+ my-mocks-dir<b>/foo/bar.jpg</b>.GET.200.jpg // Unreachable
+</pre>
+
+<br/>
+
 
 ### `host?: string`
 Defaults to `'localhost'`
 
-
 ### `port?: number`
 Defaults to `0`, which means auto-assigned
 
+<br/>
 
 ### `ignore?: RegExp`
 Defaults to `/(\.DS_Store|~)$/`
 
+<br/>
 
 ### `delay?: number` 
-Defaults to `1200` milliseconds.
+Defaults to `1200` milliseconds. Although routes can individually be
+delayed with the 🕓 checkbox, the delay amount is globally configurable.
 
-Although routes can individually be delayed with the 🕓
-checkbox, the delay amount is globally configurable.
-
+<br/>
 
 ### `proxyFallback?: string`
 For example, `config.proxyFallback = 'http://example.com'`
@@ -384,19 +400,7 @@ Defaults to `true`. Saves the mock with the formatting output
 of `JSON.stringify(data, null, '  ')` (two spaces indentation).
 
 
-### `staticDir?: string`
-- Use Case 1: If you have a bunch of static assets you don’t want to add `.GET.200.ext`
-- Use Case 2: For a standalone demo server. For example,
-  build your frontend bundle, and serve it from Mockaton.
-
-Files under `config.staticDir` don’t use the filename convention, and
-they take precedence over corresponding `GET` mocks in `config.mocksDir`.
-For example, if you have two files for `GET /foo/bar.jpg`
-
-<pre>
-my-static-dir<b>/foo/bar.jpg</b>
- my-mocks-dir<b>/foo/bar.jpg</b>.GET.200.jpg // Unreachable
-</pre>
+<br/>
 
 
 ### `cookies?: { [label: string]: string }`
@@ -422,6 +426,7 @@ in `config.extraHeaders`, or in function `.js` or `.ts` mock.
 By the way, the `jwtCookie` helper has a hardcoded header and signature.
 In other words, it’s useful only if you care about its payload.
 
+<br/>
 
 ### `extraHeaders?: string[]`
 Note: it’s a one-dimensional array. The header name goes at even indices.
@@ -434,6 +439,7 @@ config.extraHeaders = [
 ]
 ```
 
+<br/>
 
 ### `extraMimes?: { [fileExt: string]: string }`
 ```js
@@ -444,6 +450,7 @@ config.extraMimes = {
 Those extra media types take precedence over the built-in
 [utils/mime.js](src/utils/mime.js), so you can override them.
 
+<br/>
 
 ### `plugins?: [filenameTester: RegExp, plugin: Plugin][]`
 ```ts
@@ -499,6 +506,7 @@ function capitalizePlugin(filePath) {
 ```
 </details>
 
+<br/>
 
 ### `corsAllowed?: boolean`
 Defaults to `true`. When `true`, these are the default options:
@@ -511,6 +519,7 @@ config.corsMaxAge = 0 // seconds to cache the preflight req
 config.corsExposedHeaders = [] // headers you need to access in client-side JS
 ```
 
+<br/>
 
 ### `onReady?: (dashboardUrl: string) => void`
 By default, it will open the dashboard in your default browser on macOS and

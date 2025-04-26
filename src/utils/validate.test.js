@@ -20,14 +20,14 @@ describe('validate', () => {
 		it('rejects when tester func returns falsy', () =>
 			throws(() =>
 					validate({ field: 1 }, { field: optional(Array.isArray) }),
-				/config.field=1 is invalid/))
+				/field=1 is invalid/))
 	})
 
 	describe('is', () => {
 		it('rejects mismatched type', () =>
 			throws(() =>
 					validate({ field: 1 }, { field: is(String) }),
-				/config.field=1 is invalid/))
+				/field=1 is invalid/))
 
 		it('accepts matched type', () =>
 			doesNotThrow(() =>
@@ -38,7 +38,7 @@ describe('validate', () => {
 		it('rejects mismatched type', () =>
 			throws(() =>
 					validate({ field: 0.1 }, { field: Number.isInteger }),
-				/config.field=0.1 is invalid/))
+				/field=0.1 is invalid/))
 
 		it('accepts matched type', () =>
 			doesNotThrow(() =>

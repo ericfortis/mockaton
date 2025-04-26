@@ -8,8 +8,8 @@ import { cookie } from './cookie.js'
 import { arEvents } from './Watcher.js'
 import { parseJSON } from './utils/http-request.js'
 import { listFilesRecursively } from './utils/fs.js'
-import { config, fileIsAllowed } from './config.js'
 import * as mockBrokersCollection from './mockBrokersCollection.js'
+import { config, fileIsAllowed, ConfigValidators } from './config.js'
 import { DF, API, LONG_POLL_SERVER_TIMEOUT } from './ApiConstants.js'
 import { sendOK, sendJSON, sendUnprocessableContent, sendFile } from './utils/http-response.js'
 
@@ -161,7 +161,7 @@ async function setRouteIsProxied(req, response) { // TESTME
 
 async function updateProxyFallback(req, response) {
 	const fallback = await parseJSON(req)
-	if (fallback && !URL.canParse(fallback)) {
+	if (!ConfigValidators.proxyFallback(fallback)) {
 		sendUnprocessableContent(response)
 		return
 	}

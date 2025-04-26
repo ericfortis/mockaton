@@ -24,13 +24,17 @@ export class MockBroker {
 	hasMock(file) { return this.mocks.includes(file) }
 
 	register(file) {
-		if (parseFilename(file).status === 500) {
+		if (this.#is500(file)) {
 			if (this.temp500IsSelected)
 				this.selectFile(file)
 			this.#deleteTemp500()
 		}
 		this.mocks.push(file)
 		this.#sortMocks()
+	}
+
+	#is500(file) {
+		return parseFilename(file).status === 500
 	}
 
 	#deleteTemp500() {
@@ -44,7 +48,7 @@ export class MockBroker {
 	#sortMocks() {
 		this.mocks.sort()
 		const defaults = this.mocks.filter(file => includesComment(file, DEFAULT_MOCK_COMMENT))
-		const temp500 = this.mocks.filter(file => includesComment(file, DEFAULT_500_COMMENT))
+		const temp500 = this.mocks.filter(this.#isTemp500)
 		this.mocks = [
 			...defaults,
 			...this.mocks.filter(file => !defaults.includes(file) && !temp500.includes(file)),
@@ -53,10 +57,9 @@ export class MockBroker {
 	}
 
 	ensureItHas500() {
-		if (!this.#has500())
+		if (!this.mocks.some(this.#is500))
 			this.#registerTemp500()
 	}
-	#has500() { return this.mocks.some(mock => parseFilename(mock).status === 500) }
 	#registerTemp500() {
 		const { urlMask, method } = parseFilename(this.mocks[0])
 		const file = urlMask.replace(/^\//, '') // Removes leading slash

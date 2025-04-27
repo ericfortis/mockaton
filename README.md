@@ -4,11 +4,12 @@
 ![NPM Version](https://img.shields.io/npm/l/mockaton)
 
 An HTTP mock server for simulating APIs with minimal setup
-&mdash; ideal for testing edge cases and prototyping UIs.
+&mdash; ideal for triggering difficult to reproduce backend states.
+
 
 ## Convention Over Code
-With Mockaton you don’t need to write code for wiring mocks. Instead, it scans a
-given directory for filenames following a convention similar to the URLs.
+With Mockaton you don’t need to write code for wiring mocks. Instead, it scans
+a given directory for filenames following a convention similar to the URLs.
 
 For example, for <code>/<b>api/user</b>/1234</code> the filename would be:
 <pre>
@@ -265,12 +266,16 @@ want a `Content-Type` header in the response.
 </p>
 </details>
 
+<br/>
+
 ### Dynamic parameters
 Anything within square brackets is always matched. For example, for this route
 `/api/company/1234/user/5678`
 <pre>
 api/company/<b>[id]</b>/user/<b>[uid]</b>.GET.200.json
 </pre>
+
+<br/>
 
 ### Comments
 Comments are anything within parentheses, including them.
@@ -283,6 +288,8 @@ api/foo.GET.200.json
 
 A filename can have many comments.
 
+<br/>
+
 ### Default mock for a route
 You can add the comment: `(default)`. 
 Otherwise, the first file in **alphabetical order** wins.
@@ -291,6 +298,7 @@ Otherwise, the first file in **alphabetical order** wins.
 api/user<b>(default)</b>.GET.200.json
 </pre>
 
+<br/>
 
 ### Query string params
 The query string is ignored when routing to it. In other words, it’s only used for
@@ -302,6 +310,7 @@ api/video<b>?limit=[limit]</b>.GET.200.json
 On Windows filenames containing "?" are [not
 permitted](https://learn.microsoft.com/en-us/windows/win32/fileio/naming-a-file), but since that’s part of the query string it’s ignored anyway.
 
+<br/>
 
 ### Index-like routes
 If you have `api/foo` and `api/foo/bar`, you have two options:

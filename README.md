@@ -269,11 +269,10 @@ want a `Content-Type` header in the response.
 <br/>
 
 ### Dynamic parameters
-Anything within square brackets is always matched. For example, for this route
-`/api/company/1234/user/5678`
-<pre>
-api/company/<b>[id]</b>/user/<b>[uid]</b>.GET.200.json
-</pre>
+Anything within square brackets is always matched. For example, for this route:
+<code>/api/company/<b>1234</b>/user/<b>5678</b></code>
+
+<pre><code>api/company/<b>[id]</b>/user/<b>[uid]</b>.GET.200.json</code></pre>
 
 <br/>
 
@@ -301,7 +300,7 @@ api/user<b>(default)</b>.GET.200.json
 <br/>
 
 ### Query string params
-The query string is ignored when routing to it. In other words, it’s only used for
+The query string is ignored for routing purposes. In other words, it’s only used for
 documenting the URL contract.
 <pre>
 api/video<b>?limit=[limit]</b>.GET.200.json
@@ -315,13 +314,13 @@ permitted](https://learn.microsoft.com/en-us/windows/win32/fileio/naming-a-file)
 ### Index-like routes
 If you have `api/foo` and `api/foo/bar`, you have two options:
 
-**Option A:** 
+**Option A.** 
 ```
 api/foo.GET.200.json
 api/foo/bar.GET.200.json
 ```
 
-**Option B:** Omit the filename.
+**Option B.** Omit the URL on the filename:
 ```text
 api/foo/.GET.200.json
 api/foo/bar.GET.200.json

@@ -3,7 +3,7 @@ import fs, { readFileSync } from 'node:fs'
 
 import { mimeFor } from './utils/mime.js'
 import { isDirectory, isFile } from './utils/fs.js'
-import { config, fileIsAllowed } from './config.js'
+import { config, filenameIsNotIgnored } from './config.js'
 import { sendInternalServerError } from './utils/http-response.js'
 
 
@@ -11,7 +11,7 @@ export function isStatic(req) {
 	if (!config.staticDir)
 		return false
 	const f = resolvePath(req.url)
-	return f && fileIsAllowed(f)
+	return f && filenameIsNotIgnored(f)
 }
 
 export async function dispatchStatic(req, response) {

@@ -9,7 +9,7 @@ import { arEvents } from './Watcher.js'
 import { parseJSON } from './utils/http-request.js'
 import { listFilesRecursively } from './utils/fs.js'
 import * as mockBrokersCollection from './mockBrokersCollection.js'
-import { config, fileIsAllowed, ConfigValidators } from './config.js'
+import { config, filenameIsNotIgnored, ConfigValidators } from './config.js'
 import { DF, API, LONG_POLL_SERVER_TIMEOUT } from './ApiConstants.js'
 import { sendOK, sendJSON, sendUnprocessableContent, sendFile } from './utils/http-response.js'
 
@@ -72,7 +72,7 @@ function getCollectProxied(_, response) { sendJSON(response, config.collectProxi
 
 function listStaticFiles(req, response) {
 	sendJSON(response, config.staticDir
-		? listFilesRecursively(config.staticDir).filter(fileIsAllowed)
+		? listFilesRecursively(config.staticDir).filter(filenameIsNotIgnored)
 		: [])
 }
 

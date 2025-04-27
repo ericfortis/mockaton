@@ -64,7 +64,7 @@ for (const [k, [defaultVal, validator]] of Object.entries(schema)) {
 /** @type {Config} */
 export const config = Object.seal(ConfigDefaults)
 
-export const fileIsAllowed = f => !config.ignore.test(f)
+export const filenameIsNotIgnored = f => !config.ignore.test(f)
 
 export function setup(options) {
 	Object.assign(config, options)

@@ -8,8 +8,7 @@ An HTTP mock server for simulating APIs with minimal setup
 
 
 ## Convention Over Code
-With Mockaton you don’t need to write code for wiring mocks. Instead, it scans
-a given directory for filenames following a convention similar to the URLs.
+Mockaton scans a given directory for filenames following a convention similar to the URLs.
 
 For example, for <code>/<b>api/user</b>/1234</code> the filename would be:
 <pre>
@@ -363,8 +362,8 @@ Defaults to `/(\.DS_Store|~)$/`
 <br/>
 
 ### `delay?: number` 
-Defaults to `1200` milliseconds. Although routes can individually be
-delayed with the 🕓 checkbox, the delay amount is globally configurable.
+Defaults to `1200` milliseconds. Although routes can individually be delayed
+with the 🕓 checkbox, the delay amount is globally configurable with option.
 
 <br/>
 

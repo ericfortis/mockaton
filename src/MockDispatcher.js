@@ -11,7 +11,7 @@ import { sendInternalServerError, sendNotFound, sendUnprocessableContent } from 
 
 export async function dispatchMock(req, response) {
 	try {
-		const broker = mockBrokerCollection.getBrokerByRoute(req.method, req.url)
+		const broker = mockBrokerCollection.findBrokerByRoute(req.method, req.url)
 		if (!broker || broker.proxied) {
 			if (config.proxyFallback)
 				await proxy(req, response, config.delay * Boolean(broker?.delayed))

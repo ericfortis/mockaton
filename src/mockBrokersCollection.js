@@ -37,7 +37,7 @@ export function init() {
 
 /** @returns {boolean} registered */
 export function registerMock(file, isFromWatcher) {
-	if (getBrokerByFilename(file)?.hasMock(file)
+	if (findBrokerByFilename(file)?.hasMock(file)
 		|| !isFileAllowed(file)
 		|| !filenameIsValid(file))
 		return false
@@ -60,7 +60,7 @@ export function registerMock(file, isFromWatcher) {
 }
 
 export function unregisterMock(file) {
-	const broker = getBrokerByFilename(file)
+	const broker = findBrokerByFilename(file)
 	if (!broker)
 		return
 	const isEmpty = broker.unregister(file)
@@ -76,20 +76,20 @@ export const getAll = () => collection
 
 
 /** @returns {MockBroker | undefined} */
-export function getBrokerByFilename(file) {
+export function findBrokerByFilename(file) {
 	const { method, urlMask } = parseFilename(file)
 	if (collection[method])
 		return collection[method][urlMask]
 }
 
 /**
- * Searching the routes in reverse order so dynamic params (e.g.
+ * Searching routes in reverse order so dynamic params (e.g.
  * /user/[id]) don’t take precedence over exact paths (e.g.
  * /user/name). That’s because "[]" chars are lower than alphanumeric ones.
  * BTW, `urlMasks` always start with "/", so there’s no need to
  * worry about the primacy of array-like keys when iterating.
  @returns {MockBroker | undefined} */
-export function getBrokerByRoute(method, url) {
+export function findBrokerByRoute(method, url) {
 	if (!collection[method])
 		return
 	const brokers = Object.values(collection[method])

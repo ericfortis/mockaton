@@ -114,7 +114,7 @@ async function selectCookie(req, response) {
 
 async function selectMock(req, response) {
 	const file = await parseJSON(req)
-	const broker = mockBrokersCollection.getBrokerByFilename(file)
+	const broker = mockBrokersCollection.findBrokerByFilename(file)
 	if (!broker || !broker.hasMock(file))
 		sendUnprocessableContent(response, `Missing Mock: ${file}`)
 	else {
@@ -126,7 +126,7 @@ async function selectMock(req, response) {
 async function setRouteIsDelayed(req, response) {
 	const body = await parseJSON(req)
 	const delayed = body[DF.delayed]
-	const broker = mockBrokersCollection.getBrokerByRoute(
+	const broker = mockBrokersCollection.findBrokerByRoute(
 		body[DF.routeMethod],
 		body[DF.routeUrlMask])
 
@@ -143,7 +143,7 @@ async function setRouteIsDelayed(req, response) {
 async function setRouteIsProxied(req, response) { // TESTME
 	const body = await parseJSON(req)
 	const proxied = body[DF.proxied]
-	const broker = mockBrokersCollection.getBrokerByRoute(
+	const broker = mockBrokersCollection.findBrokerByRoute(
 		body[DF.routeMethod],
 		body[DF.routeUrlMask])
 

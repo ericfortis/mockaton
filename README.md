@@ -47,12 +47,12 @@ api/login<b>(invalid login attempt)</b>.POST.401.json
 
 ### Different response status code
 For instance, you can use a `4xx` or `5xx` status code for triggering error
-responses, or a `2xx` such as `204` (No Content) for testing empty collections.
+responses, or a `2xx` such as `204` for testing empty collections.
 
 <pre>
-api/videos(empty list).GET.<b>204</b>.json
-api/videos.GET.<b>403</b>.json
-api/videos.GET.<b>500</b>.txt
+api/videos(empty list).GET.<b>204</b>.json  # No Content
+api/videos.GET.<b>403</b>.json              # Forbidden
+api/videos.GET.<b>500</b>.txt               # Internal Server Error
 </pre>
 
 
@@ -313,7 +313,7 @@ permitted](https://learn.microsoft.com/en-us/windows/win32/fileio/naming-a-file)
 ### Index-like routes
 If you have `api/foo` and `api/foo/bar`, you have two options:
 
-**Option A.** 
+**Option A.** Standard naming:
 ```
 api/foo.GET.200.json
 api/foo/bar.GET.200.json

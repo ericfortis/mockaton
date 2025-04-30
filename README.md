@@ -345,6 +345,9 @@ my-static-dir<b>/foo/bar.jpg</b>
  my-mocks-dir<b>/foo/bar.jpg</b>.GET.200.jpg // Unreachable
 </pre>
 
+### `ignore?: RegExp`
+Defaults to `/(\.DS_Store|~)$/`
+
 <br/>
 
 
@@ -353,11 +356,6 @@ Defaults to `'localhost'`
 
 ### `port?: number`
 Defaults to `0`, which means auto-assigned
-
-<br/>
-
-### `ignore?: RegExp`
-Defaults to `/(\.DS_Store|~)$/`
 
 <br/>
 

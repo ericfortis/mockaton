@@ -50,25 +50,26 @@ const schema = {
 }
 
 
-const ConfigDefaults = {}
-
-/** @type {Record<keyof Config, (val: unknown) => boolean>} */
-export const ConfigValidators = {}
-
+const defaults = {}
+const validators = {}
 for (const [k, [defaultVal, validator]] of Object.entries(schema)) {
-	ConfigDefaults[k] = defaultVal
-	ConfigValidators[k] = validator
+	defaults[k] = defaultVal
+	validators[k] = validator
 }
 
-
 /** @type {Config} */
-export const config = Object.seal(ConfigDefaults)
+export const config = Object.seal(defaults)
+
+/** @type {Record<keyof Config, (val: unknown) => boolean>} */
+export const ConfigValidator = Object.freeze(validators)
+
 
 export const isFileAllowed = f => !config.ignore.test(f)
 
+
 export function setup(options) {
 	Object.assign(config, options)
-	validate(config, ConfigValidators)
+	validate(config, ConfigValidator)
 
 	config.mocksDir = realpathSync(config.mocksDir)
 	if (config.staticDir)

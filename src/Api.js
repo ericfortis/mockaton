@@ -9,7 +9,7 @@ import { arEvents } from './Watcher.js'
 import { parseJSON } from './utils/http-request.js'
 import { listFilesRecursively } from './utils/fs.js'
 import * as mockBrokersCollection from './mockBrokersCollection.js'
-import { config, isFileAllowed, ConfigValidators } from './config.js'
+import { config, isFileAllowed, ConfigValidator } from './config.js'
 import { DF, API, LONG_POLL_SERVER_TIMEOUT } from './ApiConstants.js'
 import { sendOK, sendJSON, sendUnprocessableContent, sendFile } from './utils/http-response.js'
 
@@ -161,7 +161,7 @@ async function setRouteIsProxied(req, response) { // TESTME
 
 async function updateProxyFallback(req, response) {
 	const fallback = await parseJSON(req)
-	if (!ConfigValidators.proxyFallback(fallback)) {
+	if (!ConfigValidator.proxyFallback(fallback)) {
 		sendUnprocessableContent(response)
 		return
 	}
@@ -172,7 +172,12 @@ async function updateProxyFallback(req, response) {
 }
 
 async function setCollectProxied(req, response) {
-	config.collectProxied = await parseJSON(req)
+	const collectProxied = await parseJSON(req)
+	if (!ConfigValidator.collectProxied(collectProxied)) { // TESTME
+		sendUnprocessableContent(response)
+		return
+	}
+	config.collectProxied = collectProxied
 	sendOK(response)
 }
 

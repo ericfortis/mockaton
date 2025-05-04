@@ -1,6 +1,7 @@
 .editorconfig
 .github
 .idea
+.coverage
 README-*.png
 demo-app-vite/
 fixtures-mocks/

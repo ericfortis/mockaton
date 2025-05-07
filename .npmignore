@@ -2,6 +2,8 @@
 .github
 .idea
 .coverage
+dev-mockaton.js
+TODO.md
 README-*.png
 demo-app-vite/
 fixtures-mocks/

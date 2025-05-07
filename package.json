@@ -1,8 +1,8 @@
 {
 	"name": "mockaton",
-	"description": "A deterministic server-side for developing and testing APIs",
+	"description": "HTTP Mock Server",
 	"type": "module",
-	"version": "8.12.3",
+	"version": "8.12.4",
 	"main": "index.js",
 	"types": "index.d.ts",
 	"license": "MIT",

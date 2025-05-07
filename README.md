@@ -361,7 +361,7 @@ Defaults to `0`, which means auto-assigned
 
 ### `delay?: number` 
 Defaults to `1200` milliseconds. Although routes can individually be delayed
-with the 🕓 checkbox, the delay amount is globally configurable with option.
+with the 🕓 Checkbox, the amount is globally configurable with this option.
 
 <br/>
 

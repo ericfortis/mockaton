@@ -9,3 +9,4 @@ demo-app-vite/
 fixtures-mocks/
 fixtures-static-mocks/
 pixaton-tests/
+src/**/*.test.js

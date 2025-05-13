@@ -51,7 +51,7 @@ export const apiPatchRequests = new Map([
 ])
 
 
-/* === GET === */
+/** # GET */
 
 function serveDashboard(_, response) {
 	sendFile(response, join(import.meta.dirname, 'Dashboard.html'))
@@ -97,7 +97,7 @@ function longPollAR_Events(req, response) {
 
 
 
-/* === PATCH === */
+/** # PATCH */
 
 function reinitialize(_, response) {
 	mockBrokersCollection.init()

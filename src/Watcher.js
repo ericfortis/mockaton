@@ -7,7 +7,7 @@ import { isFile } from './utils/fs.js'
 import * as mockBrokerCollection from './mockBrokersCollection.js'
 
 
-// AR = Add or Remove Mock
+/** # AR = Add or Remove Mock */
 export const arEvents = new class extends EventEmitter {
 	count = 0
 

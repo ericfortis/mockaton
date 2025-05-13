@@ -97,7 +97,8 @@ function App([brokersByMethod, cookies, comments, delay, collectProxied, fallbac
 			r(StaticFilesList, { staticFiles })))
 }
 
-// Header ===============
+
+/** # Header */
 
 function Header({ cookies, comments, delay, fallbackAddress, collectProxied }) {
 	return (
@@ -240,8 +241,7 @@ function ResetButton() {
 }
 
 
-
-// MockList ===============
+/** # MockList */
 
 function MockList({ brokersByMethod, canProxy }) {
 	const hasMocks = Object.keys(brokersByMethod).length
@@ -255,7 +255,6 @@ function MockList({ brokersByMethod, canProxy }) {
 				r(SectionByMethod, { method, brokers, canProxy }))),
 			r(PayloadViewer)))
 }
-
 
 function SectionByMethod({ method, brokers, canProxy }) {
 	return (
@@ -272,7 +271,6 @@ function SectionByMethod({ method, brokers, canProxy }) {
 						r('td', null, r(DelayRouteToggler, { broker })),
 						r('td', null, r(ProxyToggler, { broker, disabled: !canProxy }))))))
 }
-
 
 function PreviewLink({ method, urlMask }) {
 	async function onClick(event) {
@@ -293,7 +291,6 @@ function PreviewLink({ method, urlMask }) {
 			onClick
 		}, urlMask))
 }
-
 
 function MockSelector({ broker }) {
 	function onChange() {
@@ -349,7 +346,6 @@ function DelayRouteToggler({ broker }) {
 			TimerIcon()))
 }
 
-
 function InternalServerErrorToggler({ broker }) {
 	function onChange() {
 		const { urlMask, method } = parseFilename(broker.mocks[0])
@@ -375,7 +371,6 @@ function InternalServerErrorToggler({ broker }) {
 			r('span', null, '500')))
 }
 
-
 function ProxyToggler({ broker, disabled }) {
 	function onChange() {
 		const { urlMask, method } = parseFilename(broker.mocks[0])
@@ -399,8 +394,7 @@ function ProxyToggler({ broker, disabled }) {
 }
 
 
-
-// Payload Preview ===============
+/** # Payload Preview */
 
 const payloadViewerTitleRef = useRef()
 const payloadViewerRef = useRef()
@@ -497,8 +491,7 @@ function mockSelectorFor(method, urlMask) {
 }
 
 
-
-// StaticFilesList ===============
+/** # StaticFilesList */
 
 function StaticFilesList({ staticFiles }) {
 	if (!staticFiles.length)
@@ -515,7 +508,7 @@ function StaticFilesList({ staticFiles }) {
 }
 
 
-// Misc ===============
+/** # Misc */
 
 function onError(error) {
 	if (error?.message === 'Failed to fetch')
@@ -537,7 +530,7 @@ function CloudIcon() {
 }
 
 
-// AR Events (Add or Remove mock) ============
+/**  AR Events (Add or Remove mock) */
 
 pollAR_Events.isPolling = false
 pollAR_Events.oldAR_EventsCount = 0
@@ -566,14 +559,14 @@ async function pollAR_Events() {
 }
 
 
-// Utils ============
+/** # Utils */
 
 function cssClass(...args) {
 	return args.filter(Boolean).join(' ')
 }
 
 
-// These are simplified React-compatible implementations
+/** ## React-compatible simplified implementations */
 
 function createElement(elem, props = null, ...children) {
 	if (typeof elem === 'function')

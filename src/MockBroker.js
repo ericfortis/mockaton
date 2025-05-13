@@ -2,8 +2,8 @@ import { includesComment, extractComments, parseFilename } from './Filename.js'
 import { DEFAULT_500_COMMENT, DEFAULT_MOCK_COMMENT } from './ApiConstants.js'
 
 
-// MockBroker is a state for a particular route. It knows the available mock files
-// that can be served for the route, the currently selected file, and if it’s delayed.
+/** MockBroker is a state for a particular route. It knows the available mock files
+ * that can be served for the route, the currently selected file, and if it’s delayed. */
 export class MockBroker {
 	constructor(file) {
 		this.urlMaskMatches = new UrlMatcher(file).urlMaskMatches

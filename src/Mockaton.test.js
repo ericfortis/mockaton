@@ -635,7 +635,7 @@ function testWindowsPaths() {
 }
 
 
-// Utils
+/** # Utils */
 
 function write(filename, data) {
 	_write(tmpDir + filename, data)

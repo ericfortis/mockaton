@@ -68,11 +68,7 @@ let globalDelay = 1200
 
 
 init()
-pollAR_Events() // Add or Remove Mocks from File System
-document.addEventListener('visibilitychange', () => {
-	if (!document.hidden)
-		pollAR_Events()
-})
+initLongPoll()
 
 function init() {
 	return Promise.all([
@@ -530,16 +526,29 @@ function CloudIcon() {
 }
 
 
-/**  AR Events (Add or Remove mock) */
+/** # Poll AR Events - Add or Remove mock */
 
-pollAR_Events.isPolling = false
-pollAR_Events.oldAR_EventsCount = 0
+function initLongPoll() {
+	pollAR_Events.oldAR_EventsCount = 0
+	pollAR_Events.isPolling = false
+	pollAR_Events.controller = new AbortController()
+	pollAR_Events()
+	document.addEventListener('visibilitychange', () => {
+		if (document.hidden) {
+			pollAR_Events.controller.abort('_was_hidden_')
+			pollAR_Events.controller = new AbortController()
+		}
+		else
+			pollAR_Events()
+	})
+}
+
 async function pollAR_Events() {
-	if (pollAR_Events.isPolling || document.hidden)
+	if (pollAR_Events.isPolling)
 		return
 	try {
 		pollAR_Events.isPolling = true
-		const response = await mockaton.getAR_EventsCount(pollAR_Events.oldAR_EventsCount)
+		const response = await mockaton.getAR_EventsCount(pollAR_Events.oldAR_EventsCount, pollAR_Events.controller.signal)
 		if (response.ok) {
 			const nAR_Events = await response.json()
 			if (pollAR_Events.oldAR_EventsCount !== nAR_Events) { // because it could be < or >
@@ -552,9 +561,10 @@ async function pollAR_Events() {
 		else
 			throw response.status
 	}
-	catch (_) {
+	catch (error) {
 		pollAR_Events.isPolling = false
-		setTimeout(pollAR_Events, 5000)
+		if (error !== '_was_hidden_')
+			setTimeout(pollAR_Events, 3000)
 	}
 }
 

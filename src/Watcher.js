@@ -16,7 +16,7 @@ export const arEvents = new class extends EventEmitter {
 		super.emit('AR')
 	}
 	subscribe(listener) {
-		this.on('AR', listener)
+		this.once('AR', listener)
 	}
 	unsubscribe(listener) {
 		this.removeListener('AR', listener)

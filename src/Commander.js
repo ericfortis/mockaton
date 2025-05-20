@@ -92,11 +92,11 @@ export class Commander {
 		return this.#patch(API.reset)
 	}
 
-	getAR_EventsCount(nAR_EventReceived, abortSignal) {
+	getSyncVersion(currentSyncVersion, abortSignal) {
 		return fetch(API.arEvents, {
 			signal: AbortSignal.any([abortSignal, AbortSignal.timeout(LONG_POLL_SERVER_TIMEOUT + 1000)]),
 			headers: {
-				[DF.lastReceived_nAR]: nAR_EventReceived
+				[DF.syncVersion]: currentSyncVersion
 			}
 		})
 	}

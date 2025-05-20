@@ -5,7 +5,7 @@
 
 import { join } from 'node:path'
 import { cookie } from './cookie.js'
-import { arEvents } from './Watcher.js'
+import { uiSyncVersion } from './Watcher.js'
 import { parseJSON } from './utils/http-request.js'
 import { listFilesRecursively } from './utils/fs.js'
 import * as mockBrokersCollection from './mockBrokersCollection.js'
@@ -31,7 +31,7 @@ export const apiGetRequests = new Map([
 	[API.mocks, listMockBrokers],
 	[API.cookies, listCookies],
 	[API.fallback, getProxyFallback],
-	[API.arEvents, longPollAR_Events],
+	[API.arEvents, longPollClientSyncVersion],
 	[API.comments, listComments],
 	[API.globalDelay, getGlobalDelay],
 	[API.collectProxied, getCollectProxied]
@@ -76,23 +76,26 @@ function listStaticFiles(req, response) {
 		: [])
 }
 
-function longPollAR_Events(req, response) {
-	// needs sync e.g. when tab was hidden while new mocks were added or removed
-	const clientIsOutOfSync = parseInt(req.headers[DF.lastReceived_nAR], 10) !== arEvents.count
-	if (clientIsOutOfSync) {
-		sendJSON(response, arEvents.count)
+function longPollClientSyncVersion(req, response) {
+	if (uiSyncVersion.version !== Number(req.headers[DF.syncVersion])) {
+		// e.g., tab was hidden while new mocks were added or removed
+		sendJSON(response, uiSyncVersion.version)
 		return
 	}
+
 	function onAddOrRemoveMock() {
-		arEvents.unsubscribe(onAddOrRemoveMock)
-		sendJSON(response, arEvents.count)
+		uiSyncVersion.unsubscribe(onAddOrRemoveMock)
+		sendJSON(response, uiSyncVersion.version)
 	}
+
 	response.setTimeout(LONG_POLL_SERVER_TIMEOUT, onAddOrRemoveMock)
+
 	req.on('error', () => {
-		arEvents.unsubscribe(onAddOrRemoveMock)
+		uiSyncVersion.unsubscribe(onAddOrRemoveMock)
 		response.destroy()
 	})
-	arEvents.subscribe(onAddOrRemoveMock)
+
+	uiSyncVersion.subscribe(onAddOrRemoveMock)
 }
 
 

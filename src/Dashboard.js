@@ -526,45 +526,48 @@ function CloudIcon() {
 }
 
 
-/** # Poll AR Events - Add or Remove mock */
+/**
+ * # Poll UI Sync Version
+ * The version increments when a mock file is added or removed
+ */
 
 function initLongPoll() {
-	pollAR_Events.oldAR_EventsCount = 0
-	pollAR_Events.isPolling = false
-	pollAR_Events.controller = new AbortController()
-	pollAR_Events()
+	poll.oldSyncVersion = 0
+	poll.isPolling = false
+	poll.controller = new AbortController()
+	poll()
 	document.addEventListener('visibilitychange', () => {
 		if (document.hidden) {
-			pollAR_Events.controller.abort('_was_hidden_')
-			pollAR_Events.controller = new AbortController()
+			poll.controller.abort('_hidden_tab_')
+			poll.controller = new AbortController()
 		}
 		else
-			pollAR_Events()
+			poll()
 	})
 }
 
-async function pollAR_Events() {
-	if (pollAR_Events.isPolling)
+async function poll() {
+	if (poll.isPolling)
 		return
 	try {
-		pollAR_Events.isPolling = true
-		const response = await mockaton.getAR_EventsCount(pollAR_Events.oldAR_EventsCount, pollAR_Events.controller.signal)
+		poll.isPolling = true
+		const response = await mockaton.getSyncVersion(poll.oldSyncVersion, poll.controller.signal)
 		if (response.ok) {
-			const nAR_Events = await response.json()
-			if (pollAR_Events.oldAR_EventsCount !== nAR_Events) { // because it could be < or >
-				pollAR_Events.oldAR_EventsCount = nAR_Events
+			const syncVersion = await response.json()
+			if (poll.oldSyncVersion !== syncVersion) { // because it could be < or >
+				poll.oldSyncVersion = syncVersion
 				await init()
 			}
-			pollAR_Events.isPolling = false
-			pollAR_Events()
+			poll.isPolling = false
+			poll()
 		}
 		else
 			throw response.status
 	}
 	catch (error) {
-		pollAR_Events.isPolling = false
-		if (error !== '_was_hidden_')
-			setTimeout(pollAR_Events, 3000)
+		poll.isPolling = false
+		if (error !== '_hidden_tab_')
+			setTimeout(poll, 3000)
 	}
 }
 

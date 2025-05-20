@@ -7,12 +7,12 @@ import { isFile } from './utils/fs.js'
 import * as mockBrokerCollection from './mockBrokersCollection.js'
 
 
-/** # AR = Add or Remove Mock */
-export const arEvents = new class extends EventEmitter {
-	count = 0
+/** # AR = Add or Remove Mock Event */
+export const uiSyncVersion = new class extends EventEmitter {
+	version = 0
 
-	emit() {
-		this.count++
+	increment() {
+		this.version++
 		super.emit('AR')
 	}
 	subscribe(listener) {
@@ -30,11 +30,11 @@ export function watchMocksDir() {
 			return
 		if (isFile(join(dir, file))) {
 			if (mockBrokerCollection.registerMock(file, 'isFromWatcher'))
-				arEvents.emit()
+				uiSyncVersion.increment()
 		}
 		else {
 			mockBrokerCollection.unregisterMock(file)
-			arEvents.emit()
+			uiSyncVersion.increment()
 		}
 	})
 }

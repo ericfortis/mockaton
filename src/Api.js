@@ -31,9 +31,9 @@ export const apiGetRequests = new Map([
 	[API.mocks, listMockBrokers],
 	[API.cookies, listCookies],
 	[API.fallback, getProxyFallback],
-	[API.arEvents, longPollClientSyncVersion],
 	[API.comments, listComments],
 	[API.globalDelay, getGlobalDelay],
+	[API.syncVersion, longPollClientSyncVersion],
 	[API.collectProxied, getCollectProxied]
 ])
 

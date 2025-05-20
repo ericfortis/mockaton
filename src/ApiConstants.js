@@ -14,7 +14,7 @@ export const API = {
 	proxied: MOUNT + '/proxied',
 	cors: MOUNT + '/cors',
 	static: MOUNT + '/static',
-	arEvents: MOUNT + '/ar_events'
+	syncVersion: MOUNT + '/sync_version'
 }
 
 export const DF = { // Dashboard Fields (XHR)

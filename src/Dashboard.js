@@ -533,7 +533,6 @@ function CloudIcon() {
 
 function initLongPoll() {
 	poll.oldSyncVersion = 0
-	poll.isPolling = false
 	poll.controller = new AbortController()
 	poll()
 	document.addEventListener('visibilitychange', () => {
@@ -547,10 +546,7 @@ function initLongPoll() {
 }
 
 async function poll() {
-	if (poll.isPolling)
-		return
 	try {
-		poll.isPolling = true
 		const response = await mockaton.getSyncVersion(poll.oldSyncVersion, poll.controller.signal)
 		if (response.ok) {
 			const syncVersion = await response.json()
@@ -558,14 +554,12 @@ async function poll() {
 				poll.oldSyncVersion = syncVersion
 				await init()
 			}
-			poll.isPolling = false
 			poll()
 		}
 		else
 			throw response.status
 	}
 	catch (error) {
-		poll.isPolling = false
 		if (error !== '_hidden_tab_')
 			setTimeout(poll, 3000)
 	}

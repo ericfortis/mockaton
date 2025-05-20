@@ -93,7 +93,7 @@ export class Commander {
 	}
 
 	getSyncVersion(currentSyncVersion, abortSignal) {
-		return fetch(API.arEvents, {
+		return fetch(API.syncVersion, {
 			signal: AbortSignal.any([abortSignal, AbortSignal.timeout(LONG_POLL_SERVER_TIMEOUT + 1000)]),
 			headers: {
 				[DF.syncVersion]: currentSyncVersion

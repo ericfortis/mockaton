@@ -2,11 +2,19 @@
 	"name": "mockaton",
 	"description": "HTTP Mock Server",
 	"type": "module",
-	"version": "8.12.7",
+	"version": "8.12.8",
 	"main": "index.js",
 	"types": "index.d.ts",
 	"license": "MIT",
 	"repository": "https://github.com/ericfortis/mockaton",
+	"keywords": [
+		"mock-server",
+		"mock",
+		"api",
+		"testing",
+		"front-end",
+		"back-end"
+	],
 	"scripts": {
 		"test": "node --test \"src/**/*.test.js\"",
 		"coverage": "node --test --test-reporter=lcov --test-reporter-destination=.coverage/lcov.info --experimental-test-coverage \"src/**/*.test.js\"",

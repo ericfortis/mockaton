@@ -7,8 +7,9 @@ An HTTP mock server for simulating APIs with minimal setup
 &mdash; ideal for triggering difficult to reproduce backend states.
 
 
-## Convention Over Code
-Mockaton scans a given directory for filenames following a convention similar to the URLs.
+## Overview
+With Mockaton, you don’t need to write code for wiring up your mocks. Instead, a
+given directory is scanned for filenames following a convention similar to the URLs.
 
 For example, for <code>/<b>api/user</b>/1234</code> the filename would be:
 <pre>
@@ -158,16 +159,6 @@ putting its built assets in `config.staticDir`. And simulate the flow by Bulk Se
 
 <br/>
 
-## Alternatives
-- Chrome DevTools allows for [overriding responses](https://developer.chrome.com/docs/devtools/overrides)
-- Reverse Proxies such as [Burp](https://portswigger.net/burp) are also handy for overriding responses.
-- [MSW (Mock Server Worker)](https://mswjs.io)
-- [Nock](https://github.com/nock/nock)
-- [Fetch Mock](https://github.com/wheresrhys/fetch-mock)
-- [Mentoss](https://github.com/humanwhocodes/mentoss)
-
-
-<br/>
 
 ## You can write JSON mocks in JavaScript or TypeScript
 For example, `api/foo.GET.200.js`
@@ -606,3 +597,25 @@ default, but the `proxyFallback`, `colledProxied`, and `corsAllowed` are not aff
 ```js
 await mockaton.reset()
 ```
+
+
+<br/>
+
+## Alternatives worth learning as well
+
+### Proxy-like
+These are similar to Mockaton in the sense that you can modify the
+mock response without loosing or risking your frontend code state. For
+example, if you are polling, and you want to test the state change.
+
+- Chrome DevTools allows for [overriding responses](https://developer.chrome.com/docs/devtools/overrides)
+- Reverse Proxies such as [Burp](https://portswigger.net/burp) are also handy for overriding responses
+
+### Client side
+In contrast to Mockaton, which is an HTTP Server, these programs
+mock the client (e.g., `fetch`) in Node.js and browsers.
+
+- [MSW (Mock Server Worker)](https://mswjs.io)
+- [Nock](https://github.com/nock/nock)
+- [Fetch Mock](https://github.com/wheresrhys/fetch-mock)
+- [Mentoss](https://github.com/humanwhocodes/mentoss) Has a server side too

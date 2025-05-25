@@ -1,7 +1,7 @@
 import { API, DF, LONG_POLL_SERVER_TIMEOUT } from './ApiConstants.js'
 
 
-// Client for controlling Mockaton via its HTTP API
+/** Client for controlling Mockaton via its HTTP API */
 export class Commander {
 	#addr = ''
 	constructor(addr) {

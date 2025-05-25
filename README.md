@@ -12,7 +12,7 @@ With Mockaton, you don’t need to write code for wiring up your
 mocks. Instead, a given directory is scanned for filenames
 following a convention similar to the URLs. 
 
-For example, for [/api/user/123](#), the mock filename would be:
+For example, for [/api/user/123](#), the mock filename could be:
 
 <pre>
 <code>my-mocks-dir/<b>api/user</b>/[user-id].GET.200.json</code>
@@ -169,7 +169,7 @@ For example, `api/foo.GET.200.js`
 **Option A:** An Object, Array, or String is sent as JSON.
 
 ```js
-export default [{ foo: 'bar' }]
+export default { foo: 'bar' }
 ```
 
 **Option B:** Function

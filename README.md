@@ -112,9 +112,10 @@ cd mockaton/demo-app-vite
 npm install 
 
 npm run mockaton
-npm run start
-# BTW, that directory has scripts for running Mockaton and Vite 
-# with one command in two terminals.
+npm run start # in another terminal
+
+# BTW, that directory has scripts for running both 
+# servers with one command in two terminals.
 ```
 
 

@@ -207,7 +207,7 @@ export default async function insertColor(request, response) {
 }
 ```
 
-`api/colors(assorted)(default).GET.200.ts`
+`api/colors.GET.200.js`
 ```js
 import colorsFixture from './colors.json' with { type: 'json' }
 

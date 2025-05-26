@@ -6,21 +6,30 @@ import {
 	diffServer
 } from 'pixaton'
 import { Commander } from '../index.js'
+import { devConfig } from '../dev-mockaton.js'
+import { Mockaton } from 'mockaton'
 
-// Before running these tests you need to spin up the demo:
-//   npm run start
 
-const MOCKATON_ADDR = 'http://localhost:2345'
-const mockaton = new Commander(MOCKATON_ADDR)
+let mockatonServer
+await new Promise(resolve => {
+	mockatonServer = Mockaton({
+		...devConfig,
+		port: 0,
+		onReady: resolve
+	})
+})
+const mockatonAddr = `http://${mockatonServer.address().address}:${mockatonServer.address().port}`
+const mockaton = new Commander(mockatonAddr)
 
 const testsDir = import.meta.dirname
 
 removeDiffsAndCandidates(testsDir)
-const browser = await launch({ headless: true })
+const browser = await launch({ headless: 'shell' })
 const page = await browser.newPage()
 
 after(() => {
 	browser?.close()
+	mockatonServer?.close()
 	diffServer(testsDir)
 })
 
@@ -35,7 +44,7 @@ export function testPixels(testFileName, options = {}) {
 		height: 800
 	}]
 	options.colorSchemes ??= ['light', 'dark']
-	_testPixels(page, testFileName, MOCKATON_ADDR + '/mockaton', 'body', options)
+	_testPixels(page, testFileName, mockatonAddr + '/mockaton', 'body', options)
 }
 
 

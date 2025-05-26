@@ -2,7 +2,7 @@ import { join } from 'node:path'
 import { Mockaton, jwtCookie } from './index.js'
 
 
-Mockaton({
+export const devConfig = {
 	port: 2345,
 	mocksDir: join(import.meta.dirname, 'fixtures-mocks'),
 	staticDir: join(import.meta.dirname, 'fixtures-static-mocks'),
@@ -14,4 +14,9 @@ Mockaton({
 			picture: 'https://cdn.auth0.com/avatars/jd.png'
 		})
 	}
-})
+}
+
+// If this file was called as `node dev-mockaton.js` (not imported for tests)
+if (import.meta.url === `file://${process.argv[1]}`)
+	Mockaton(devConfig)
+	

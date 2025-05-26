@@ -1,14 +1,12 @@
+import { join } from 'node:path'
 import { after } from 'node:test'
 import { launch } from 'puppeteer'
-import {
-	removeDiffsAndCandidates,
-	testPixels as _testPixels,
-	diffServer
-} from 'pixaton'
-import { Commander } from '../index.js'
 import { devConfig } from '../dev-mockaton.js'
-import { Mockaton } from 'mockaton'
+import { Commander, Mockaton } from '../index.js'
+import { removeDiffsAndCandidates, testPixels as _testPixels, diffServer } from 'pixaton'
 
+
+const isGHA = process.env.GITHUB_ACTIONS === 'true'
 
 let mockatonServer
 await new Promise(resolve => {
@@ -21,16 +19,22 @@ await new Promise(resolve => {
 const mockatonAddr = `http://${mockatonServer.address().address}:${mockatonServer.address().port}`
 const mockaton = new Commander(mockatonAddr)
 
-const testsDir = import.meta.dirname
+const testsDir = isGHA // TODO env var
+	? join(import.meta.dirname, 'ubuntu')
+	: join(import.meta.dirname, 'macos')
 
 removeDiffsAndCandidates(testsDir)
-const browser = await launch({ headless: 'shell' })
+const browser = await launch({
+	headless: 'shell',
+	args: ['--no-sandbox', '--disable-setuid-sandbox'] // For GHA
+})
 const page = await browser.newPage()
 
 after(() => {
 	browser?.close()
 	mockatonServer?.close()
-	diffServer(testsDir)
+	if (!isGHA)
+		diffServer(testsDir)
 })
 
 export function testPixels(testFileName, options = {}) {
@@ -44,6 +48,7 @@ export function testPixels(testFileName, options = {}) {
 		height: 800
 	}]
 	options.colorSchemes ??= ['light', 'dark']
+	options.outputDir = testsDir
 	_testPixels(page, testFileName, mockatonAddr + '/mockaton', 'body', options)
 }
 
@@ -81,13 +86,13 @@ export async function clickSaveProxiedCheckbox() {
 }
 
 async function clickCheckbox(selector) {
-	await page.waitForSelector(selector)
+	await page.waitForFunction(selector => !document.querySelector(selector)?.disabled,
+		{ polling: 'mutation' }, selector)
 	await page.$eval(selector, el => el.click())
 }
 
 export async function typeFallbackBackend(serverAddress) {
-	const input = '.FallbackBackend input[type=url]'
-	await page.waitForSelector(input)
-	await page.type(input, serverAddress)
-	await page.$eval(input, el => el.blur())
+	const el = await page.waitForSelector('.FallbackBackend input[type=url]')
+	await el.type(serverAddress)
+	await el.evaluate(el => el.blur())
 }

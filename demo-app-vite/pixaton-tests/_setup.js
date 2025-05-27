@@ -18,7 +18,7 @@ export const mockaton = new Commander(MOCKATON_ADDR)
 const testsDir = import.meta.dirname
 
 removeDiffsAndCandidates(testsDir)
-const browser = await launch({ headless: true })
+const browser = await launch({ headless: 'shell' })
 const page = await browser.newPage()
 
 after(() => {
@@ -27,6 +27,7 @@ after(() => {
 })
 
 export function testPixels(testFileName, qaId, options = {}) {
+	options.outputDir = testsDir
 	options.beforeSuite = async () => await mockaton.reset()
 	options.viewports ??= [{
 		width: 500,

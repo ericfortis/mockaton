@@ -51,24 +51,19 @@ export default colors = [
 		stock: 1800
 	},
 	{
-		name: 'Light green',
-		color: '#8BC34A',
-		stock: 1800
-	},
-	{
 		name: 'Sold out non-new',
-		color: '#CDDC39',
+		color: '#8BC34A',
 		stock: 0
 	},
 	{
 		name: 'In-stock but discontinued',
-		color: '#FFEB3B',
+		color: '#CDDC39',
 		stock: 20,
 		discontinued: true,
 	},
 	{
 		name: 'Sold out and discontinued',
-		color: '#FFC107',
+		color: '#FFEB3B',
 		stock: 0,
 		discontinued: true
 	},

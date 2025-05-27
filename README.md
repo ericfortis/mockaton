@@ -123,7 +123,7 @@ npm run start # in another terminal
 
 The app looks like this:
 
-<img src="./demo-app-vite/pixaton-tests/pic-for-readme.vp500x800.light.gold.png" alt="Mockaton Demo App Screenshot" width="500" />
+<img src="./demo-app-vite/pixaton-tests/pic-for-readme.vp740x880.light.gold.png" alt="Mockaton Demo App Screenshot" width="740" />
 
 <br/>
 

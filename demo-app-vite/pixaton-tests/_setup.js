@@ -30,8 +30,8 @@ export function testPixels(testFileName, qaId, options = {}) {
 	options.outputDir = testsDir
 	options.beforeSuite = async () => await mockaton.reset()
 	options.viewports ??= [{
-		width: 500,
-		height: 800,
+		width: 740,
+		height: 880,
 		deviceScaleFactor: 1.5 // For higher quality screenshots
 	}]
 	const selector = `[data-qaid=${qaId}]`

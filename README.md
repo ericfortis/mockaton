@@ -2,6 +2,8 @@
 
 ![NPM Version](https://img.shields.io/npm/v/mockaton)
 ![NPM Version](https://img.shields.io/npm/l/mockaton)
+[![Test](https://github.com/ericfortis/mockaton/actions/workflows/test.yml/badge.svg)](https://github.com/ericfortis/mockaton/actions/workflows/test.yml)
+[![CodeQL](https://github.com/ericfortis/mockaton/actions/workflows/github-code-scanning/codeql/badge.svg)](https://github.com/ericfortis/mockaton/actions/workflows/github-code-scanning/codeql)
 
 An HTTP mock server for simulating APIs with minimal setup
 &mdash; ideal for triggering difficult to reproduce backend states.

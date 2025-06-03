@@ -396,8 +396,8 @@ the predefined list. For that, you can add it to <code>config.extraMimes</code>
 
 
 ### `formatCollectedJSON?: boolean`
-Defaults to `true`. Saves the mock with the formatting output
-of `JSON.stringify(data, null, '  ')` (two spaces indentation).
+Defaults to `true`. Saves the mock with two spaces indentation &mdash; 
+the formatting output of `JSON.stringify(data, null, '  ')`
 
 
 <br/>
@@ -420,8 +420,8 @@ config.cookies = {
 The selected cookie, which is the first one by default, is sent in every
 response in a `Set-Cookie` header. 
 
-If you need to send more cookies, you can either inject them globally
-in `config.extraHeaders`, or in function `.js` or `.ts` mock.
+If you need to send more than one cookie, you can inject them globally 
+in `config.extraHeaders`, or individually in a function `.js` or `.ts` mock.
 
 By the way, the `jwtCookie` helper has a hardcoded header and signature.
 In other words, it’s useful only if you care about its payload.
@@ -510,14 +510,18 @@ function capitalizePlugin(filePath) {
 
 ### `corsAllowed?: boolean`
 Defaults to `true`. When `true`, these are the default options:
-```js
+
+<details>
+<summary>CORS Options</summary>
+<pre><code language="javascript">
 config.corsOrigins = ['*']
 config.corsMethods = require('node:http').METHODS
 config.corsHeaders = ['content-type']
 config.corsCredentials = true
 config.corsMaxAge = 0 // seconds to cache the preflight req
 config.corsExposedHeaders = [] // headers you need to access in client-side JS
-```
+</code></pre>
+</details>
 
 <br/>
 

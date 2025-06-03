@@ -414,11 +414,13 @@ config.cookies = {
   'My JWT': jwtCookie('my-cookie', {
     name: 'John Doe',
     picture: 'https://cdn.auth0.com/avatars/jd.png'
-  })
+  }),
+  'None': null
 }
 ```
 The selected cookie, which is the first one by default, is sent in every
-response in a `Set-Cookie` header. 
+response in a `Set-Cookie` header (as long it’s not `null`). The cookie 
+label is just for UI display purposes and for changing it with the Commander API.
 
 If you need to send more than one cookie, you can inject them globally 
 in `config.extraHeaders`, or individually in a function `.js` or `.ts` mock.
@@ -482,8 +484,8 @@ import { jsToJsonPlugin } from 'mockaton'
 
 config.plugins = [
   
-  // Although `jsToJsonPlugin` is set by default, you need to add it to your list if you need it.
-  // In other words, your plugins array overwrites the default list. This way you can remove it.
+  // Although `jsToJsonPlugin` is set by default, you need to include it if you need it.
+  // IOW, your plugins array overwrites the default list. This way you can remove it.
   [/\.(js|ts)$/, jsToJsonPlugin], 
   
   [/\.yml$/, yamlToJsonPlugin],
@@ -513,14 +515,15 @@ Defaults to `true`. When `true`, these are the default options:
 
 <details>
 <summary>CORS Options</summary>
-<pre><code language="javascript">
+
+```js
 config.corsOrigins = ['*']
 config.corsMethods = require('node:http').METHODS
 config.corsHeaders = ['content-type']
 config.corsCredentials = true
 config.corsMaxAge = 0 // seconds to cache the preflight req
 config.corsExposedHeaders = [] // headers you need to access in client-side JS
-</code></pre>
+```
 </details>
 
 <br/>

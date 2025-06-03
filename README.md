@@ -419,8 +419,9 @@ config.cookies = {
 }
 ```
 The selected cookie, which is the first one by default, is sent in every
-response in a `Set-Cookie` header (as long it’s not `null`). The cookie 
-label is just for UI display purposes and for changing it with the Commander API.
+response in a `Set-Cookie` header (as long it’s not `null`). The label 
+is just for UI display purposes, and for selecting another cookie via the 
+Commander API.
 
 If you need to send more than one cookie, you can inject them globally 
 in `config.extraHeaders`, or individually in a function `.js` or `.ts` mock.

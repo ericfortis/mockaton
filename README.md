@@ -564,9 +564,9 @@ await mockaton.select('api/foo.200.GET.json')
 ```js
 await mockaton.bulkSelectByComment('(demo-a)')
 ```
-Parentheses are optional, so you can pass a partial match.
-For example, passing `'demo-'` (without the final `a`), selects the
-first mock in alphabetical order that matches.
+Parentheses are optional, so you can pass a partial match. For example,
+passing `'demo-'` (without the final `a`) works too. On routes
+with many partial matches, their first mock in alphabetical order wins.
 
 <br/>
 

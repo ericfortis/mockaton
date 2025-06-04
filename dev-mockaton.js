@@ -13,7 +13,7 @@ export const devConfig = {
 			email: 'john.doe@example.com',
 			picture: 'https://cdn.auth0.com/avatars/jd.png'
 		}),
-		'None': null
+		'None': ''
 	}
 }
 

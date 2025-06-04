@@ -415,13 +415,12 @@ config.cookies = {
     name: 'John Doe',
     picture: 'https://cdn.auth0.com/avatars/jd.png'
   }),
-  'None': null
+  'None': ''
 }
 ```
-The selected cookie, which is the first one by default, is sent in every
-response in a `Set-Cookie` header (as long it’s not `null`). The label 
-is just for UI display purposes, and for selecting another cookie via the 
-Commander API.
+The selected cookie, which is the first one by default, is sent in every response in a
+`Set-Cookie` header (as long as its value is not an empty string). The object key is just
+a label for UI display purposes, and also for selecting a cookie via the Commander API.
 
 If you need to send more than one cookie, you can inject them globally 
 in `config.extraHeaders`, or individually in a function `.js` or `.ts` mock.

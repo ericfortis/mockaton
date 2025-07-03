@@ -366,8 +366,8 @@ or that you manually picked with the ☁️ **Cloud Checkbox**.
 
 ### `collectProxied?: boolean`
 Defaults to `false`. With this flag you can save mocks that hit
-your proxy fallback to `config.mocksDir`. If there are UUIDv4 in the
-URL, the filename will have `[id]` in their place. For example,
+your proxy fallback to `config.mocksDir`. If the URL has v4 UUIDs, 
+the filename will have `[id]` in their place. For example,
 
 ```
 /api/user/d14e09c8-d970-4b07-be42-b2f4ee22f0a6/likes =>

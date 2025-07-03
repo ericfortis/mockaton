@@ -1,4 +1,5 @@
-import scores from './typescript-scores.GET.200'
+// @ts-ignore
+import scores from './typescript-scores.GET.200.ts'
 
 export default [
 	...scores,

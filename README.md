@@ -76,12 +76,10 @@ They will be saved in your `config.mocksDir` following the filename convention.
 
 
 ## Basic Usage
-Mockaton is a Node.js program with no build or runtime NPM dependencies.
-
-`tsx` is only needed if you want to write mocks in TypeScript.
+Mockaton is a Node.js program.
 
 ```sh
-npm install mockaton tsx --save-dev
+npm install mockaton --save-dev
 ```
 
 Create a `my-mockaton.js` file
@@ -97,7 +95,7 @@ Mockaton({
 ```
 
 ```sh
-node --import=tsx my-mockaton.js
+node my-mockaton.js
 ```
 
 <br/>

@@ -367,16 +367,15 @@ or that you manually picked with the ☁️ **Cloud Checkbox**.
 ### `collectProxied?: boolean`
 Defaults to `false`. With this flag you can save mocks that hit
 your proxy fallback to `config.mocksDir`. If the URL has v4 UUIDs, 
-the filename will have `[id]` in their place. For example,
+the filename will have `[id]` in their place. For example:
 
-```
-/api/user/d14e09c8-d970-4b07-be42-b2f4ee22f0a6/likes =>
-  my-mocks-dir/api/user/[id]/likes.GET.200.json
-```
+<pre>
+<b>/api/user/</b>d14e09c8-d970-4b07-be42-b2f4ee22f0a6<b>/likes</b> =>
+  my-mocks-dir<b>/api/user/</b>[id]<b>/likes</b>.GET.200.json
+</pre>
 
-Your existing mocks won’t be overwritten. That is, the routes you manually
-selected for using your backend with the ☁️ **Cloud Checkbox**, will have
-a unique filename comment.
+Your existing mocks won’t be overwritten. In other words, responses of routes with
+the ☁️ **Cloud Checkbox** selected will be saved with unique filename-comments.
 
 
 <details>

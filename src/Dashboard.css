@@ -290,6 +290,11 @@ select {
 	text-decoration: none;
 	word-break: break-word;
 
+	span {
+		opacity: 0.5;
+		filter: saturate(0.5);
+	}
+
 	&:hover {
 		background: var(--colorHover);
 	}
@@ -510,6 +515,11 @@ select {
 
 		&:hover {
 			text-decoration: underline;
+		}
+
+		span {
+			opacity: 0.5;
+			filter: saturate(0.5);
 		}
 	}
 }

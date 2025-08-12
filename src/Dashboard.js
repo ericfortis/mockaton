@@ -253,22 +253,25 @@ function MockList({ brokersByMethod, canProxy }) {
 }
 
 function SectionByMethod({ method, brokers, canProxy }) {
+	const brokersSorted = Object.entries(brokers)
+		.filter(([, broker]) => broker.mocks.length > 1) // >1 because of autogen500
+		.sort((a, b) => a[0].localeCompare(b[0]))
+
+	const urlMasks = brokersSorted.map(([urlMask]) => urlMask)
+	const urlMasksHighlighted = highlightCommonPathPrefixes(urlMasks)
 	return (
 		r('tbody', null,
 			r('th', null, method),
-			Object.entries(brokers)
-				.filter(([, broker]) => broker.mocks.length > 1) // >1 because of autogen500
-				.sort((a, b) => a[0].localeCompare(b[0]))
-				.map(([urlMask, broker]) =>
-					r('tr', { 'data-method': method, 'data-urlMask': urlMask },
-						r('td', null, r(PreviewLink, { method, urlMask })),
-						r('td', null, r(MockSelector, { broker })),
-						r('td', null, r(InternalServerErrorToggler, { broker })),
-						r('td', null, r(DelayRouteToggler, { broker })),
-						r('td', null, r(ProxyToggler, { broker, disabled: !canProxy }))))))
+			brokersSorted.map(([urlMask, broker], i) =>
+				r('tr', { 'data-method': method, 'data-urlMask': urlMask },
+					r('td', null, r(PreviewLink, { method, urlMask, urlMaskHighlighted: urlMasksHighlighted[i] })),
+					r('td', null, r(MockSelector, { broker })),
+					r('td', null, r(InternalServerErrorToggler, { broker })),
+					r('td', null, r(DelayRouteToggler, { broker })),
+					r('td', null, r(ProxyToggler, { broker, disabled: !canProxy }))))))
 }
 
-function PreviewLink({ method, urlMask }) {
+function PreviewLink({ method, urlMask, urlMaskHighlighted }) {
 	async function onClick(event) {
 		event.preventDefault()
 		try {
@@ -284,8 +287,9 @@ function PreviewLink({ method, urlMask }) {
 		r('a', {
 			className: CSS.PreviewLink,
 			href: urlMask,
-			onClick
-		}, urlMask))
+			onClick,
+			innerHTML: urlMaskHighlighted
+		}))
 }
 
 function MockSelector({ broker }) {
@@ -492,15 +496,20 @@ function mockSelectorFor(method, urlMask) {
 function StaticFilesList({ staticFiles }) {
 	if (!staticFiles.length)
 		return null
+	const highlighted = highlightCommonPathPrefixes(staticFiles)
 	return (
 		r('section', {
 				open: true,
 				className: CSS.StaticFilesList
 			},
 			r('h2', null, Strings.static_get),
-			r('ul', null, staticFiles.map(f =>
+			r('ul', null, staticFiles.map((f, i) =>
 				r('li', null,
-					r('a', { href: f, target: '_blank' }, f))))))
+					r('a', {
+						href: f,
+						target: '_blank',
+						innerHTML: highlighted[i]
+					}))))))
 }
 
 
@@ -606,4 +615,41 @@ function createSvgElement(tagName, props, ...children) {
 
 function useRef() {
 	return { current: null }
+}
+
+
+
+
+/** This is for styling the repeated paths with a faint style  */
+function highlightCommonPathPrefixes(paths) {
+	const seen = []
+	const result = []
+	for (const path of paths) {
+		let longestPrefixSegments = []
+
+		for (const prev of seen) {
+			const currSegs = path.split('/')
+			const prevSegs = prev.split('/')
+
+			let i = 0
+			while (i < currSegs.length && i < prevSegs.length && currSegs[i] === prevSegs[i])
+				i++
+
+			if (i > longestPrefixSegments.length)
+				longestPrefixSegments = currSegs.slice(0, i)
+		}
+
+		if (longestPrefixSegments.length > 0) {
+			let prefix = longestPrefixSegments.join('/')
+			if (!prefix.endsWith('/'))
+				prefix += '/' // always end with slash for dirs
+			const suffix = path.slice(prefix.length)
+			result.push(`<span>${prefix}</span>${suffix}`)
+		}
+		else
+			result.push(path)
+
+		seen.push(path)
+	}
+	return result
 }

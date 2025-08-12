@@ -2,17 +2,17 @@ const MOUNT = '/mockaton'
 export const API = {
 	dashboard: MOUNT,
 	bulkSelect: MOUNT + '/bulk-select-by-comment',
+	collectProxied: MOUNT + '/collect-proxied',
 	comments: MOUNT + '/comments',
-	select: MOUNT + '/select',
+	cookies: MOUNT + '/cookies',
+	cors: MOUNT + '/cors',
 	delay: MOUNT + '/delay',
+	fallback: MOUNT + '/fallback',
 	globalDelay: MOUNT + '/global-delay',
 	mocks: MOUNT + '/mocks',
-	reset: MOUNT + '/reset',
-	cookies: MOUNT + '/cookies',
-	fallback: MOUNT + '/fallback',
-	collectProxied: MOUNT + '/collect-proxied',
 	proxied: MOUNT + '/proxied',
-	cors: MOUNT + '/cors',
+	reset: MOUNT + '/reset',
+	select: MOUNT + '/select',
 	static: MOUNT + '/static',
 	syncVersion: MOUNT + '/sync_version'
 }

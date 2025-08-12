@@ -29,7 +29,7 @@ export function watchMocksDir() {
 		if (!file)
 			return
 		if (isFile(join(dir, file))) {
-			if (mockBrokerCollection.registerMock(file, 'isFromWatcher'))
+			if (mockBrokerCollection.registerMock(file, Boolean('isFromWatcher')))
 				uiSyncVersion.increment()
 		}
 		else {

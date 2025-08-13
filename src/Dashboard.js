@@ -258,20 +258,20 @@ function SectionByMethod({ method, brokers, canProxy }) {
 		.sort((a, b) => a[0].localeCompare(b[0]))
 
 	const urlMasks = brokersSorted.map(([urlMask]) => urlMask)
-	const urlMasksHighlighted = highlightCommonPathPrefixes(urlMasks)
+	const urlMasksDittoed = dittoSplitPaths(urlMasks)
 	return (
 		r('tbody', null,
 			r('th', null, method),
 			brokersSorted.map(([urlMask, broker], i) =>
 				r('tr', { 'data-method': method, 'data-urlMask': urlMask },
-					r('td', null, r(PreviewLink, { method, urlMask, urlMaskHighlighted: urlMasksHighlighted[i] })),
+					r('td', null, r(PreviewLink, { method, urlMask, urlMaskDittoed: urlMasksDittoed[i] })),
 					r('td', null, r(MockSelector, { broker })),
 					r('td', null, r(InternalServerErrorToggler, { broker })),
 					r('td', null, r(DelayRouteToggler, { broker })),
 					r('td', null, r(ProxyToggler, { broker, disabled: !canProxy }))))))
 }
 
-function PreviewLink({ method, urlMask, urlMaskHighlighted }) {
+function PreviewLink({ method, urlMask, urlMaskDittoed }) {
 	async function onClick(event) {
 		event.preventDefault()
 		try {
@@ -283,13 +283,15 @@ function PreviewLink({ method, urlMask, urlMaskHighlighted }) {
 			onError(error)
 		}
 	}
+	const [ditto, tail] = urlMaskDittoed
 	return (
 		r('a', {
 			className: CSS.PreviewLink,
 			href: urlMask,
-			onClick,
-			innerHTML: urlMaskHighlighted
-		}))
+			onClick
+		}, ditto
+			? [r('span', null, ditto), tail]
+			: tail))
 }
 
 function MockSelector({ broker }) {
@@ -496,7 +498,10 @@ function mockSelectorFor(method, urlMask) {
 function StaticFilesList({ staticFiles }) {
 	if (!staticFiles.length)
 		return null
-	const highlighted = highlightCommonPathPrefixes(staticFiles)
+	const highlighted = dittoSplitPaths(staticFiles)
+		.map(([ditto, tail]) => ditto
+			? [r('span', null, ditto), tail]
+			: tail)
 	return (
 		r('section', {
 				open: true,
@@ -507,9 +512,8 @@ function StaticFilesList({ staticFiles }) {
 				r('li', null,
 					r('a', {
 						href: f,
-						target: '_blank',
-						innerHTML: highlighted[i]
-					}))))))
+						target: '_blank'
+					}, highlighted[i]))))))
 }
 
 
@@ -619,37 +623,55 @@ function useRef() {
 
 
 
-
-/** This is for styling the repeated paths with a faint style  */
-function highlightCommonPathPrefixes(paths) {
+/**
+ * This is for styling the repeated paths with a faint style.
+ * It splits each path into [dittoPrefix, tail], where dittoPrefix is
+ * the longest previously-seen common directory prefix.
+ */
+function dittoSplitPaths(paths) {
 	const seen = []
 	const result = []
 	for (const path of paths) {
-		let longestPrefixSegments = []
+		const currSegs = path.split('/')
+		let longestDittoSegments = []
 
 		for (const prev of seen) {
-			const currSegs = path.split('/')
 			const prevSegs = prev.split('/')
 
 			let i = 0
 			while (i < currSegs.length && i < prevSegs.length && currSegs[i] === prevSegs[i])
 				i++
 
-			if (i > longestPrefixSegments.length)
-				longestPrefixSegments = currSegs.slice(0, i)
+			if (i > longestDittoSegments.length)
+				longestDittoSegments = currSegs.slice(0, i)
 		}
 
-		if (longestPrefixSegments.length > 0) {
-			let prefix = longestPrefixSegments.join('/')
-			if (!prefix.endsWith('/'))
-				prefix += '/' // always end with slash for dirs
-			const suffix = path.slice(prefix.length)
-			result.push(`<span>${prefix}</span>${suffix}`)
+		if (longestDittoSegments.length) {
+			const ditto = longestDittoSegments.join('/') + '/'
+			result.push([ditto, path.slice(ditto.length)])
 		}
 		else
-			result.push(path)
+			result.push(['', path])
 
 		seen.push(path)
 	}
 	return result
 }
+
+(function testDittoSplitPaths() {
+	const input = [
+		'/api/user',
+		'/api/user/avatar',
+		'/api/user/friends',
+		'/api/video/id',
+		'/api/video/stats'
+	]
+	const expected = [
+		['', '/api/user'],
+		['/api/user/', 'avatar'],
+		['/api/user/', 'friends'],
+		['/api/', 'video/id'],
+		['/api/video/', 'stats']
+	]
+	console.assert(JSON.stringify(dittoSplitPaths(input)) === JSON.stringify(expected))
+}())

@@ -498,10 +498,9 @@ function mockSelectorFor(method, urlMask) {
 function StaticFilesList({ staticFiles }) {
 	if (!staticFiles.length)
 		return null
-	const highlighted = dittoSplitPaths(staticFiles)
-		.map(([ditto, tail]) => ditto
-			? [r('span', null, ditto), tail]
-			: tail)
+	const paths = dittoSplitPaths(staticFiles).map(([ditto, tail]) => ditto
+		? [r('span', null, ditto), tail]
+		: tail)
 	return (
 		r('section', {
 				open: true,
@@ -513,7 +512,7 @@ function StaticFilesList({ staticFiles }) {
 					r('a', {
 						href: f,
 						target: '_blank'
-					}, highlighted[i]))))))
+					}, paths[i]))))))
 }
 
 
@@ -629,32 +628,34 @@ function useRef() {
  * the longest previously-seen common directory prefix.
  */
 function dittoSplitPaths(paths) {
-	const seen = []
 	const result = []
-	for (const path of paths) {
-		const currSegs = path.split('/')
-		let longestDittoSegments = []
+	for (let i = 0; i < paths.length; i++) {
+		const path = paths[i]
+		const currParts = path.split('/')
 
-		for (const prev of seen) {
-			const prevSegs = prev.split('/')
+		let dittoParts = []
+		for (let j = 0; j < i; j++) {
+			const prevParts = paths[j].split('/')
 
-			let i = 0
-			while (i < currSegs.length && i < prevSegs.length && currSegs[i] === prevSegs[i])
-				i++
+			let k = 0
+			while (
+				k < currParts.length &&
+				k < prevParts.length &&
+				currParts[k] === prevParts[k])
+				k++
 
-			if (i > longestDittoSegments.length)
-				longestDittoSegments = currSegs.slice(0, i)
+			if (k > dittoParts.length)
+				dittoParts = currParts.slice(0, k)
 		}
 
-		if (longestDittoSegments.length) {
-			const ditto = longestDittoSegments.join('/') + '/'
+		if (!dittoParts.length)
+			result.push(['', path])
+		else {
+			const ditto = dittoParts.join('/') + '/'
 			result.push([ditto, path.slice(ditto.length)])
 		}
-		else
-			result.push(['', path])
-
-		seen.push(path)
 	}
+
 	return result
 }
 

@@ -51,6 +51,7 @@ const CSS = {
 	GlobalDelayField: 'GlobalDelayField',
 	SaveProxiedCheckbox: 'SaveProxiedCheckbox',
 	StaticFilesList: 'StaticFilesList',
+	Main: 'Main',
 
 	red: 'red',
 	empty: 'empty',
@@ -89,8 +90,11 @@ function App([brokersByMethod, cookies, comments, delay, collectProxied, fallbac
 	return (
 		r('div', null,
 			r(Header, { cookies, comments, delay, fallbackAddress, collectProxied }),
-			r(MockList, { brokersByMethod, canProxy: Boolean(fallbackAddress) }),
-			r(StaticFilesList, { staticFiles })))
+			r('main', { className: CSS.Main },
+				r('div', null,
+					r(MockList, { brokersByMethod, canProxy: Boolean(fallbackAddress) }),
+					r(StaticFilesList, { staticFiles })),
+				r(PayloadViewer))))
 }
 
 
@@ -243,13 +247,12 @@ function MockList({ brokersByMethod, canProxy }) {
 	const hasMocks = Object.keys(brokersByMethod).length
 	if (!hasMocks)
 		return (
-			r('main', { className: cssClass(CSS.MockList, CSS.empty) },
+			r('div', { className: cssClass(CSS.MockList, CSS.empty) },
 				Strings.no_mocks_found))
 	return (
-		r('main', { className: CSS.MockList },
+		r('div', { className: CSS.MockList },
 			r('table', null, Object.entries(brokersByMethod).map(([method, brokers]) =>
-				r(SectionByMethod, { method, brokers, canProxy }))),
-			r(PayloadViewer)))
+				r(SectionByMethod, { method, brokers, canProxy })))))
 }
 
 function SectionByMethod({ method, brokers, canProxy }) {

@@ -1,19 +1,19 @@
 :root {
 	--boxShadow1: 0 2px 1px -1px rgba(0, 0, 0, 0.15), 0 1px 1px 0 rgba(0, 0, 0, 0.15), 0 1px 3px 0 rgba(0, 0, 0, 0.1);
-	--radius: 6px;
+	--radius: 4px;
 	--radiusSmall: 4px;
 }
 
 @media (prefers-color-scheme: light) {
 	:root {
 		--color4xxBackground: #ffedd1;
-		--colorAccent: #0075db;
+		--colorAccent: #0170cc;
 		--colorAccentAlt: #068185;
 		--colorBackground: #fff;
 		--colorComboBoxHeaderBackground: #fff;
-		--colorComboBoxBackground: #f7f7f7;
+		--colorComboBoxBackground: #eee;
 		--colorHeaderBackground: #eee;
-		--colorSecondaryButtonBackground: #f3f3f3;
+		--colorSecondaryButtonBackground: #eee;
 		--colorSecondaryAction: #555;
 		--colorDisabledMockSelector: #444;
 		--colorHover: #dfefff;
@@ -27,11 +27,10 @@
 	:root {
 		--color4xxBackground: #403630;
 		--colorAccent: #2495ff;
-		--colorAccentAlt: #00bf64;
 		--colorBackground: #161616;
 		--colorHeaderBackground: #090909;
-		--colorComboBoxBackground: #252525;
-		--colorSecondaryButtonBackground: #282828;
+		--colorComboBoxBackground: #2a2a2a;
+		--colorSecondaryButtonBackground: #2a2a2a;
 		--colorSecondaryAction: #999;
 		--colorComboBoxHeaderBackground: #222;
 		--colorDisabledMockSelector: #b9b9b9;
@@ -227,6 +226,11 @@ select {
 }
 
 
+.Main {
+	display: flex;
+}
+
+
 .MockList {
 	display: flex;
 	align-items: flex-start;
@@ -254,6 +258,7 @@ select {
 
 .PayloadViewer {
 	position: sticky;
+	margin-top: 62px;
 	top: 62px;
 	width: 50%;
 	margin-left: 20px;
@@ -292,7 +297,6 @@ select {
 
 	span {
 		opacity: 0.5;
-		filter: saturate(0.5);
 	}
 
 	&:hover {
@@ -359,7 +363,6 @@ select {
 .DelayToggler {
 	> input {
 		&:checked ~ svg {
-			border: 1px solid var(--colorBackground);
 			fill: var(--colorAccent);
 			background: var(--colorAccent);
 			stroke: var(--colorBackground);
@@ -373,11 +376,12 @@ select {
 	}
 
 	> svg {
-		width: 18px;
-		height: 18px;
+		width: 19px;
+		height: 19px;
 		stroke-width: 2.5px;
 		border-radius: 50%;
 		background: var(--colorSecondaryButtonBackground);
+		box-shadow: var(--boxShadow1);
 	}
 }
 
@@ -385,10 +389,12 @@ select {
 	padding: 1px 3px;
 	background: var(--colorSecondaryButtonBackground);
 	border-radius: var(--radiusSmall);
+	box-shadow: var(--boxShadow1);
 
 	&:has(input:checked),
 	&:has(input:disabled) {
 		background: transparent;
+		box-shadow: none;
 	}
 
 	> input {
@@ -456,6 +462,7 @@ select {
 		color: var(--colorSecondaryAction);
 		border-radius: var(--radiusSmall);
 		background: var(--colorSecondaryButtonBackground);
+		box-shadow: var(--boxShadow1);
 
 		&:hover {
 			background: var(--colorLightRed);
@@ -510,7 +517,7 @@ select {
 		display: inline-block;
 		padding: 6px;
 		border-radius: var(--radius);
-		color: var(--colorAccentAlt);
+		color: var(--colorAccent);
 		text-decoration: none;
 
 		&:hover {
@@ -519,7 +526,6 @@ select {
 
 		span {
 			opacity: 0.5;
-			filter: saturate(0.5);
 		}
 	}
 }

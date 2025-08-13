@@ -663,6 +663,7 @@ function dittoSplitPaths(paths) {
 		'/api/user',
 		'/api/user/avatar',
 		'/api/user/friends',
+		'/api/vid',
 		'/api/video/id',
 		'/api/video/stats'
 	]
@@ -670,6 +671,7 @@ function dittoSplitPaths(paths) {
 		['', '/api/user'],
 		['/api/user/', 'avatar'],
 		['/api/user/', 'friends'],
+		['/api/', 'vid'],
 		['/api/', 'video/id'],
 		['/api/video/', 'stats']
 	]

@@ -75,9 +75,7 @@ They will be saved in your `config.mocksDir` following the filename convention.
 <br/>
 
 
-## Basic Usage
-Mockaton is a Node.js program.
-
+## Basic Usage (See below for Node < 23.6)
 ```sh
 npm install mockaton --save-dev
 ```
@@ -97,6 +95,14 @@ Mockaton({
 ```sh
 node my-mockaton.js
 ```
+
+### Node < 23.6 + TypeScript
+If you want to write mocks in TypeScript in a version older than Node 23.6:
+```shell
+npm install tsx
+node --import=tsx my-mockaton.js
+```
+
 
 <br/>
 

@@ -1,4 +1,4 @@
-#!/usr/bin/env -S node --import=tsx
+#!/usr/bin/env node
 
 import { join } from 'node:path'
 import { parseArgs } from 'node:util'

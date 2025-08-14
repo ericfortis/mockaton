@@ -626,39 +626,32 @@ function useRef() {
 
 
 /**
- * This is for styling the repeated paths with a faint style.
- * It splits each path into [dittoPrefix, tail], where dittoPrefix is
- * the longest previously-seen common directory prefix.
+ * Think of this as a way of printing a directory tree in which
+ * the repeated folder paths are kept but styled differently.
+ * @param {string[]} paths - sorted
  */
 function dittoSplitPaths(paths) {
-	const result = []
-	for (let i = 0; i < paths.length; i++) {
-		const path = paths[i]
-		const currParts = path.split('/')
+	const result = [['', paths[0]]]
+	const pathsInParts = paths.map(p => p.split('/').filter(Boolean))
 
-		let dittoParts = []
-		for (let j = 0; j < i; j++) {
-			const prevParts = paths[j].split('/')
+	for (let i = 1; i < paths.length; i++) {
+		const prevParts = pathsInParts[i - 1]
+		const currParts = pathsInParts[i]
 
-			let k = 0
-			while (
-				k < currParts.length &&
-				k < prevParts.length &&
-				currParts[k] === prevParts[k])
-				k++
+		let j = 0
+		while (
+			j < currParts.length &&
+			j < prevParts.length &&
+			currParts[j] === prevParts[j])
+			j++
 
-			if (k > dittoParts.length)
-				dittoParts = currParts.slice(0, k)
-		}
-
-		if (!dittoParts.length)
-			result.push(['', path])
+		if (!j) // no common dirs
+			result.push(['', paths[i]])
 		else {
-			const ditto = dittoParts.join('/') + '/'
-			result.push([ditto, path.slice(ditto.length)])
+			const ditto = '/' + currParts.slice(0, j).join('/') + '/'
+			result.push([ditto, paths[i].slice(ditto.length)])
 		}
 	}
-
 	return result
 }
 
@@ -669,7 +662,9 @@ function dittoSplitPaths(paths) {
 		'/api/user/friends',
 		'/api/vid',
 		'/api/video/id',
-		'/api/video/stats'
+		'/api/video/stats',
+		'/v2/foo',
+		'/v2/foo/bar'
 	]
 	const expected = [
 		['', '/api/user'],
@@ -677,7 +672,9 @@ function dittoSplitPaths(paths) {
 		['/api/user/', 'friends'],
 		['/api/', 'vid'],
 		['/api/', 'video/id'],
-		['/api/video/', 'stats']
+		['/api/video/', 'stats'],
+		['', '/v2/foo'],
+		['/v2/foo/', 'bar']
 	]
 	console.assert(JSON.stringify(dittoSplitPaths(input)) === JSON.stringify(expected))
 }())

@@ -26,6 +26,7 @@ const Strings = {
 	internal_server_error: 'Internal Server Error',
 	mock: 'Mock',
 	no_mocks_found: 'No mocks found',
+	not_found: 'Not Found',
 	pick_comment: 'Pick Comment…',
 	proxied: 'Proxied',
 	proxy_toggler: 'Proxy Toggler',
@@ -264,14 +265,15 @@ function SectionByMethod({ method, brokers, canProxy }) {
 	const urlMasksDittoed = dittoSplitPaths(urlMasks)
 	return (
 		r('tbody', null,
-			r('th', null, method),
+			r('th', { colspan: 4 }, method),
 			brokersSorted.map(([urlMask, broker], i) =>
 				r('tr', { 'data-method': method, 'data-urlMask': urlMask },
-					r('td', null, r(PreviewLink, { method, urlMask, urlMaskDittoed: urlMasksDittoed[i] })),
-					r('td', null, r(MockSelector, { broker })),
-					r('td', null, r(InternalServerErrorToggler, { broker })),
+					r('td', null, r(ProxyToggler, { broker, disabled: !canProxy })),
 					r('td', null, r(DelayRouteToggler, { broker })),
-					r('td', null, r(ProxyToggler, { broker, disabled: !canProxy }))))))
+					r('td', null, r(InternalServerErrorToggler, { broker })),
+					r('td', null, r(PreviewLink, { method, urlMask, urlMaskDittoed: urlMasksDittoed[i] })),
+					r('td', null, r(MockSelector, { broker }))
+				))))
 }
 
 function PreviewLink({ method, urlMask, urlMaskDittoed }) {
@@ -399,6 +401,84 @@ function ProxyToggler({ broker, disabled }) {
 }
 
 
+
+/** # StaticFilesList */
+
+function StaticFilesList({ staticFiles }) {
+	if (!Object.keys(staticFiles).length)
+		return null
+	const paths = dittoSplitPaths(Object.keys(staticFiles)).map(([ditto, tail]) => ditto
+		? [r('span', null, ditto), tail]
+		: tail)
+	return (
+		r('table', { className: CSS.StaticFilesList },
+			r('tbody', null,
+				r('th', { colspan: 4 }, Strings.static_get),
+				Object.values(staticFiles).map((broker, i) =>
+					r('tr', null,
+						r('td', null, r(ProxyStaticToggler, {})),
+						r('td', null, r(DelayStaticRouteToggler, { broker })),
+						r('td', null, r(NotFoundToggler, { broker })),
+						r('td', null, r('a', { href: broker.file, target: '_blank' }, paths[i]))
+					)))))
+}
+
+
+function DelayStaticRouteToggler({ broker }) {
+	function onChange() {
+		mockaton.setStaticRouteIsDelayed(broker.file, this.checked)
+			.catch(onError)
+	}
+	return (
+		r('label', {
+				className: CSS.DelayToggler,
+				title: Strings.delay
+			},
+			r('input', {
+				type: 'checkbox',
+				checked: broker.delayed,
+				onChange
+			}),
+			TimerIcon()))
+}
+
+function NotFoundToggler({ broker }) {
+	function onChange() {
+		mockaton.setStaticRouteIs404(broker.file, this.checked)
+			.catch(onError)
+	}
+	return (
+		r('label', {
+				className: CSS.InternalServerErrorToggler, // TODO rename
+				title: Strings.not_found
+			},
+			r('input', {
+				type: 'checkbox',
+				checked: broker.should404,
+				onChange
+			}),
+			r('span', null, '404')))
+}
+
+
+// TODO
+function ProxyStaticToggler({}) {
+	function onChange() {
+	}
+	return (
+		r('label', {
+				style: { visibility: 'hidden' },
+				className: CSS.ProxyToggler,
+				title: Strings.proxy_toggler
+			},
+			r('input', {
+				type: 'checkbox',
+				disabled: true,
+				onChange
+			}),
+			r(CloudIcon)))
+}
+
 /** # Payload Preview */
 
 const payloadViewerTitleRef = useRef()
@@ -493,29 +573,6 @@ function linkFor(method, urlMask) {
 }
 function mockSelectorFor(method, urlMask) {
 	return trFor(method, urlMask)?.querySelector(`select.${CSS.MockSelector}`)
-}
-
-
-/** # StaticFilesList */
-
-function StaticFilesList({ staticFiles }) {
-	if (!staticFiles.length)
-		return null
-	const paths = dittoSplitPaths(staticFiles).map(([ditto, tail]) => ditto
-		? [r('span', null, ditto), tail]
-		: tail)
-	return (
-		r('section', {
-				open: true,
-				className: CSS.StaticFilesList
-			},
-			r('h2', null, Strings.static_get),
-			r('ul', null, staticFiles.map((f, i) =>
-				r('li', null,
-					r('a', {
-						href: f,
-						target: '_blank'
-					}, paths[i]))))))
 }
 
 

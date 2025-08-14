@@ -538,7 +538,7 @@ async function testStaticFileServing() {
 async function testStaticFileList() {
 	await it('Static File List', async () => {
 		const res = await commander.listStaticFiles()
-		deepEqual((await res.json()).sort(), staticFiles.map(([file]) => file).sort())
+		deepEqual(Object.keys(await res.json()).sort(), staticFiles.map(([file]) => '/' + file).sort())
 	})
 }
 

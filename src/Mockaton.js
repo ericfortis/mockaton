@@ -6,9 +6,9 @@ import { dispatchMock } from './MockDispatcher.js'
 import { watchMocksDir } from './Watcher.js'
 import { BodyReaderError } from './utils/http-request.js'
 import * as mockBrokerCollection from './mockBrokersCollection.js'
-import { dispatchStatic, isStatic } from './StaticDispatcher.js'
 import { setCorsHeaders, isPreflight } from './utils/http-cors.js'
 import { apiPatchRequests, apiGetRequests } from './Api.js'
+import { dispatchStatic, isStatic, initStaticCollection } from './StaticDispatcher.js'
 import { sendNoContent, sendInternalServerError, sendUnprocessableContent } from './utils/http-response.js'
 
 
@@ -18,6 +18,7 @@ export function Mockaton(options) {
 	setup(options)
 	mockBrokerCollection.init()
 	watchMocksDir()
+	initStaticCollection()
 
 	return createServer(onRequest).listen(config.port, config.host, function (error) {
 		if (error) {

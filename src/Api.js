@@ -5,11 +5,11 @@
 
 import { join } from 'node:path'
 import { cookie } from './cookie.js'
-import { uiSyncVersion } from './Watcher.js'
 import { parseJSON } from './utils/http-request.js'
-import { listFilesRecursively } from './utils/fs.js'
+import { uiSyncVersion } from './Watcher.js'
 import * as mockBrokersCollection from './mockBrokersCollection.js'
-import { config, isFileAllowed, ConfigValidator } from './config.js'
+import { config, ConfigValidator } from './config.js'
+import { getStaticFilesCollection, findStaticBrokerByRoute } from './StaticDispatcher.js'
 import { DF, API, LONG_POLL_SERVER_TIMEOUT } from './ApiConstants.js'
 import { sendOK, sendJSON, sendUnprocessableContent, sendFile } from './utils/http-response.js'
 
@@ -47,7 +47,9 @@ export const apiPatchRequests = new Map([
 	[API.fallback, updateProxyFallback],
 	[API.bulkSelect, bulkUpdateBrokersByCommentTag],
 	[API.globalDelay, setGlobalDelay],
-	[API.collectProxied, setCollectProxied]
+	[API.collectProxied, setCollectProxied],
+	[API.delayStatic, setStaticRouteIsDelayed],
+	[API.notFoundStatic, setStaticRouteIsNotFound]
 ])
 
 
@@ -64,17 +66,12 @@ function serveDashboardAsset(f) {
 
 function listCookies(_, response) { sendJSON(response, cookie.list()) }
 function listComments(_, response) { sendJSON(response, mockBrokersCollection.extractAllComments()) }
+function listStaticFiles(req, response) { sendJSON(response, getStaticFilesCollection()) }
 function getGlobalDelay(_, response) { sendJSON(response, config.delay) }
 function listMockBrokers(_, response) { sendJSON(response, mockBrokersCollection.getAll()) }
 function getProxyFallback(_, response) { sendJSON(response, config.proxyFallback) }
 function getIsCorsAllowed(_, response) { sendJSON(response, config.corsAllowed) }
 function getCollectProxied(_, response) { sendJSON(response, config.collectProxied) }
-
-function listStaticFiles(req, response) {
-	sendJSON(response, config.staticDir
-		? listFilesRecursively(config.staticDir).filter(isFileAllowed)
-		: [])
-}
 
 function longPollClientSyncVersion(req, response) {
 	if (uiSyncVersion.version !== Number(req.headers[DF.syncVersion])) {
@@ -134,7 +131,7 @@ async function setRouteIsDelayed(req, response) {
 		body[DF.routeUrlMask])
 
 	if (!broker) // TESTME
-		sendUnprocessableContent(response, `Route does not exist: ${body[DF.routeUrlMask]} ${body[DF.routeUrlMask]}`)
+		sendUnprocessableContent(response, `Route does not exist: ${body[DF.routeMethod]} ${body[DF.routeUrlMask]}`)
 	else if (typeof delayed !== 'boolean')
 		sendUnprocessableContent(response, `Expected a boolean for "delayed"`) // TESTME
 	else {
@@ -151,7 +148,7 @@ async function setRouteIsProxied(req, response) { // TESTME
 		body[DF.routeUrlMask])
 
 	if (!broker)
-		sendUnprocessableContent(response, `Route does not exist: ${body[DF.routeUrlMask]} ${body[DF.routeUrlMask]}`)
+		sendUnprocessableContent(response, `Route does not exist: ${body[DF.routeMethod]} ${body[DF.routeUrlMask]}`)
 	else if (typeof proxied !== 'boolean')
 		sendUnprocessableContent(response, `Expected a boolean for "proxied"`)
 	else if (proxied && !config.proxyFallback)
@@ -198,3 +195,36 @@ async function setGlobalDelay(req, response) { // TESTME
 	config.delay = parseInt(await parseJSON(req), 10)
 	sendOK(response)
 }
+
+
+async function setStaticRouteIsNotFound(req, response) {
+	const body = await parseJSON(req)
+	const shouldBeNotFound = body[DF.shouldBeNotFound]
+	const broker = findStaticBrokerByRoute(body[DF.routeUrlMask])
+
+	if (!broker) // TESTME
+		sendUnprocessableContent(response, `Route does not exist: ${body[DF.routeUrlMask]}`)
+	else if (typeof shouldBeNotFound !== 'boolean')
+		sendUnprocessableContent(response, `Expected a boolean for "not found"`) // TESTME
+	else {
+		broker.updateNotFound(body[DF.shouldBeNotFound])
+		sendOK(response)
+	}
+}
+
+
+async function setStaticRouteIsDelayed(req, response) {
+	const body = await parseJSON(req)
+	const shouldBeNotFound = body[DF.delayed]
+	const broker = findStaticBrokerByRoute(body[DF.routeUrlMask])
+
+	if (!broker) // TESTME
+		sendUnprocessableContent(response, `Route does not exist: ${body[DF.routeUrlMask]}`)
+	else if (typeof shouldBeNotFound !== 'boolean')
+		sendUnprocessableContent(response, `Expected a boolean for "delayed"`) // TESTME
+	else {
+		broker.updateDelayed(body[DF.delayed])
+		sendOK(response)
+	}
+}
+

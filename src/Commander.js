@@ -37,6 +37,20 @@ export class Commander {
 		})
 	}
 
+	setStaticRouteIsDelayed(routeUrlMask, delayed) {
+		return this.#patch(API.delayStatic, {
+			[DF.routeUrlMask]: routeUrlMask,
+			[DF.delayed]: delayed
+		})
+	}
+
+	setStaticRouteIs404(routeUrlMask, shouldBeNotFound) {
+		return this.#patch(API.notFoundStatic, {
+			[DF.routeUrlMask]: routeUrlMask,
+			[DF.shouldBeNotFound]: shouldBeNotFound
+		})
+	}
+
 	setRouteIsProxied(routeMethod, routeUrlMask, proxied) {
 		return this.#patch(API.proxied, {
 			[DF.routeMethod]: routeMethod,

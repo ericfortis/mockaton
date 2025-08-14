@@ -7,9 +7,11 @@ export const API = {
 	cookies: MOUNT + '/cookies',
 	cors: MOUNT + '/cors',
 	delay: MOUNT + '/delay',
+	delayStatic: MOUNT + '/delay-static',
 	fallback: MOUNT + '/fallback',
 	globalDelay: MOUNT + '/global-delay',
 	mocks: MOUNT + '/mocks',
+	notFoundStatic: MOUNT + '/not-found-static',
 	proxied: MOUNT + '/proxied',
 	reset: MOUNT + '/reset',
 	select: MOUNT + '/select',
@@ -22,6 +24,7 @@ export const DF = { // Dashboard Fields (XHR)
 	routeUrlMask: 'route_url_mask',
 	delayed: 'delayed',
 	proxied: 'proxied',
+	shouldBeNotFound: 'should_be_not_found',
 	syncVersion: 'last_received_sync_version'
 }
 

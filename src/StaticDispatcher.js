@@ -1,59 +1,83 @@
 import { join } from 'node:path'
-import fs, { readFileSync } from 'node:fs'
+import { readFileSync } from 'node:fs'
 
 import { mimeFor } from './utils/mime.js'
-import { isDirectory, isFile } from './utils/fs.js'
 import { config, isFileAllowed } from './config.js'
-import { sendInternalServerError } from './utils/http-response.js'
+import { sendPartialContent, sendNotFound } from './utils/http-response.js'
+import { isDirectory, isFile, listFilesRecursively } from './utils/fs.js'
 
+
+class StaticBroker {
+	constructor(file) {
+		this.file = file
+		this.delayed = false
+		this.should404 = false
+		this.resolvedPath = this.#staticFilePath()
+	}
+
+	#staticFilePath() { // url is absolute e.g. /home/../.. => /
+		let candidate = join(config.staticDir, this.file)
+		if (isDirectory(candidate))
+			candidate = join(candidate, 'index.html')
+		if (isFile(candidate))
+			return candidate
+	}
+
+	updateDelayed(value) {
+		this.delayed = value
+	}
+
+	updateNotFound(value) {
+		this.should404 = value
+	}
+}
+
+let collection = {}
+
+export function initStaticCollection() {
+	collection = {}
+	listFilesRecursively(config.staticDir)
+		.filter(isFileAllowed)
+		.sort()
+		.forEach(f => registerStatic(f))
+}
+
+function registerStatic(file) {
+	file = '/' + file
+	collection[file] = new StaticBroker(file)
+}
+
+export function findStaticBrokerByRoute(route) {
+	return collection[route] || collection[join(route, 'index.html')]
+}
+
+export function getStaticFilesCollection() {
+	return collection
+}
 
 export function isStatic(req) {
-	if (!config.staticDir)
-		return false
-	const f = resolvePath(req.url)
-	return f && isFileAllowed(f)
+	return req.url in collection || join(req.url, 'index.html') in collection
 }
 
+// TODO improve
 export async function dispatchStatic(req, response) {
-	const file = resolvePath(req.url)
-	if (req.headers.range)
-		await sendPartialContent(response, req.headers.range, file)
-	else {
-		response.setHeader('Content-Type', mimeFor(file))
-		response.end(readFileSync(file))
+	let broker = collection[join(req.url, 'index.html')]
+	if (!broker && req.url in collection)
+		broker = collection[req.url]
+
+	if (broker?.should404) { // TESTME
+		sendNotFound(response)
+		return
 	}
+
+	const file = broker.resolvedPath
+	setTimeout(async () => {
+		if (req.headers.range)
+			await sendPartialContent(response, req.headers.range, file)
+		else {
+			response.setHeader('Content-Type', mimeFor(file))
+			response.end(readFileSync(file))
+		}
+	}, broker.delayed * config.delay)
 }
 
-function resolvePath(url) { // url is absolute e.g. /home/../.. => /
-	let candidate = join(config.staticDir, url)
-	if (isDirectory(candidate))
-		candidate = join(candidate, 'index.html')
-	if (isFile(candidate))
-		return candidate
-}
-
-async function sendPartialContent(response, range, file) {
-	const { size } = await fs.promises.lstat(file)
-	let [start, end] = range.replace(/bytes=/, '').split('-').map(n => parseInt(n, 10))
-	if (isNaN(end)) end = size - 1
-	if (isNaN(start)) start = size - end
-
-	if (start < 0 || start > end || start >= size || end >= size) {
-		response.statusCode = 416 // Range Not Satisfiable
-		response.setHeader('Content-Range', `bytes */${size}`)
-		response.end()
-	}
-	else {
-		response.statusCode = 206 // Partial Content
-		response.setHeader('Accept-Ranges', 'bytes')
-		response.setHeader('Content-Range', `bytes ${start}-${end}/${size}`)
-		response.setHeader('Content-Type', mimeFor(file))
-		const reader = fs.createReadStream(file, { start, end })
-		reader.on('open', function () {
-			this.pipe(response)
-		})
-		reader.on('error', function (error) {
-			sendInternalServerError(response, error)
-		})
-	}
-}

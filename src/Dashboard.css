@@ -230,25 +230,25 @@ select {
 	display: flex;
 }
 
+table {
+	border-collapse: collapse;
+
+	th {
+		padding-top: 20px;
+		padding-bottom: 2px;
+		padding-left: 99px;
+		text-align: left;
+	}
+
+	tr {
+		border-top: 2px solid transparent;
+	}
+}
 
 .MockList {
 	display: flex;
 	align-items: flex-start;
 	margin-top: 64px;
-
-	> table {
-		border-collapse: collapse;
-
-		th {
-			padding-top: 20px;
-			padding-bottom: 2px;
-			text-align: left;
-		}
-
-		tr {
-			border-top: 2px solid transparent;
-		}
-	}
 
 	&.empty {
 		margin-top: 80px;
@@ -340,7 +340,6 @@ select {
 .DelayToggler,
 .ProxyToggler {
 	display: flex;
-	margin-left: 8px;
 
 	> input {
 		appearance: none;
@@ -361,6 +360,7 @@ select {
 }
 
 .DelayToggler {
+	margin-left: 8px;
 	> input {
 		&:checked ~ svg {
 			fill: var(--colorAccent);
@@ -437,6 +437,7 @@ select {
 .InternalServerErrorToggler {
 	display: flex;
 	margin-left: 8px;
+	margin-right: 12px;
 	cursor: pointer;
 
 	> input {
@@ -498,24 +499,11 @@ select {
 }
 
 .StaticFilesList {
-	margin-top: 20px;
-
-	h2 {
-		margin-bottom: 8px;
-	}
-
-	ul {
-		position: relative;
-		left: -6px;
-	}
-
-	li {
-		list-style: none;
-	}
+	margin-top: 8px;
 
 	a {
 		display: inline-block;
-		padding: 6px;
+		padding: 6px 0;
 		border-radius: var(--radius);
 		color: var(--colorAccent);
 		text-decoration: none;

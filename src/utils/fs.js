@@ -7,10 +7,15 @@ export const isDirectory = path => lstatSync(path, { throwIfNoEntry: false })?.i
 
 /** @returns {Array<string>} paths relative to `dir` */
 export const listFilesRecursively = dir => {
-	const files = readdirSync(dir, { recursive: true }).filter(f => isFile(join(dir, f)))
-	return process.platform === 'win32'
-		? files.map(f => f.replaceAll(sep, posix.sep))
-		: files
+	try {
+		const files = readdirSync(dir, { recursive: true }).filter(f => isFile(join(dir, f)))
+		return process.platform === 'win32'
+			? files.map(f => f.replaceAll(sep, posix.sep))
+			: files
+	}
+	catch (err) { // e.g. ENOENT
+		return []
+	}
 }
 
 export const write = (path, body) => {

@@ -7,7 +7,7 @@
 @media (prefers-color-scheme: light) {
 	:root {
 		--color4xxBackground: #ffedd1;
-		--colorAccent: #0170cc;
+		--colorAccent: #0068c1;
 		--colorAccentAlt: #068185;
 		--colorBackground: #fff;
 		--colorComboBoxHeaderBackground: #fff;
@@ -295,7 +295,8 @@ table {
 	word-break: break-word;
 
 	span {
-		opacity: 0.5;
+		opacity: 0.6;
+		filter: saturate(0);
 	}
 
 	&:hover {
@@ -512,7 +513,8 @@ table {
 		}
 
 		span {
-			opacity: 0.5;
+			opacity: 0.6;
+			filter: saturate(0);
 		}
 	}
 }

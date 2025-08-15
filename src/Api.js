@@ -9,9 +9,9 @@ import { parseJSON } from './utils/http-request.js'
 import { uiSyncVersion } from './Watcher.js'
 import * as mockBrokersCollection from './mockBrokersCollection.js'
 import { config, ConfigValidator } from './config.js'
-import { getStaticFilesCollection, findStaticBrokerByRoute } from './StaticDispatcher.js'
 import { DF, API, LONG_POLL_SERVER_TIMEOUT } from './ApiConstants.js'
 import { sendOK, sendJSON, sendUnprocessableContent, sendFile } from './utils/http-response.js'
+import { getStaticFilesCollection, findStaticBrokerByRoute, initStaticCollection } from './StaticDispatcher.js'
 
 
 const dashboardAssets = [
@@ -101,6 +101,7 @@ function longPollClientSyncVersion(req, response) {
 
 function reinitialize(_, response) {
 	mockBrokersCollection.init()
+	initStaticCollection() // TESTME
 	sendOK(response)
 }
 

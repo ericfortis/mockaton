@@ -28,7 +28,7 @@
 		--color4xxBackground: #403630;
 		--colorAccent: #2495ff;
 		--colorBackground: #161616;
-		--colorHeaderBackground: #090909;
+		--colorHeaderBackground: #111;
 		--colorComboBoxBackground: #2a2a2a;
 		--colorSecondaryButtonBackground: #2a2a2a;
 		--colorSecondaryAction: #999;
@@ -115,7 +115,6 @@ select {
 	width: 100%;
 	align-items: flex-end;
 	padding: 16px;
-	border-bottom: 1px solid rgba(127, 127, 127, 0.1);
 	background: var(--colorHeaderBackground);
 	box-shadow: var(--boxShadow1);
 	gap: 10px;

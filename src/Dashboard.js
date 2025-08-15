@@ -40,12 +40,13 @@ const CSS = {
 	DelayToggler: 'DelayToggler',
 	FallbackBackend: 'FallbackBackend',
 	Field: 'Field',
+	GlobalDelayField: 'GlobalDelayField',
 	Header: 'Header',
 	InternalServerErrorToggler: 'InternalServerErrorToggler',
-	GlobalDelayField: 'GlobalDelayField',
 	Main: 'Main',
 	MockList: 'MockList',
 	MockSelector: 'MockSelector',
+	NotFoundToggler: 'NotFoundToggler',
 	PayloadViewer: 'PayloadViewer',
 	PreviewLink: 'PreviewLink',
 	ProxyToggler: 'ProxyToggler',
@@ -451,7 +452,7 @@ function NotFoundToggler({ broker }) {
 	}
 	return (
 		r('label', {
-				className: CSS.InternalServerErrorToggler, // TODO rename
+				className: CSS.NotFoundToggler,
 				title: Strings.not_found
 			},
 			r('input', {
@@ -497,9 +498,9 @@ function PayloadViewer() {
 function PayloadViewerSpinner() {
 	return (
 		s('svg', { viewBox: '0 0 24 24', class: CSS.SpinnerClock },
-			s('path', { d: 'M12,1A11,11,0,1,0,23,12,11,11,0,0,0,12,1Zm0,20a9,9,0,1,1,9-9A9,9,0,0,1,12,21Z' }),
-			s('rect', { class: CSS.SpinnerClockHourHand, x: 11, y: 6, rx: 1, width: 2, height: 7 }),
-			s('rect', { class: CSS.SpinnerClockMinuteHand, x: 11, y: 11, rx: 1, width: 2, height: 9 })
+			s('circle', { cx: 12, cy: 12, r: 10 }),
+			s('line', { class: CSS.SpinnerClockHourHand, x1: 12, y1: 12, x2: 12, y2: 8 }),
+			s('line', { class: CSS.SpinnerClockMinuteHand, x1: 12, y1: 12, x2: 12, y2: 5 })
 		))
 }
 

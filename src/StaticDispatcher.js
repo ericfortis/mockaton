@@ -55,14 +55,11 @@ export function getStaticFilesCollection() {
 	return collection
 }
 
-
 export async function dispatchStatic(req, response) {
-	let broker = collection[join(req.url, 'index.html')]
-	if (!broker && req.url in collection)
-		broker = collection[req.url]
+	const broker = findStaticBrokerByRoute(req.url)
 
 	setTimeout(async () => {
-		if (broker?.should404) { // TESTME
+		if (!broker || broker.should404) { // TESTME
 			sendNotFound(response)
 			return
 		}

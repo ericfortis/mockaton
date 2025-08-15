@@ -257,9 +257,9 @@ table {
 
 .PayloadViewer {
 	position: sticky;
-	margin-top: 62px;
 	top: 62px;
 	width: 50%;
+	margin-top: 62px;
 	margin-left: 20px;
 
 	h2 {
@@ -436,8 +436,8 @@ table {
 
 .InternalServerErrorToggler {
 	display: flex;
-	margin-left: 8px;
 	margin-right: 12px;
+	margin-left: 8px;
 	cursor: pointer;
 
 	> input {
@@ -472,31 +472,30 @@ table {
 	}
 }
 
-.ProgressBar {
-	position: relative;
-	width: 100%;
-	height: 2px;
-	background: var(--colorComboBoxHeaderBackground);
+.SpinnerClock {
+	display: flex;
+	width: 36px;
+	height: 36px;
+	margin-top: 24px;
+	justify-self: center;
+	fill: var(--colorSecondaryAction);
 
-	div {
-		position: absolute;
-		top: 0;
-		left: 0;
-		height: 100%;
-		background: var(--colorAccent);
-		animation-name: _kfProgress;
-		/*animation-duration: It's in JavaScript */
+	rect {
+		transform-origin: center
 	}
-
+	.HourHand {
+		animation: _kfRotate 9s linear infinite
+	}
+	.MinuteHand {
+		animation: _kfRotate 0.75s linear infinite
+	}
 }
-@keyframes _kfProgress {
-	0% {
-		width: 0;
-	}
+@keyframes _kfRotate {
 	100% {
-		width: 100%;
+		transform: rotate(360deg)
 	}
 }
+
 
 .StaticFilesList {
 	margin-top: 8px;

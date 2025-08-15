@@ -42,17 +42,19 @@ const CSS = {
 	Field: 'Field',
 	Header: 'Header',
 	InternalServerErrorToggler: 'InternalServerErrorToggler',
+	GlobalDelayField: 'GlobalDelayField',
+	Main: 'Main',
 	MockList: 'MockList',
 	MockSelector: 'MockSelector',
 	PayloadViewer: 'PayloadViewer',
 	PreviewLink: 'PreviewLink',
-	ProgressBar: 'ProgressBar',
 	ProxyToggler: 'ProxyToggler',
 	ResetButton: 'ResetButton',
-	GlobalDelayField: 'GlobalDelayField',
 	SaveProxiedCheckbox: 'SaveProxiedCheckbox',
+	SpinnerClock: 'SpinnerClock',
+	SpinnerClockHourHand: 'HourHand',
+	SpinnerClockMinuteHand: 'MinuteHand',
 	StaticFilesList: 'StaticFilesList',
-	Main: 'Main',
 
 	red: 'red',
 	empty: 'empty',
@@ -65,7 +67,7 @@ const r = createElement
 const s = createSvgElement
 const mockaton = new Commander(window.location.origin)
 
-const PROGRESS_BAR_DELAY = 180
+const SPINNER_DELAY = 180
 let globalDelay = 1200
 
 
@@ -492,10 +494,13 @@ function PayloadViewer() {
 				r('code', { ref: payloadViewerRef }, Strings.click_link_to_preview))))
 }
 
-function PayloadViewerProgressBar() {
+function PayloadViewerSpinner() {
 	return (
-		r('div', { className: CSS.ProgressBar },
-			r('div', { style: { animationDuration: globalDelay - PROGRESS_BAR_DELAY + 'ms' } })))
+		s('svg', { viewBox: '0 0 24 24', class: CSS.SpinnerClock },
+			s('path', { d: 'M12,1A11,11,0,1,0,23,12,11,11,0,0,0,12,1Zm0,20a9,9,0,1,1,9-9A9,9,0,0,1,12,21Z' }),
+			s('rect', { class: CSS.SpinnerClockHourHand, x: 11, y: 6, rx: 1, width: 2, height: 7 }),
+			s('rect', { class: CSS.SpinnerClockMinuteHand, x: 11, y: 11, rx: 1, width: 2, height: 9 })
+		))
 }
 
 function PayloadViewerTitle({ file, status, statusText }) {
@@ -517,13 +522,13 @@ function PayloadViewerTitleWhenProxied({ mime, status, statusText, gatewayIsBad 
 }
 
 async function previewMock(method, urlMask, href) {
-	const timer = setTimeout(renderProgressBar, PROGRESS_BAR_DELAY)
+	const timer = setTimeout(renderSpinner, SPINNER_DELAY)
 	const response = await fetch(href, { method })
 	clearTimeout(timer)
 	await updatePayloadViewer(method, urlMask, response)
 
-	function renderProgressBar() {
-		payloadViewerRef.current.replaceChildren(PayloadViewerProgressBar())
+	function renderSpinner() {
+		payloadViewerRef.current.replaceChildren(PayloadViewerSpinner())
 	}
 }
 

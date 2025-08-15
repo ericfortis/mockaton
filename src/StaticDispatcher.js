@@ -55,23 +55,18 @@ export function getStaticFilesCollection() {
 	return collection
 }
 
-export function isStatic(req) {
-	return req.url in collection || join(req.url, 'index.html') in collection
-}
 
-// TODO improve
 export async function dispatchStatic(req, response) {
 	let broker = collection[join(req.url, 'index.html')]
 	if (!broker && req.url in collection)
 		broker = collection[req.url]
 
-	if (broker?.should404) { // TESTME
-		sendNotFound(response)
-		return
-	}
-
-	const file = broker.resolvedPath
 	setTimeout(async () => {
+		if (broker?.should404) { // TESTME
+			sendNotFound(response)
+			return
+		}
+		const file = broker.resolvedPath
 		if (req.headers.range)
 			await sendPartialContent(response, req.headers.range, file)
 		else {

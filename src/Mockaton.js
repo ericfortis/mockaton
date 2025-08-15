@@ -8,7 +8,7 @@ import { BodyReaderError } from './utils/http-request.js'
 import * as mockBrokerCollection from './mockBrokersCollection.js'
 import { setCorsHeaders, isPreflight } from './utils/http-cors.js'
 import { apiPatchRequests, apiGetRequests } from './Api.js'
-import { dispatchStatic, isStatic, initStaticCollection } from './StaticDispatcher.js'
+import { dispatchStatic, initStaticCollection, findStaticBrokerByRoute } from './StaticDispatcher.js'
 import { sendNoContent, sendInternalServerError, sendUnprocessableContent } from './utils/http-response.js'
 
 
@@ -53,7 +53,7 @@ async function onRequest(req, response) {
 		else if (method === 'GET' && apiGetRequests.has(url))
 			apiGetRequests.get(url)(req, response)
 
-		else if (method === 'GET' && isStatic(req))
+		else if (method === 'GET' && findStaticBrokerByRoute(req.url))
 			await dispatchStatic(req, response)
 
 		else

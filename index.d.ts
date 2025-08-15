@@ -22,6 +22,7 @@ interface Config {
 	formatCollectedJSON?: boolean
 
 	delay?: number
+	delayJitter?: number
 
 	cookies?: { [label: string]: string }
 

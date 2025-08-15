@@ -2,7 +2,7 @@ import { join } from 'node:path'
 import { readFileSync } from 'node:fs'
 
 import { mimeFor } from './utils/mime.js'
-import { config, isFileAllowed } from './config.js'
+import { config, isFileAllowed, calcDelay } from './config.js'
 import { sendPartialContent, sendNotFound } from './utils/http-response.js'
 import { isDirectory, isFile, listFilesRecursively } from './utils/fs.js'
 
@@ -70,6 +70,6 @@ export async function dispatchStatic(req, response) {
 			response.setHeader('Content-Type', mimeFor(file))
 			response.end(readFileSync(file))
 		}
-	}, broker.delayed * config.delay)
+	}, Number(broker.delayed && calcDelay()))
 }
 

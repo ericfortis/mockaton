@@ -362,6 +362,10 @@ Defaults to `0`, which means auto-assigned
 Defaults to `1200` milliseconds. Although routes can individually be delayed
 with the 🕓 Checkbox, the amount is globally configurable with this option.
 
+### `delayJitter?: number`
+Defaults to `0`. Range: `[0.0, 3.0]`. Maximum percentage of the delay to add.
+For example, `0.5` will add at most `600ms` to the default delay.   
+
 <br/>
 
 ### `proxyFallback?: string`

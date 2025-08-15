@@ -2,8 +2,8 @@ import { join } from 'node:path'
 
 import { proxy } from './ProxyRelay.js'
 import { cookie } from './cookie.js'
-import { config } from './config.js'
 import { applyPlugins } from './MockDispatcherPlugins.js'
+import { config, calcDelay } from './config.js'
 import { BodyReaderError } from './utils/http-request.js'
 import * as mockBrokerCollection from './mockBrokersCollection.js'
 import { sendInternalServerError, sendNotFound, sendUnprocessableContent } from './utils/http-response.js'
@@ -14,7 +14,7 @@ export async function dispatchMock(req, response) {
 		const broker = mockBrokerCollection.findBrokerByRoute(req.method, req.url)
 		if (!broker || broker.proxied) {
 			if (config.proxyFallback)
-				await proxy(req, response, config.delay * Boolean(broker?.delayed))
+				await proxy(req, response, Number(broker?.delayed && calcDelay()))
 			else
 				sendNotFound(response)
 			return
@@ -34,7 +34,7 @@ export async function dispatchMock(req, response) {
 			: await applyPlugins(join(config.mocksDir, broker.file), req, response)
 
 		response.setHeader('Content-Type', mime)
-		setTimeout(() => response.end(body), config.delay * broker.delayed)
+		setTimeout(() => response.end(body), Number(broker.delayed && calcDelay()))
 	}
 	catch (error) {
 		if (error instanceof BodyReaderError)

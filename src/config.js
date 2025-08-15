@@ -26,6 +26,7 @@ const schema = {
 	formatCollectedJSON: [true, is(Boolean)],
 
 	delay: [1200, ms => Number.isInteger(ms) && ms >= 0],
+	delayJitter: [0, percent => percent >= 0 && percent <= 3],
 
 	cookies: [{}, is(Object)], // defaults to the first kv
 
@@ -65,6 +66,10 @@ export const ConfigValidator = Object.freeze(validators)
 
 
 export const isFileAllowed = f => !config.ignore.test(f)
+
+export const calcDelay = () => config.delayJitter
+	? config.delay * (1 + Math.random() * config.delayJitter)
+	: config.delay
 
 
 export function setup(options) {

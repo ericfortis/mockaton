@@ -49,7 +49,7 @@ export const apiPatchRequests = new Map([
 	[API.globalDelay, setGlobalDelay],
 	[API.collectProxied, setCollectProxied],
 	[API.delayStatic, setStaticRouteIsDelayed],
-	[API.notFoundStatic, setStaticRouteIsNotFound]
+	[API.staticStatus, setStaticRouteStatusCode]
 ])
 
 
@@ -198,17 +198,17 @@ async function setGlobalDelay(req, response) { // TESTME
 }
 
 
-async function setStaticRouteIsNotFound(req, response) {
+async function setStaticRouteStatusCode(req, response) {
 	const body = await parseJSON(req)
-	const shouldBeNotFound = body[DF.shouldBeNotFound]
+	const status = Number(body[DF.statusCode])
 	const broker = findStaticBrokerByRoute(body[DF.routeUrlMask])
 
 	if (!broker) // TESTME
 		sendUnprocessableContent(response, `Route does not exist: ${body[DF.routeUrlMask]}`)
-	else if (typeof shouldBeNotFound !== 'boolean')
-		sendUnprocessableContent(response, `Expected a boolean for "not found"`) // TESTME
+	else if (!(status === 200 || status === 404))
+		sendUnprocessableContent(response, `Expected a 200 or 404 status code. Received ${status}`) // TESTME
 	else {
-		broker.updateNotFound(body[DF.shouldBeNotFound])
+		broker.setStatus(status)
 		sendOK(response)
 	}
 }
@@ -216,15 +216,15 @@ async function setStaticRouteIsNotFound(req, response) {
 
 async function setStaticRouteIsDelayed(req, response) {
 	const body = await parseJSON(req)
-	const shouldBeNotFound = body[DF.delayed]
+	const delayed = body[DF.delayed]
 	const broker = findStaticBrokerByRoute(body[DF.routeUrlMask])
 
 	if (!broker) // TESTME
 		sendUnprocessableContent(response, `Route does not exist: ${body[DF.routeUrlMask]}`)
-	else if (typeof shouldBeNotFound !== 'boolean')
-		sendUnprocessableContent(response, `Expected a boolean for "delayed"`) // TESTME
+	else if (typeof delayed !== 'boolean')
+		sendUnprocessableContent(response, `Expected a boolean for "delayed". Received ${delayed}`) // TESTME
 	else {
-		broker.updateDelayed(body[DF.delayed])
+		broker.setDelayed(delayed)
 		sendOK(response)
 	}
 }

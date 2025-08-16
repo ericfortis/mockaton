@@ -11,11 +11,11 @@ export const API = {
 	fallback: MOUNT + '/fallback',
 	globalDelay: MOUNT + '/global-delay',
 	mocks: MOUNT + '/mocks',
-	notFoundStatic: MOUNT + '/not-found-static',
 	proxied: MOUNT + '/proxied',
 	reset: MOUNT + '/reset',
 	select: MOUNT + '/select',
 	static: MOUNT + '/static',
+	staticStatus: MOUNT + '/static-status',
 	syncVersion: MOUNT + '/sync_version'
 }
 
@@ -24,7 +24,7 @@ export const DF = { // Dashboard Fields (XHR)
 	routeUrlMask: 'route_url_mask',
 	delayed: 'delayed',
 	proxied: 'proxied',
-	shouldBeNotFound: 'should_be_not_found',
+	statusCode: 'status_code',
 	syncVersion: 'last_received_sync_version'
 }
 

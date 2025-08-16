@@ -44,10 +44,10 @@ export class Commander {
 		})
 	}
 
-	setStaticRouteIs404(routeUrlMask, shouldBeNotFound) {
-		return this.#patch(API.notFoundStatic, {
+	setStaticRouteStatus(routeUrlMask, status) {
+		return this.#patch(API.staticStatus, {
 			[DF.routeUrlMask]: routeUrlMask,
-			[DF.shouldBeNotFound]: shouldBeNotFound
+			[DF.statusCode]: status
 		})
 	}
 

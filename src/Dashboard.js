@@ -454,7 +454,7 @@ function DelayStaticRouteToggler({ broker }) {
 /** @param {{ broker: StaticBroker }} props */
 function NotFoundToggler({ broker }) {
 	function onChange() {
-		mockaton.setStaticRouteIs404(broker.route, this.checked)
+		mockaton.setStaticRouteStatus(broker.route, this.checked ? 404 : 200)
 			.catch(onError)
 	}
 	return (
@@ -464,7 +464,7 @@ function NotFoundToggler({ broker }) {
 			},
 			r('input', {
 				type: 'checkbox',
-				checked: broker.should404,
+				checked: broker.status === 404,
 				onChange
 			}),
 			r('span', null, '404')))

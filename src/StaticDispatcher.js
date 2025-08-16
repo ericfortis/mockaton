@@ -11,11 +11,11 @@ class StaticBroker {
 	constructor(route) {
 		this.route = route
 		this.delayed = false
-		this.should404 = false
+		this.status = 200 // 200 or 404
 	}
 
-	updateDelayed(value) { this.delayed = value }
-	updateNotFound(value) { this.should404 = value }
+	setDelayed(value) { this.delayed = value }
+	setStatus(value) { this.status = value }
 }
 
 /** @type {{ [route: string]: StaticBroker }} */
@@ -62,7 +62,7 @@ export async function dispatchStatic(req, response) {
 	const broker = findStaticBrokerByRoute(req.url)
 
 	setTimeout(async () => {
-		if (!broker || broker.should404) { // TESTME
+		if (!broker || broker.status === 404) { // TESTME
 			sendNotFound(response)
 			return
 		}

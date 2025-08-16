@@ -89,7 +89,7 @@ function init() {
 		.catch(onError)
 }
 
-function App([brokersByMethod, cookies, comments, delay, collectProxied, fallbackAddress, staticFiles]) {
+function App([brokersByMethod, cookies, comments, delay, collectProxied, fallbackAddress, staticBrokers]) {
 	globalDelay = delay
 	return (
 		r('div', null,
@@ -97,7 +97,7 @@ function App([brokersByMethod, cookies, comments, delay, collectProxied, fallbac
 			r('main', { className: CSS.Main },
 				r('div', null,
 					r(MockList, { brokersByMethod, canProxy: Boolean(fallbackAddress) }),
-					r(StaticFilesList, { staticFiles })),
+					r(StaticFilesList, { brokers: staticBrokers })),
 				r(PayloadViewer))))
 }
 
@@ -302,6 +302,7 @@ function PreviewLink({ method, urlMask, urlMaskDittoed }) {
 			: tail))
 }
 
+/** @param {{ broker: MockBroker }} props */
 function MockSelector({ broker }) {
 	function onChange() {
 		const { urlMask, method } = parseFilename(this.value)
@@ -338,6 +339,7 @@ function MockSelector({ broker }) {
 			}, file))))
 }
 
+/** @param {{ broker: MockBroker }} props */
 function DelayRouteToggler({ broker }) {
 	function onChange() {
 		const { method, urlMask } = parseFilename(broker.mocks[0])
@@ -356,6 +358,7 @@ function DelayRouteToggler({ broker }) {
 			TimerIcon()))
 }
 
+/** @param {{ broker: MockBroker }} props */
 function InternalServerErrorToggler({ broker }) {
 	function onChange() {
 		const { urlMask, method } = parseFilename(broker.mocks[0])
@@ -381,6 +384,7 @@ function InternalServerErrorToggler({ broker }) {
 			r('span', null, '500')))
 }
 
+/** @param {{ broker: MockBroker, disabled: boolean }} props */
 function ProxyToggler({ broker, disabled }) {
 	function onChange() {
 		const { urlMask, method } = parseFilename(broker.mocks[0])
@@ -404,32 +408,34 @@ function ProxyToggler({ broker, disabled }) {
 }
 
 
-
-/** # StaticFilesList */
-
-function StaticFilesList({ staticFiles }) {
-	if (!Object.keys(staticFiles).length)
+/**
+ * # StaticFilesList
+ * @param {{ brokers: StaticBroker[] }} props
+ */
+function StaticFilesList({ brokers }) {
+	if (!Object.keys(brokers).length)
 		return null
-	const paths = dittoSplitPaths(Object.keys(staticFiles)).map(([ditto, tail]) => ditto
+	const dp = dittoSplitPaths(Object.keys(brokers)).map(([ditto, tail]) => ditto
 		? [r('span', null, ditto), tail]
 		: tail)
 	return (
 		r('table', { className: CSS.StaticFilesList },
 			r('tbody', null,
 				r('th', { colspan: 4 }, Strings.static_get),
-				Object.values(staticFiles).map((broker, i) =>
+				Object.values(brokers).map((broker, i) =>
 					r('tr', null,
 						r('td', null, r(ProxyStaticToggler, {})),
 						r('td', null, r(DelayStaticRouteToggler, { broker })),
 						r('td', null, r(NotFoundToggler, { broker })),
-						r('td', null, r('a', { href: broker.file, target: '_blank' }, paths[i]))
+						r('td', null, r('a', { href: broker.route, target: '_blank' }, dp[i]))
 					)))))
 }
 
 
+/** @param {{ broker: StaticBroker }} props */
 function DelayStaticRouteToggler({ broker }) {
 	function onChange() {
-		mockaton.setStaticRouteIsDelayed(broker.file, this.checked)
+		mockaton.setStaticRouteIsDelayed(broker.route, this.checked)
 			.catch(onError)
 	}
 	return (
@@ -445,9 +451,10 @@ function DelayStaticRouteToggler({ broker }) {
 			TimerIcon()))
 }
 
+/** @param {{ broker: StaticBroker }} props */
 function NotFoundToggler({ broker }) {
 	function onChange() {
-		mockaton.setStaticRouteIs404(broker.file, this.checked)
+		mockaton.setStaticRouteIs404(broker.route, this.checked)
 			.catch(onError)
 	}
 	return (
@@ -463,9 +470,7 @@ function NotFoundToggler({ broker }) {
 			r('span', null, '404')))
 }
 
-
-// TODO
-function ProxyStaticToggler({}) {
+function ProxyStaticToggler({}) { // TODO
 	function onChange() {
 	}
 	return (

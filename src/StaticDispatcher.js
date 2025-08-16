@@ -1,37 +1,24 @@
-import { join, basename } from 'node:path'
 import { readFileSync } from 'node:fs'
+import { join, basename } from 'node:path'
 
 import { mimeFor } from './utils/mime.js'
+import { listFilesRecursively } from './utils/fs.js'
 import { config, isFileAllowed, calcDelay } from './config.js'
 import { sendPartialContent, sendNotFound } from './utils/http-response.js'
-import { isDirectory, isFile, listFilesRecursively } from './utils/fs.js'
 
 
 class StaticBroker {
-	constructor(file) {
-		this.file = file
+	constructor(route) {
+		this.route = route
 		this.delayed = false
 		this.should404 = false
-		this.resolvedPath = this.#staticFilePath()
 	}
 
-	#staticFilePath() { // url is absolute e.g. /home/../.. => /
-		let candidate = join(config.staticDir, this.file)
-		if (isDirectory(candidate))
-			candidate = join(candidate, 'index.html')
-		if (isFile(candidate))
-			return candidate
-	}
-
-	updateDelayed(value) {
-		this.delayed = value
-	}
-
-	updateNotFound(value) {
-		this.should404 = value
-	}
+	updateDelayed(value) { this.delayed = value }
+	updateNotFound(value) { this.should404 = value }
 }
 
+/** @type {{ [route: string]: StaticBroker }} */
 let collection = {}
 
 export function initStaticCollection() {
@@ -41,23 +28,27 @@ export function initStaticCollection() {
 		.forEach(registerStaticMock)
 }
 
+
 /** @returns {boolean} registered */
-export function registerStaticMock(file) {
-	if (!isFileAllowed(basename(file)))
+export function registerStaticMock(relativeFile) {
+	if (!isFileAllowed(basename(relativeFile)))
 		return false
 
-	file = '/' + file
-	if (findStaticBrokerByRoute(file))
+	const route = '/' + relativeFile
+	if (findStaticBrokerByRoute(route))
 		return false
 
-	collection[file] = new StaticBroker(file)
+	collection[route] = new StaticBroker(route)
 	return true
 }
 
-export function unregisterStaticMock(file) {
-	delete collection['/' + file]
+
+export function unregisterStaticMock(relativeFile) {
+	delete collection['/' + relativeFile]
 }
 
+
+/** @returns {StaticBroker | undefined} */
 export function findStaticBrokerByRoute(route) {
 	return collection[route] || collection[join(route, 'index.html')]
 }
@@ -65,6 +56,7 @@ export function findStaticBrokerByRoute(route) {
 export function getStaticFilesCollection() {
 	return collection
 }
+
 
 export async function dispatchStatic(req, response) {
 	const broker = findStaticBrokerByRoute(req.url)
@@ -74,7 +66,7 @@ export async function dispatchStatic(req, response) {
 			sendNotFound(response)
 			return
 		}
-		const file = broker.resolvedPath
+		const file = join(config.staticDir, broker.route)
 		if (req.headers.range)
 			await sendPartialContent(response, req.headers.range, file)
 		else {

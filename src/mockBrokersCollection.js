@@ -38,7 +38,7 @@ export function init() {
 /** @returns {boolean} registered */
 export function registerMock(file, isFromWatcher = false) {
 	if (findBrokerByFilename(file)?.hasMock(file)
-		|| !isFileAllowed(file)
+		|| !isFileAllowed(file) // TODO basename(file) 
 		|| !filenameIsValid(file))
 		return false
 

@@ -6,7 +6,7 @@
 [![CodeQL](https://github.com/ericfortis/mockaton/actions/workflows/github-code-scanning/codeql/badge.svg)](https://github.com/ericfortis/mockaton/actions/workflows/github-code-scanning/codeql)
 
 An HTTP mock server for simulating APIs with minimal setup
-&mdash; ideal for triggering difficult to reproduce backend states.
+&mdash; ideal for testing difficult to reproduce backend states.
 
 
 ## Overview

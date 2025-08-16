@@ -1,4 +1,4 @@
-import { join } from 'node:path'
+import { join, basename } from 'node:path'
 import { readFileSync } from 'node:fs'
 
 import { mimeFor } from './utils/mime.js'
@@ -37,14 +37,25 @@ let collection = {}
 export function initStaticCollection() {
 	collection = {}
 	listFilesRecursively(config.staticDir)
-		.filter(isFileAllowed)
 		.sort()
-		.forEach(f => registerStatic(f))
+		.forEach(registerStaticMock)
 }
 
-function registerStatic(file) {
+/** @returns {boolean} registered */
+export function registerStaticMock(file) {
+	if (!isFileAllowed(basename(file)))
+		return false
+
 	file = '/' + file
+	if (findStaticBrokerByRoute(file))
+		return false
+
 	collection[file] = new StaticBroker(file)
+	return true
+}
+
+export function unregisterStaticMock(file) {
+	delete collection['/' + file]
 }
 
 export function findStaticBrokerByRoute(route) {

@@ -5,6 +5,7 @@ import { EventEmitter } from 'node:events'
 import { config } from './config.js'
 import { isFile } from './utils/fs.js'
 import * as mockBrokerCollection from './mockBrokersCollection.js'
+import { registerStaticMock, unregisterStaticMock } from './StaticDispatcher.js'
 
 
 /** # AR = Add or Remove Mock Event */
@@ -39,5 +40,23 @@ export function watchMocksDir() {
 	})
 }
 
-// TODO staticDir, config changes
+export function watchStaticMocksDir() {
+	const dir = config.staticDir
+	if (!dir)
+		return
+	watch(dir, { recursive: true, persistent: false }, (_, file) => {
+		if (!file)
+			return
+		if (isFile(join(dir, file))) {
+			if (registerStaticMock(file))
+				uiSyncVersion.increment()
+		}
+		else {
+			unregisterStaticMock(file)
+			uiSyncVersion.increment()
+		}
+	})
+}
+
+// TODO config changes
 // TODO think about throttling e.g. bulk deletes/remove files

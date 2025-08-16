@@ -3,11 +3,11 @@ import { createServer } from 'node:http'
 import { API } from './ApiConstants.js'
 import { config, setup } from './config.js'
 import { dispatchMock } from './MockDispatcher.js'
-import { watchMocksDir } from './Watcher.js'
 import { BodyReaderError } from './utils/http-request.js'
 import * as mockBrokerCollection from './mockBrokersCollection.js'
 import { setCorsHeaders, isPreflight } from './utils/http-cors.js'
 import { apiPatchRequests, apiGetRequests } from './Api.js'
+import { watchMocksDir, watchStaticMocksDir } from './Watcher.js'
 import { dispatchStatic, initStaticCollection, findStaticBrokerByRoute } from './StaticDispatcher.js'
 import { sendNoContent, sendInternalServerError, sendUnprocessableContent } from './utils/http-response.js'
 
@@ -17,8 +17,9 @@ process.on('unhandledRejection', error => { throw error })
 export function Mockaton(options) {
 	setup(options)
 	mockBrokerCollection.init()
-	watchMocksDir()
 	initStaticCollection()
+	watchMocksDir()
+	watchStaticMocksDir()
 
 	return createServer(onRequest).listen(config.port, config.host, function (error) {
 		if (error) {

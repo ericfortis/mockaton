@@ -66,11 +66,9 @@ const CSS = {
 
 const r = createElement
 const s = createSvgElement
+
 const mockaton = new Commander(window.location.origin)
-
-const SPINNER_DELAY = 180
 let globalDelay = 1200
-
 
 init()
 initLongPoll()
@@ -528,7 +526,7 @@ function PayloadViewerTitleWhenProxied({ mime, status, statusText, gatewayIsBad 
 }
 
 async function previewMock(method, urlMask, href) {
-	const timer = setTimeout(renderSpinner, SPINNER_DELAY)
+	const timer = setTimeout(renderSpinner, 180)
 	const response = await fetch(href, { method })
 	clearTimeout(timer)
 	await updatePayloadViewer(method, urlMask, response)

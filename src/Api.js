@@ -25,7 +25,9 @@ const dashboardAssets = [
 
 export const apiGetRequests = new Map([
 	[API.dashboard, serveDashboard],
-	...dashboardAssets.map(f => [API.dashboard + f, serveDashboardAsset(f)]),
+	...dashboardAssets.map(f => [
+		API.dashboard + f, serveDashboardAsset(f)
+	]),
 	[API.cors, getIsCorsAllowed],
 	[API.static, listStaticFiles],
 	[API.mocks, listMockBrokers],
@@ -66,7 +68,7 @@ function serveDashboardAsset(f) {
 
 function listCookies(_, response) { sendJSON(response, cookie.list()) }
 function listComments(_, response) { sendJSON(response, mockBrokersCollection.extractAllComments()) }
-function listStaticFiles(req, response) { sendJSON(response, getStaticFilesCollection()) }
+function listStaticFiles(_, response) { sendJSON(response, getStaticFilesCollection()) }
 function getGlobalDelay(_, response) { sendJSON(response, config.delay) }
 function listMockBrokers(_, response) { sendJSON(response, mockBrokersCollection.getAll()) }
 function getProxyFallback(_, response) { sendJSON(response, config.proxyFallback) }
@@ -86,12 +88,10 @@ function longPollClientSyncVersion(req, response) {
 	}
 
 	response.setTimeout(LONG_POLL_SERVER_TIMEOUT, onAddOrRemoveMock)
-
 	req.on('error', () => {
 		uiSyncVersion.unsubscribe(onAddOrRemoveMock)
 		response.destroy()
 	})
-
 	uiSyncVersion.subscribe(onAddOrRemoveMock)
 }
 
@@ -136,7 +136,7 @@ async function setRouteIsDelayed(req, response) {
 	else if (typeof delayed !== 'boolean')
 		sendUnprocessableContent(response, `Expected a boolean for "delayed"`) // TESTME
 	else {
-		broker.updateDelayed(body[DF.delayed])
+		broker.setDelayed(delayed)
 		sendOK(response)
 	}
 }
@@ -155,7 +155,7 @@ async function setRouteIsProxied(req, response) { // TESTME
 	else if (proxied && !config.proxyFallback)
 		sendUnprocessableContent(response, `There’s no proxy fallback`)
 	else {
-		broker.updateProxied(proxied)
+		broker.setProxied(proxied)
 		sendOK(response)
 	}
 }

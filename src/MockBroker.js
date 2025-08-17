@@ -83,11 +83,11 @@ export class MockBroker {
 		this.currentMock.file = filename
 	}
 
-	updateDelayed(delayed) {
+	setDelayed(delayed) {
 		this.currentMock.delayed = delayed
 	}
 
-	updateProxied(proxied) {
+	setProxied(proxied) {
 		if (proxied)
 			this.selectFile('')
 		else

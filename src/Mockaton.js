@@ -54,7 +54,7 @@ async function onRequest(req, response) {
 		else if (method === 'GET' && apiGetRequests.has(url))
 			apiGetRequests.get(url)(req, response)
 
-		else if (method === 'GET' && findStaticBrokerByRoute(req.url))
+		else if (method === 'GET' && findStaticBrokerByRoute(url))
 			await dispatchStatic(req, response)
 
 		else

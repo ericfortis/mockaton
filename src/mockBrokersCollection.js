@@ -1,3 +1,5 @@
+import { basename } from 'node:path'
+
 import { cookie } from './cookie.js'
 import { MockBroker } from './MockBroker.js'
 import { listFilesRecursively } from './utils/fs.js'
@@ -38,7 +40,7 @@ export function init() {
 /** @returns {boolean} registered */
 export function registerMock(file, isFromWatcher = false) {
 	if (findBrokerByFilename(file)?.hasMock(file)
-		|| !isFileAllowed(file) // TODO basename(file) 
+		|| !isFileAllowed(basename(file)) // TESTME
 		|| !filenameIsValid(file))
 		return false
 

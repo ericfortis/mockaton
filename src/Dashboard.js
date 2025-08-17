@@ -24,15 +24,16 @@ const Strings = {
 	fallback_server_placeholder: 'Type Server Address',
 	got: 'Got',
 	internal_server_error: 'Internal Server Error',
-	mock: 'Mock',
 	no_mocks_found: 'No mocks found',
 	not_found: 'Not Found',
 	pick_comment: 'Pick Comment…',
+	preview: 'Preview',
 	proxied: 'Proxied',
 	proxy_toggler: 'Proxy Toggler',
 	reset: 'Reset',
 	save_proxied: 'Save Mocks',
-	static_get: 'Static GET'
+	static_get: 'Static GET',
+	title: 'Mockaton'
 }
 
 const CSS = {
@@ -41,9 +42,9 @@ const CSS = {
 	FallbackBackend: 'FallbackBackend',
 	Field: 'Field',
 	GlobalDelayField: 'GlobalDelayField',
-	Header: 'Header',
 	InternalServerErrorToggler: 'InternalServerErrorToggler',
-	Main: 'Main',
+	MainLeftSide: 'leftSide',
+	MainRightSide: 'rightSide',
 	MockList: 'MockList',
 	MockSelector: 'MockSelector',
 	NotFoundToggler: 'NotFoundToggler',
@@ -57,11 +58,12 @@ const CSS = {
 	SpinnerClockMinuteHand: 'MinuteHand',
 	StaticFilesList: 'StaticFilesList',
 
-	red: 'red',
-	empty: 'empty',
 	chosen: 'chosen',
-	status4xx: 'status4xx',
-	nonDefault: 'nonDefault'
+	dittoDir: 'dittoDir',
+	empty: 'empty',
+	nonDefault: 'nonDefault',
+	red: 'red',
+	status4xx: 'status4xx'
 }
 
 const r = createElement
@@ -83,20 +85,20 @@ function init() {
 		mockaton.getProxyFallback(),
 		mockaton.listStaticFiles()
 	].map(api => api.then(response => response.ok && response.json())))
-		.then(data => document.body.replaceChildren(App(data)))
+		.then(data => document.body.replaceChildren(...App(data)))
 		.catch(onError)
 }
 
 function App([brokersByMethod, cookies, comments, delay, collectProxied, fallbackAddress, staticBrokers]) {
 	globalDelay = delay
-	return (
-		r('div', null,
-			r(Header, { cookies, comments, delay, fallbackAddress, collectProxied }),
-			r('main', { className: CSS.Main },
-				r('div', null,
-					r(MockList, { brokersByMethod, canProxy: Boolean(fallbackAddress) }),
-					r(StaticFilesList, { brokers: staticBrokers })),
-				r(PayloadViewer))))
+	return [
+		r(Header, { cookies, comments, delay, fallbackAddress, collectProxied }),
+		r('main', null,
+			r('div', { className: CSS.MainLeftSide },
+				r(MockList, { brokersByMethod, canProxy: Boolean(fallbackAddress) }),
+				r(StaticFilesList, { brokers: staticBrokers })),
+			r('div', { className: CSS.MainRightSide },
+				r(PayloadViewer)))]
 }
 
 
@@ -104,13 +106,14 @@ function App([brokersByMethod, cookies, comments, delay, collectProxied, fallbac
 
 function Header({ cookies, comments, delay, fallbackAddress, collectProxied }) {
 	return (
-		r('menu', { className: CSS.Header },
+		r('header', null,
 			r(Logo),
-			r(CookieSelector, { cookies }),
-			r(BulkSelector, { comments }),
-			r(GlobalDelayField, { delay }),
-			r(ProxyFallbackField, { fallbackAddress, collectProxied }),
-			r(ResetButton)))
+			r('div', null,
+				r(CookieSelector, { cookies }),
+				r(BulkSelector, { comments }),
+				r(GlobalDelayField, { delay }),
+				r(ProxyFallbackField, { fallbackAddress, collectProxied }),
+				r(ResetButton))))
 }
 
 function Logo() {
@@ -249,10 +252,10 @@ function MockList({ brokersByMethod, canProxy }) {
 	const hasMocks = Object.keys(brokersByMethod).length
 	if (!hasMocks)
 		return (
-			r('div', { className: cssClass(CSS.MockList, CSS.empty) },
+			r('div', { className: CSS.empty },
 				Strings.no_mocks_found))
 	return (
-		r('div', { className: CSS.MockList },
+		r('div', null,
 			r('table', null, Object.entries(brokersByMethod).map(([method, brokers]) =>
 				r(SectionByMethod, { method, brokers, canProxy })))))
 }
@@ -296,7 +299,7 @@ function PreviewLink({ method, urlMask, urlMaskDittoed }) {
 			href: urlMask,
 			onClick
 		}, ditto
-			? [r('span', null, ditto), tail]
+			? [r('span', { className: CSS.dittoDir }, ditto), tail]
 			: tail))
 }
 
@@ -414,7 +417,7 @@ function StaticFilesList({ brokers }) {
 	if (!Object.keys(brokers).length)
 		return null
 	const dp = dittoSplitPaths(Object.keys(brokers)).map(([ditto, tail]) => ditto
-		? [r('span', null, ditto), tail]
+		? [r('span', { className: CSS.dittoDir }, ditto), tail]
 		: tail)
 	return (
 		r('table', { className: CSS.StaticFilesList },
@@ -493,7 +496,7 @@ const payloadViewerRef = useRef()
 function PayloadViewer() {
 	return (
 		r('div', { className: CSS.PayloadViewer },
-			r('h2', { ref: payloadViewerTitleRef }, Strings.mock),
+			r('h2', { ref: payloadViewerTitleRef }, Strings.preview),
 			r('pre', null,
 				r('code', { ref: payloadViewerRef }, Strings.click_link_to_preview))))
 }

@@ -1,7 +1,6 @@
 :root {
-	--boxShadow1: 0 2px 1px -1px rgba(0, 0, 0, 0.15), 0 1px 1px 0 rgba(0, 0, 0, 0.15), 0 1px 3px 0 rgba(0, 0, 0, 0.1);
+	--boxShadow1: 0 3px 1px -1px rgba(0, 0, 0, 0.04), 0 1px 1px 0 rgba(0, 0, 0, 0.1), 0 1px 3px 0 rgba(0, 0, 0, 0.1);
 	--radius: 4px;
-	--radiusSmall: 4px;
 }
 
 @media (prefers-color-scheme: light) {
@@ -12,9 +11,10 @@
 		--colorBackground: #fff;
 		--colorComboBoxHeaderBackground: #fff;
 		--colorComboBoxBackground: #eee;
-		--colorHeaderBackground: #eee;
-		--colorSecondaryButtonBackground: #eee;
-		--colorSecondaryAction: #555;
+		--colorHeaderBackground: #f0f0f0;
+		--colorSecondaryButtonBackground: #fcfcfc;
+		--colorSecondaryActionBorder: #ddd;
+		--colorSecondaryAction: #666;
 		--colorDisabledMockSelector: #444;
 		--colorHover: #dfefff;
 		--colorLabel: #444;
@@ -31,6 +31,7 @@
 		--colorHeaderBackground: #111;
 		--colorComboBoxBackground: #2a2a2a;
 		--colorSecondaryButtonBackground: #2a2a2a;
+		--colorSecondaryActionBorder: #333;
 		--colorSecondaryAction: #999;
 		--colorComboBoxHeaderBackground: #222;
 		--colorDisabledMockSelector: #b9b9b9;
@@ -42,15 +43,22 @@
 	}
 }
 
-html, body {
+html,
+body {
+	overflow: hidden;
+	height: 100%;
+	padding: 0;
 	margin: 0;
+	background: var(--colorHeaderBackground);
 	font-size: 12px;
 }
 body {
-	padding: 16px;
+	display: grid;
+	grid-template-rows: auto 1fr;
 	background: var(--colorBackground);
 	color: var(--colorText);
 }
+
 * {
 	box-sizing: border-box;
 	padding: 0;
@@ -59,6 +67,7 @@ body {
 	font-family: system-ui, sans-serif;
 	font-size: 100%;
 	outline: 0;
+	scrollbar-width: thin;
 }
 
 select, a, input, button, summary {
@@ -79,6 +88,7 @@ input[type=checkbox] ~ svg {
 }
 
 select {
+	border: 1px solid transparent;
 	font-size: 100%;
 	color: var(--colorText);
 	cursor: pointer;
@@ -86,16 +96,17 @@ select {
 	border-radius: var(--radius);
 	appearance: none;
 	background: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%23888888'><path d='M16.59 8.59 12 13.17 7.41 8.59 6 10l6 6 6-6z'/></svg>") no-repeat;
-	background-color: var(--colorComboBoxBackground);
 	background-size: 16px;
 	background-position: 100% center;
 
 	&:enabled {
-		box-shadow: var(--boxShadow1);
-	}
-	&:enabled:hover {
-		cursor: pointer;
-		background-color: var(--colorHover);
+		border-color: var(--colorSecondaryActionBorder);
+		background-color: var(--colorSecondaryButtonBackground);
+		&:hover {
+			border-color: var(--colorHover);
+			cursor: pointer;
+			background-color: var(--colorHover);
+		}
 	}
 	&:disabled {
 		cursor: not-allowed;
@@ -106,18 +117,19 @@ select {
 	color: var(--colorRed);
 }
 
-.Header {
-	position: fixed;
-	z-index: 100;
-	top: 0;
-	left: 0;
+header {
 	display: flex;
 	width: 100%;
-	align-items: flex-end;
 	padding: 16px;
 	background: var(--colorHeaderBackground);
 	box-shadow: var(--boxShadow1);
-	gap: 10px;
+
+	> div {
+		display: flex;
+		flex-wrap: wrap;
+		align-items: flex-end;
+		gap: 10px;
+	}
 
 	img {
 		width: 130px;
@@ -151,11 +163,11 @@ select {
 			width: 100%;
 			height: 28px;
 			padding: 4px 8px;
+			border: 0;
 			border-right: 3px solid transparent;
 			margin-top: 4px;
 			color: var(--colorText);
 			font-size: 11px;
-			box-shadow: var(--boxShadow1);
 			background-color: var(--colorComboBoxHeaderBackground);
 			border-radius: var(--radius);
 		}
@@ -219,56 +231,61 @@ select {
 		&:hover {
 			background: var(--colorRed);
 			color: white;
-			box-shadow: var(--boxShadow1);
 		}
 	}
 }
 
 
-.Main {
-	display: flex;
+main {
+	display: grid;
+	min-height: 0;
+	grid-template-columns: 50% 50%;
+
+	@media (max-width: 960px) {
+		grid-template-columns: 100%;
+		grid-template-rows: 50% 50%;
+		gap: 32px;
+	}
+
+	.leftSide {
+		padding: 16px;
+		padding-bottom: 0;
+		overflow-y: auto;
+	}
+
+	.rightSide {
+		padding-top: 16px;
+		padding-left: 16px;
+		overflow-y: auto;
+	}
 }
 
 table {
 	border-collapse: collapse;
 
 	th {
-		padding-top: 20px;
 		padding-bottom: 2px;
-		padding-left: 99px;
+		padding-left: 110px;
 		text-align: left;
 	}
 
-	tr {
-		border-top: 2px solid transparent;
+	tbody {
+		border-bottom: 20px solid transparent;
 	}
 }
 
-.MockList {
-	display: flex;
-	align-items: flex-start;
-	margin-top: 64px;
-
-	&.empty {
-		margin-top: 80px;
-	}
+.empty {
+	margin-top: 80px;
 }
 
 
 .PayloadViewer {
-	position: sticky;
-	top: 62px;
-	width: 50%;
-	margin-top: 62px;
-	margin-left: 20px;
-
-	h2 {
-		padding-top: 20px;
-	}
-
+	/*h2 {*/
+	/*	top: 0;*/
+	/*	position: sticky;*/
+	/*	background: var(--colorBackground);*/
+	/*}*/
 	pre {
-		overflow: auto;
-		max-height: calc(100vh - 72px);
 		padding-top: 12px;
 
 		code {
@@ -285,19 +302,15 @@ table {
 
 .PreviewLink {
 	position: relative;
-	left: -6px;
+	left: -8px;
 	display: inline-block;
-	width: 272px;
-	padding: 8px 6px;
+	width: 240px;
+	padding: 8px;
+	margin-left: 4px;
 	border-radius: var(--radius);
 	color: var(--colorAccent);
 	text-decoration: none;
 	word-break: break-word;
-
-	span {
-		opacity: 0.6;
-		filter: saturate(0);
-	}
 
 	&:hover {
 		background: var(--colorHover);
@@ -309,11 +322,10 @@ table {
 }
 
 .MockSelector {
-	width: 260px;
-	height: 30px;
+	width: 100%;
+	height: 26px;
 	padding-right: 5px;
 	padding-left: 16px;
-	border: 0;
 	text-align: right;
 	direction: rtl;
 	text-overflow: ellipsis;
@@ -329,6 +341,7 @@ table {
 	}
 	&:disabled {
 		padding-right: 4px;
+		border-color: transparent;
 		appearance: none;
 		background: transparent;
 		cursor: default;
@@ -363,33 +376,32 @@ table {
 	margin-left: 8px;
 	> input {
 		&:checked ~ svg {
+			border-color: var(--colorAccent);
 			fill: var(--colorAccent);
 			background: var(--colorAccent);
 			stroke: var(--colorBackground);
 		}
 
 		&:enabled:hover:not(:checked) ~ svg {
-			border-color: var(--colorText);
+			border-color: var(--colorHover);
 			background: var(--colorHover);
 			stroke: var(--colorText);
 		}
 	}
 
 	> svg {
-		width: 19px;
-		height: 19px;
+		width: 22px;
+		height: 22px;
+		border: 1px solid var(--colorSecondaryActionBorder);
 		stroke-width: 2.5px;
 		border-radius: 50%;
-		background: var(--colorSecondaryButtonBackground);
-		box-shadow: var(--boxShadow1);
 	}
 }
 
 .ProxyToggler {
 	padding: 1px 3px;
-	background: var(--colorSecondaryButtonBackground);
-	border-radius: var(--radiusSmall);
-	box-shadow: var(--boxShadow1);
+	border: 1px solid var(--colorSecondaryActionBorder);
+	border-radius: var(--radius);
 
 	&:has(input:checked),
 	&:has(input:disabled) {
@@ -414,7 +426,7 @@ table {
 		}
 
 		&:disabled ~ svg {
-			stroke-opacity: 0.5;
+			stroke-opacity: 0.4;
 			cursor: not-allowed;
 			box-shadow: none;
 			fill: transparent;
@@ -430,7 +442,7 @@ table {
 		width: 18px;
 		height: 18px;
 		stroke-width: 2px;
-		border-radius: var(--radiusSmall);
+		border-radius: var(--radius);
 	}
 }
 
@@ -452,6 +464,7 @@ table {
 		}
 
 		&:checked ~ span {
+			border-color: var(--colorRed);
 			color: white;
 			background: var(--colorRed);
 		}
@@ -459,14 +472,14 @@ table {
 
 	> span {
 		padding: 4px;
+		border: 1px solid var(--colorSecondaryActionBorder);
 		font-size: 10px;
 		font-weight: bold;
 		color: var(--colorSecondaryAction);
-		border-radius: var(--radiusSmall);
-		background: var(--colorSecondaryButtonBackground);
-		box-shadow: var(--boxShadow1);
+		border-radius: var(--radius);
 
 		&:hover {
+			border-color: var(--colorLightRed);
 			background: var(--colorLightRed);
 			color: var(--colorRed);
 		}
@@ -501,7 +514,6 @@ table {
 
 
 .StaticFilesList {
-	margin-top: 8px;
 
 	a {
 		display: inline-block;
@@ -513,12 +525,12 @@ table {
 		&:hover {
 			text-decoration: underline;
 		}
-
-		span {
-			opacity: 0.6;
-			filter: saturate(0);
-		}
 	}
+}
+
+.dittoDir {
+	opacity: 0.9;
+	filter: saturate(0);
 }
 
 

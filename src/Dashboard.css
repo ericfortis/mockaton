@@ -1,6 +1,6 @@
 :root {
-	--boxShadow1: 0 3px 1px -1px rgba(0, 0, 0, 0.04), 0 1px 1px 0 rgba(0, 0, 0, 0.1), 0 1px 3px 0 rgba(0, 0, 0, 0.1);
 	--radius: 4px;
+	--boxShadow1: 0 3px 1px -1px rgba(0, 0, 0, 0.04), 0 1px 1px 0 rgba(0, 0, 0, 0.1), 0 1px 3px 0 rgba(0, 0, 0, 0.1);
 }
 
 @media (prefers-color-scheme: light) {
@@ -27,7 +27,7 @@
 	:root {
 		--color4xxBackground: #403630;
 		--colorAccent: #2495ff;
-		--colorBackground: #161616;
+		--colorBackground: #181818;
 		--colorHeaderBackground: #111;
 		--colorComboBoxBackground: #2a2a2a;
 		--colorSecondaryButtonBackground: #2a2a2a;
@@ -113,10 +113,6 @@ select {
 	}
 }
 
-.red {
-	color: var(--colorRed);
-}
-
 header {
 	display: flex;
 	width: 100%;
@@ -129,7 +125,12 @@ header {
 		flex-wrap: wrap;
 		align-items: flex-end;
 		gap: 10px;
+
+		@media (max-width: 860px) {
+			max-width: 500px;
+		}
 	}
+
 
 	img {
 		width: 130px;
@@ -227,7 +228,6 @@ header {
 		color: var(--colorRed);
 		border-radius: 50px;
 
-
 		&:hover {
 			background: var(--colorRed);
 			color: white;
@@ -239,12 +239,19 @@ header {
 main {
 	display: grid;
 	min-height: 0;
-	grid-template-columns: 50% 50%;
+	grid-template-columns: min(820px) 1fr;
+
+	@media (max-width: 1160px) {
+		grid-template-columns: min(620px) 1fr;
+	}
 
 	@media (max-width: 960px) {
 		grid-template-columns: 100%;
-		grid-template-rows: 50% 50%;
-		gap: 32px;
+		grid-template-rows: 1fr 1fr;
+
+		.leftSide {
+			box-shadow: var(--boxShadow1);
+		}
 	}
 
 	.leftSide {
@@ -279,32 +286,11 @@ table {
 }
 
 
-.PayloadViewer {
-	/*h2 {*/
-	/*	top: 0;*/
-	/*	position: sticky;*/
-	/*	background: var(--colorBackground);*/
-	/*}*/
-	pre {
-		padding-top: 12px;
-
-		code {
-			white-space: pre;
-			tab-size: 2;
-			font-family: monospace;
-
-			* {
-				font-family: monospace;
-			}
-		}
-	}
-}
-
 .PreviewLink {
 	position: relative;
 	left: -8px;
 	display: inline-block;
-	width: 240px;
+	width: 100%;
 	padding: 8px;
 	margin-left: 4px;
 	border-radius: var(--radius);
@@ -486,6 +472,38 @@ table {
 	}
 }
 
+
+.StaticFilesList {
+	a {
+		display: inline-block;
+		padding: 6px 0;
+		border-radius: var(--radius);
+		color: var(--colorAccent);
+		text-decoration: none;
+
+		&:hover {
+			text-decoration: underline;
+		}
+	}
+}
+
+
+.PayloadViewer {
+	pre {
+		padding-top: 12px;
+
+		code {
+			white-space: pre;
+			tab-size: 2;
+			font-family: monospace;
+
+			* {
+				font-family: monospace;
+			}
+		}
+	}
+}
+
 .SpinnerClock {
 	display: flex;
 	width: 36px;
@@ -512,20 +530,8 @@ table {
 	}
 }
 
-
-.StaticFilesList {
-
-	a {
-		display: inline-block;
-		padding: 6px 0;
-		border-radius: var(--radius);
-		color: var(--colorAccent);
-		text-decoration: none;
-
-		&:hover {
-			text-decoration: underline;
-		}
-	}
+.red {
+	color: var(--colorRed);
 }
 
 .dittoDir {
@@ -537,7 +543,6 @@ table {
 /* 
  * Prism 
  */
-
 
 @media (prefers-color-scheme: dark) {
 	.token.cdata, .token.comment, .token.doctype, .token.prolog {

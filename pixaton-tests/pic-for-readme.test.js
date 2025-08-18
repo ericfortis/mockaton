@@ -12,7 +12,7 @@ testPixels(import.meta.filename, {
 	},
 
 	viewports: [{
-		width: 840,
+		width: 962,
 		height: 800,
 		deviceScaleFactor: 1.5
 	}]

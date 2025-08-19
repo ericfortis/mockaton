@@ -62,14 +62,20 @@ api/videos.GET.<b>500</b>.txt               # Internal Server Error
 
 <br/>
 
-## Fallback to Your Backend
-No need to mock everything. You can forward requests to your backend for routes
-you don’t have mocks for, or routes that have the ☁️ **Cloud Checkbox** checked.
+## Scraping mocks from your Backend
 
+### Option 1: Browser Extension
+This [devtools extension](https://github.com/ericfortis/devtools-ext-zip-http-requests) 
+lets you download a ZIP with all the responses following the filename convention.
 
-### Scraping mocks from your backend
-By checking ✅ **Save Mocks**, you can collect the responses that hit your backend.
-They will be saved in your `config.mocksDir` following the filename convention.
+### Option 2: Fallback to Your Backend
+This option could be a bit elaborate if your backend uses third-party auth, 
+because in that case you’d have to inject the cookies manually.
+
+At any rate, you can forward requests to your backend for routes you don’t have
+mocks for, or routes that have the ☁️ **Cloud Checkbox** checked. By checking
+✅ **Save Mocks**, you can collect the responses that hit your backend. They
+will be saved in your `config.mocksDir` following the filename convention.
 
 
 <br/>

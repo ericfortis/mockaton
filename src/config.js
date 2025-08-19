@@ -1,7 +1,7 @@
 import { realpathSync } from 'node:fs'
 import { isDirectory } from './utils/fs.js'
 import { openInBrowser } from './utils/openInBrowser.js'
-import { jsToJsonPlugin } from './MockDispatcherPlugins.js'
+import { jsToJsonPlugin } from './MockDispatcher.js'
 import { optional, is, validate } from './utils/validate.js'
 import { SUPPORTED_METHODS } from './utils/http-request.js'
 import { validateCorsAllowedMethods, validateCorsAllowedOrigins } from './utils/http-cors.js'

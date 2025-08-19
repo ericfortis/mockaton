@@ -1,8 +1,9 @@
 import { join } from 'node:path'
+import { readFileSync } from 'node:fs'
 
 import { proxy } from './ProxyRelay.js'
 import { cookie } from './cookie.js'
-import { applyPlugins } from './MockDispatcherPlugins.js'
+import { mimeFor } from './utils/mime.js'
 import { config, calcDelay } from './config.js'
 import { BodyReaderError } from './utils/http-request.js'
 import * as mockBrokerCollection from './mockBrokersCollection.js'
@@ -11,7 +12,7 @@ import { sendInternalServerError, sendNotFound, sendUnprocessableContent } from 
 
 export async function dispatchMock(req, response) {
 	try {
-		const broker = mockBrokerCollection.findBrokerByRoute(req.method, req.url)
+		const broker = mockBrokerCollection.brokerByRoute(req.method, req.url)
 		if (!broker || broker.proxied) {
 			if (config.proxyFallback)
 				await proxy(req, response, Number(broker?.delayed && calcDelay()))
@@ -48,5 +49,28 @@ export async function dispatchMock(req, response) {
 		}
 		else
 			sendInternalServerError(response, error)
+	}
+}
+
+
+async function applyPlugins(filePath, req, response) {
+	for (const [regex, plugin] of config.plugins)
+		if (regex.test(filePath))
+			return await plugin(filePath, req, response)
+	return {
+		mime: mimeFor(filePath),
+		body: readFileSync(filePath)
+	}
+}
+
+
+export async function jsToJsonPlugin(filePath, req, response) {
+	const jsExport = (await import(filePath + '?' + Date.now())).default // date for cache busting
+	const body = typeof jsExport === 'function'
+		? await jsExport(req, response)
+		: JSON.stringify(jsExport, null, 2)
+	return {
+		mime: response.getHeader('Content-Type') || mimeFor('.json'), // jsFunc are allowed to set it
+		body
 	}
 }

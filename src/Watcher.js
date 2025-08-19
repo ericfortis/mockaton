@@ -5,7 +5,7 @@ import { EventEmitter } from 'node:events'
 import { config } from './config.js'
 import { isFile } from './utils/fs.js'
 import * as mockBrokerCollection from './mockBrokersCollection.js'
-import { registerStaticMock, unregisterStaticMock } from './StaticDispatcher.js'
+import { registerStaticMock, unregisterStaticMock } from './staticCollection.js'
 
 
 /** # AR = Add or Remove Mock Event */
@@ -40,7 +40,7 @@ export function watchMocksDir() {
 	})
 }
 
-export function watchStaticMocksDir() {
+export function watchStaticDir() {
 	const dir = config.staticDir
 	if (!dir)
 		return

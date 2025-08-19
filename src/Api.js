@@ -7,11 +7,11 @@ import { join } from 'node:path'
 import { cookie } from './cookie.js'
 import { parseJSON } from './utils/http-request.js'
 import { uiSyncVersion } from './Watcher.js'
+import * as staticCollection from './staticCollection.js'
 import * as mockBrokersCollection from './mockBrokersCollection.js'
 import { config, ConfigValidator } from './config.js'
 import { DF, API, LONG_POLL_SERVER_TIMEOUT } from './ApiConstants.js'
 import { sendOK, sendJSON, sendUnprocessableContent, sendFile } from './utils/http-response.js'
-import { getStaticFilesCollection, findStaticBrokerByRoute, initStaticCollection } from './StaticDispatcher.js'
 
 
 const dashboardAssets = [
@@ -25,9 +25,7 @@ const dashboardAssets = [
 
 export const apiGetRequests = new Map([
 	[API.dashboard, serveDashboard],
-	...dashboardAssets.map(f => [
-		API.dashboard + f, serveDashboardAsset(f)
-	]),
+	...dashboardAssets.map(f => [API.dashboard + f, serveDashboardAsset(f)]),
 	[API.cors, getIsCorsAllowed],
 	[API.static, listStaticFiles],
 	[API.mocks, listMockBrokers],
@@ -68,12 +66,14 @@ function serveDashboardAsset(f) {
 
 function listCookies(_, response) { sendJSON(response, cookie.list()) }
 function listComments(_, response) { sendJSON(response, mockBrokersCollection.extractAllComments()) }
-function listStaticFiles(_, response) { sendJSON(response, getStaticFilesCollection()) }
+
+function listStaticFiles(_, response) { sendJSON(response, staticCollection.all()) }
+function listMockBrokers(_, response) { sendJSON(response, mockBrokersCollection.all()) }
+
 function getGlobalDelay(_, response) { sendJSON(response, config.delay) }
-function listMockBrokers(_, response) { sendJSON(response, mockBrokersCollection.getAll()) }
 function getProxyFallback(_, response) { sendJSON(response, config.proxyFallback) }
-function getIsCorsAllowed(_, response) { sendJSON(response, config.corsAllowed) }
 function getCollectProxied(_, response) { sendJSON(response, config.collectProxied) }
+function getIsCorsAllowed(_, response) { sendJSON(response, config.corsAllowed) }
 
 function longPollClientSyncVersion(req, response) {
 	if (uiSyncVersion.version !== Number(req.headers[DF.syncVersion])) {
@@ -101,7 +101,7 @@ function longPollClientSyncVersion(req, response) {
 
 function reinitialize(_, response) {
 	mockBrokersCollection.init()
-	initStaticCollection() // TESTME
+	staticCollection.init() // TESTME
 	sendOK(response)
 }
 
@@ -115,7 +115,7 @@ async function selectCookie(req, response) {
 
 async function selectMock(req, response) {
 	const file = await parseJSON(req)
-	const broker = mockBrokersCollection.findBrokerByFilename(file)
+	const broker = mockBrokersCollection.brokerByFilename(file)
 	if (!broker || !broker.hasMock(file))
 		sendUnprocessableContent(response, `Missing Mock: ${file}`)
 	else {
@@ -127,7 +127,7 @@ async function selectMock(req, response) {
 async function setRouteIsDelayed(req, response) {
 	const body = await parseJSON(req)
 	const delayed = body[DF.delayed]
-	const broker = mockBrokersCollection.findBrokerByRoute(
+	const broker = mockBrokersCollection.brokerByRoute(
 		body[DF.routeMethod],
 		body[DF.routeUrlMask])
 
@@ -144,7 +144,7 @@ async function setRouteIsDelayed(req, response) {
 async function setRouteIsProxied(req, response) { // TESTME
 	const body = await parseJSON(req)
 	const proxied = body[DF.proxied]
-	const broker = mockBrokersCollection.findBrokerByRoute(
+	const broker = mockBrokersCollection.brokerByRoute(
 		body[DF.routeMethod],
 		body[DF.routeUrlMask])
 
@@ -201,7 +201,7 @@ async function setGlobalDelay(req, response) { // TESTME
 async function setStaticRouteStatusCode(req, response) {
 	const body = await parseJSON(req)
 	const status = Number(body[DF.statusCode])
-	const broker = findStaticBrokerByRoute(body[DF.routeUrlMask])
+	const broker = staticCollection.brokerByRoute(body[DF.routeUrlMask])
 
 	if (!broker) // TESTME
 		sendUnprocessableContent(response, `Route does not exist: ${body[DF.routeUrlMask]}`)
@@ -217,7 +217,7 @@ async function setStaticRouteStatusCode(req, response) {
 async function setStaticRouteIsDelayed(req, response) {
 	const body = await parseJSON(req)
 	const delayed = body[DF.delayed]
-	const broker = findStaticBrokerByRoute(body[DF.routeUrlMask])
+	const broker = staticCollection.brokerByRoute(body[DF.routeUrlMask])
 
 	if (!broker) // TESTME
 		sendUnprocessableContent(response, `Route does not exist: ${body[DF.routeUrlMask]}`)

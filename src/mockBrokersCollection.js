@@ -23,6 +23,8 @@ import { parseFilename, filenameIsValid } from './Filename.js'
  */
 let collection = {}
 
+export const all = () => collection
+
 export function init() {
 	collection = {}
 	cookie.init(config.cookies)
@@ -39,7 +41,7 @@ export function init() {
 
 /** @returns {boolean} registered */
 export function registerMock(file, isFromWatcher = false) {
-	if (findBrokerByFilename(file)?.hasMock(file)
+	if (brokerByFilename(file)?.hasMock(file)
 		|| !isFileAllowed(basename(file)) // TESTME
 		|| !filenameIsValid(file))
 		return false
@@ -62,7 +64,7 @@ export function registerMock(file, isFromWatcher = false) {
 }
 
 export function unregisterMock(file) {
-	const broker = findBrokerByFilename(file)
+	const broker = brokerByFilename(file)
 	if (!broker)
 		return
 	const isEmpty = broker.unregister(file)
@@ -74,11 +76,9 @@ export function unregisterMock(file) {
 	}
 }
 
-export const getAll = () => collection
-
 
 /** @returns {MockBroker | undefined} */
-export function findBrokerByFilename(file) {
+export function brokerByFilename(file) {
 	const { method, urlMask } = parseFilename(file)
 	if (collection[method])
 		return collection[method][urlMask]
@@ -91,7 +91,7 @@ export function findBrokerByFilename(file) {
  * BTW, `urlMasks` always start with "/", so there’s no need to
  * worry about the primacy of array-like keys when iterating.
  @returns {MockBroker | undefined} */
-export function findBrokerByRoute(method, url) {
+export function brokerByRoute(method, url) {
 	if (!collection[method])
 		return
 	const brokers = Object.values(collection[method])

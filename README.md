@@ -65,8 +65,8 @@ api/videos.GET.<b>500</b>.txt               # Internal Server Error
 ## Scraping mocks from your Backend
 
 ### Option 1: Browser Extension
-This [devtools extension](https://github.com/ericfortis/devtools-ext-zip-http-requests) 
-lets you download a ZIP with all the responses following the filename convention.
+This [browser extension](https://github.com/ericfortis/download-http-requests-browser-ext) 
+lets you download all the HTTP responses following the filename convention.
 
 ### Option 2: Fallback to Your Backend
 This option could be a bit elaborate if your backend uses third-party auth, 

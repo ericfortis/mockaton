@@ -1,5 +1,6 @@
 import { join } from 'node:path'
 import { readFileSync } from 'node:fs'
+import { pathToFileURL } from 'node:url'
 
 import { proxy } from './ProxyRelay.js'
 import { cookie } from './cookie.js'
@@ -65,7 +66,7 @@ async function applyPlugins(filePath, req, response) {
 
 
 export async function jsToJsonPlugin(filePath, req, response) {
-	const jsExport = (await import(filePath + '?' + Date.now())).default // date for cache busting
+	const jsExport = (await import(pathToFileURL(filePath) + '?' + Date.now())).default // date for cache busting
 	const body = typeof jsExport === 'function'
 		? await jsExport(req, response)
 		: JSON.stringify(jsExport, null, 2)

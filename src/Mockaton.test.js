@@ -165,8 +165,8 @@ write('api/alternative(comment-2).GET.200.json', JSON.stringify({ comment: 2 }))
 write('api/my-route(comment-2).GET.200.json', JSON.stringify({ comment: 2 }))
 write('api/ignored.GET.200.json~', '')
 
-// JavaScript to JSON
-write('/api/object.GET.200.js', 'export default { JSON_FROM_JS: true }')
+// JavaScript to JSON (params for testing URL decoding)
+write('/api/object?param=[param].GET.200.js', 'export default { JSON_FROM_JS: true }')
 
 const staticFiles = [
 	['index.html', '<h1>Static</h1>'],

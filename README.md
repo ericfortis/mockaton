@@ -232,8 +232,17 @@ export default function listColors() {
 ```
 </details>
 
-**What if I need to serve a static .js?**
-Put it in your `config.staticDir` without the mock filename convention.
+**What if I need to serve a static .js or .ts?**
+
+**Option A:** Put it in your `config.staticDir` without the filename extension convention (i.e., no `.GET.200.js`)
+
+**Option B:** Read it and return it. For example:
+```js
+export default function (_, response) {
+  response.setHeader('Content-Type', 'application/javascript')
+  return readFileSync('./some-dir/foo.js', 'utf8')
+}
+```
 
 <br/>
 
@@ -337,10 +346,6 @@ api/foo/bar.GET.200.json
 This is the only required field. The directory must exist.
 
 ### `staticDir?: string`
-- Use Case 1: If you have a bunch of static assets you don’t want to add `.GET.200.ext`
-- Use Case 2: For a standalone demo server. For example,
-  build your frontend bundle, and serve it from Mockaton.
-
 Files under `config.staticDir` don’t use the filename convention, and
 they take precedence over corresponding `GET` mocks in `config.mocksDir`.
 For example, if you have two files for `GET /foo/bar.jpg`
@@ -349,6 +354,14 @@ For example, if you have two files for `GET /foo/bar.jpg`
 my-static-dir<b>/foo/bar.jpg</b>
  my-mocks-dir<b>/foo/bar.jpg</b>.GET.200.jpg // Unreachable
 </pre>
+
+This `config.staticDir` is not actually needed besides serving partial content
+(e.g., videos). At any rate, it’s convenient for serving 200 GET requests without
+having to add the filename extension convention (i.e., no `.GET.200.ext`).
+For example, for using Mockaton as a standalone demo server. For that, you
+can build your frontend bundle and put its built assets in this folder.
+
+<br/>
 
 ### `ignore?: RegExp`
 Defaults to `/(\.DS_Store|~)$/`

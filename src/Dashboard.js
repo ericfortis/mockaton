@@ -39,6 +39,7 @@ const Strings = {
 const CSS = {
 	BulkSelector: 'BulkSelector',
 	DelayToggler: 'DelayToggler',
+	ErrorToast: 'ErrorToast',
 	FallbackBackend: 'FallbackBackend',
 	Field: 'Field',
 	GlobalDelayField: 'GlobalDelayField',
@@ -592,8 +593,22 @@ function mockSelectorFor(method, urlMask) {
 
 function onError(error) {
 	if (error?.message === 'Failed to fetch')
-		alert('Looks like the Mockaton server is not running')
+		showErrorToast('Looks like the Mockaton server is not running')
 	console.error(error)
+}
+
+function showErrorToast(msg) {
+	document.getElementsByClassName(CSS.ErrorToast)[0]?.remove()
+	document.body.appendChild(
+		r('div', {
+			className: CSS.ErrorToast,
+			onClick() {
+				const toast = this
+				document.startViewTransition(() => {
+					toast.remove()
+				})
+			}
+		}, msg))
 }
 
 function TimerIcon() {

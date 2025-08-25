@@ -537,6 +537,42 @@ table {
 	filter: saturate(0);
 }
 
+.ErrorToast {
+	position: fixed;
+	bottom: 12px;
+	left: 12px;
+	z-index: 9999;
+	cursor: pointer;
+	background: var(--colorRed);
+	color: white;
+	padding: 12px 16px;
+	border-radius: var(--radius);
+	box-shadow: var(--boxShadow1);
+	opacity: 0;
+	transform: translateY(20px);
+	animation: _kfToastIn 240ms forwards;
+
+	&:hover {
+		&::after {
+			top: 0;
+			left: calc(100% - 6px);
+			position: absolute;
+			content: '×';
+			vertical-align: middle;
+			padding: 12px;
+			border-radius: var(--radius);
+			background: black;
+		}
+	}
+}
+
+@keyframes _kfToastIn {
+	to {
+		opacity: 1;
+		transform: translateY(0);
+	}
+}
+
 
 /* 
  * Prism 

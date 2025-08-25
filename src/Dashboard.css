@@ -506,10 +506,8 @@ table {
 
 .SpinnerClock {
 	display: flex;
-	width: 36px;
-	height: 36px;
-	margin-top: 92px;
-	justify-self: center;
+	width: 48px;
+	margin-top: 6px;
 	fill: none;
 	stroke: var(--colorSecondaryAction);
 	stroke-width: 2px;

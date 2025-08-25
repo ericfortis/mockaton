@@ -552,17 +552,15 @@ table {
 	transform: translateY(20px);
 	animation: _kfToastIn 240ms forwards;
 
-	&:hover {
-		&::after {
-			top: 0;
-			left: calc(100% - 6px);
-			position: absolute;
-			content: '×';
-			vertical-align: middle;
-			padding: 12px;
-			border-radius: var(--radius);
-			background: black;
-		}
+	&:hover::after {
+		top: 0;
+		left: calc(100% - 6px);
+		position: absolute;
+		content: '×';
+		vertical-align: middle;
+		padding: 12px;
+		border-radius: var(--radius);
+		background: black;
 	}
 }
 

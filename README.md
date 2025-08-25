@@ -161,6 +161,7 @@ you want. For example, by adding `(demo-part1)`, `(demo-part2)` to the filenames
 
 Similarly, you can deploy a **Standalone Demo Server** by compiling the frontend app and
 putting its built assets in `config.staticDir`. And simulate the flow by Bulk Selecting mocks.
+The [aot-fetch-demo repo](https://github.com/ericfortis/aot-fetch-demo) has a working example.
 
 
 <br/>
@@ -232,9 +233,11 @@ export default function listColors() {
 ```
 </details>
 
+<br/>
+
 **What if I need to serve a static .js or .ts?**
 
-**Option A:** Put it in your `config.staticDir` without the filename extension convention (i.e., no `.GET.200.js`)
+**Option A:** Put it in your `config.staticDir` without the `.GET.200.js` extension.
 
 **Option B:** Read it and return it. For example:
 ```js
@@ -346,20 +349,19 @@ api/foo/bar.GET.200.json
 This is the only required field. The directory must exist.
 
 ### `staticDir?: string`
-Files under `config.staticDir` don’t use the filename convention, and
-they take precedence over corresponding `GET` mocks in `config.mocksDir`.
-For example, if you have two files for `GET /foo/bar.jpg`
+**This option is not needed** besides serving partial content (e.g., videos). But
+it’s convenient for serving 200 GET requests without having to add the filename
+extension convention. For example, for using Mockaton as a standalone demo server,
+as explained above in the _Use Cases_ section.
 
+Files under `config.staticDir` don’t use the filename convention, and they take
+precedence over corresponding `GET` mocks in `config.mocksDir` (regardless
+of status code). For example, if you have two files for `GET /foo/bar.jpg`:
 <pre>
-my-static-dir<b>/foo/bar.jpg</b>
- my-mocks-dir<b>/foo/bar.jpg</b>.GET.200.jpg // Unreachable
+my-static-dir<b>/foo/bar.jpg</b> <span style="color:green"> // Wins</span>
+ my-mocks-dir<b>/foo/bar.jpg</b>.GET.200.jpg <span style="color:red"> // Unreachable</span>
 </pre>
 
-This `config.staticDir` is not actually needed besides serving partial content
-(e.g., videos). At any rate, it’s convenient for serving 200 GET requests without
-having to add the filename extension convention (i.e., no `.GET.200.ext`).
-For example, for using Mockaton as a standalone demo server. For that, you
-can build your frontend bundle and put its built assets in this folder.
 
 <br/>
 

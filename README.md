@@ -70,12 +70,15 @@ lets you download all the HTTP responses following the filename convention.
 
 ### Option 2: Fallback to Your Backend
 This option could be a bit elaborate if your backend uses third-party auth, 
-because in that case you’d have to inject the cookies manually.
+because you’d have to inject the cookies or tokens in `sessionStorage` manually.
 
-At any rate, you can forward requests to your backend for routes you don’t have
-mocks for, or routes that have the ☁️ **Cloud Checkbox** checked. By checking
-✅ **Save Mocks**, you can collect the responses that hit your backend. They
-will be saved in your `config.mocksDir` following the filename convention.
+On the other hand, if you backend handles the session cookie, or if you can 
+develop without auth, proxying to your backend is straightforward to set up. 
+
+In a nutshell, you can forward requests to your backend for routes you don’t have
+mocks for, or routes that have the ☁️ **Cloud Checkbox** checked. In addition, by
+checking ✅ **Save Mocks**, you can collect the responses that hit your backend.
+They will be saved in your `config.mocksDir` following the filename convention.
 
 
 <br/>

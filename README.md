@@ -550,7 +550,7 @@ Defaults to `true`. When `true`, these are the default options:
 ```js
 config.corsOrigins = ['*']
 config.corsMethods = require('node:http').METHODS
-config.corsHeaders = ['content-type']
+config.corsHeaders = ['content-type', 'authorization']
 config.corsCredentials = true
 config.corsMaxAge = 0 // seconds to cache the preflight req
 config.corsExposedHeaders = [] // headers you need to access in client-side JS

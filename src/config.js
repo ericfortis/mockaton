@@ -42,7 +42,7 @@ const schema = {
 	corsAllowed: [true, is(Boolean)],
 	corsOrigins: [['*'], validateCorsAllowedOrigins],
 	corsMethods: [SUPPORTED_METHODS, validateCorsAllowedMethods],
-	corsHeaders: [['content-type'], Array.isArray],
+	corsHeaders: [['content-type', 'authorization'], Array.isArray],
 	corsExposedHeaders: [[], Array.isArray],
 	corsCredentials: [true, is(Boolean)],
 	corsMaxAge: [0, is(Number)],

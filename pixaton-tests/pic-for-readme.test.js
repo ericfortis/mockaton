@@ -4,9 +4,10 @@ import { testPixels, clickLinkByText, click500Checkbox, clickDelayCheckbox, clic
 testPixels(import.meta.filename, {
 	async setup() {
 		await click500Checkbox('GET', '/api/user/friends')
-		await clickDelayCheckbox('GET', '/api/user/links')
+		await clickDelayCheckbox('GET', '/api/user/links?limit=[limit]')
 		await typeFallbackBackend('http://mybackend')
 		await clickSaveProxiedCheckbox()
+		await sleep()
 		await clickProxiedCheckbox('GET', '/api/video/[id]')
 		await clickLinkByText('/api/user/likes')
 	},
@@ -17,3 +18,7 @@ testPixels(import.meta.filename, {
 		deviceScaleFactor: 1.5
 	}]
 })
+
+async function sleep(ms = 50) {
+	return new Promise(resolve => setTimeout(resolve, ms))
+}

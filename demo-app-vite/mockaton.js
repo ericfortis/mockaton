@@ -6,11 +6,13 @@ import { Mockaton, jwtCookie } from 'mockaton'
 
 
 const { port } = parseArgs({
-	options: { port: { type: 'string' } }
+	options: {
+		port: { type: 'string', default: '2345' }
+	}
 }).values
 
 Mockaton({
-	port: Number(port) || 2345,
+	port: Number(port),
 	mocksDir: join(import.meta.dirname, './mocks'),
 	cookies: {
 		'Non-Admin User': jwtCookie('id_token', {

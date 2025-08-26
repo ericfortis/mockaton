@@ -47,10 +47,10 @@ function validateFilename(file) {
 export function parseFilename(file) {
 	const tokens = file.replace(reComments, '').split('.')
 	return {
-		urlMask: '/' + removeTrailingSlash(tokens.slice(0, -3).join('.')),
-		method: tokens.at(-3),
-		status: Number(tokens.at(-2)),
-		ext: tokens.at(-1)
+		ext: tokens.pop(),
+		status: Number(tokens.pop()),
+		method: tokens.pop(),
+		urlMask: '/' + removeTrailingSlash(tokens.join('.'))
 	}
 }
 

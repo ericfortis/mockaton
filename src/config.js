@@ -61,7 +61,7 @@ for (const [k, [defaultVal, validator]] of Object.entries(schema)) {
 /** @type {Config} */
 export const config = Object.seal(defaults)
 
-/** @type {Record<keyof Config, (val: unknown) => boolean>} */
+/** @type {Record<keyof Config, (val: unknown) => val is Config[keyof Config]>} */
 export const ConfigValidator = Object.freeze(validators)
 
 

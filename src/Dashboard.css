@@ -7,7 +7,6 @@
 	:root {
 		--color4xxBackground: #ffedd1;
 		--colorAccent: #0068c1;
-		--colorAccentAlt: #068185;
 		--colorBackground: #fff;
 		--colorComboBoxHeaderBackground: #fff;
 		--colorComboBoxBackground: #eee;
@@ -126,11 +125,10 @@ header {
 		align-items: flex-end;
 		gap: 10px;
 
-		@media (max-width: 860px) {
-			max-width: 500px;
+		@media (max-width: 890px) {
+			max-width: 400px;
 		}
 	}
-
 
 	img {
 		width: 130px;
@@ -231,6 +229,21 @@ header {
 		&:hover {
 			background: var(--colorRed);
 			color: white;
+		}
+	}
+
+	.Help {
+		align-self: center;
+		margin-left: auto;
+		min-width: 24px;
+		fill: var(--colorSecondaryAction);
+
+		&:hover {
+			fill: var(--colorAccent);
+		}
+
+		@media (max-width: 590px) {
+			display: none;
 		}
 	}
 }

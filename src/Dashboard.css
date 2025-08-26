@@ -272,7 +272,7 @@ table {
 
 	th {
 		padding-bottom: 2px;
-		padding-left: 110px;
+		padding-left: 4px;
 		text-align: left;
 	}
 
@@ -359,7 +359,6 @@ table {
 }
 
 .DelayToggler {
-	margin-left: 8px;
 	> input {
 		&:checked ~ svg {
 			border-color: var(--colorAccent);
@@ -387,6 +386,7 @@ table {
 .ProxyToggler {
 	padding: 1px 3px;
 	border: 1px solid var(--colorSecondaryActionBorder);
+	margin-right: 8px;
 	border-radius: var(--radius);
 
 	&:has(input:checked),
@@ -539,13 +539,13 @@ table {
 
 .ErrorToast {
 	position: fixed;
+	z-index: 9999;
 	bottom: 12px;
 	left: 12px;
-	z-index: 9999;
+	padding: 12px 16px;
 	cursor: pointer;
 	background: var(--colorRed);
 	color: white;
-	padding: 12px 16px;
 	border-radius: var(--radius);
 	box-shadow: var(--boxShadow1);
 	opacity: 0;
@@ -553,14 +553,17 @@ table {
 	animation: _kfToastIn 240ms forwards;
 
 	&:hover::after {
-		top: 0;
-		left: calc(100% - 6px);
 		position: absolute;
+		top: 0;
+		left: 0;
+		width: 100%;
+		height: 100%;
+		text-align: center;
 		content: '×';
-		vertical-align: middle;
-		padding: 12px;
+		font-size: 28px;
+		line-height: 34px;
 		border-radius: var(--radius);
-		background: black;
+		background: rgba(0, 0, 0, 0.5);
 	}
 }
 

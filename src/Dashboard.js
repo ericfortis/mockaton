@@ -92,12 +92,13 @@ function init() {
 
 function App([brokersByMethod, cookies, comments, delay, collectProxied, fallbackAddress, staticBrokers]) {
 	globalDelay = delay
+	const canProxy = Boolean(fallbackAddress)
 	return [
 		r(Header, { cookies, comments, delay, fallbackAddress, collectProxied }),
 		r('main', null,
 			r('div', { className: CSS.MainLeftSide },
-				r(MockList, { brokersByMethod, canProxy: Boolean(fallbackAddress) }),
-				r(StaticFilesList, { brokers: staticBrokers })),
+				r(MockList, { brokersByMethod, canProxy }),
+				r(StaticFilesList, { brokers: staticBrokers, canProxy })),
 			r('div', { className: CSS.MainRightSide },
 				r(PayloadViewer)))]
 }
@@ -270,10 +271,12 @@ function SectionByMethod({ method, brokers, canProxy }) {
 	const urlMasksDittoed = dittoSplitPaths(urlMasks)
 	return (
 		r('tbody', null,
-			r('th', { colspan: 4 }, method),
+			r('tr', null,
+				r('th', { colspan: 2 + Number(canProxy) }),
+				r('th', null, method)),
 			brokersSorted.map(([urlMask, broker], i) =>
 				r('tr', { 'data-method': method, 'data-urlMask': urlMask },
-					r('td', null, r(ProxyToggler, { broker, disabled: !canProxy })),
+					canProxy && r('td', null, r(ProxyToggler, { broker })),
 					r('td', null, r(DelayRouteToggler, { broker })),
 					r('td', null, r(InternalServerErrorToggler, { broker })),
 					r('td', null, r(PreviewLink, { method, urlMask, urlMaskDittoed: urlMasksDittoed[i] })),
@@ -387,7 +390,7 @@ function InternalServerErrorToggler({ broker }) {
 }
 
 /** @param {{ broker: MockBroker, disabled: boolean }} props */
-function ProxyToggler({ broker, disabled }) {
+function ProxyToggler({ broker }) {
 	function onChange() {
 		const { urlMask, method } = parseFilename(broker.mocks[0])
 		mockaton.setRouteIsProxied(method, urlMask, this.checked)
@@ -402,7 +405,6 @@ function ProxyToggler({ broker, disabled }) {
 			},
 			r('input', {
 				type: 'checkbox',
-				disabled,
 				checked: !broker.currentMock.file,
 				onChange
 			}),
@@ -414,7 +416,7 @@ function ProxyToggler({ broker, disabled }) {
  * # StaticFilesList
  * @param {{ brokers: StaticBroker[] }} props
  */
-function StaticFilesList({ brokers }) {
+function StaticFilesList({ brokers, canProxy }) {
 	if (!Object.keys(brokers).length)
 		return null
 	const dp = dittoSplitPaths(Object.keys(brokers)).map(([ditto, tail]) => ditto
@@ -422,11 +424,14 @@ function StaticFilesList({ brokers }) {
 		: tail)
 	return (
 		r('table', { className: CSS.StaticFilesList },
+			r('thead', null,
+				r('tr', null,
+					r('th', { colspan: 2 + Number(canProxy) }),
+					r('th', null, Strings.static_get))),
 			r('tbody', null,
-				r('th', { colspan: 4 }, Strings.static_get),
 				Object.values(brokers).map((broker, i) =>
 					r('tr', null,
-						r('td', null, r(ProxyStaticToggler, {})),
+						canProxy && r('td', null, r(ProxyStaticToggler, {})),
 						r('td', null, r(DelayStaticRouteToggler, { broker })),
 						r('td', null, r(NotFoundToggler, { broker })),
 						r('td', null, r('a', { href: broker.route, target: '_blank' }, dp[i]))
@@ -604,9 +609,7 @@ function showErrorToast(msg) {
 			className: CSS.ErrorToast,
 			onClick() {
 				const toast = this
-				document.startViewTransition(() => {
-					toast.remove()
-				})
+				document.startViewTransition(() => toast.remove())
 			}
 		}, msg))
 }

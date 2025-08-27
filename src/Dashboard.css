@@ -123,7 +123,7 @@ header {
 		display: flex;
 		flex-wrap: wrap;
 		align-items: flex-end;
-		gap: 10px;
+		gap: 16px 10px;
 
 		@media (max-width: 890px) {
 			max-width: 400px;
@@ -233,9 +233,9 @@ header {
 	}
 
 	.Help {
+		min-width: 24px;
 		align-self: center;
 		margin-left: auto;
-		min-width: 24px;
 		fill: var(--colorSecondaryAction);
 
 		&:hover {
@@ -489,7 +489,8 @@ table {
 .StaticFilesList {
 	a {
 		display: inline-block;
-		padding: 6px 0;
+		padding: 8px 0;
+		margin-left: 4px;
 		border-radius: var(--radius);
 		color: var(--colorAccent);
 		text-decoration: none;
@@ -519,11 +520,12 @@ table {
 
 .SpinnerClock {
 	display: flex;
-	width: 48px;
-	margin-top: 6px;
+	width: 64px;
+	margin: auto;
+	margin-top: 64px;
 	fill: none;
 	stroke: var(--colorSecondaryAction);
-	stroke-width: 2px;
+	stroke-width: 1px;
 
 	.HourHand,
 	.MinuteHand {
@@ -532,7 +534,7 @@ table {
 		animation: _kfRotate 9s linear infinite
 	}
 	.MinuteHand {
-		animation-duration: .75s;
+		animation-duration: 1s;
 	}
 }
 @keyframes _kfRotate {

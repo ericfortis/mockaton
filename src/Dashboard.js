@@ -32,7 +32,7 @@ const Strings = {
 	proxy_toggler: 'Proxy Toggler',
 	reset: 'Reset',
 	save_proxied: 'Save Mocks',
-	static_get: 'Static GET',
+	static_get: 'Static Folder GET',
 	title: 'Mockaton'
 }
 

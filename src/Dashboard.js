@@ -22,6 +22,7 @@ const Strings = {
 	fallback_server: 'Fallback Backend',
 	fallback_server_error: '⛔ Fallback Backend Error',
 	fallback_server_placeholder: 'Type Server Address',
+	fetching: 'Fetching…',
 	got: 'Got',
 	internal_server_error: 'Internal Server Error',
 	no_mocks_found: 'No mocks found',
@@ -542,7 +543,8 @@ function PayloadViewerTitleWhenProxied({ mime, status, statusText, gatewayIsBad 
 }
 
 async function previewMock(method, urlMask, href) {
-	const timer = setTimeout(renderSpinner, 180)
+	const timer = setTimeout(renderSpinner, 80)
+	payloadViewerTitleRef.current.replaceChildren(r('span', null, Strings.fetching))
 	const response = await fetch(href, { method })
 	clearTimeout(timer)
 	await updatePayloadViewer(method, urlMask, response)

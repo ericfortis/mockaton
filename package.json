@@ -2,7 +2,7 @@
 	"name": "mockaton",
 	"description": "HTTP Mock Server",
 	"type": "module",
-	"version": "8.18.1",
+	"version": "8.19.0",
 	"main": "index.js",
 	"types": "index.d.ts",
 	"license": "MIT",
@@ -23,13 +23,15 @@
 		"outdated": "npm outdated --parseable | awk -F: '{ printf \"npm i %-30s ;# %s\\n\", $4, $2 }'"
 	},
 	"optionalDependencies": {
-		"open": "^10.0.0",
-		"pixaton": ">=1.1.1",
-		"puppeteer": ">=24.1.1"
+		"open": "^10.0.0"
 	},
 	"dependencies": {
 		"@vitejs/plugin-react": "5.0.1",
 		"mockaton": "8.18.0",
 		"vite": "7.1.3"
+	},
+	"devDependencies": {
+		"pixaton": "1.1.2",
+		"puppeteer": "24.17.0"
 	}
 }

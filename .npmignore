@@ -3,11 +3,15 @@
 .github
 .idea
 .coverage
+
+dev-config.js
 dev-mockaton.js
 TODO.md
 README-*.png
+
 demo-app-vite/
 fixtures-mocks/
 fixtures-static-mocks/
 pixaton-tests/
+
 src/**/*.test.js

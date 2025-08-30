@@ -1,4 +1,4 @@
-<img src="src/mockaton-logo.svg" alt="Mockaton Logo" width="210" style="margin-top: 30px"/>
+<img src="src/logo.svg" alt="Mockaton Logo" width="210" style="margin-top: 30px"/>
 
 ![NPM Version](https://img.shields.io/npm/v/mockaton)
 ![NPM Version](https://img.shields.io/npm/l/mockaton)

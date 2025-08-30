@@ -128,7 +128,7 @@ function Logo() {
 	return (
 		r('img', {
 			alt: Strings.title,
-			src: 'mockaton/mockaton-logo.svg',
+			src: 'mockaton/logo.svg',
 			width: 160
 		}))
 }

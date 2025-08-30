@@ -20,7 +20,7 @@ const dashboardAssets = [
 	'/Dashboard.css',
 	'/Dashboard.js',
 	'/Filename.js',
-	'/mockaton-logo.svg'
+	'/logo.svg'
 ]
 
 export const apiGetRequests = new Map([

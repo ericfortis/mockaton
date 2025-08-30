@@ -53,12 +53,10 @@ const CSS = {
 	NotFoundToggler: 'NotFoundToggler',
 	PayloadViewer: 'PayloadViewer',
 	PreviewLink: 'PreviewLink',
+	ProgressBar: 'ProgressBar',
 	ProxyToggler: 'ProxyToggler',
 	ResetButton: 'ResetButton',
 	SaveProxiedCheckbox: 'SaveProxiedCheckbox',
-	SpinnerClock: 'SpinnerClock',
-	SpinnerClockHourHand: 'HourHand',
-	SpinnerClockMinuteHand: 'MinuteHand',
 	StaticFilesList: 'StaticFilesList',
 
 	chosen: 'chosen',
@@ -296,9 +294,9 @@ function PreviewLink({ method, urlMask, urlMaskDittoed }) {
 	async function onClick(event) {
 		event.preventDefault()
 		try {
-			await previewMock(method, urlMask, this.href)
 			document.querySelector(`.${CSS.PreviewLink}.${CSS.chosen}`)?.classList.remove(CSS.chosen)
 			this.classList.add(CSS.chosen)
+			await previewMock(method, urlMask, this.href)
 		}
 		catch (error) {
 			onError(error)
@@ -397,7 +395,7 @@ function InternalServerErrorToggler({ broker }) {
 			r('span', null, '500')))
 }
 
-/** @param {{ broker: MockBroker, disabled: boolean }} props */
+/** @param {{ broker: MockBroker }} props */
 function ProxyToggler({ broker }) {
 	function onChange() {
 		const { urlMask, method } = parseFilename(broker.mocks[0])
@@ -515,13 +513,11 @@ function PayloadViewer() {
 				r('code', { ref: payloadViewerRef }, Strings.click_link_to_preview))))
 }
 
-function PayloadViewerSpinner() {
+
+function PayloadViewerProgressBar() {
 	return (
-		s('svg', { viewBox: '0 0 24 24', class: CSS.SpinnerClock },
-			s('circle', { cx: 12, cy: 12, r: 10 }),
-			s('line', { class: CSS.SpinnerClockHourHand, x1: 12, y1: 12, x2: 12, y2: 8 }),
-			s('line', { class: CSS.SpinnerClockMinuteHand, x1: 12, y1: 12, x2: 12, y2: 5 })
-		))
+		r('div', { className: CSS.ProgressBar },
+			r('div', { style: { animationDuration: globalDelay + 'ms' } })))
 }
 
 function PayloadViewerTitle({ file, status, statusText }) {
@@ -543,14 +539,23 @@ function PayloadViewerTitleWhenProxied({ mime, status, statusText, gatewayIsBad 
 }
 
 async function previewMock(method, urlMask, href) {
-	const timer = setTimeout(renderSpinner, 80)
-	payloadViewerTitleRef.current.replaceChildren(r('span', null, Strings.fetching))
-	const response = await fetch(href, { method })
-	clearTimeout(timer)
-	await updatePayloadViewer(method, urlMask, response)
+	previewMock.controller?.abort()
+	previewMock.controller = new AbortController
 
-	function renderSpinner() {
-		payloadViewerRef.current.replaceChildren(PayloadViewerSpinner())
+	renderProgressBar()
+	payloadViewerTitleRef.current.replaceChildren(r('span', null, Strings.fetching))
+
+	try {
+		const response = await fetch(href, {
+			method,
+			signal: previewMock.controller.signal
+		})
+		await updatePayloadViewer(method, urlMask, response)
+	}
+	catch {}
+
+	function renderProgressBar() {
+		payloadViewerRef.current.replaceChildren(PayloadViewerProgressBar())
 	}
 }
 

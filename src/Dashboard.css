@@ -274,8 +274,7 @@ main {
 	}
 
 	.rightSide {
-		padding-top: 16px;
-		padding-left: 16px;
+		padding: 16px;
 		overflow-y: auto;
 	}
 }
@@ -518,28 +517,28 @@ table {
 	}
 }
 
-.SpinnerClock {
-	display: flex;
-	width: 64px;
-	margin: auto;
-	margin-top: 64px;
-	fill: none;
-	stroke: var(--colorSecondaryAction);
-	stroke-width: 1px;
+.ProgressBar {
+	position: relative;
+	width: 100%;
+	height: 2px;
+	background: var(--colorComboBoxHeaderBackground);
 
-	.HourHand,
-	.MinuteHand {
-		stroke-linecap: round;
-		transform-origin: center;
-		animation: _kfRotate 9s linear infinite
-	}
-	.MinuteHand {
-		animation-duration: 1s;
+	div {
+		position: absolute;
+		top: 0;
+		left: 0;
+		width: 0;
+		height: 100%;
+		background: var(--colorAccent);
+		animation-name: _kfProgress;
+		animation-timing-function: linear;
+		animation-delay: 80ms;
+		/*animation-duration: It's in JavaScript */
 	}
 }
-@keyframes _kfRotate {
-	100% {
-		transform: rotate(360deg)
+@keyframes _kfProgress {
+	to {
+		width: 100%;
 	}
 }
 

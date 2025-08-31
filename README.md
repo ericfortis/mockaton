@@ -12,13 +12,30 @@ An HTTP mock server for simulating APIs with minimal setup
 ## Overview
 With Mockaton, you don’t need to write code for wiring up your
 mocks. Instead, a given directory is scanned for filenames
-following a convention similar to the URLs. 
+following a convention similar to the URLs.
 
 For example, for [/api/user/123](#), the mock filename could be:
 
 <pre>
 <code>my-mocks-dir/<b>api/user</b>/[user-id].GET.200.json</code>
 </pre>
+
+
+## Motivation
+
+> **No scenario should be too hard to test.** With Mockaton, 
+> developers can achieve correctness without sacrificing speed.
+
+### Correctness
+- Enables testing of complex or rare scenarios that would otherwise be skipped.
+- Allows for deterministic, comprehensive, and consistent backend state.
+
+### Speed
+- Prevents frontend progress from being blocked by waiting for backend APIs.
+- Avoids spinning up and updating hefty backends when developing UIs.
+
+
+<br/>
 
 
 ## Dashboard
@@ -70,11 +87,11 @@ lets you download all the HTTP responses, and they
 get saved following Mockaton’s filename convention.
 
 ### Option 2: Fallback to Your Backend
-This option could be a bit elaborate if your backend uses third-party auth, 
+This option could be a bit elaborate if your backend uses third-party auth,
 because you’d have to manually inject cookies or `sessionStorage` tokens.
 
 On the other hand, proxying to your backend is straightforward if your backend
-handles the session cookie, or if you can develop without auth. 
+handles the session cookie, or if you can develop without auth.
 
 Either way you can forward requests to your backend for routes you don’t have
 mocks for, or routes that have the ☁️ **Cloud Checkbox** checked. In addition, by
@@ -133,6 +150,8 @@ permutations for out-of-stock, new-arrival, and discontinued. It looks like this
 <img src="./demo-app-vite/pixaton-tests/pic-for-readme.vp740x880.light.gold.png" alt="Mockaton Demo App Screenshot" width="740" />
 
 <br/>
+<br/>
+
 
 ## Use Cases
 ### Testing Backend or Frontend
@@ -165,18 +184,9 @@ The [aot-fetch-demo repo](https://github.com/ericfortis/aot-fetch-demo) has a wo
 
 <br/>
 
-## Motivation
-- Avoids spinning up and updating hefty backends when developing UIs.
-- Allows for a deterministic, comprehensive, and consistent backend state. For example, having
-  a collection with all the possible state variants helps for spotting inadvertent bugs.
-- Sometimes frontend progress is blocked by waiting for backend APIs.
-
-<br/>
-
 
 ## You can write JSON mocks in JavaScript or TypeScript
 For example, `api/foo.GET.200.js`
-
 
 **Option A:** An Object, Array, or String is sent as JSON.
 
@@ -189,7 +199,7 @@ export default { foo: 'bar' }
 Return a `string | Buffer | Uint8Array`, but don’t call `response.end()`
 
 ```js
-export default (request, response) => 
+export default (request, response) =>
   JSON.stringify({ foo: 'bar' })
 ```
 
@@ -205,6 +215,7 @@ you want to concatenate newly added colors.
 `api/colors.POST.201.js`
 ```js
 import { parseJSON } from 'mockaton'
+
 
 export default async function insertColor(request, response) {
   const color = await parseJSON(request)
@@ -222,6 +233,7 @@ export default async function insertColor(request, response) {
 `api/colors.GET.200.js`
 ```js
 import colorsFixture from './colors.json' with { type: 'json' }
+
 
 export default function listColors() {
   return JSON.stringify([
@@ -305,7 +317,7 @@ A filename can have many comments.
 <br/>
 
 ### Default mock for a route
-You can add the comment: `(default)`. 
+You can add the comment: `(default)`.
 Otherwise, the first file in **alphabetical order** wins.
 
 <pre>
@@ -322,7 +334,8 @@ api/video<b>?limit=[limit]</b>.GET.200.json
 </pre>
 
 On Windows, filenames containing "?" are [not
-permitted](https://learn.microsoft.com/en-us/windows/win32/fileio/naming-a-file), but since that’s part of the query string it’s ignored anyway.
+permitted](https://learn.microsoft.com/en-us/windows/win32/fileio/naming-a-file), but since that’s part of the query
+string it’s ignored anyway.
 
 <br/>
 
@@ -378,13 +391,13 @@ Defaults to `0`, which means auto-assigned
 
 <br/>
 
-### `delay?: number` 
+### `delay?: number`
 Defaults to `1200` milliseconds. Although routes can individually be delayed
 with the 🕓 Checkbox, the amount is globally configurable with this option.
 
 ### `delayJitter?: number`
 Defaults to `0`. Range: `[0.0, 3.0]`. Maximum percentage of the delay to add.
-For example, `0.5` will add at most `600ms` to the default delay.   
+For example, `0.5` will add at most `600ms` to the default delay.
 
 <br/>
 
@@ -396,7 +409,7 @@ or that you manually picked with the ☁️ **Cloud Checkbox**.
 
 ### `collectProxied?: boolean`
 Defaults to `false`. With this flag you can save mocks that hit
-your proxy fallback to `config.mocksDir`. If the URL has v4 UUIDs, 
+your proxy fallback to `config.mocksDir`. If the URL has v4 UUIDs,
 the filename will have `[id]` in their place. For example:
 
 <pre>
@@ -423,7 +436,7 @@ the predefined list. For that, you can add it to <code>config.extraMimes</code>
 
 
 ### `formatCollectedJSON?: boolean`
-Defaults to `true`. Saves the mock with two spaces indentation &mdash; 
+Defaults to `true`. Saves the mock with two spaces indentation &mdash;
 the formatting output of `JSON.stringify(data, null, '  ')`
 
 
@@ -434,6 +447,7 @@ the formatting output of `JSON.stringify(data, null, '  ')`
 
 ```js
 import { jwtCookie } from 'mockaton'
+
 
 config.cookies = {
   'My Admin User': 'my-cookie=1;Path=/;SameSite=strict',
@@ -449,7 +463,7 @@ The selected cookie, which is the first one by default, is sent in every respons
 `Set-Cookie` header (as long as its value is not an empty string). The object key is just
 a label for UI display purposes, and also for selecting a cookie via the Commander API.
 
-If you need to send more than one cookie, you can inject them globally 
+If you need to send more than one cookie, you can inject them globally
 in `config.extraHeaders`, or individually in a function `.js` or `.ts` mock.
 
 By the way, the `jwtCookie` helper has a hardcoded header and signature.
@@ -509,12 +523,13 @@ import { parse } from 'yaml'
 import { readFileSync } from 'node:js'
 import { jsToJsonPlugin } from 'mockaton'
 
+
 config.plugins = [
-  
+
   // Although `jsToJsonPlugin` is set by default, you need to include it if you need it.
   // IOW, your plugins array overwrites the default list. This way you can remove it.
-  [/\.(js|ts)$/, jsToJsonPlugin], 
-  
+  [/\.(js|ts)$/, jsToJsonPlugin],
+
   [/\.yml$/, yamlToJsonPlugin],
   [/foo\.GET\.200\.txt$/, capitalizePlugin], // e.g. GET /api/foo would be capitalized
 ]
@@ -574,6 +589,7 @@ At any rate, you can trigger any command besides opening a browser.
 All of its methods return their `fetch` response promise.
 ```js
 import { Commander } from 'mockaton'
+
 
 const myMockatonAddr = 'http://localhost:2345'
 const mockaton = new Commander(myMockatonAddr)
@@ -657,3 +673,9 @@ mock the client (e.g., `fetch`) in Node.js and browsers.
 - [Nock](https://github.com/nock/nock)
 - [Fetch Mock](https://github.com/wheresrhys/fetch-mock)
 - [Mentoss](https://github.com/humanwhocodes/mentoss) Has a server side too
+
+<br/>
+
+---
+
+![](./fixtures-mocks/api/user/avatar.GET.200.png)

@@ -18,7 +18,7 @@ With Mockaton, developers can achieve correctness without sacrificing speed.
 
 ### Correctness
 - Enables testing of complex or rare scenarios that would otherwise be skipped.
-- Allows for deterministic, comprehensive, and consistent backend state.
+- Allows for deterministic, comprehensive, and consistent state.
 
 ### Speed
 - Prevents progress from being blocked by waiting for APIs.

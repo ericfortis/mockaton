@@ -131,17 +131,17 @@ async function setRouteIsDelayed(req, response) {
 		body[DF.routeMethod],
 		body[DF.routeUrlMask])
 
-	if (!broker) // TESTME
+	if (!broker)
 		sendUnprocessableContent(response, `Route does not exist: ${body[DF.routeMethod]} ${body[DF.routeUrlMask]}`)
 	else if (typeof delayed !== 'boolean')
-		sendUnprocessableContent(response, `Expected a boolean for "delayed"`) // TESTME
+		sendUnprocessableContent(response, `Expected a boolean for "delayed"`)
 	else {
 		broker.setDelayed(delayed)
 		sendOK(response)
 	}
 }
 
-async function setRouteIsProxied(req, response) { // TESTME
+async function setRouteIsProxied(req, response) {
 	const body = await parseJSON(req)
 	const proxied = body[DF.proxied]
 	const broker = mockBrokersCollection.brokerByRoute(
@@ -163,10 +163,10 @@ async function setRouteIsProxied(req, response) { // TESTME
 async function updateProxyFallback(req, response) {
 	const fallback = await parseJSON(req)
 	if (!ConfigValidator.proxyFallback(fallback)) {
-		sendUnprocessableContent(response)
+		sendUnprocessableContent(response, `Invalid Proxy Fallback URL`)
 		return
 	}
-	if (!fallback) // TESTME
+	if (!fallback)
 		mockBrokersCollection.ensureAllRoutesHaveSelectedMock()
 	config.proxyFallback = fallback
 	sendOK(response)
@@ -174,8 +174,8 @@ async function updateProxyFallback(req, response) {
 
 async function setCollectProxied(req, response) {
 	const collectProxied = await parseJSON(req)
-	if (!ConfigValidator.collectProxied(collectProxied)) { // TESTME
-		sendUnprocessableContent(response)
+	if (!ConfigValidator.collectProxied(collectProxied)) {
+		sendUnprocessableContent(response, `Expected a boolean for "collectProxied"`)
 		return
 	}
 	config.collectProxied = collectProxied
@@ -188,12 +188,22 @@ async function bulkUpdateBrokersByCommentTag(req, response) {
 }
 
 async function setCorsAllowed(req, response) {
-	config.corsAllowed = await parseJSON(req)
+	const corsAllowed = await parseJSON(req)
+	if (!ConfigValidator.corsAllowed(corsAllowed)) {
+		sendUnprocessableContent(response, `Expected a boolean for corsAllowed`)
+		return
+	}
+	config.corsAllowed = corsAllowed
 	sendOK(response)
 }
 
-async function setGlobalDelay(req, response) { // TESTME
-	config.delay = parseInt(await parseJSON(req), 10)
+async function setGlobalDelay(req, response) {
+	const delay = await parseJSON(req)
+	if (!ConfigValidator.delay(delay)) {
+		sendUnprocessableContent(response, `Expected a number for delay`)
+		return
+	}
+	config.delay = delay
 	sendOK(response)
 }
 

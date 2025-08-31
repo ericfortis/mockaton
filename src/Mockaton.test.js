@@ -21,6 +21,11 @@ import { API, DEFAULT_500_COMMENT, DEFAULT_MOCK_COMMENT } from './ApiConstants.j
 const tmpDir = mkdtempSync(tmpdir() + '/mocks') + '/'
 const staticTmpDir = mkdtempSync(tmpdir() + '/static') + '/'
 
+const fixtureGetSimple = [
+	'/api/basic',
+	'api/basic.GET.200.json',
+	'Simple JSON'
+]
 const fixtureCustomMime = [
 	'/api/custom-mime',
 	'api/custom-mime.GET.200.my_custom_extension',
@@ -73,6 +78,7 @@ const fixtures = [
 	],
 
 	// Exact route paths
+	fixtureGetSimple,
 	fixtureDefaultInName,
 	fixtureDelayed,
 	[
@@ -204,7 +210,7 @@ function request(path, options = {}) {
 	return fetch(`${mockatonAddr()}${path}`, options)
 }
 
-let commander
+let commander = new Commander('')
 async function runTests() {
 	commander = new Commander(mockatonAddr())
 
@@ -265,11 +271,17 @@ async function runTests() {
 	await testStaticFileList()
 	await testInvalidFilenamesAreIgnored()
 	await testEnableFallbackSoRoutesWithoutMocksGetRelayed()
-	await testValidatesProxyFallbackURL()
+	await testSetProxyFallbackURL()
+	await testSetCollectProxied()
 	await testCorsAllowed()
 	testWindowsPaths()
 
 	await testRegistering()
+	await testSetRouteIsDelayed()
+	await testSetRouteIsProxied()
+
+	await testSetCorsAllowed()
+	await testSetGlobalDelay()
 
 	server.close()
 }
@@ -594,10 +606,39 @@ async function testEnableFallbackSoRoutesWithoutMocksGetRelayed() {
 	})
 }
 
-async function testValidatesProxyFallbackURL() {
+async function testSetProxyFallbackURL() {
 	await it('422 when value is not a valid URL', async () => {
 		const res = await commander.setProxyFallback('bad url')
 		equal(res.status, 422)
+		equal(await res.text(), 'Invalid Proxy Fallback URL')
+	})
+	await it('sets fallback', async () => {
+		const res = await commander.setProxyFallback('http://example.com')
+		equal(res.status, 200)
+		equal(await (await commander.getProxyFallback()).json(), 'http://example.com')
+	})
+	await it('unsets fallback', async () => {
+		const res = await commander.setProxyFallback('')
+		equal(res.status, 200)
+		equal(await (await commander.getProxyFallback()).json(), '')
+	})
+}
+
+async function testSetCollectProxied() {
+	await describe('Set Collect Proxied', () => {
+		it('422 for invalid collectProxied value', async () => {
+			const res = await commander.setCollectProxied('not-a-boolean')
+			equal(res.status, 422)
+			equal(await res.text(), 'Expected a boolean for "collectProxied"')
+		})
+
+		it('200 set and unset', async () => {
+			await commander.setCollectProxied(true)
+			equal(await (await commander.getCollectProxied()).json(), true)
+
+			await commander.setCollectProxied(false)
+			equal(await (await commander.getCollectProxied()).json(), false)
+		})
 	})
 }
 
@@ -626,6 +667,101 @@ async function testCorsAllowed() {
 		equal(res.headers.get(CorsHeader.AcExposeHeaders), 'Content-Encoding')
 	})
 }
+
+async function testSetRouteIsDelayed() {
+	await describe('Set Route is Delayed', async () => {
+		await commander.reset()
+		const [route] = fixtureGetSimple
+		await it('422 for non-existing route', async () => {
+			const res = await commander.setRouteIsDelayed('GET', route + '/non-existing', true)
+			equal(res.status, 422)
+			equal(await res.text(), `Route does not exist: GET ${route}/non-existing`)
+		})
+
+		await it('422 for invalid delayed value', async () => {
+			const res = await commander.setRouteIsDelayed('GET', route, 'not-a-boolean')
+			equal(await res.text(), 'Expected a boolean for "delayed"')
+		})
+
+		await it('200', async () => {
+			await commander.setRouteIsDelayed('GET', route, true)
+			const mocks = await commander.listMocks()
+			equal((await mocks.json())['GET'][route].currentMock.delayed, true)
+		})
+	})
+}
+
+async function testSetRouteIsProxied() {
+	await describe('Set Route is Proxied', async () => {
+		await commander.setProxyFallback('')
+
+		const [route] = fixtureGetSimple
+		await it('422 for non-existing route', async () => {
+			const res = await commander.setRouteIsProxied('GET', route + '/non-existing', true)
+			equal(res.status, 422)
+			equal(await res.text(), `Route does not exist: GET ${route}/non-existing`)
+		})
+
+		await it('422 for invalid proxied value', async () => {
+			const res = await commander.setRouteIsProxied('GET', route, 'not-a-boolean')
+			equal(res.status, 422)
+			equal(await res.text(), 'Expected a boolean for "proxied"')
+		})
+
+		await it('422 for missing proxy fallback', async () => {
+			const res = await commander.setRouteIsProxied('GET', route, true)
+			equal(res.status, 422)
+			equal(await res.text(), `There’s no proxy fallback`)
+		})
+
+		await it('200', async () => {
+			await commander.setProxyFallback('https://example.com')
+			const res = await commander.setRouteIsProxied('GET', route, true)
+			equal(res.status, 200)
+			const mocks = await commander.listMocks()
+			equal((await mocks.json())['GET'][route].currentMock.file, '')
+		})
+	})
+}
+
+async function testSetCorsAllowed() {
+	await describe('Set CORS allowed', () => {
+		it('422 for non boolean', async () => {
+			const res = await commander.setCorsAllowed('not-a-boolean')
+			equal(res.status, 422)
+			equal(await res.text(), 'Expected a boolean for corsAllowed')
+		})
+
+		it('200', async () => {
+			const res = await commander.setCorsAllowed(true)
+			equal(res.status, 200)
+			equal(await (await commander.getCorsAllowed()).json(), true)
+
+			await commander.setCorsAllowed(false)
+			equal(await (await commander.getCorsAllowed()).json(), false)
+		})
+	})
+}
+
+
+async function testSetGlobalDelay() {
+	await describe('Set Global Delay', () => {
+		it('422 for invalid global delay value', async () => {
+			const res = await commander.setGlobalDelay('not-a-number')
+			equal(res.status, 422)
+			equal(await res.text(), 'Expected a number for delay')
+		})
+
+		it('200 for valid global delay value', async () => {
+			const res = await commander.setGlobalDelay(1000)
+			equal(res.status, 200)
+			equal(await (await commander.getGlobalDelay()).json(), 1000)
+		})
+	})
+}
+
+
+
 
 function testWindowsPaths() {
 	it('normalizes backslashes with forward ones', () => {

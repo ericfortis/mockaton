@@ -5,8 +5,9 @@
 [![Test](https://github.com/ericfortis/mockaton/actions/workflows/test.yml/badge.svg)](https://github.com/ericfortis/mockaton/actions/workflows/test.yml)
 [![CodeQL](https://github.com/ericfortis/mockaton/actions/workflows/github-code-scanning/codeql/badge.svg)](https://github.com/ericfortis/mockaton/actions/workflows/github-code-scanning/codeql)
 
-An HTTP mock server for simulating APIs with minimal setup
-&mdash; ideal for testing difficult to reproduce states.
+An HTTP mock server for simulating APIs with minimal setup &mdash; ideal for testing
+difficult to reproduce states. For example, triggering an error on a third-party API.
+Similarly, if you are a frontend developer, triggering it on your project backend.
 
 <br/>
 
@@ -20,7 +21,7 @@ With Mockaton, developers can achieve correctness without sacrificing speed.
 - Allows for deterministic, comprehensive, and consistent backend state.
 
 ### Speed
-- Prevents frontend progress from being blocked by waiting for backend APIs.
+- Prevents progress from being blocked by waiting for APIs.
 - Avoids spinning up and updating hefty backends when developing UIs.
 
 <br/>
@@ -79,16 +80,17 @@ api/videos.GET.<b>500</b>.txt               # Internal Server Error
 
 <br/>
 
-## Scraping mocks from your Backend
+## Scraping Mocks from your Backend
 
 ### Option 1: Browser Extension
-This [browser extension](https://github.com/ericfortis/download-http-requests-browser-ext)
-lets you download all the HTTP responses, and they
+This companion [browser-devtools extension](https://github.com/ericfortis/download-http-requests-browser-ext)
+lets you download all the HTTP responses at once, and they
 get saved following Mockaton’s filename convention.
 
 ### Option 2: Fallback to Your Backend
 <details>
 <summary>Details</summary>
+
 This option could be a bit elaborate if your backend uses third-party auth,
 because you’d have to manually inject cookies or `sessionStorage` tokens.
 
@@ -115,11 +117,10 @@ Create a `my-mockaton.js` file
 import { resolve } from 'node:path'
 import { Mockaton } from 'mockaton'
 
-// See the Config section for more options
 Mockaton({
   mocksDir: resolve('my-mocks-dir'), // must exist
   port: 2345
-})
+}) // The Config section below documents more options
 ```
 
 ```sh
@@ -151,7 +152,7 @@ npm run start # in another terminal
 ```
 
 The demo app has a list of colors containing all of their possible states. For example,
-permutations for out-of-stock, new-arrival, and discontinued. It looks like this:
+permutations for out-of-stock, new-arrival, and discontinued.
 
 <img src="./demo-app-vite/pixaton-tests/pic-for-readme.vp740x880.light.gold.png" alt="Mockaton Demo App Screenshot" width="740" />
 

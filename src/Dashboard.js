@@ -38,83 +38,116 @@ const Strings = {
 }
 
 const CSS = {
-	BulkSelector: 'BulkSelector',
-	DelayToggler: 'DelayToggler',
-	ErrorToast: 'ErrorToast',
-	FallbackBackend: 'FallbackBackend',
-	Field: 'Field',
-	GlobalDelayField: 'GlobalDelayField',
-	Help: 'Help',
-	InternalServerErrorToggler: 'InternalServerErrorToggler',
-	MainLeftSide: 'leftSide',
-	MainRightSide: 'rightSide',
-	MockList: 'MockList',
-	MockSelector: 'MockSelector',
-	NotFoundToggler: 'NotFoundToggler',
-	PayloadViewer: 'PayloadViewer',
-	PreviewLink: 'PreviewLink',
-	ProgressBar: 'ProgressBar',
-	ProxyToggler: 'ProxyToggler',
-	ResetButton: 'ResetButton',
-	SaveProxiedCheckbox: 'SaveProxiedCheckbox',
-	StaticFilesList: 'StaticFilesList',
+	BulkSelector: null,
+	DelayToggler: null,
+	ErrorToast: null,
+	FallbackBackend: null,
+	Field: null,
+	GlobalDelayField: null,
+	Help: null,
+	InternalServerErrorToggler: null,
+	MockList: null,
+	MockSelector: null,
+	NotFoundToggler: null,
+	PayloadViewer: null,
+	PreviewLink: null,
+	ProgressBar: null,
+	ProxyToggler: null,
+	ResetButton: null,
+	SaveProxiedCheckbox: null,
+	StaticFilesList: null,
 
-	chosen: 'chosen',
-	dittoDir: 'dittoDir',
-	empty: 'empty',
-	nonDefault: 'nonDefault',
-	red: 'red',
-	status4xx: 'status4xx'
+	chosen: null,
+	dittoDir: null,
+	empty: null,
+	leftSide: null,
+	nonDefault: null,
+	red: null,
+	rightSide: null,
+	status4xx: null
+}
+for (const k of Object.keys(CSS))
+	CSS[k] = k
+
+
+const state = {
+	/** @type {{ [method:string]: { [route:string]: MockBroker } }} */
+	brokersByMethod: {},
+
+	/** @type {StaticBroker[]} */
+	staticBrokers: [],
+
+	/** @type {[label:string, selected:boolean][]} */
+	cookies: [],
+
+	/** @type {string[]} */
+	comments: [],
+
+	delay: 0,
+
+	collectProxied: false,
+
+	fallbackAddress: '',
+
+	get canProxy() {
+		return Boolean(this.fallbackAddress)
+	}
+}
+
+const mockaton = new Commander(window.location.origin)
+init()
+initLongPoll()
+function init() {
+	return Promise.all([
+		mockaton.listMocks(),
+		mockaton.listStaticFiles(),
+		mockaton.listCookies(),
+		mockaton.listComments(),
+		mockaton.getGlobalDelay(),
+		mockaton.getCollectProxied(),
+		mockaton.getProxyFallback()
+	].map(api => api.then(response => response.ok && response.json())))
+		.then(data => {
+			state.brokersByMethod = data[0]
+			state.staticBrokers = data[1]
+			state.cookies = data[2]
+			state.comments = data[3]
+			state.delay = data[4]
+			state.collectProxied = data[5]
+			state.fallbackAddress = data[6]
+			document.body.replaceChildren(...App())
+		})
+		.catch(onError)
 }
 
 const r = createElement
 const s = createSvgElement
 
-const mockaton = new Commander(window.location.origin)
-let globalDelay = 1200
-
-init()
-initLongPoll()
-
-function init() {
-	return Promise.all([
-		mockaton.listMocks(),
-		mockaton.listCookies(),
-		mockaton.listComments(),
-		mockaton.getGlobalDelay(),
-		mockaton.getCollectProxied(),
-		mockaton.getProxyFallback(),
-		mockaton.listStaticFiles()
-	].map(api => api.then(response => response.ok && response.json())))
-		.then(data => document.body.replaceChildren(...App(data)))
-		.catch(onError)
-}
-
-function App([brokersByMethod, cookies, comments, delay, collectProxied, fallbackAddress, staticBrokers]) {
-	globalDelay = delay
-	const canProxy = Boolean(fallbackAddress)
+function App() {
 	return [
-		r(Header, { cookies, comments, delay, fallbackAddress, collectProxied }),
+		r(Header),
 		r('main', null,
-			r('div', { className: CSS.MainLeftSide },
-				r(MockList, { brokersByMethod, canProxy }),
-				r(StaticFilesList, { brokers: staticBrokers, canProxy })),
-			r('div', { className: CSS.MainRightSide },
+			r('div', { className: CSS.leftSide },
+				r(MockList),
+				r(StaticFilesList)),
+			r('div', { className: CSS.rightSide },
 				r(PayloadViewer)))]
 }
 
 
-/** # Header */
-
-function Header({ cookies, comments, delay, fallbackAddress, collectProxied }) {
+function Header() {
 	return (
 		r('header', null,
-			r(Logo),
+			r('img', {
+				alt: Strings.title,
+				src: 'mockaton/logo.svg',
+				width: 160
+			}),
 			r('div', null,
-				r(CookieSelector, { cookies }),
-				r(BulkSelector, { comments }),
-				r(GlobalDelayField, { delay }),
-				r(ProxyFallbackField, { fallbackAddress, collectProxied }),
+				r(CookieSelector),
+				r(BulkSelector),
+				r(GlobalDelayField),
+				r(ProxyFallbackField),
 				r(ResetButton)),
 			r('a', {
 				className: CSS.Help,
@@ -124,16 +157,9 @@ function Header({ cookies, comments, delay, fallbackAddress, collectProxied }) {
 			}, r(HelpIcon))))
 }
 
-function Logo() {
-	return (
-		r('img', {
-			alt: Strings.title,
-			src: 'mockaton/logo.svg',
-			width: 160
-		}))
-}
 
-function CookieSelector({ cookies }) {
+function CookieSelector() {
+	const { cookies } = state
 	function onChange() {
 		mockaton.selectCookie(this.value).catch(onError)
 	}
@@ -150,7 +176,9 @@ function CookieSelector({ cookies }) {
 				r('option', { value, selected }, value)))))
 }
 
-function BulkSelector({ comments }) {
+
+function BulkSelector() {
+	const { comments } = state
 	// UX wise this should be a menu instead of this `select`.
 	// But this way is easier to implement, with a few hacks.
 	const firstOption = Strings.pick_comment
@@ -179,10 +207,12 @@ function BulkSelector({ comments }) {
 				r('option', { value }, value)))))
 }
 
-function GlobalDelayField({ delay }) {
+
+function GlobalDelayField() {
+	const { delay } = state
 	function onChange() {
-		globalDelay = this.valueAsNumber
-		mockaton.setGlobalDelay(globalDelay).catch(onError)
+		state.delay = this.valueAsNumber
+		mockaton.setGlobalDelay(state.delay).catch(onError)
 	}
 	return (
 		r('label', { className: cssClass(CSS.Field, CSS.GlobalDelayField) },
@@ -197,7 +227,9 @@ function GlobalDelayField({ delay }) {
 			})))
 }
 
-function ProxyFallbackField({ fallbackAddress, collectProxied }) {
+
+function ProxyFallbackField() {
+	const { fallbackAddress, collectProxied } = state
 	function onChange() {
 		const saveCheckbox = this.closest(`.${CSS.FallbackBackend}`).querySelector('[type=checkbox]')
 		saveCheckbox.disabled = !this.validity.valid || !this.value.trim()
@@ -226,7 +258,8 @@ function ProxyFallbackField({ fallbackAddress, collectProxied }) {
 			})))
 }
 
-function SaveProxiedCheckbox({ disabled, collectProxied }) {
+function SaveProxiedCheckbox({ disabled }) {
+	const { collectProxied } = state
 	function onChange() {
 		mockaton.setCollectProxied(this.checked).catch(onError)
 	}
@@ -241,22 +274,24 @@ function SaveProxiedCheckbox({ disabled, collectProxied }) {
 			r('span', null, Strings.save_proxied)))
 }
 
+
 function ResetButton() {
+	function onClick() {
+		mockaton.reset().then(init).catch(onError)
+	}
 	return (
 		r('button', {
 			className: CSS.ResetButton,
-			onClick() {
-				mockaton.reset()
-					.then(init)
-					.catch(onError)
-			}
+			onClick
 		}, Strings.reset))
 }
 
 
+
 /** # MockList */
 
-function MockList({ brokersByMethod, canProxy }) {
+function MockList() {
+	const { brokersByMethod } = state
 	const hasMocks = Object.keys(brokersByMethod).length
 	if (!hasMocks)
 		return (
@@ -265,10 +300,11 @@ function MockList({ brokersByMethod, canProxy }) {
 	return (
 		r('div', null,
 			r('table', null, Object.entries(brokersByMethod).map(([method, brokers]) =>
-				r(SectionByMethod, { method, brokers, canProxy })))))
+				r(SectionByMethod, { method, brokers })))))
 }
 
-function SectionByMethod({ method, brokers, canProxy }) {
+function SectionByMethod({ method, brokers }) {
+	const canProxy = state.canProxy
 	const brokersSorted = Object.entries(brokers)
 		.filter(([, broker]) => broker.mocks.length > 1) // >1 because of autogen500
 		.sort((a, b) => a[0].localeCompare(b[0]))
@@ -418,14 +454,15 @@ function ProxyToggler({ broker }) {
 }
 
 
-/**
- * # StaticFilesList
- * @param {{ brokers: StaticBroker[] }} props
- */
-function StaticFilesList({ brokers, canProxy }) {
-	if (!Object.keys(brokers).length)
+
+/** # StaticFilesList */
+
+function StaticFilesList() {
+	const { staticBrokers } = state
+	const canProxy = state.canProxy
+	if (!Object.keys({ staticBrokers }).length)
 		return null
-	const dp = dittoSplitPaths(Object.keys(brokers)).map(([ditto, tail]) => ditto
+	const dp = dittoSplitPaths(Object.keys({ staticBrokers })).map(([ditto, tail]) => ditto
 		? [r('span', { className: CSS.dittoDir }, ditto), tail]
 		: tail)
 	return (
@@ -435,7 +472,7 @@ function StaticFilesList({ brokers, canProxy }) {
 					r('th', { colspan: 2 + Number(canProxy) }),
 					r('th', null, Strings.static_get))),
 			r('tbody', null,
-				Object.values(brokers).map((broker, i) =>
+				Object.values({ staticBrokers }).map((broker, i) =>
 					r('tr', null,
 						canProxy && r('td', null, r(ProxyStaticToggler, {})),
 						r('td', null, r(DelayStaticRouteToggler, { broker })),
@@ -443,7 +480,6 @@ function StaticFilesList({ brokers, canProxy }) {
 						r('td', null, r('a', { href: broker.route, target: '_blank' }, dp[i]))
 					)))))
 }
-
 
 /** @param {{ broker: StaticBroker }} props */
 function DelayStaticRouteToggler({ broker }) {
@@ -500,6 +536,8 @@ function ProxyStaticToggler({}) { // TODO
 			r(CloudIcon)))
 }
 
+
+
 /** # Payload Preview */
 
 const payloadViewerTitleRef = useRef()
@@ -513,11 +551,10 @@ function PayloadViewer() {
 				r('code', { ref: payloadViewerRef }, Strings.click_link_to_preview))))
 }
 
-
 function PayloadViewerProgressBar() {
 	return (
 		r('div', { className: CSS.ProgressBar },
-			r('div', { style: { animationDuration: globalDelay + 'ms' } })))
+			r('div', { style: { animationDuration: state.delay + 'ms' } })))
 }
 
 function PayloadViewerTitle({ file, status, statusText }) {
@@ -694,8 +731,6 @@ function cssClass(...args) {
 }
 
 
-/** ## React-compatible simplified implementations */
-
 function createElement(elem, props = null, ...children) {
 	if (typeof elem === 'function')
 		return elem(props)
@@ -728,7 +763,6 @@ function createSvgElement(tagName, props, ...children) {
 function useRef() {
 	return { current: null }
 }
-
 
 
 /**

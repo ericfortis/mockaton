@@ -8,6 +8,7 @@
 An HTTP mock server for simulating APIs with minimal setup
 &mdash; ideal for testing difficult to reproduce states.
 
+<br/>
 
 ## Motivation
 
@@ -22,6 +23,7 @@ With Mockaton, developers can achieve correctness without sacrificing speed.
 - Prevents frontend progress from being blocked by waiting for backend APIs.
 - Avoids spinning up and updating hefty backends when developing UIs.
 
+<br/>
 
 ## Overview
 With Mockaton, you don’t need to write code for wiring up your
@@ -34,6 +36,7 @@ For example, for [/api/user/123](#), the filename could be:
 <code>my-mocks-dir/<b>api/user</b>/[user-id].GET.200.json</code>
 </pre>
 
+<br/>
 
 ## Dashboard
 
@@ -369,9 +372,9 @@ it’s convenient for serving 200 GET requests without having to add the filenam
 extension convention. For example, for using Mockaton as a standalone demo server,
 as explained above in the _Use Cases_ section.
 
-Files under `config.staticDir` don’t use the filename convention, and they take
-precedence over corresponding `GET` mocks in `config.mocksDir` (regardless
-of status code). For example, if you have two files for `GET /foo/bar.jpg`:
+Files under `config.staticDir` take precedence over corresponding
+`GET` mocks in `config.mocksDir` (regardless of status code).
+For example, if you have two files for `GET /foo/bar.jpg`:
 <pre>
 my-static-dir<b>/foo/bar.jpg</b> <span style="color:green"> // Wins</span>
  my-mocks-dir<b>/foo/bar.jpg</b>.GET.200.jpg <span style="color:red"> // Unreachable</span>
@@ -381,7 +384,9 @@ my-static-dir<b>/foo/bar.jpg</b> <span style="color:green"> // Wins</span>
 <br/>
 
 ### `ignore?: RegExp`
-Defaults to `/(\.DS_Store|~)$/`
+Defaults to `/(\.DS_Store|~)$/`. The regex rule is
+tested against the basename (filename without directory path).
+
 
 <br/>
 

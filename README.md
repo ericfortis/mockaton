@@ -6,25 +6,13 @@
 [![CodeQL](https://github.com/ericfortis/mockaton/actions/workflows/github-code-scanning/codeql/badge.svg)](https://github.com/ericfortis/mockaton/actions/workflows/github-code-scanning/codeql)
 
 An HTTP mock server for simulating APIs with minimal setup
-&mdash; ideal for testing difficult to reproduce backend states.
-
-
-## Overview
-With Mockaton, you don’t need to write code for wiring up your
-mocks. Instead, a given directory is scanned for filenames
-following a convention similar to the URLs.
-
-For example, for [/api/user/123](#), the mock filename could be:
-
-<pre>
-<code>my-mocks-dir/<b>api/user</b>/[user-id].GET.200.json</code>
-</pre>
+&mdash; ideal for testing difficult to reproduce states.
 
 
 ## Motivation
 
-> **No scenario should be too hard to test.** With Mockaton, 
-> developers can achieve correctness without sacrificing speed.
+**No API state should be too hard to test.**
+With Mockaton, developers can achieve correctness without sacrificing speed.
 
 ### Correctness
 - Enables testing of complex or rare scenarios that would otherwise be skipped.
@@ -35,7 +23,16 @@ For example, for [/api/user/123](#), the mock filename could be:
 - Avoids spinning up and updating hefty backends when developing UIs.
 
 
-<br/>
+## Overview
+With Mockaton, you don’t need to write code for wiring up your
+mocks. Instead, a given directory is scanned for filenames
+following a convention similar to the URLs.
+
+For example, for [/api/user/123](#), the filename could be:
+
+<pre>
+<code>my-mocks-dir/<b>api/user</b>/[user-id].GET.200.json</code>
+</pre>
 
 
 ## Dashboard
@@ -87,6 +84,8 @@ lets you download all the HTTP responses, and they
 get saved following Mockaton’s filename convention.
 
 ### Option 2: Fallback to Your Backend
+<details>
+<summary>Details</summary>
 This option could be a bit elaborate if your backend uses third-party auth,
 because you’d have to manually inject cookies or `sessionStorage` tokens.
 
@@ -97,12 +96,13 @@ Either way you can forward requests to your backend for routes you don’t have
 mocks for, or routes that have the ☁️ **Cloud Checkbox** checked. In addition, by
 checking ✅ **Save Mocks**, you can collect the responses that hit your backend.
 They will be saved in your `config.mocksDir` following the filename convention.
+</details>
 
 
 <br/>
 
 
-## Basic Usage (See below for Node < 23.6)
+## Basic Usage
 ```sh
 npm install mockaton --save-dev
 ```
@@ -123,12 +123,15 @@ Mockaton({
 node my-mockaton.js
 ```
 
-### TypeScript with Node < 23.6
+<details>
+<summary>About TypeScript in Node < 23.6</summary>
 If you want to write mocks in TypeScript in a version older than Node 23.6:
+
 ```shell
 npm install tsx
 node --import=tsx my-mockaton.js
 ```
+</details>
 
 
 <br/>
@@ -665,11 +668,11 @@ example, if you are polling, and you want to test the state change.
 - Chrome DevTools allows for [overriding responses](https://developer.chrome.com/docs/devtools/overrides)
 - Reverse Proxies such as [Burp](https://portswigger.net/burp) are also handy for overriding responses
 
-### Client side
+### Client Side
 In contrast to Mockaton, which is an HTTP Server, these programs
-mock the client (e.g., `fetch`) in Node.js and browsers.
+hijack the client (e.g., `fetch`) in Node.js and browsers.
 
-- [MSW (Mock Server Worker)](https://mswjs.io)
+- [Mock Server Worker (MSW)](https://mswjs.io)
 - [Nock](https://github.com/nock/nock)
 - [Fetch Mock](https://github.com/wheresrhys/fetch-mock)
 - [Mentoss](https://github.com/humanwhocodes/mentoss) Has a server side too

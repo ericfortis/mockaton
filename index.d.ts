@@ -1,6 +1,4 @@
 import { Server, IncomingMessage, OutgoingMessage } from 'node:http';
-import { MockBroker } from './src/MockBroker.js'
-import { StaticBroker } from './src/staticCollection.js'
 
 type Plugin = (
 	filePath: string,
@@ -57,6 +55,10 @@ export function jwtCookie(cookieName: string, payload: any, path?: string): stri
 
 export function parseJSON(request: IncomingMessage): Promise<any>
 
+export type JsonPromise<T> = Promise<Response & { json(): Promise<T> }>
+
+
+// API
 
 export type ClientMockBroker = {
 	mocks: string[]
@@ -80,5 +82,4 @@ export type ClientStaticBrokers = {
 	[route: string]: ClientMockBroker
 }
 
-export type JsonPromise<T> = Promise<Response & { json(): Promise<T> }>
 

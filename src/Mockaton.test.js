@@ -680,7 +680,7 @@ async function testSetRouteIsDelayed() {
 
 		await it('422 for invalid delayed value', async () => {
 			const res = await commander.setRouteIsDelayed('GET', route, 'not-a-boolean')
-			equal(await res.text(), 'Expected a boolean for "delayed"')
+			equal(await res.text(), 'Expected boolean for "delayed"')
 		})
 
 		await it('200', async () => {
@@ -705,7 +705,7 @@ async function testSetRouteIsProxied() {
 		await it('422 for invalid proxied value', async () => {
 			const res = await commander.setRouteIsProxied('GET', route, 'not-a-boolean')
 			equal(res.status, 422)
-			equal(await res.text(), 'Expected a boolean for "proxied"')
+			equal(await res.text(), 'Expected boolean for "proxied"')
 		})
 
 		await it('422 for missing proxy fallback', async () => {
@@ -729,7 +729,7 @@ async function testSetCorsAllowed() {
 		it('422 for non boolean', async () => {
 			const res = await commander.setCorsAllowed('not-a-boolean')
 			equal(res.status, 422)
-			equal(await res.text(), 'Expected a boolean for corsAllowed')
+			equal(await res.text(), 'Expected boolean for "corsAllowed"')
 		})
 
 		it('200', async () => {
@@ -749,7 +749,7 @@ async function testSetGlobalDelay() {
 		it('422 for invalid global delay value', async () => {
 			const res = await commander.setGlobalDelay('not-a-number')
 			equal(res.status, 422)
-			equal(await res.text(), 'Expected a number for delay')
+			equal(await res.text(), 'Expected non-negative integer for "delay"')
 		})
 
 		it('200 for valid global delay value', async () => {

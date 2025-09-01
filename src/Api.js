@@ -134,7 +134,7 @@ async function setRouteIsDelayed(req, response) {
 	if (!broker)
 		sendUnprocessableContent(response, `Route does not exist: ${body[DF.routeMethod]} ${body[DF.routeUrlMask]}`)
 	else if (typeof delayed !== 'boolean')
-		sendUnprocessableContent(response, `Expected a boolean for "delayed"`)
+		sendUnprocessableContent(response, `Expected boolean for "delayed"`)
 	else {
 		broker.setDelayed(delayed)
 		sendOK(response)
@@ -151,7 +151,7 @@ async function setRouteIsProxied(req, response) {
 	if (!broker)
 		sendUnprocessableContent(response, `Route does not exist: ${body[DF.routeMethod]} ${body[DF.routeUrlMask]}`)
 	else if (typeof proxied !== 'boolean')
-		sendUnprocessableContent(response, `Expected a boolean for "proxied"`)
+		sendUnprocessableContent(response, `Expected boolean for "proxied"`)
 	else if (proxied && !config.proxyFallback)
 		sendUnprocessableContent(response, `There’s no proxy fallback`)
 	else {
@@ -190,7 +190,7 @@ async function bulkUpdateBrokersByCommentTag(req, response) {
 async function setCorsAllowed(req, response) {
 	const corsAllowed = await parseJSON(req)
 	if (!ConfigValidator.corsAllowed(corsAllowed)) {
-		sendUnprocessableContent(response, `Expected a boolean for corsAllowed`)
+		sendUnprocessableContent(response, `Expected boolean for "corsAllowed"`)
 		return
 	}
 	config.corsAllowed = corsAllowed
@@ -200,7 +200,7 @@ async function setCorsAllowed(req, response) {
 async function setGlobalDelay(req, response) {
 	const delay = await parseJSON(req)
 	if (!ConfigValidator.delay(delay)) {
-		sendUnprocessableContent(response, `Expected a number for delay`)
+		sendUnprocessableContent(response, `Expected non-negative integer for "delay"`)
 		return
 	}
 	config.delay = delay
@@ -216,7 +216,7 @@ async function setStaticRouteStatusCode(req, response) {
 	if (!broker) // TESTME
 		sendUnprocessableContent(response, `Route does not exist: ${body[DF.routeUrlMask]}`)
 	else if (!(status === 200 || status === 404))
-		sendUnprocessableContent(response, `Expected a 200 or 404 status code. Received ${status}`) // TESTME
+		sendUnprocessableContent(response, `Expected 200 or 404 status code. Received ${status}`) // TESTME
 	else {
 		broker.setStatus(status)
 		sendOK(response)
@@ -232,7 +232,7 @@ async function setStaticRouteIsDelayed(req, response) {
 	if (!broker) // TESTME
 		sendUnprocessableContent(response, `Route does not exist: ${body[DF.routeUrlMask]}`)
 	else if (typeof delayed !== 'boolean')
-		sendUnprocessableContent(response, `Expected a boolean for "delayed". Received ${delayed}`) // TESTME
+		sendUnprocessableContent(response, `Expected boolean for "delayed". Received ${delayed}`) // TESTME
 	else {
 		broker.setDelayed(delayed)
 		sendOK(response)

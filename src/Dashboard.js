@@ -162,7 +162,9 @@ function Header() {
 function CookieSelector() {
 	const { cookies } = state
 	function onChange() {
-		mockaton.selectCookie(this.value).catch(onError)
+		mockaton.selectCookie(this.value)
+			.then(parseError)
+			.catch(onError)
 	}
 	const disabled = cookies.length <= 1
 	return (
@@ -187,6 +189,7 @@ function BulkSelector() {
 		const value = this.value
 		this.value = firstOption // Hack 
 		mockaton.bulkSelectByComment(value)
+			.then(parseError)
 			.then(updateState)
 			.catch(onError)
 	}
@@ -213,7 +216,9 @@ function GlobalDelayField() {
 	const { delay } = state
 	function onChange() {
 		state.delay = this.valueAsNumber
-		mockaton.setGlobalDelay(state.delay).catch(onError)
+		mockaton.setGlobalDelay(state.delay)
+			.then(parseError)
+			.catch(onError)
 	}
 	return (
 		r('label', { className: cssClass(CSS.Field, CSS.GlobalDelayField) },
@@ -239,6 +244,7 @@ function ProxyFallbackField() {
 			this.reportValidity()
 		else
 			mockaton.setProxyFallback(this.value.trim())
+				.then(parseError)
 				.then(updateState)
 				.catch(onError)
 	}
@@ -262,7 +268,9 @@ function ProxyFallbackField() {
 function SaveProxiedCheckbox({ disabled }) {
 	const { collectProxied } = state
 	function onChange() {
-		mockaton.setCollectProxied(this.checked).catch(onError)
+		mockaton.setCollectProxied(this.checked)
+			.then(parseError)
+			.catch(onError)
 	}
 	return (
 		r('label', { className: CSS.SaveProxiedCheckbox },
@@ -278,7 +286,10 @@ function SaveProxiedCheckbox({ disabled }) {
 
 function ResetButton() {
 	function onClick() {
-		mockaton.reset().then(updateState).catch(onError)
+		mockaton.reset()
+			.then(parseError)
+			.then(updateState)
+			.catch(onError)
 	}
 	return (
 		r('button', {
@@ -293,8 +304,7 @@ function ResetButton() {
 
 function MockList() {
 	const { brokersByMethod } = state
-	const hasMocks = Object.keys(brokersByMethod).length
-	if (!hasMocks)
+	if (!Object.keys(brokersByMethod).length)
 		return (
 			r('div', { className: CSS.empty },
 				Strings.no_mocks_found))
@@ -355,6 +365,7 @@ function MockSelector({ broker }) {
 	function onChange() {
 		const { urlMask, method } = parseFilename(this.value)
 		mockaton.select(this.value)
+			.then(parseError)
 			.then(updateState)
 			.then(() => linkFor(method, urlMask)?.click())
 			.catch(onError)
@@ -391,7 +402,9 @@ function MockSelector({ broker }) {
 function DelayRouteToggler({ broker }) {
 	function onChange() {
 		const { method, urlMask } = parseFilename(broker.mocks[0])
-		mockaton.setRouteIsDelayed(method, urlMask, this.checked).catch(onError)
+		mockaton.setRouteIsDelayed(method, urlMask, this.checked)
+			.then(parseError)
+			.catch(onError)
 	}
 	return (
 		r('label', {
@@ -414,6 +427,7 @@ function InternalServerErrorToggler({ broker }) {
 			this.checked
 				? broker.mocks.find(f => parseFilename(f).status === 500)
 				: broker.mocks[0])
+			.then(parseError)
 			.then(updateState)
 			.then(() => linkFor(method, urlMask)?.click())
 			.catch(onError)
@@ -437,6 +451,7 @@ function ProxyToggler({ broker }) {
 	function onChange() {
 		const { urlMask, method } = parseFilename(broker.mocks[0])
 		mockaton.setRouteIsProxied(method, urlMask, this.checked)
+			.then(parseError)
 			.then(updateState)
 			.then(() => linkFor(method, urlMask)?.click())
 			.catch(onError)
@@ -486,6 +501,7 @@ function StaticFilesList() {
 function DelayStaticRouteToggler({ broker }) {
 	function onChange() {
 		mockaton.setStaticRouteIsDelayed(broker.route, this.checked)
+			.then(parseError)
 			.catch(onError)
 	}
 	return (
@@ -505,6 +521,7 @@ function DelayStaticRouteToggler({ broker }) {
 function NotFoundToggler({ broker }) {
 	function onChange() {
 		mockaton.setStaticRouteStatus(broker.route, this.checked ? 404 : 200)
+			.then(parseError)
 			.catch(onError)
 	}
 	return (
@@ -648,9 +665,19 @@ function mockSelectorFor(method, urlMask) {
 
 /** # Misc */
 
+async function parseError(response) {
+	if (response.ok)
+		return
+	if (response.status === 422)
+		throw await response.text()
+	throw response.statusText
+}
+
 function onError(error) {
 	if (error?.message === 'Failed to fetch')
 		showErrorToast('Looks like the Mockaton server is not running')
+	else
+		showErrorToast(error || 'Unexpected Error')
 	console.error(error)
 }
 
@@ -732,23 +759,22 @@ function cssClass(...args) {
 }
 
 
-function createElement(elem, props = null, ...children) {
+function createElement(elem, props, ...children) {
 	if (typeof elem === 'function')
 		return elem(props)
 
 	const node = document.createElement(elem)
-	if (props)
-		for (const [key, value] of Object.entries(props))
-			if (key === 'ref')
-				value.current = node
-			else if (key.startsWith('on'))
-				node.addEventListener(key.replace(/^on/, '').toLowerCase(), value)
-			else if (key === 'style')
-				Object.assign(node.style, value)
-			else if (key in node)
-				node[key] = value
-			else
-				node.setAttribute(key, value)
+	for (const [key, value] of Object.entries(props || {}))
+		if (key === 'ref')
+			value.current = node
+		else if (key.startsWith('on'))
+			node.addEventListener(key.replace(/^on/, '').toLowerCase(), value)
+		else if (key === 'style')
+			Object.assign(node.style, value)
+		else if (key in node)
+			node[key] = value
+		else
+			node.setAttribute(key, value)
 	node.append(...children.flat().filter(Boolean))
 	return node
 }

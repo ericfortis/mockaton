@@ -4,7 +4,13 @@ import { METHODS } from 'node:http'
 export const SUPPORTED_METHODS = METHODS
 export const methodIsSupported = method => SUPPORTED_METHODS.includes(method)
 
-export class BodyReaderError extends Error {name = 'BodyReaderError'}
+export class BodyReaderError extends Error {
+	name = 'BodyReaderError'
+	constructor(msg) {
+		super()
+		this.message = msg
+	}
+}
 
 export const parseJSON = req => readBody(req, JSON.parse)
 
@@ -31,13 +37,13 @@ export function readBody(req, parser = a => a) {
 			req.removeListener('end', onEnd)
 			req.removeListener('error', onEnd)
 			if (lengthSoFar !== expectedLength)
-				reject(new BodyReaderError())
+				reject(new BodyReaderError('Length mismatch'))
 			else
 				try {
 					resolve(parser(Buffer.concat(body).toString()))
 				}
 				catch (_) {
-					reject(new BodyReaderError())
+					reject(new BodyReaderError('Could not parse'))
 				}
 		}
 	})

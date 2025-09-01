@@ -63,7 +63,7 @@ async function onRequest(req, response) {
 	}
 	catch (error) {
 		if (error instanceof BodyReaderError)
-			sendUnprocessableContent(response, error.name)
+			sendUnprocessableContent(response, `${error.name}: ${error.message}`)
 		else
 			sendInternalServerError(response, error)
 	}

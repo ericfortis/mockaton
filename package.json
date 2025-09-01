@@ -2,7 +2,7 @@
 	"name": "mockaton",
 	"description": "HTTP Mock Server",
 	"type": "module",
-	"version": "8.20.1",
+	"version": "8.20.2",
 	"main": "index.js",
 	"types": "index.d.ts",
 	"license": "MIT",
@@ -23,7 +23,7 @@
 		"outdated": "npm outdated --parseable | awk -F: '{ printf \"npm i %-30s ;# %s\\n\", $4, $2 }'"
 	},
 	"optionalDependencies": {
-		"open": "10.2.0"
+		"open": "^10"
 	},
 	"devDependencies": {
 		"pixaton": "1.1.2",

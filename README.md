@@ -5,9 +5,8 @@
 [![Test](https://github.com/ericfortis/mockaton/actions/workflows/test.yml/badge.svg)](https://github.com/ericfortis/mockaton/actions/workflows/test.yml)
 [![CodeQL](https://github.com/ericfortis/mockaton/actions/workflows/github-code-scanning/codeql/badge.svg)](https://github.com/ericfortis/mockaton/actions/workflows/github-code-scanning/codeql)
 
-An HTTP mock server for simulating APIs with minimal setup &mdash; ideal for testing
-difficult to reproduce states. For example, triggering an error on a third-party API.
-Similarly, if you are a frontend developer, triggering it on your project’s backend.
+An HTTP mock server for simulating APIs with minimal setup
+&mdash; ideal for testing difficult to reproduce states.
 
 <br/>
 
@@ -17,7 +16,9 @@ Similarly, if you are a frontend developer, triggering it on your project’s ba
 With Mockaton, developers can achieve correctness without sacrificing speed.
 
 ### Correctness
-- Enables testing of complex or rare scenarios that would otherwise be skipped.
+- Enables testing of complex scenarios that would otherwise be
+  skipped. For example, triggering an error on a third-party API. Or if
+  you are a frontend developer, triggering it on your project’s backend.
 - Allows for deterministic, comprehensive, and consistent state.
 
 ### Speed

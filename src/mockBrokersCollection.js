@@ -8,10 +8,7 @@ import { parseFilename, filenameIsValid } from './Filename.js'
 
 
 /**
- * @type {{
- * [method: string]:
- *   { [route: string]: MockBroker }
- * }}
+ * @type {BrokersByMethod}
  * @example
  * {
  *   GET: {

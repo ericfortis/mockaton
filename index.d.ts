@@ -1,4 +1,6 @@
 import { Server, IncomingMessage, OutgoingMessage } from 'node:http';
+import { MockBroker } from './src/MockBroker.js'
+import { StaticBroker } from './src/staticCollection.js'
 
 type Plugin = (
 	filePath: string,
@@ -56,32 +58,15 @@ export function jwtCookie(cookieName: string, payload: any, path?: string): stri
 export function parseJSON(request: IncomingMessage): Promise<any>
 
 
-export class Commander {
-	constructor(addr: string)
-
-	listMocks(): Promise<Response>
-
-	select(file: string): Promise<Response>
-
-	bulkSelectByComment(comment: string): Promise<Response>
-
-
-	setRouteIsDelayed(routeMethod: string, routeUrlMask: string, delayed: boolean): Promise<Response>
-
-
-	listCookies(): Promise<Response>
-
-	selectCookie(cookieKey: string): Promise<Response>
-
-
-	listComments(): Promise<Response>
-
-	setProxyFallback(proxyAddr: string): Promise<Response>
-
-	reset(): Promise<Response>
-
-
-	getCorsAllowed(): Promise<Response>
-
-	setCorsAllowed(value: boolean): Promise<Response>
+export type BrokersByMethod = {
+	[method: string]: {
+		[urlMask: string]: MockBroker
+	}
 }
+
+export type StaticBrokers = {
+	[route: string]: StaticBroker
+}
+
+export type JsonPromise<T> = Promise<Response & { json(): Promise<T> }>
+

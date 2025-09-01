@@ -71,11 +71,11 @@ for (const k of Object.keys(CSS))
 
 
 const state = {
-	/** @type {{ [method:string]: { [route:string]: MockBroker } }} */
+	/** @type {BrokersByMethod} */
 	brokersByMethod: {},
 
-	/** @type {StaticBroker[]} */
-	staticBrokers: [],
+	/** @type {StaticBrokers} */
+	staticBrokers: {},
 
 	/** @type {[label:string, selected:boolean][]} */
 	cookies: [],
@@ -95,10 +95,10 @@ const state = {
 }
 
 const mockaton = new Commander(window.location.origin)
-init()
+updateState()
 initLongPoll()
-function init() {
-	return Promise.all([
+function updateState() {
+	Promise.all([
 		mockaton.listMocks(),
 		mockaton.listStaticFiles(),
 		mockaton.listCookies(),
@@ -131,7 +131,8 @@ function App() {
 				r(MockList),
 				r(StaticFilesList)),
 			r('div', { className: CSS.rightSide },
-				r(PayloadViewer)))]
+				r(PayloadViewer)))
+	]
 }
 
 
@@ -186,7 +187,7 @@ function BulkSelector() {
 		const value = this.value
 		this.value = firstOption // Hack 
 		mockaton.bulkSelectByComment(value)
-			.then(init)
+			.then(updateState)
 			.catch(onError)
 	}
 	const disabled = !comments.length
@@ -238,7 +239,7 @@ function ProxyFallbackField() {
 			this.reportValidity()
 		else
 			mockaton.setProxyFallback(this.value.trim())
-				.then(init)
+				.then(updateState)
 				.catch(onError)
 	}
 	return (
@@ -277,7 +278,7 @@ function SaveProxiedCheckbox({ disabled }) {
 
 function ResetButton() {
 	function onClick() {
-		mockaton.reset().then(init).catch(onError)
+		mockaton.reset().then(updateState).catch(onError)
 	}
 	return (
 		r('button', {
@@ -354,7 +355,7 @@ function MockSelector({ broker }) {
 	function onChange() {
 		const { urlMask, method } = parseFilename(this.value)
 		mockaton.select(this.value)
-			.then(init)
+			.then(updateState)
 			.then(() => linkFor(method, urlMask)?.click())
 			.catch(onError)
 	}
@@ -413,7 +414,7 @@ function InternalServerErrorToggler({ broker }) {
 			this.checked
 				? broker.mocks.find(f => parseFilename(f).status === 500)
 				: broker.mocks[0])
-			.then(init)
+			.then(updateState)
 			.then(() => linkFor(method, urlMask)?.click())
 			.catch(onError)
 	}
@@ -436,7 +437,7 @@ function ProxyToggler({ broker }) {
 	function onChange() {
 		const { urlMask, method } = parseFilename(broker.mocks[0])
 		mockaton.setRouteIsProxied(method, urlMask, this.checked)
-			.then(init)
+			.then(updateState)
 			.then(() => linkFor(method, urlMask)?.click())
 			.catch(onError)
 	}
@@ -460,9 +461,9 @@ function ProxyToggler({ broker }) {
 function StaticFilesList() {
 	const { staticBrokers } = state
 	const canProxy = state.canProxy
-	if (!Object.keys({ staticBrokers }).length)
+	if (!Object.keys(staticBrokers).length)
 		return null
-	const dp = dittoSplitPaths(Object.keys({ staticBrokers })).map(([ditto, tail]) => ditto
+	const dp = dittoSplitPaths(Object.keys(staticBrokers)).map(([ditto, tail]) => ditto
 		? [r('span', { className: CSS.dittoDir }, ditto), tail]
 		: tail)
 	return (
@@ -472,7 +473,7 @@ function StaticFilesList() {
 					r('th', { colspan: 2 + Number(canProxy) }),
 					r('th', null, Strings.static_get))),
 			r('tbody', null,
-				Object.values({ staticBrokers }).map((broker, i) =>
+				Object.values(staticBrokers).map((broker, i) =>
 					r('tr', null,
 						canProxy && r('td', null, r(ProxyStaticToggler, {})),
 						r('td', null, r(DelayStaticRouteToggler, { broker })),
@@ -710,7 +711,7 @@ async function poll() {
 			const syncVersion = await response.json()
 			if (poll.oldSyncVersion !== syncVersion) { // because it could be < or >
 				poll.oldSyncVersion = syncVersion
-				await init()
+				await updateState()
 			}
 			poll()
 		}

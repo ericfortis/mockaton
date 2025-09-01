@@ -18,13 +18,65 @@ export class Commander {
 		})
 	}
 
+	/** @type {JsonPromise<BrokersByMethod>} */
 	listMocks() {
 		return this.#get(API.mocks)
+	}
+
+	/** @type {JsonPromise<StaticBrokers>} */
+	listStaticFiles() {
+		return this.#get(API.static)
+	}
+
+	/** @type {JsonPromise<[label:string, selected:boolean][]>} */
+	listCookies() {
+		return this.#get(API.cookies)
+	}
+
+	/** @type {JsonPromise<string[]>} */
+	listComments() {
+		return this.#get(API.comments)
+	}
+
+	/** @type {JsonPromise<string>} */
+	getProxyFallback() {
+		return this.#get(API.fallback)
+	}
+
+	/** @type {JsonPromise<boolean>} */
+	getCollectProxied() {
+		return this.#get(API.collectProxied)
+	}
+
+	/** @type {JsonPromise<boolean>} */
+	getCorsAllowed() {
+		return this.#get(API.cors)
+	}
+
+	/** @type {JsonPromise<number>} */
+	getGlobalDelay() {
+		return this.#get(API.globalDelay)
+	}
+
+	/** @type {JsonPromise<number>} */
+	getSyncVersion(currentSyncVersion, abortSignal) {
+		return fetch(API.syncVersion, {
+			signal: AbortSignal.any([abortSignal, AbortSignal.timeout(LONG_POLL_SERVER_TIMEOUT + 1000)]),
+			headers: {
+				[DF.syncVersion]: currentSyncVersion
+			}
+		})
+	}
+
+
+	reset() {
+		return this.#patch(API.reset)
 	}
 
 	select(file) {
 		return this.#patch(API.select, file)
 	}
+
 	bulkSelectByComment(comment) {
 		return this.#patch(API.bulkSelect, comment)
 	}
@@ -59,59 +111,23 @@ export class Commander {
 		})
 	}
 
-	listCookies() {
-		return this.#get(API.cookies)
-	}
 	selectCookie(cookieKey) {
 		return this.#patch(API.cookies, cookieKey)
 	}
 
-	listComments() {
-		return this.#get(API.comments)
-	}
-
-	getProxyFallback() {
-		return this.#get(API.fallback)
-	}
 	setProxyFallback(proxyAddr) {
 		return this.#patch(API.fallback, proxyAddr)
 	}
 
-	getCollectProxied() {
-		return this.#get(API.collectProxied)
-	}
 	setCollectProxied(shouldCollect) {
 		return this.#patch(API.collectProxied, shouldCollect)
 	}
 
-	getCorsAllowed() {
-		return this.#get(API.cors)
-	}
 	setCorsAllowed(value) {
 		return this.#patch(API.cors, value)
 	}
 
-	getGlobalDelay() {
-		return this.#get(API.globalDelay)
-	}
 	setGlobalDelay(delay) {
 		return this.#patch(API.globalDelay, delay)
-	}
-
-	listStaticFiles() {
-		return this.#get(API.static)
-	}
-
-	reset() {
-		return this.#patch(API.reset)
-	}
-
-	getSyncVersion(currentSyncVersion, abortSignal) {
-		return fetch(API.syncVersion, {
-			signal: AbortSignal.any([abortSignal, AbortSignal.timeout(LONG_POLL_SERVER_TIMEOUT + 1000)]),
-			headers: {
-				[DF.syncVersion]: currentSyncVersion
-			}
-		})
 	}
 }

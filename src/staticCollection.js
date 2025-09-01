@@ -3,7 +3,7 @@ import { listFilesRecursively } from './utils/fs.js'
 import { config, isFileAllowed } from './config.js'
 
 
-class StaticBroker {
+export class StaticBroker {
 	constructor(route) {
 		this.route = route
 		this.delayed = false
@@ -14,7 +14,7 @@ class StaticBroker {
 	setStatus(value) { this.status = value }
 }
 
-/** @type {{ [route: string]: StaticBroker }} */
+/** @type {StaticBrokers} */
 let collection = {}
 
 export const all = () => collection

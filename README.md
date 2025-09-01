@@ -7,7 +7,7 @@
 
 An HTTP mock server for simulating APIs with minimal setup &mdash; ideal for testing
 difficult to reproduce states. For example, triggering an error on a third-party API.
-Similarly, if you are a frontend developer, triggering it on your project backend.
+Similarly, if you are a frontend developer, triggering it on your project’s backend.
 
 <br/>
 

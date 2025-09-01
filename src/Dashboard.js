@@ -127,10 +127,10 @@ function App() {
 	return [
 		r(Header),
 		r('main', null,
-			r('div', { className: CSS.leftSide },
+			r('div', className(CSS.leftSide),
 				r(MockList),
 				r(StaticFilesList)),
-			r('div', { className: CSS.rightSide },
+			r('div', className(CSS.rightSide),
 				r(PayloadViewer)))
 	]
 }
@@ -168,7 +168,7 @@ function CookieSelector() {
 	}
 	const disabled = cookies.length <= 1
 	return (
-		r('label', { className: CSS.Field },
+		r('label', className(CSS.Field),
 			r('span', null, Strings.cookie),
 			r('select', {
 				autocomplete: 'off',
@@ -198,7 +198,7 @@ function BulkSelector() {
 		? []
 		: [firstOption].concat(comments)
 	return (
-		r('label', { className: CSS.Field },
+		r('label', className(CSS.Field),
 			r('span', null, Strings.bulk_select),
 			r('select', {
 				className: CSS.BulkSelector,
@@ -221,7 +221,7 @@ function GlobalDelayField() {
 			.catch(onError)
 	}
 	return (
-		r('label', { className: cssClass(CSS.Field, CSS.GlobalDelayField) },
+		r('label', className(CSS.Field, CSS.GlobalDelayField),
 			r('span', null, r(TimerIcon), Strings.delay_ms),
 			r('input', {
 				type: 'number',
@@ -249,7 +249,7 @@ function ProxyFallbackField() {
 				.catch(onError)
 	}
 	return (
-		r('div', { className: cssClass(CSS.Field, CSS.FallbackBackend) },
+		r('div', className(CSS.Field, CSS.FallbackBackend),
 			r('label', null,
 				r('span', null, r(CloudIcon), Strings.fallback_server),
 				r('input', {
@@ -273,7 +273,7 @@ function SaveProxiedCheckbox({ disabled }) {
 			.catch(onError)
 	}
 	return (
-		r('label', { className: CSS.SaveProxiedCheckbox },
+		r('label', className(CSS.SaveProxiedCheckbox),
 			r('input', {
 				type: 'checkbox',
 				disabled,
@@ -306,7 +306,7 @@ function MockList() {
 	const { brokersByMethod } = state
 	if (!Object.keys(brokersByMethod).length)
 		return (
-			r('div', { className: CSS.empty },
+			r('div', className(CSS.empty),
 				Strings.no_mocks_found))
 	return (
 		r('div', null,
@@ -356,7 +356,7 @@ function PreviewLink({ method, urlMask, urlMaskDittoed }) {
 			href: urlMask,
 			onClick
 		}, ditto
-			? [r('span', { className: CSS.dittoDir }, ditto), tail]
+			? [r('span', className(CSS.dittoDir), ditto), tail]
 			: tail))
 }
 
@@ -387,7 +387,7 @@ function MockSelector({ broker }) {
 			autocomplete: 'off',
 			'data-qaid': urlMask,
 			disabled: files.length <= 1,
-			className: cssClass(
+			...className(
 				CSS.MockSelector,
 				selected !== files[0] && CSS.nonDefault,
 				status >= 400 && status < 500 && CSS.status4xx)
@@ -479,10 +479,10 @@ function StaticFilesList() {
 	if (!Object.keys(staticBrokers).length)
 		return null
 	const dp = dittoSplitPaths(Object.keys(staticBrokers)).map(([ditto, tail]) => ditto
-		? [r('span', { className: CSS.dittoDir }, ditto), tail]
+		? [r('span', className(CSS.dittoDir), ditto), tail]
 		: tail)
 	return (
-		r('table', { className: CSS.StaticFilesList },
+		r('table', className(CSS.StaticFilesList),
 			r('thead', null,
 				r('tr', null,
 					r('th', { colspan: 2 + Number(canProxy) }),
@@ -563,7 +563,7 @@ const payloadViewerRef = useRef()
 
 function PayloadViewer() {
 	return (
-		r('div', { className: CSS.PayloadViewer },
+		r('div', className(CSS.PayloadViewer),
 			r('h2', { ref: payloadViewerTitleRef }, Strings.preview),
 			r('pre', null,
 				r('code', { ref: payloadViewerRef }, Strings.click_link_to_preview))))
@@ -571,7 +571,7 @@ function PayloadViewer() {
 
 function PayloadViewerProgressBar() {
 	return (
-		r('div', { className: CSS.ProgressBar },
+		r('div', className(CSS.ProgressBar),
 			r('div', { style: { animationDuration: state.delay + 'ms' } })))
 }
 
@@ -587,7 +587,7 @@ function PayloadViewerTitleWhenProxied({ mime, status, statusText, gatewayIsBad 
 	return (
 		r('span', null,
 			gatewayIsBad
-				? r('span', { className: CSS.red }, Strings.fallback_server_error + ' ')
+				? r('span', className(CSS.red), Strings.fallback_server_error + ' ')
 				: r('span', null, Strings.got + ' '),
 			r('abbr', { title: statusText }, status),
 			' ' + mime))
@@ -754,8 +754,8 @@ async function poll() {
 
 /** # Utils */
 
-function cssClass(...args) {
-	return args.filter(Boolean).join(' ')
+function className(...args) {
+	return { className: args.filter(Boolean).join(' ') }
 }
 
 

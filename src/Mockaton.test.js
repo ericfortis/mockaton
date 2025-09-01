@@ -174,8 +174,9 @@ write('api/ignored.GET.200.json~', '')
 // JavaScript to JSON (params for testing URL decoding)
 write('/api/object?param=[param].GET.200.js', 'export default { JSON_FROM_JS: true }')
 
+const fixtureStaticIndex = ['index.html', '<h1>Static</h1>']
 const staticFiles = [
-	['index.html', '<h1>Static</h1>'],
+	fixtureStaticIndex,
 	['assets/app.js', 'const app = 1'],
 	['another-entry/index.html', '<h1>Another</h1>']
 ]
@@ -282,6 +283,10 @@ async function runTests() {
 
 	await testSetCorsAllowed()
 	await testSetGlobalDelay()
+
+	await testSetStaticRouteIsDelayed()
+	await testSetStaticRouteStatusCode()
+	await testResetStaticRoutes()
 
 	server.close()
 }
@@ -690,7 +695,6 @@ async function testSetRouteIsDelayed() {
 		})
 	})
 }
-
 async function testSetRouteIsProxied() {
 	await describe('Set Route is Proxied', async () => {
 		await commander.setProxyFallback('')
@@ -756,6 +760,73 @@ async function testSetGlobalDelay() {
 			const res = await commander.setGlobalDelay(1000)
 			equal(res.status, 200)
 			equal(await (await commander.getGlobalDelay()).json(), 1000)
+		})
+	})
+}
+
+
+async function testSetStaticRouteIsDelayed() {
+	await describe('Set Static Route is Delayed', async () => {
+		await commander.reset()
+		const route = '/' + fixtureStaticIndex[0]
+		await it('422 for non-existing route', async () => {
+			const res = await commander.setStaticRouteIsDelayed(route + '/non-existing', true)
+			equal(res.status, 422)
+			equal(await res.text(), `Static route does not exist: ${route}/non-existing`)
+		})
+
+		await it('422 for invalid delayed value', async () => {
+			const res = await commander.setStaticRouteIsDelayed(route, 'not-a-boolean')
+			equal(await res.text(), 'Expected boolean for "delayed"')
+		})
+
+		await it('200', async () => {
+			await commander.setStaticRouteIsDelayed(route, true)
+			const mocks = await commander.listStaticFiles()
+			equal((await mocks.json())[route].delayed, true)
+		})
+	})
+}
+
+async function testSetStaticRouteStatusCode() {
+	await describe('Set Static Route Status Code', async () => {
+		await commander.reset()
+		const route = '/' + fixtureStaticIndex[0]
+		await it('422 for non-existing route', async () => {
+			const res = await commander.setStaticRouteStatus(route + '/non-existing', 200)
+			equal(res.status, 422)
+			equal(await res.text(), `Static route does not exist: ${route}/non-existing`)
+		})
+
+		await it('422 for invalid delayed value', async () => {
+			const res = await commander.setStaticRouteStatus(route, 'not-200-or-404')
+			equal(await res.text(), 'Expected 200 or 404 status code')
+		})
+
+		await it('200', async () => {
+			await commander.setStaticRouteStatus(route, 404)
+			const mocks = await commander.listStaticFiles()
+			equal((await mocks.json())[route].status, 404)
+		})
+	})
+}
+
+async function testResetStaticRoutes() {
+	await describe('Resets Static Routes', async () => {
+		await commander.reset()
+		const route = '/' + fixtureStaticIndex[0]
+		await commander.setStaticRouteIsDelayed(route, true)
+		await commander.setStaticRouteStatus(route, 404)
+		await commander.reset()
+
+		await it('resets delayed', async () => {
+			const mocks = await commander.listStaticFiles()
+			equal((await mocks.json())[route].delayed, false)
+		})
+
+		await it('resets status', async () => {
+			const mocks = await commander.listStaticFiles()
+			equal((await mocks.json())[route].status, 200)
 		})
 	})
 }

@@ -101,7 +101,7 @@ function longPollClientSyncVersion(req, response) {
 
 function reinitialize(_, response) {
 	mockBrokersCollection.init()
-	staticCollection.init() // TESTME
+	staticCollection.init()
 	sendOK(response)
 }
 
@@ -213,10 +213,10 @@ async function setStaticRouteStatusCode(req, response) {
 	const status = Number(body[DF.statusCode])
 	const broker = staticCollection.brokerByRoute(body[DF.routeUrlMask])
 
-	if (!broker) // TESTME
-		sendUnprocessableContent(response, `Route does not exist: ${body[DF.routeUrlMask]}`)
+	if (!broker)
+		sendUnprocessableContent(response, `Static route does not exist: ${body[DF.routeUrlMask]}`)
 	else if (!(status === 200 || status === 404))
-		sendUnprocessableContent(response, `Expected 200 or 404 status code. Received ${status}`) // TESTME
+		sendUnprocessableContent(response, `Expected 200 or 404 status code`)
 	else {
 		broker.setStatus(status)
 		sendOK(response)
@@ -229,10 +229,10 @@ async function setStaticRouteIsDelayed(req, response) {
 	const delayed = body[DF.delayed]
 	const broker = staticCollection.brokerByRoute(body[DF.routeUrlMask])
 
-	if (!broker) // TESTME
-		sendUnprocessableContent(response, `Route does not exist: ${body[DF.routeUrlMask]}`)
+	if (!broker)
+		sendUnprocessableContent(response, `Static route does not exist: ${body[DF.routeUrlMask]}`)
 	else if (typeof delayed !== 'boolean')
-		sendUnprocessableContent(response, `Expected boolean for "delayed". Received ${delayed}`) // TESTME
+		sendUnprocessableContent(response, `Expected boolean for "delayed"`)
 	else {
 		broker.setDelayed(delayed)
 		sendOK(response)

@@ -79,7 +79,7 @@ export type ClientStaticBroker = {
 	status: number
 }
 export type ClientStaticBrokers = {
-	[route: string]: ClientMockBroker
+	[route: string]: ClientStaticBroker
 }
 
 

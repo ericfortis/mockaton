@@ -58,14 +58,26 @@ export function jwtCookie(cookieName: string, payload: any, path?: string): stri
 export function parseJSON(request: IncomingMessage): Promise<any>
 
 
-export type BrokersByMethod = {
+export type ClientMockBroker = {
+	mocks: string[]
+	currentMock: {
+		file: string
+		delayed: boolean
+	}
+}
+export type ClientBrokersByMethod = {
 	[method: string]: {
-		[urlMask: string]: MockBroker
+		[urlMask: string]: ClientMockBroker
 	}
 }
 
-export type StaticBrokers = {
-	[route: string]: StaticBroker
+export type ClientStaticBroker = {
+	route: string
+	delayed: boolean
+	status: number
+}
+export type ClientStaticBrokers = {
+	[route: string]: ClientMockBroker
 }
 
 export type JsonPromise<T> = Promise<Response & { json(): Promise<T> }>

@@ -71,10 +71,10 @@ for (const k of Object.keys(CSS))
 
 
 const state = {
-	/** @type {BrokersByMethod} */
+	/** @type {ClientBrokersByMethod} */
 	brokersByMethod: {},
 
-	/** @type {StaticBrokers} */
+	/** @type {ClientStaticBrokers} */
 	staticBrokers: {},
 
 	/** @type {[label:string, selected:boolean][]} */
@@ -350,7 +350,7 @@ function PreviewLink({ method, urlMask, urlMaskDittoed }) {
 			: tail))
 }
 
-/** @param {{ broker: MockBroker }} props */
+/** @param {{ broker: ClientMockBroker }} props */
 function MockSelector({ broker }) {
 	function onChange() {
 		const { urlMask, method } = parseFilename(this.value)
@@ -387,7 +387,7 @@ function MockSelector({ broker }) {
 			}, file))))
 }
 
-/** @param {{ broker: MockBroker }} props */
+/** @param {{ broker: ClientMockBroker }} props */
 function DelayRouteToggler({ broker }) {
 	function onChange() {
 		const { method, urlMask } = parseFilename(broker.mocks[0])
@@ -406,7 +406,7 @@ function DelayRouteToggler({ broker }) {
 			TimerIcon()))
 }
 
-/** @param {{ broker: MockBroker }} props */
+/** @param {{ broker: ClientMockBroker }} props */
 function InternalServerErrorToggler({ broker }) {
 	function onChange() {
 		const { urlMask, method } = parseFilename(broker.mocks[0])
@@ -432,7 +432,7 @@ function InternalServerErrorToggler({ broker }) {
 			r('span', null, '500')))
 }
 
-/** @param {{ broker: MockBroker }} props */
+/** @param {{ broker: ClientMockBroker }} props */
 function ProxyToggler({ broker }) {
 	function onChange() {
 		const { urlMask, method } = parseFilename(broker.mocks[0])
@@ -482,7 +482,7 @@ function StaticFilesList() {
 					)))))
 }
 
-/** @param {{ broker: StaticBroker }} props */
+/** @param {{ broker: ClientStaticBroker }} props */
 function DelayStaticRouteToggler({ broker }) {
 	function onChange() {
 		mockaton.setStaticRouteIsDelayed(broker.route, this.checked)
@@ -501,7 +501,7 @@ function DelayStaticRouteToggler({ broker }) {
 			TimerIcon()))
 }
 
-/** @param {{ broker: StaticBroker }} props */
+/** @param {{ broker: ClientStaticBroker }} props */
 function NotFoundToggler({ broker }) {
 	function onChange() {
 		mockaton.setStaticRouteStatus(broker.route, this.checked ? 404 : 200)

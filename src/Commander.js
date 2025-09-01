@@ -18,12 +18,12 @@ export class Commander {
 		})
 	}
 
-	/** @type {JsonPromise<BrokersByMethod>} */
+	/** @type {JsonPromise<ClientBrokersByMethod>} */
 	listMocks() {
 		return this.#get(API.mocks)
 	}
 
-	/** @type {JsonPromise<StaticBrokers>} */
+	/** @type {JsonPromise<ClientStaticBrokers>} */
 	listStaticFiles() {
 		return this.#get(API.static)
 	}

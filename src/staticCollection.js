@@ -14,7 +14,7 @@ export class StaticBroker {
 	setStatus(value) { this.status = value }
 }
 
-/** @type {StaticBrokers} */
+/** @type {{ [route:string]: StaticBroker }} */
 let collection = {}
 
 export const all = () => collection

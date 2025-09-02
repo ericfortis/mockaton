@@ -24,10 +24,16 @@ const testsDir = isGHA // TODO env var
 	: join(import.meta.dirname, 'macos')
 
 removeDiffsAndCandidates(testsDir)
-const browser = await launch({
-	headless: 'shell',
-	args: ['--no-sandbox', '--disable-setuid-sandbox'] // For GHA
-})
+let browser
+try {
+	browser = await launch({
+		headless: 'shell',
+		args: ['--no-sandbox', '--disable-setuid-sandbox'] // For GHA
+	})
+}
+catch (error) {
+	console.error(error)
+}
 const page = await browser.newPage()
 
 after(() => {

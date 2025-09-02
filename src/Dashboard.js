@@ -597,8 +597,8 @@ async function previewMock(method, urlMask, href) {
 	previewMock.controller?.abort()
 	previewMock.controller = new AbortController
 
-	renderProgressBar()
 	payloadViewerTitleRef.current.replaceChildren(r('span', null, Strings.fetching))
+	payloadViewerRef.current.replaceChildren(PayloadViewerProgressBar())
 
 	try {
 		const response = await fetch(href, {
@@ -607,10 +607,9 @@ async function previewMock(method, urlMask, href) {
 		})
 		await updatePayloadViewer(method, urlMask, response)
 	}
-	catch {}
-
-	function renderProgressBar() {
-		payloadViewerRef.current.replaceChildren(PayloadViewerProgressBar())
+	catch (err) {
+		onError(err)
+		payloadViewerRef.current.replaceChildren()
 	}
 }
 
@@ -755,7 +754,9 @@ async function poll() {
 /** # Utils */
 
 function className(...args) {
-	return { className: args.filter(Boolean).join(' ') }
+	return {
+		className: args.filter(Boolean).join(' ')
+	}
 }
 
 

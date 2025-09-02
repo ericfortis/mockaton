@@ -60,7 +60,7 @@ function serveDashboard(_, response) {
 }
 
 function serveDashboardAsset(f) {
-	return (req, response) =>
+	return (_, response) =>
 		sendFile(response, join(import.meta.dirname, f))
 }
 

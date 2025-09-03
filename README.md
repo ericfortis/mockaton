@@ -65,7 +65,8 @@ for setting up tests (see **Commander&nbsp;API** section below).
 <br/>
 
 ## Multiple Mock Variants
-Each route can have different mocks. There are two options for doing that:
+Each route can have different mocks. There are two
+options for doing that, and they can be combined.
 
 ### Adding comments to the filename
 Comments are anything within parentheses, including them.
@@ -80,9 +81,9 @@ For instance, you can use a `4xx` or `5xx` status code for triggering error
 responses, or a `2xx` such as `204` for testing empty collections.
 
 <pre>
-api/videos(empty list).GET.<b>204</b>.json  # No Content
-api/videos.GET.<b>403</b>.json              # Forbidden
-api/videos.GET.<b>500</b>.txt               # Internal Server Error
+api/videos.GET.<b>204</b>.json  # No Content (Empty list)
+api/videos.GET.<b>403</b>.json  # Forbidden
+api/videos.GET.<b>500</b>.txt   # Internal Server Error
 </pre>
 
 
@@ -91,8 +92,8 @@ api/videos.GET.<b>500</b>.txt               # Internal Server Error
 ## Scraping Mocks from your Backend
 
 ### Option 1: Browser Extension
-This companion [browser-devtools extension](https://github.com/ericfortis/download-http-requests-browser-ext)
-lets you download all the HTTP responses at once, and they
+With the companion [browser-devtools extension](https://github.com/ericfortis/download-http-requests-browser-ext)
+you can download all the HTTP responses at once, and they
 get saved following Mockaton’s filename convention.
 
 ### Option 2: Fallback to Your Backend
@@ -183,7 +184,7 @@ permutations for out-of-stock, new-arrival, and discontinued.
 - Spinners by delaying responses
 - Setting up UI tests
 
-### Simulating complex backend states
+### Demoing complex backend states
 Sometimes, the ideal flow you need is too difficult to reproduce from the actual backend.
 For this, you can **Bulk Select** mocks by comments to simulate the complete states
 you want. For example, by adding `(demo-part1)`, `(demo-part2)` to the filenames.
@@ -307,8 +308,10 @@ want a `Content-Type` header in the response.
 <br/>
 
 ### Dynamic parameters
-Anything within square brackets is always matched. For example, for this route:
-<code>/api/company/<b>1234</b>/user/<b>5678</b></code>
+Anything within square brackets is always matched. 
+
+For example, for <a href="#">/api/company/<b>123</b>/user/<b>789</b></a>,
+the filename could be:
 
 <pre><code>api/company/<b>[id]</b>/user/<b>[uid]</b>.GET.200.json</code></pre>
 
@@ -351,7 +354,7 @@ string it’s ignored anyway.
 <br/>
 
 ### Index-like routes
-If you have `api/foo` and `api/foo/bar`, you have two options:
+If you have <a href="#">api/foo</a> and <a href="#">api/foo/bar</a>, you have two options:
 
 **Option A.** Standard naming:
 ```
@@ -379,7 +382,7 @@ as explained above in the _Use Cases_ section.
 
 Files under `config.staticDir` take precedence over corresponding
 `GET` mocks in `config.mocksDir` (regardless of status code).
-For example, if you have two files for `GET /foo/bar.jpg`:
+For example, if you have two files for `GET` <a href="#">/foo/bar.jpg</a> such as:
 <pre>
 my-static-dir<b>/foo/bar.jpg</b> <span style="color:green"> // Wins</span>
  my-mocks-dir<b>/foo/bar.jpg</b>.GET.200.jpg <span style="color:red"> // Unreachable</span>

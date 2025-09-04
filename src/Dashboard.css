@@ -21,17 +21,14 @@
 		--colorRed: #da0f00;
 		--colorText: #000;
 	}
-	.SyntaxHighlight {
-		color: var(--colorSecondaryAction);
-		.key {
-			color: #ed206a
-		}
-		.val {
-			color: #9b71e8
-		}
-		.string {
-			color: #3e8300
-		}
+	.syntaxKey {
+		color: #ed206a
+	}
+	.syntaxVal {
+		color: #9b71e8
+	}
+	.syntaxStr {
+		color: #3e8300
 	}
 }
 @media (prefers-color-scheme: dark) {
@@ -52,17 +49,14 @@
 		--colorRed: #f41606;
 		--colorText: #fff;
 	}
-	.SyntaxHighlight {
-		color: var(--colorSecondaryAction);
-		.key {
-			color: #f92672
-		}
-		.val {
-			color: #ae81ff
-		}
-		.string {
-			color: #a6e22e
-		}
+	.syntaxKey {
+		color: #f92672
+	}
+	.syntaxVal {
+		color: #ae81ff
+	}
+	.syntaxStr {
+		color: #a6e22e
 	}
 }
 
@@ -532,6 +526,7 @@ table {
 		padding-top: 12px;
 
 		code {
+			color: var(--colorSecondaryAction);
 			white-space: pre;
 			tab-size: 2;
 			font-family: monospace;

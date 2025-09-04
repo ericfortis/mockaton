@@ -49,7 +49,6 @@ const CSS = {
 	ResetButton: null,
 	SaveProxiedCheckbox: null,
 	StaticFilesList: null,
-	SyntaxHighlight: null,
 
 	chosen: null,
 	dittoDir: null,
@@ -58,7 +57,10 @@ const CSS = {
 	nonDefault: null,
 	red: null,
 	rightSide: null,
-	status4xx: null
+	status4xx: null,
+	syntaxKey: null,
+	syntaxVal: null,
+	syntaxStr: null
 }
 for (const k of Object.keys(CSS))
 	CSS[k] = k
@@ -560,7 +562,7 @@ function PayloadViewer() {
 		r('div', className(CSS.PayloadViewer),
 			r('h2', { ref: payloadViewerTitleRef }, Strings.preview),
 			r('pre', null,
-				r('code', { ref: payloadViewerRef, className: CSS.SyntaxHighlight }, Strings.click_link_to_preview))))
+				r('code', { ref: payloadViewerRef }, Strings.click_link_to_preview))))
 }
 
 function PayloadViewerProgressBar() {
@@ -843,24 +845,36 @@ function dittoSplitPaths(paths) {
 
 
 
-function syntaxHighlightJson(textBody) {
-	return textBody.replace(
-		/("(\\u[a-zA-Z0-9]{4}|\\[^u]|[^\\"])*"(\s*:)?|\b(true|false|null)\b|-?\d+(\.\d+)?)/g,
-		match => {
-			if (/^".*":$/.test(match))
-				return `<span class="key">${escapeHTML(match.slice(0, -1))}</span>:`
-
-			return /^"/.test(match)
-				? `<span class="string">${escapeHTML(match)}</span>`
-				: `<span class="val">${match}</span>`
-		}
-	)
+function syntaxHighlightJson(text) {
+	return text.replace(syntaxHighlightJson.regex, syntaxHighlightJson.replacer)
+}
+syntaxHighlightJson.regex = /("(\\u[a-fA-F0-9]{4}|\\[^u]|[^\\"])*")(\s*:)?|\b(true|false|null)\b|-?\d+(\.\d+)?([eE][+-]?\d+)?/g 
+syntaxHighlightJson.replacer = function (match, str, _, colon) {
+	if (str && colon)
+		return `<span class="${CSS.syntaxKey}">${escapeHTML(str)}</span>${colon}`
+	return str
+		? `<span class="${CSS.syntaxStr}">${escapeHTML(match)}</span>`
+		: `<span class="${CSS.syntaxVal}">${match}</span>`
 }
 
+
 function escapeHTML(str) {
-	return str.replace(/&/g, '&amp;')
-		.replace(/</g, '&lt;')
-		.replace(/>/g, '&gt;')
-		.replace(/"/g, '&quot;')
-		.replace(/'/g, '&#39;')
+	return str.replace(escapeHTML.regex, escapeHTML.replacer)
+}
+escapeHTML.regex = /[&<>"']/g
+escapeHTML.replacer = function (char) {
+	switch (char) {
+		case '&':
+			return '&amp;'
+		case '<':
+			return '&lt;'
+		case '>':
+			return '&gt;'
+		case '"':
+			return '&quot;'
+		case "'":
+			return '&#39;'
+		default:
+			return char
+	}
 }

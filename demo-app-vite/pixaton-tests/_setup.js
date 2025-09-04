@@ -1,7 +1,7 @@
 import { after } from 'node:test'
 import { launch } from 'puppeteer'
 
-import { preview } from 'vite'
+import { preview, build } from 'vite'
 import viteConfig from '../vite.config.js'
 
 import {
@@ -25,6 +25,8 @@ const mockatonAddr = `http://${mockatonServer.address().address}:${mockatonServe
 export const mockaton = new Commander(mockatonAddr)
 
 process.env.BACKEND = mockatonAddr
+await build(viteConfig)
+viteConfig.server.open = false
 const viteServer = await preview(viteConfig)
 
 const VITE_ADDR = `http://localhost:${viteServer.config.preview.port}`

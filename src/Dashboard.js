@@ -3,13 +3,6 @@ import { parseFilename } from './Filename.js'
 import { Commander } from './Commander.js'
 
 
-function syntaxHighlightJson(textBody) {
-	const prism = window.Prism
-	return prism?.highlight && prism?.languages?.json
-		? prism.highlight(textBody, prism.languages.json, 'json')
-		: false
-}
-
 const Strings = {
 	bulk_select: 'Bulk Select',
 	bulk_select_disabled_title: 'No mock files have comments, which are anything within parentheses on the filename.',
@@ -56,6 +49,7 @@ const CSS = {
 	ResetButton: null,
 	SaveProxiedCheckbox: null,
 	StaticFilesList: null,
+	SyntaxHighlight: null,
 
 	chosen: null,
 	dittoDir: null,
@@ -566,7 +560,7 @@ function PayloadViewer() {
 		r('div', className(CSS.PayloadViewer),
 			r('h2', { ref: payloadViewerTitleRef }, Strings.preview),
 			r('pre', null,
-				r('code', { ref: payloadViewerRef }, Strings.click_link_to_preview))))
+				r('code', { ref: payloadViewerRef, className: CSS.SyntaxHighlight }, Strings.click_link_to_preview))))
 }
 
 function PayloadViewerProgressBar() {
@@ -846,3 +840,34 @@ function dittoSplitPaths(paths) {
 	]
 	console.assert(JSON.stringify(dittoSplitPaths(input)) === JSON.stringify(expected))
 }())
+
+
+
+function syntaxHighlightJson(textBody) {
+	return textBody.replace(
+		/("(\\u[a-zA-Z0-9]{4}|\\[^u]|[^\\"])*"(\s*:)?|\b(true|false|null)\b|-?\d+(\.\d+)?)/g,
+		match => {
+			if (/^".*":$/.test(match))
+				return `<span class="key">${escapeHTML(match.slice(0, -1))}</span>:`
+
+			if (/^"/.test(match))
+				return `<span class="string">${escapeHTML(match)}</span>`
+
+			let cls = 'null'
+			if (/^-?\d/.test(match))
+				cls = 'num'
+			else if (/true|false/.test(match))
+				cls = 'bool'
+
+			return `<span class="${cls}">${match}</span>`
+		}
+	)
+}
+
+function escapeHTML(str) {
+	return str.replace(/&/g, '&amp;')
+		.replace(/</g, '&lt;')
+		.replace(/>/g, '&gt;')
+		.replace(/"/g, '&quot;')
+		.replace(/'/g, '&#39;')
+}

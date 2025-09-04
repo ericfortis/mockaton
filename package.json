@@ -2,18 +2,17 @@
 	"name": "mockaton",
 	"description": "HTTP Mock Server",
 	"type": "module",
-	"version": "8.21.0",
+	"version": "8.21.1",
 	"main": "index.js",
 	"types": "index.d.ts",
 	"license": "MIT",
 	"repository": "https://github.com/ericfortis/mockaton",
 	"keywords": [
 		"mock-server",
+		"rest-api",
 		"mock",
 		"api",
-		"testing",
-		"front-end",
-		"back-end"
+		"testing"
 	],
 	"scripts": {
 		"test": "node --test \"src/**/*.test.js\"",
@@ -22,15 +21,11 @@
 		"pixaton": "node --test --import=./pixaton-tests/_setup.js --experimental-test-isolation=none \"pixaton-tests/**/*.test.js\"",
 		"outdated": "npm outdated --parseable | awk -F: '{ printf \"npm i %-30s ;# %s\\n\", $4, $2 }'"
 	},
-	"optionalDependencies": {
-		"open": "^10"
-	},
 	"devDependencies": {
 		"pixaton": "1.1.2",
 		"puppeteer": "24.18.0"
 	},
-	"dependencies": {
-		"mockaton": "8.21.0",
-		"vite": "7.1.4"
+	"optionalDependencies": {
+		"open": "10.2.0"
 	}
 }

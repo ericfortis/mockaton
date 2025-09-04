@@ -850,16 +850,9 @@ function syntaxHighlightJson(textBody) {
 			if (/^".*":$/.test(match))
 				return `<span class="key">${escapeHTML(match.slice(0, -1))}</span>:`
 
-			if (/^"/.test(match))
-				return `<span class="string">${escapeHTML(match)}</span>`
-
-			let cls = 'null'
-			if (/^-?\d/.test(match))
-				cls = 'num'
-			else if (/true|false/.test(match))
-				cls = 'bool'
-
-			return `<span class="${cls}">${match}</span>`
+			return /^"/.test(match)
+				? `<span class="string">${escapeHTML(match)}</span>`
+				: `<span class="val">${match}</span>`
 		}
 	)
 }

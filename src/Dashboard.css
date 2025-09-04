@@ -26,7 +26,7 @@
 		.key {
 			color: #ed206a
 		}
-		.bool, .num, .null {
+		.val {
 			color: #9b71e8
 		}
 		.string {
@@ -57,11 +57,11 @@
 		.key {
 			color: #f92672
 		}
+		.val {
+			color: #ae81ff
+		}
 		.string {
 			color: #a6e22e
-		}
-		.bool, .num, .null {
-			color: #ae81ff
 		}
 	}
 }

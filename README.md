@@ -81,7 +81,7 @@ For instance, you can use a `4xx` or `5xx` status code for triggering error
 responses, or a `2xx` such as `204` for testing empty collections.
 
 <pre>
-api/videos.GET.<b>204</b>.json  # No Content (Empty list)
+api/videos.GET.<b>204</b>.empty # No Content
 api/videos.GET.<b>403</b>.json  # Forbidden
 api/videos.GET.<b>500</b>.txt   # Internal Server Error
 </pre>

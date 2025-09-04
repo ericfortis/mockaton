@@ -1,8 +1,8 @@
 #!/usr/bin/env node
 
-import { join } from 'node:path'
 import { parseArgs } from 'node:util'
-import { Mockaton, jwtCookie } from 'mockaton'
+import { Mockaton } from 'mockaton'
+import mockatonConfig from './mockaton-config.js'
 
 
 const { port } = parseArgs({
@@ -13,15 +13,5 @@ const { port } = parseArgs({
 
 Mockaton({
 	port: Number(port),
-	mocksDir: join(import.meta.dirname, './mocks'),
-	cookies: {
-		'Non-Admin User': jwtCookie('id_token', {
-			name: 'John Doe',
-			roles: ['USER']
-		}),
-		'Admin User': jwtCookie('id_token', {
-			name: 'Charlie Root',
-			roles: ['ADMIN']
-		})
-	}
+	...mockatonConfig
 })

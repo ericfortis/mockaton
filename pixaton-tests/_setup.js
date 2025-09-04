@@ -6,8 +6,6 @@ import { Commander, Mockaton } from '../index.js'
 import { removeDiffsAndCandidates, testPixels as _testPixels, diffServer } from 'pixaton'
 
 
-const isGHA = process.env.GITHUB_ACTIONS === 'true'
-
 let mockatonServer
 await new Promise(resolve => {
 	mockatonServer = Mockaton({
@@ -19,28 +17,23 @@ await new Promise(resolve => {
 const mockatonAddr = `http://${mockatonServer.address().address}:${mockatonServer.address().port}`
 const mockaton = new Commander(mockatonAddr)
 
-const testsDir = isGHA // TODO env var
-	? join(import.meta.dirname, 'ubuntu')
-	: join(import.meta.dirname, 'macos')
+const testsDir = join(import.meta.dirname, 'macos')
 
 removeDiffsAndCandidates(testsDir)
 let browser
 try {
-	browser = await launch({
-		headless: 'shell',
-		args: ['--no-sandbox', '--disable-setuid-sandbox'] // For GHA
-	})
+	browser = await launch({ headless: 'shell' })
 }
 catch (error) {
 	console.error(error)
+	process.exit(1)
 }
 const page = await browser.newPage()
 
 after(() => {
 	browser?.close()
 	mockatonServer?.close()
-	if (!isGHA)
-		diffServer(testsDir)
+	diffServer(testsDir)
 })
 
 export function testPixels(testFileName, options = {}) {

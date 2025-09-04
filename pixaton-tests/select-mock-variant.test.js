@@ -5,7 +5,7 @@ testPixels(import.meta.filename, {
 	async setup() {
 		await selectFromDropdown({
 			qaId: '/api/user/friends',
-			target: 'api/user/friends.GET.204.json'
+			target: 'api/user/friends.GET.204.empty'
 		})
 	}
 })

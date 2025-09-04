@@ -1,28 +1,50 @@
 import { after } from 'node:test'
 import { launch } from 'puppeteer'
+
+import { preview } from 'vite'
+import viteConfig from '../vite.config.js'
+
 import {
 	removeDiffsAndCandidates,
 	testPixels as _testPixels,
 	diffServer
 } from 'pixaton'
-import { Commander } from 'mockaton'
+import { Commander, Mockaton } from 'mockaton'
+import mockatonConfig from '../mockaton-config.js'
 
-// Before running these tests you need to 
-// spin up Mockaton and the App
 
-const MOCKATON_ADDR = 'http://localhost:2345'
-const VITE_ADDR = 'http://localhost:3030'
+let mockatonServer
+await new Promise(resolve => {
+	mockatonServer = Mockaton({
+		...mockatonConfig,
+		port: 0,
+		onReady: resolve
+	})
+})
+const mockatonAddr = `http://${mockatonServer.address().address}:${mockatonServer.address().port}`
+export const mockaton = new Commander(mockatonAddr)
 
-export const mockaton = new Commander(MOCKATON_ADDR)
+process.env.BACKEND = mockatonAddr
+const viteServer = await preview(viteConfig)
+
+const VITE_ADDR = `http://localhost:${viteServer.config.preview.port}`
 
 const testsDir = import.meta.dirname
-
 removeDiffsAndCandidates(testsDir)
-const browser = await launch({ headless: 'shell' })
+let browser
+try {
+	browser = await launch({ headless: 'shell' })
+}
+catch (error) {
+	console.error(error)
+	process.exit(1)
+}
 const page = await browser.newPage()
 
 after(() => {
 	browser?.close()
+	mockatonServer?.close()
+	viteServer?.close()
 	diffServer(testsDir)
 })
 

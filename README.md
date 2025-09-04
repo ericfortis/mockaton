@@ -25,7 +25,7 @@ With Mockaton, developers can achieve correctness without sacrificing speed.
 
 ### Speed
 - Prevents progress from being blocked by waiting for APIs.
-- Avoids spinning up and updating hefty backends when developing UIs.
+- Works around unstable dev backends while developing UIs.
 - Time travel. If you commit the mocks to your repo, it’s straightforward
   to check out long-lived branches and bisect bugs, so you don’t
   have to downgrade backends to old API contracts or databases.

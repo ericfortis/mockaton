@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Response source="mock-server" version="1.2">
+	<Status code="200">SUCCESS</Status>
+	<Message lang="en">Data retrieved successfully.</Message>
+	<Data type="friends">
+		<Item>
+			<ID>101</ID>
+			<Name>Friend 1</Name>
+		</Item>
+		<Item>
+			<ID>102</ID>
+			<Name>Friend 2</Name>
+		</Item>
+		<Item>
+			<ID>103</ID>
+			<Name>Friend 3</Name>
+		</Item>
+	</Data>
+</Response>

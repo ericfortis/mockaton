@@ -1,3 +1,14 @@
-{
-	"_": "This is an exact path (i.e. /api/user/friends)"
-}
+[
+	{
+		"id": 101,
+		"name": "Friend 1"
+	},
+	{
+		"id": 102,
+		"name": "Friend 2"
+	},
+	{
+		"id": 103,
+		"name": "Friend 3"
+	}
+]

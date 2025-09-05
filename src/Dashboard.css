@@ -21,13 +21,16 @@
 		--colorRed: #da0f00;
 		--colorText: #000;
 	}
-	.syntaxKey {
+	.syntaxPunc {
+		color: var(--colorSecondaryAction);
+	}
+	.syntaxKey, .syntaxTag {
 		color: #ed206a
 	}
-	.syntaxVal {
+	.syntaxVal, .syntaxAttr {
 		color: #9b71e8
 	}
-	.syntaxStr {
+	.syntaxStr, .syntaxAttrVal {
 		color: #3e8300
 	}
 }
@@ -49,13 +52,16 @@
 		--colorRed: #f41606;
 		--colorText: #fff;
 	}
-	.syntaxKey {
+	.syntaxPunc {
+		color: var(--colorSecondaryAction);
+	}
+	.syntaxKey, .syntaxTag {
 		color: #f92672
 	}
-	.syntaxVal {
+	.syntaxVal, .syntaxAttr {
 		color: #ae81ff
 	}
-	.syntaxStr {
+	.syntaxStr, .syntaxAttrVal {
 		color: #a6e22e
 	}
 }
@@ -526,13 +532,16 @@ table {
 		padding-top: 12px;
 
 		code {
-			color: var(--colorSecondaryAction);
 			white-space: pre;
 			tab-size: 4;
 			font-family: monospace;
 
 			* {
 				font-family: monospace;
+			}
+
+			.json {
+				color: var(--colorSecondaryAction);
 			}
 		}
 	}

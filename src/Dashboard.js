@@ -58,9 +58,16 @@ const CSS = {
 	red: null,
 	rightSide: null,
 	status4xx: null,
+
+	json: null,
 	syntaxKey: null,
+	syntaxStr: null,
 	syntaxVal: null,
-	syntaxStr: null
+
+	syntaxAttr: null,
+	syntaxAttrVal: null,
+	syntaxTag: null,
+	syntaxPunc: null
 }
 for (const k of Object.keys(CSS))
 	CSS[k] = k
@@ -636,7 +643,9 @@ async function updatePayloadViewer(method, urlMask, response) {
 	else {
 		const body = await response.text() || Strings.empty_response_body
 		if (mime === 'application/json')
-			payloadViewerRef.current.replaceChildren(syntaxHighlightJson(body))
+			payloadViewerRef.current.replaceChildren(r('span', className(CSS.json), syntaxJSON(body)))
+		else if (mime === 'application/xml')
+			payloadViewerRef.current.replaceChildren(syntaxXML(body))
 		else
 			payloadViewerRef.current.innerText = body
 	}
@@ -841,40 +850,77 @@ function dittoSplitPaths(paths) {
 
 
 
-function syntaxHighlightJson(text) {
+function syntaxJSON(json) {
 	const frag = document.createDocumentFragment()
-	let lastIndex = 0
-	let match
 
-	syntaxHighlightJson.regex.lastIndex = 0
-	while ((match = syntaxHighlightJson.regex.exec(text)) !== null) {
-		if (match.index > lastIndex)
-			frag.appendChild(document.createTextNode(text.slice(lastIndex, match.index)))
-
-		const [full, str, _, colon, punc] = match
-		const span = document.createElement('span')
-
-		if (str && colon) {
-			span.className = CSS.syntaxKey
-			span.textContent = str
-			frag.appendChild(span)
-			frag.appendChild(document.createTextNode(colon))
-		}
-		else if (punc)
-			frag.appendChild(document.createTextNode(punc))
-		else {
-			span.className = str ? CSS.syntaxStr : CSS.syntaxVal
-			span.textContent = full
-			frag.appendChild(span)
-		}
-
-		lastIndex = match.index + full.length
+	function span(className, textContent) {
+		const s = document.createElement('span')
+		s.className = className
+		s.textContent = textContent
+		frag.appendChild(s)
 	}
 
-	if (lastIndex < text.length)
-		frag.appendChild(document.createTextNode(text.slice(lastIndex)))
+	function text(t) {
+		frag.appendChild(document.createTextNode(t))
+	}
 
+	let match
+	let lastIndex = 0
+	syntaxJSON.regex.lastIndex = 0
+	while ((match = syntaxJSON.regex.exec(json)) !== null) {
+		if (match.index > lastIndex)
+			text(json.slice(lastIndex, match.index))
+
+		const [full, str, colon, punc] = match
+		lastIndex = match.index + full.length
+
+		if (str && colon) {
+			span(CSS.syntaxKey, str)
+			text(colon)
+		}
+		else if (punc) text(punc)
+		else if (str) span(CSS.syntaxStr, str)
+		else span(CSS.syntaxVal, full)
+	}
+	text(json.slice(lastIndex))
 	return frag
 }
+syntaxJSON.regex = /("(?:\\u[a-fA-F0-9]{4}|\\[^u]|[^\\"])*")(\s*:)?|([{}\[\],:]+)|\S+/g
+// Capture group order: [string, optional colon, punc]
 
-syntaxHighlightJson.regex = /("(\\u[a-fA-F0-9]{4}|\\[^u]|[^\\"])*")(\s*:)?|([{}\[\],:])|\S+/g
+
+
+function syntaxXML(xml) {
+	const frag = document.createDocumentFragment()
+
+	function span(className, textContent) {
+		const s = document.createElement('span')
+		s.className = className
+		s.textContent = textContent
+		frag.appendChild(s)
+	}
+
+	function text(t) {
+		frag.appendChild(document.createTextNode(t))
+	}
+
+	let match
+	let lastIndex = 0
+	syntaxXML.regex.lastIndex = 0
+	while ((match = syntaxXML.regex.exec(xml)) !== null) {
+		if (match.index > lastIndex)
+			text(xml.slice(lastIndex, match.index))
+
+		lastIndex = match.index + match[0].length
+
+		if (match[1]) span(CSS.syntaxPunc, match[1])
+		else if (match[2]) span(CSS.syntaxTag, match[2])
+		else if (match[3]) span(CSS.syntaxAttr, match[3])
+		else if (match[4]) span(CSS.syntaxAttrVal, match[4])
+	}
+	text(xml.slice(lastIndex))
+	return frag
+}
+syntaxXML.regex = /(<\/?|\/?>|\?>)|(?<=<\??\/?)([A-Za-z_:][\w:.-]*)|([A-Za-z_:][\w:.-]*)(?==)|("(?:[^"\\]|\\.)*")/g
+// Capture groups order:  [tagPunc, tagName, attrName, attrVal]
+

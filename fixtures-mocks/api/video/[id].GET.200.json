@@ -1,4 +1,4 @@
 {
-	"_": "This route has a dynamic param `<id>`. i.e. /api/video/123",
+	"_": "This route has a dynamic param `[id]` &mdash; /api/video/123",
 	"url": "https://example.com/123"
 }

@@ -635,14 +635,10 @@ async function updatePayloadViewer(method, urlMask, response) {
 	}
 	else {
 		const body = await response.text() || Strings.empty_response_body
-		if (mime === 'application/json') {
-			const hBody = syntaxHighlightJson(body)
-			if (hBody) {
-				payloadViewerRef.current.innerHTML = hBody
-				return
-			}
-		}
-		payloadViewerRef.current.innerText = body
+		if (mime === 'application/json') 
+			payloadViewerRef.current.replaceChildren(syntaxHighlightJson(body))
+		else
+			payloadViewerRef.current.innerText = body
 	}
 }
 
@@ -846,35 +842,38 @@ function dittoSplitPaths(paths) {
 
 
 function syntaxHighlightJson(text) {
-	return text.replace(syntaxHighlightJson.regex, syntaxHighlightJson.replacer)
-}
-syntaxHighlightJson.regex = /("(\\u[a-fA-F0-9]{4}|\\[^u]|[^\\"])*")(\s*:)?|\b(true|false|null)\b|-?\d+(\.\d+)?([eE][+-]?\d+)?/g 
-syntaxHighlightJson.replacer = function (match, str, _, colon) {
-	if (str && colon)
-		return `<span class="${CSS.syntaxKey}">${escapeHTML(str)}</span>${colon}`
-	return str
-		? `<span class="${CSS.syntaxStr}">${escapeHTML(match)}</span>`
-		: `<span class="${CSS.syntaxVal}">${match}</span>`
-}
+	const frag = document.createDocumentFragment()
+	let lastIndex = 0
+	let match
 
+	syntaxHighlightJson.regex.lastIndex = 0
+	while ((match = syntaxHighlightJson.regex.exec(text)) !== null) {
+		if (match.index > lastIndex)
+			frag.appendChild(document.createTextNode(text.slice(lastIndex, match.index)))
 
-function escapeHTML(str) {
-	return str.replace(escapeHTML.regex, escapeHTML.replacer)
-}
-escapeHTML.regex = /[&<>"']/g
-escapeHTML.replacer = function (char) {
-	switch (char) {
-		case '&':
-			return '&amp;'
-		case '<':
-			return '&lt;'
-		case '>':
-			return '&gt;'
-		case '"':
-			return '&quot;'
-		case "'":
-			return '&#39;'
-		default:
-			return char
+		const [full, str, _, colon] = match
+		const span = document.createElement('span')
+
+		if (str && colon) {
+			span.className = CSS.syntaxKey
+			span.textContent = str
+			frag.appendChild(span)
+			frag.appendChild(document.createTextNode(colon))
+		}
+		else {
+			span.className = str ? CSS.syntaxStr : CSS.syntaxVal
+			span.textContent = full
+			frag.appendChild(span)
+		}
+
+		lastIndex = match.index + full.length
 	}
+
+	if (lastIndex < text.length)
+		frag.appendChild(document.createTextNode(text.slice(lastIndex)))
+
+	return frag
 }
+syntaxHighlightJson.regex = /("(\\u[a-fA-F0-9]{4}|\\[^u]|[^\\"])*")(\s*:)?|\b(true|false|null)\b|-?\d+(\.\d+)?([eE][+-]?\d+)?/g
+
+

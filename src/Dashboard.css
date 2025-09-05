@@ -528,7 +528,7 @@ table {
 		code {
 			color: var(--colorSecondaryAction);
 			white-space: pre;
-			tab-size: 2;
+			tab-size: 4;
 			font-family: monospace;
 
 			* {

@@ -1,4 +1,5 @@
-import { realpathSync } from 'node:fs'
+import { join, isAbsolute } from 'node:path'
+
 import { isDirectory } from './utils/fs.js'
 import { openInBrowser } from './utils/openInBrowser.js'
 import { jsToJsonPlugin } from './MockDispatcher.js'
@@ -14,8 +15,8 @@ import { validateCorsAllowedMethods, validateCorsAllowedOrigins } from './utils/
  * 	]
  * }} */
 const schema = {
-	mocksDir: ['', isDirectory],
-	staticDir: ['', optional(isDirectory)],
+	mocksDir: [join(process.cwd(), 'mockaton-mocks'), isDirectory],
+	staticDir: [join(process.cwd(), 'mockaton-static-mocks'), optional(isDirectory)],
 	ignore: [/(\.DS_Store|~)$/, is(RegExp)],
 
 	host: ['127.0.0.1', is(String)],
@@ -65,18 +66,30 @@ export const config = Object.seal(defaults)
 export const ConfigValidator = Object.freeze(validators)
 
 
+/** @param {Partial<Config>} options */
+export function setup(options) {
+	if (options.mocksDir && !isAbsolute(options.mocksDir)) 
+		options.mocksDir = join(process.cwd(), options.mocksDir)
+	
+	if (options.staticDir && !isAbsolute(options.staticDir))
+		options.staticDir = join(process.cwd(), options.staticDir)
+	
+	if (!options.staticDir && !isDirectory(defaults.staticDir)) 
+		options.staticDir = ''
+
+	try {
+		Object.assign(config, options)
+		validate(config, ConfigValidator)
+	}
+	catch (err) {
+		return err.message
+	}
+}
+
+
 export const isFileAllowed = f => !config.ignore.test(f)
 
 export const calcDelay = () => config.delayJitter
 	? config.delay * (1 + Math.random() * config.delayJitter)
 	: config.delay
 
-
-export function setup(options) {
-	Object.assign(config, options)
-	validate(config, ConfigValidator)
-
-	config.mocksDir = realpathSync(config.mocksDir)
-	if (config.staticDir)
-		config.staticDir = realpathSync(config.staticDir)
-}

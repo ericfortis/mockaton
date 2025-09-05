@@ -10,7 +10,7 @@ type Plugin = (
 }>
 
 interface Config {
-	mocksDir: string
+	mocksDir?: string
 	staticDir?: string
 	ignore?: RegExp
 
@@ -44,7 +44,8 @@ interface Config {
 }
 
 
-export function Mockaton(options: Config): Server
+export function Mockaton(options: Partial<Config>): Server
+export function defineConfig(options: Partial<Config>): Config
 
 export const jsToJsonPlugin: Plugin
 

@@ -1,9 +1,7 @@
-import { join } from 'node:path'
-import { jwtCookie } from 'mockaton'
+import { defineConfig, jwtCookie } from 'mockaton'
 
 
-export default {
-	mocksDir: join(import.meta.dirname, './mocks'),
+export default defineConfig({
 	cookies: {
 		'Non-Admin User': jwtCookie('id_token', {
 			name: 'John Doe',
@@ -14,4 +12,4 @@ export default {
 			roles: ['ADMIN']
 		})
 	}
-}
+})

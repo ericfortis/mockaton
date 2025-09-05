@@ -1,17 +1,16 @@
-.env
+.coverage
 .editorconfig
+.env
 .github
 .idea
-.coverage
 
-dev-config.js
-dev-mockaton.js
-TODO.md
-README-*.png
 
 demo-app-vite/
-fixtures-mocks/
-fixtures-static-mocks/
+mockaton-mocks/
+mockaton-static-mocks/
 pixaton-tests/
 
 src/**/*.test.js
+
+dev.config.js
+TODO.md

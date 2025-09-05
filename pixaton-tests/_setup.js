@@ -1,7 +1,8 @@
 import { join } from 'node:path'
 import { after } from 'node:test'
 import { launch } from 'puppeteer'
-import { devConfig } from '../dev-config.js'
+
+import devConfig from '../dev.config.js'
 import { Commander, Mockaton } from '../index.js'
 import { removeDiffsAndCandidates, testPixels as _testPixels, diffServer } from 'pixaton'
 

@@ -1,4 +1,4 @@
-<img src="src/logo.svg" alt="Mockaton Logo" width="210" style="margin-top: 30px"/>
+<img src="src/Logo.svg" alt="Mockaton Logo" width="210" style="margin-top: 30px"/>
 
 ![NPM Version](https://img.shields.io/npm/v/mockaton)
 ![NPM Version](https://img.shields.io/npm/l/mockaton)
@@ -92,8 +92,9 @@ api/videos.GET.<b>500</b>.txt   # Internal Server Error
 ## Scraping Mocks from your Backend
 
 ### Option 1: Browser Extension
-With the companion [browser-devtools extension](https://github.com/ericfortis/download-http-requests-browser-ext)
-you can download all the HTTP responses at once, and they
+With the companion [browser-devtools
+extension](https://github.com/ericfortis/download-http-requests-browser-ext)
+you can download all the HTTP responses, and they
 get saved following Mockaton’s filename convention.
 
 ### Option 2: Fallback to Your Backend
@@ -117,260 +118,51 @@ They will be saved in your `config.mocksDir` following the filename convention.
 
 
 ## Basic Usage
+Mockaton is a Node.js program with no dependencies.
+
+### Create a Sample Mock
+The default `--mocks-dir` is **mockaton-mocks** in the current working directory.
 ```sh
-npm install mockaton --save-dev
+mkdir -p mockaton-mocks/api/
+echo "[1,2,3]" > mockaton-mocks/api/foo.GET.200.json
 ```
 
-Create a `my-mockaton.js` file
-```js
-import { resolve } from 'node:path'
-import { Mockaton } from 'mockaton'
-
-
-Mockaton({
-  mocksDir: resolve('my-mocks-dir'), // must exist
-  port: 2345
-}) // The Config section below documents more options
-```
-
+### Install and Run
 ```sh
-node my-mockaton.js
+npm install mockaton
+npx mockaton --port 2345
+```
+
+## CLI Options
+CLI options override their counterparts in `mockaton.config.js`
+
+```txt
+-c, --config <file>       (default: ./mockaton.config.js)
+
+-m, --mocks-dir <dir>     (default: ./mockaton-mocks/)
+-s, --static-dir <dir>    (default: ./mockaton-static-mocks/)
+
+-H, --host <host>         (default: 127.0.0.1)
+-p, --port <port>         (default: 0) which means auto-assigned
+```
+
+
+## mockaton.config.js
+Optionally, use a `mockaton.config.js` file:
+```js
+import { defineConfig } from 'mockaton'
+
+export default defineConfig({
+  port: 2345,
+  mocksDir: 'my-mocks-dir',
+  delayJitter: 0.5,
+  // …
+}) 
 ```
 
 <details>
-<summary>About TypeScript in Node < 23.6</summary>
-If you want to write mocks in TypeScript in a version older than Node 23.6:
+<summary><b>See all config options</b></summary>
 
-```shell
-npm install tsx
-node --import=tsx my-mockaton.js
-```
-</details>
-
-
-<br/>
-
-## Demo App (Vite + React)
-
-```sh  
-git clone https://github.com/ericfortis/mockaton.git
-cd mockaton/demo-app-vite
-npm install 
-
-npm run mockaton
-npm run start # in another terminal
-```
-
-The demo app has a list of colors containing all of their possible states. For example,
-permutations for out-of-stock, new-arrival, and discontinued.
-
-<img src="./demo-app-vite/pixaton-tests/pic-for-readme.vp740x880.light.gold.png" alt="Mockaton Demo App Screenshot" width="740" />
-
-<br/>
-<br/>
-
-
-## Use Cases
-### Testing Backend or Frontend
-- Empty responses
-- Errors such as _Bad Request_ and _Internal Server Error_
-- Mocking third-party APIs
-- Polled resources (for triggering their different states)
-  - alerts
-  - notifications
-  - slow to build resources
-
-### Testing Frontend
-- Spinners by delaying responses
-- Setting up UI tests
-
-### Demoing complex backend states
-Sometimes, the ideal flow you need is too difficult to reproduce from the actual backend.
-For this, you can **Bulk Select** mocks by comments to simulate the complete states
-you want. For example, by adding `(demo-part1)`, `(demo-part2)` to the filenames.
-
-Similarly, you can deploy a **Standalone Demo Server** by compiling the frontend app and
-putting its built assets in `config.staticDir`. And simulate the flow by Bulk Selecting mocks.
-The [aot-fetch-demo repo](https://github.com/ericfortis/aot-fetch-demo) has a working example.
-
-
-<br/>
-
-
-## You can write JSON mocks in JavaScript or TypeScript
-For example, `api/foo.GET.200.js`
-
-**Option A:** An Object, Array, or String is sent as JSON.
-
-```js
-export default { foo: 'bar' }
-```
-
-**Option B:** Function
-
-Return a `string | Buffer | Uint8Array`, but don’t call `response.end()`
-
-```js
-export default (request, response) =>
-  JSON.stringify({ foo: 'bar' })
-```
-
-Think of these functions as HTTP handlers. For example,
-you can intercept requests to write to a database.
-
-<details>
-<summary><b>See Intercepting Requests Examples</b></summary>
-
-Imagine you have an initial list of colors, and
-you want to concatenate newly added colors.
-
-`api/colors.POST.201.js`
-```js
-import { parseJSON } from 'mockaton'
-
-
-export default async function insertColor(request, response) {
-  const color = await parseJSON(request)
-  globalThis.newColorsDatabase ??= []
-  globalThis.newColorsDatabase.push(color)
-
-  // These two lines are not needed but you can change their values
-  //   response.statusCode = 201 // default derived from filename
-  //   response.setHeader('Content-Type', 'application/json') // unconditional default
-
-  return JSON.stringify({ msg: 'CREATED' })
-}
-```
-
-`api/colors.GET.200.js`
-```js
-import colorsFixture from './colors.json' with { type: 'json' }
-
-
-export default function listColors() {
-  return JSON.stringify([
-    ...colorsFixture,
-    ...(globalThis.newColorsDatabase || [])
-  ])
-}
-```
-</details>
-
-<br/>
-
-**What if I need to serve a static .js or .ts?**
-
-**Option A:** Put it in your `config.staticDir` without the `.GET.200.js` extension.
-
-**Option B:** Read it and return it. For example:
-```js
-export default function (_, response) {
-  response.setHeader('Content-Type', 'application/javascript')
-  return readFileSync('./some-dir/foo.js', 'utf8')
-}
-```
-
-<br/>
-
-## Mock Filename Convention
-
-### Extension
-
-The last three dots are reserved for the HTTP Method,
-Response Status Code, and File Extension.
-
-```
-api/user.GET.200.json
-```
-
-You can also use `.empty` or `.unknown` if you don’t
-want a `Content-Type` header in the response.
-
-<details>
-<summary>Supported Methods</summary>
-<p>From <code>require('node:http').METHODS</code></p>
-<p>
-	ACL, BIND, CHECKOUT,
-	CONNECT, COPY, DELETE,
-	GET, HEAD, LINK,
-	LOCK, M-SEARCH, MERGE,
-	MKACTIVITY, MKCALENDAR, MKCOL,
-	MOVE, NOTIFY, OPTIONS,
-	PATCH, POST, PROPFIND,
-	PROPPATCH, PURGE, PUT,
-	QUERY, REBIND, REPORT,
-	SEARCH, SOURCE, SUBSCRIBE,
-	TRACE, UNBIND, UNLINK,
-	UNLOCK, UNSUBSCRIBE
-</p>
-</details>
-
-<br/>
-
-### Dynamic parameters
-Anything within square brackets is always matched. 
-
-For example, for <a href="#">/api/company/<b>123</b>/user/<b>789</b></a>,
-the filename could be:
-
-<pre><code>api/company/<b>[id]</b>/user/<b>[uid]</b>.GET.200.json</code></pre>
-
-<br/>
-
-### Comments
-Comments are anything within parentheses, including them.
-They are ignored for routing purposes, so they have no effect
-on the URL mask. For example, these two are for `/api/foo`
-<pre>
-api/foo<b>(my comment)</b>.GET.200.json
-api/foo.GET.200.json
-</pre>
-
-A filename can have many comments.
-
-<br/>
-
-### Default mock for a route
-You can add the comment: `(default)`.
-Otherwise, the first file in **alphabetical order** wins.
-
-<pre>
-api/user<b>(default)</b>.GET.200.json
-</pre>
-
-<br/>
-
-### Query string params
-The query string is ignored for routing purposes. In other words, it’s only used for
-documenting the URL contract.
-<pre>
-api/video<b>?limit=[limit]</b>.GET.200.json
-</pre>
-
-On Windows, filenames containing "?" are [not
-permitted](https://learn.microsoft.com/en-us/windows/win32/fileio/naming-a-file), but since that’s part of the query
-string it’s ignored anyway.
-
-<br/>
-
-### Index-like routes
-If you have <a href="#">api/foo</a> and <a href="#">api/foo/bar</a>, you have two options:
-
-**Option A.** Standard naming:
-```
-api/foo.GET.200.json
-api/foo/bar.GET.200.json
-```
-
-**Option B.** Omit the URL on the filename:
-```text
-api/foo/.GET.200.json
-api/foo/bar.GET.200.json
-```
-
-<br/>
-
-## Config
 ### `mocksDir: string`
 This is the only required field. The directory must exist.
 
@@ -598,6 +390,235 @@ config.onReady = () => {}
 
 At any rate, you can trigger any command besides opening a browser.
 
+
+
+
+</details>
+
+
+
+<br/>
+
+## Demo App (Vite + React)
+
+```sh  
+git clone https://github.com/ericfortis/mockaton.git
+cd mockaton/demo-app-vite
+npm install 
+
+npm run mockaton
+npm run start # in another terminal
+```
+
+The demo app has a list of colors containing all of their possible states. For example,
+permutations for out-of-stock, new-arrival, and discontinued.
+
+<img src="./demo-app-vite/pixaton-tests/pic-for-readme.vp740x880.light.gold.png" alt="Mockaton Demo App Screenshot" width="740" />
+
+<br/>
+<br/>
+
+
+## Use Cases
+### Testing Backend or Frontend
+- Empty responses
+- Errors such as _Bad Request_ and _Internal Server Error_
+- Mocking third-party APIs
+- Polled resources (for triggering their different states)
+  - alerts
+  - notifications
+  - slow to build resources
+
+### Testing Frontend
+- Spinners by delaying responses
+- Setting up UI tests
+
+### Demoing complex backend states
+Sometimes, the ideal flow you need is too difficult to reproduce from the actual backend.
+For this, you can **Bulk Select** mocks by comments to simulate the complete states
+you want. For example, by adding `(demo-part1)`, `(demo-part2)` to the filenames.
+
+Similarly, you can deploy a **Standalone Demo Server** by compiling the frontend app and
+putting its built assets in `config.staticDir`. And simulate the flow by Bulk Selecting mocks.
+The [aot-fetch-demo repo](https://github.com/ericfortis/aot-fetch-demo) has a working example.
+
+
+<br/>
+
+
+## You can write JSON mocks in JavaScript or TypeScript
+For example, `api/foo.GET.200.js`
+
+**Option A:** An Object, Array, or String is sent as JSON.
+
+```js
+export default { foo: 'bar' }
+```
+
+**Option B:** Function
+
+Return a `string | Buffer | Uint8Array`, but don’t call `response.end()`
+
+```js
+export default (request, response) =>
+  JSON.stringify({ foo: 'bar' })
+```
+
+Think of these functions as HTTP handlers. For example,
+you can intercept requests to write to a database.
+
+<details>
+<summary><b>See Intercepting Requests Examples</b></summary>
+
+Imagine you have an initial list of colors, and
+you want to concatenate newly added colors.
+
+`api/colors.POST.201.js`
+```js
+import { parseJSON } from 'mockaton'
+
+
+export default async function insertColor(request, response) {
+  const color = await parseJSON(request)
+  globalThis.newColorsDatabase ??= []
+  globalThis.newColorsDatabase.push(color)
+
+  // These two lines are not needed but you can change their values
+  //   response.statusCode = 201 // default derived from filename
+  //   response.setHeader('Content-Type', 'application/json') // unconditional default
+
+  return JSON.stringify({ msg: 'CREATED' })
+}
+```
+
+`api/colors.GET.200.js`
+```js
+import colorsFixture from './colors.json' with { type: 'json' }
+
+
+export default function listColors() {
+  return JSON.stringify([
+    ...colorsFixture,
+    ...(globalThis.newColorsDatabase || [])
+  ])
+}
+```
+</details>
+
+<br/>
+
+**What if I need to serve a static .js or .ts?**
+
+**Option A:** Put it in your `config.staticDir` without the `.GET.200.js` extension.
+
+**Option B:** Read it and return it. For example:
+```js
+export default function (_, response) {
+  response.setHeader('Content-Type', 'application/javascript')
+  return readFileSync('./some-dir/foo.js', 'utf8')
+}
+```
+
+<br/>
+
+## Mock Filename Convention
+
+### Extension
+
+The last three dots are reserved for the HTTP Method,
+Response Status Code, and File Extension.
+
+```
+api/user.GET.200.json
+```
+
+You can also use `.empty` or `.unknown` if you don’t
+want a `Content-Type` header in the response.
+
+<details>
+<summary>Supported Methods</summary>
+<p>From <code>require('node:http').METHODS</code></p>
+<p>
+	ACL, BIND, CHECKOUT,
+	CONNECT, COPY, DELETE,
+	GET, HEAD, LINK,
+	LOCK, M-SEARCH, MERGE,
+	MKACTIVITY, MKCALENDAR, MKCOL,
+	MOVE, NOTIFY, OPTIONS,
+	PATCH, POST, PROPFIND,
+	PROPPATCH, PURGE, PUT,
+	QUERY, REBIND, REPORT,
+	SEARCH, SOURCE, SUBSCRIBE,
+	TRACE, UNBIND, UNLINK,
+	UNLOCK, UNSUBSCRIBE
+</p>
+</details>
+
+<br/>
+
+### Dynamic parameters
+Anything within square brackets is always matched. 
+
+For example, for <a href="#">/api/company/<b>123</b>/user/<b>789</b></a>,
+the filename could be:
+
+<pre><code>api/company/<b>[id]</b>/user/<b>[uid]</b>.GET.200.json</code></pre>
+
+<br/>
+
+### Comments
+Comments are anything within parentheses, including them.
+They are ignored for routing purposes, so they have no effect
+on the URL mask. For example, these two are for `/api/foo`
+<pre>
+api/foo<b>(my comment)</b>.GET.200.json
+api/foo.GET.200.json
+</pre>
+
+A filename can have many comments.
+
+<br/>
+
+### Default mock for a route
+You can add the comment: `(default)`.
+Otherwise, the first file in **alphabetical order** wins.
+
+<pre>
+api/user<b>(default)</b>.GET.200.json
+</pre>
+
+<br/>
+
+### Query string params
+The query string is ignored for routing purposes. In other words, it’s only used for
+documenting the URL contract.
+<pre>
+api/video<b>?limit=[limit]</b>.GET.200.json
+</pre>
+
+On Windows, filenames containing "?" are [not
+permitted](https://learn.microsoft.com/en-us/windows/win32/fileio/naming-a-file), but since that’s part of the query
+string it’s ignored anyway.
+
+<br/>
+
+### Index-like routes
+If you have <a href="#">api/foo</a> and <a href="#">api/foo/bar</a>, you have two options:
+
+**Option A.** Standard naming:
+```
+api/foo.GET.200.json
+api/foo/bar.GET.200.json
+```
+
+**Option B.** Omit the URL on the filename:
+```text
+api/foo/.GET.200.json
+api/foo/bar.GET.200.json
+```
+
+<br/>
+
 <br/>
 
 ## Commander API
@@ -694,4 +715,4 @@ hijack the client (e.g., `fetch`) in Node.js and browsers.
 
 ---
 
-![](./fixtures-mocks/api/user/avatar.GET.200.png)
+![](mockaton-mocks/api/user/avatar.GET.200.png)

@@ -1,6 +1,6 @@
 import { DEFAULT_500_COMMENT, HEADER_FOR_502 } from './ApiConstants.js'
 import { parseFilename } from './Filename.js'
-import { Commander } from './Commander.js'
+import { Commander } from './ApiCommander.js'
 
 
 const Strings = {
@@ -144,7 +144,7 @@ function Header() {
 		r('header', null,
 			r('img', {
 				alt: Strings.title,
-				src: 'mockaton/logo.svg',
+				src: 'mockaton/Logo.svg',
 				width: 160
 			}),
 			r('div', null,
@@ -885,7 +885,7 @@ function syntaxJSON(json) {
 	text(json.slice(lastIndex))
 	return frag
 }
-syntaxJSON.regex = /("(?:\\u[a-fA-F0-9]{4}|\\[^u]|[^\\"])*")(\s*:)?|([{}\[\],:]+)|\S+/g
+syntaxJSON.regex = /("(?:\\u[a-fA-F0-9]{4}|\\[^u]|[^\\"])*")(\s*:)?|([{}\[\],:\s]+)|\S+/g
 // Capture group order: [string, optional colon, punc]
 
 

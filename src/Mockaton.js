@@ -16,15 +16,24 @@ import { sendNoContent, sendInternalServerError, sendUnprocessableContent } from
 process.on('unhandledRejection', error => { throw error })
 
 export function Mockaton(options) {
-	setup(options)
+	const error = setup(options)
+	if (error) {
+		console.error(error)
+		process.exitCode = 1
+		return
+	}
+
 	mockBrokerCollection.init()
 	staticCollection.init()
 	watchMocksDir()
 	watchStaticDir()
 
-	return createServer(onRequest).listen(config.port, config.host, function (error) {
+	const server = createServer(onRequest)
+
+	server.listen(config.port, config.host, function (error) {
 		if (error) {
 			console.error(error)
+			process.exit(1)
 			return
 		}
 		const { address, port } = this.address()
@@ -33,7 +42,15 @@ export function Mockaton(options) {
 		console.log('Dashboard', url + API.dashboard)
 		config.onReady(url + API.dashboard)
 	})
+
+	server.on('error', error => {
+		console.error(error.message)
+		process.exit(1)
+	})
+
+	return server
 }
+
 
 async function onRequest(req, response) {
 	response.on('error', console.error)

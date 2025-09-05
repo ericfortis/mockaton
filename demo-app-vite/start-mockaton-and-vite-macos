@@ -10,7 +10,7 @@ HERE=$(dirname $(realpath $0)) # For running this script from any dir
 osascript << EOF
 tell app "Terminal" to do script "
   cd ${HERE}
-  ./mockaton.js --port=${MOCKATON_PORT}
+  npx mockaton --port=${MOCKATON_PORT}
 "
 EOF
 

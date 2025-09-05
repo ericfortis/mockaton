@@ -4,7 +4,7 @@
 	"version": "0.0.1",
 	"type": "module",
 	"scripts": {
-		"mockaton": "./mockaton.js --port=2345",
+		"mockaton": "mockaton --port=2345",
 		"start": "BACKEND=http://localhost:2345 vite",
 		"pixaton": "node --test --import=./pixaton-tests/_setup.js --experimental-test-isolation=none \"./pixaton-tests/**/*.test.js\"",
 		"outdated": "npm outdated --parseable | awk -F: '{ printf \"npm i %-30s ;# %s\\n\", $4, $2 }'"
@@ -16,10 +16,10 @@
 	},
 	"devDependencies": {
 		"@vitejs/plugin-react": "5.0.2",
-		"mockaton": "8.19.1",
+		"mockaton": "8.23.2",
 		"pixaton": "1.1.2",
 		"react-cookies": "0.1.1",
-		"vite": "7.1.3"
+		"vite": "7.1.4"
 	},
 	"engines": {
 		"node": ">23.6"

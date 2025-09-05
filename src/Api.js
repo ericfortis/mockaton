@@ -16,11 +16,11 @@ import { sendOK, sendJSON, sendUnprocessableContent, sendFile } from './utils/ht
 
 const dashboardAssets = [
 	'/ApiConstants.js',
-	'/Commander.js',
+	'/ApiCommander.js',
 	'/Dashboard.css',
 	'/Dashboard.js',
 	'/Filename.js',
-	'/logo.svg'
+	'/Logo.svg'
 ]
 
 export const apiGetRequests = new Map([

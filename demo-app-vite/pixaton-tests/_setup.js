@@ -10,7 +10,7 @@ import {
 	diffServer
 } from 'pixaton'
 import { Commander, Mockaton } from 'mockaton'
-import mockatonConfig from '../mockaton-config.js'
+import mockatonConfig from '../mockaton.config.js'
 
 
 let mockatonServer

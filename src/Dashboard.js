@@ -635,7 +635,7 @@ async function updatePayloadViewer(method, urlMask, response) {
 	}
 	else {
 		const body = await response.text() || Strings.empty_response_body
-		if (mime === 'application/json') 
+		if (mime === 'application/json')
 			payloadViewerRef.current.replaceChildren(syntaxHighlightJson(body))
 		else
 			payloadViewerRef.current.innerText = body
@@ -851,7 +851,7 @@ function syntaxHighlightJson(text) {
 		if (match.index > lastIndex)
 			frag.appendChild(document.createTextNode(text.slice(lastIndex, match.index)))
 
-		const [full, str, _, colon] = match
+		const [full, str, _, colon, punc] = match
 		const span = document.createElement('span')
 
 		if (str && colon) {
@@ -860,6 +860,8 @@ function syntaxHighlightJson(text) {
 			frag.appendChild(span)
 			frag.appendChild(document.createTextNode(colon))
 		}
+		else if (punc)
+			frag.appendChild(document.createTextNode(punc))
 		else {
 			span.className = str ? CSS.syntaxStr : CSS.syntaxVal
 			span.textContent = full
@@ -874,6 +876,5 @@ function syntaxHighlightJson(text) {
 
 	return frag
 }
-syntaxHighlightJson.regex = /("(\\u[a-fA-F0-9]{4}|\\[^u]|[^\\"])*")(\s*:)?|\b(true|false|null)\b|-?\d+(\.\d+)?([eE][+-]?\d+)?/g
 
-
+syntaxHighlightJson.regex = /("(\\u[a-fA-F0-9]{4}|\\[^u]|[^\\"])*")(\s*:)?|([{}\[\],:])|\S+/g

@@ -530,10 +530,11 @@ table {
 .PayloadViewer {
 	pre {
 		padding-top: 12px;
+		font-family: monospace;
 
 		code {
 			white-space: pre;
-			tab-size: 4;
+			tab-size: 2;
 			font-family: monospace;
 
 			* {

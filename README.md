@@ -147,21 +147,56 @@ CLI options override their counterparts in `mockaton.config.js`
 ```
 
 
-## mockaton.config.js
-Optionally, use a `mockaton.config.js` file:
+## mockaton.config.js (Optional)
+As an overview, these are the defaults. The section below explains each option.
 ```js
-import { defineConfig } from 'mockaton'
+import {
+  defineConfig,
+  jsToJsonPlugin,
+  openInBrowser,
+  SUPPORTED_METHODS
+} from 'mockaton'
+
 
 export default defineConfig({
-  port: 2345,
-  mocksDir: 'my-mocks-dir',
-  delayJitter: 0.5,
-  // …
-}) 
+  mocksDir: 'mockaton-mocks',
+  staticDir: 'mockaton-static-mocks',
+  ignore: /(\.DS_Store|~)$/,
+
+  host: '127.0.0.1',
+  port: 0,
+
+  proxyFallback: '',
+  collectProxied: false,
+  formatCollectedJSON: true,
+
+  delay: 1200,
+  delayJitter: 0,
+
+  cookies: {},
+
+  extraHeaders: [],
+
+  extraMimes: {},
+
+  plugins: [
+    [/\.(js|ts)$/, jsToJsonPlugin]
+  ],
+
+  corsAllowed: true,
+  corsOrigins: ['*'],
+  corsMethods: SUPPORTED_METHODS,
+  corsHeaders: ['content-type', 'authorization'],
+  corsExposedHeaders: [],
+  corsCredentials: true,
+  corsMaxAge: 0,
+
+  onReady: await openInBrowser
+})
 ```
 
 <details>
-<summary><b>See all config options</b></summary>
+<summary><b>Config Documentation</b></summary>
 
 ### `mocksDir: string`
 This is the only required field. The directory must exist.

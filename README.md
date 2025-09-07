@@ -653,7 +653,7 @@ api/foo/bar.GET.200.json
 <br/>
 
 ## Commander API
-`Commander` is a client for Mockaton’s HTTP API.
+`Commander` is a JavaScript client for Mockaton’s HTTP API.
 All of its methods return their `fetch` response promise.
 ```js
 import { Commander } from 'mockaton'
@@ -663,7 +663,8 @@ const myMockatonAddr = 'http://localhost:2345'
 const mockaton = new Commander(myMockatonAddr)
 ```
 
-<br/>
+<details>
+<summary><b>See Commander Documentation</b></summary>
 
 ### Select a mock file for a route
 ```js
@@ -719,6 +720,7 @@ default, but the `proxyFallback`, `colledProxied`, and `corsAllowed` are not aff
 ```js
 await mockaton.reset()
 ```
+</details>
 
 
 <br/>
@@ -735,7 +737,7 @@ example, if you are polling, and you want to test the state change.
 
 ### Client Side
 In contrast to Mockaton, which is an HTTP Server, these programs
-hijack the client (e.g., `fetch`) in Node.js and browsers.
+hijack the HTTP client in Node.js and browsers.
 
 - [Mock Server Worker (MSW)](https://mswjs.io)
 - [Nock](https://github.com/nock/nock)

@@ -1,4 +1,4 @@
-import { exec } from 'node:child_process'
+import { execFileSync } from 'node:child_process'
 
 
 export const openInBrowser = (async () => {
@@ -13,10 +13,10 @@ export const openInBrowser = (async () => {
 function _openInBrowser(address) {
 	switch (process.platform) {
 		case 'darwin':
-			exec(`open ${address}`)
+			execFileSync('open', [address])
 			break
 		case 'win32':
-			exec(`start ${address}`)
+			execFileSync('start', [address])
 			break
 	}
 }

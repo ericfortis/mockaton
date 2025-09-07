@@ -45,7 +45,7 @@ Options:
 
 Notes:
   * mockaton.config.js supports more options, see:
-      https://github.com/ericfortis/mockaton?tab=readme-ov-file#config
+      https://github.com/ericfortis/mockaton?tab=readme-ov-file#mockatonconfigjs-optional
   * CLI options override their mockaton.config.js counterparts`)
 
 else if (args.config && !isFile(args.config)) {

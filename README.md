@@ -118,17 +118,13 @@ They will be saved in your `config.mocksDir` following the filename convention.
 
 
 ## Basic Usage
-
-### Create a Sample Mock
-The default `--mocks-dir` is **mockaton-mocks** in the current working directory.
+Mockaton is a Node.js program available as an NPM module. After you have
+Node.js, you can create a sample mock in the default mocks directory, which
+is `./mockaton-mocks`. Then run it with `npx`, which installs it if needed.
 ```sh
 mkdir -p mockaton-mocks/api/
 echo "[1,2,3]" > mockaton-mocks/api/foo.GET.200.json
-```
 
-### Run
-Mockaton is a Node.js program available as an NPM module:
-```sh
 npx mockaton --port 2345
 ```
 
@@ -138,16 +134,16 @@ CLI options override their counterparts in `mockaton.config.js`
 ```txt
 -c, --config <file>       (default: ./mockaton.config.js)
 
--m, --mocks-dir <dir>     (default: ./mockaton-mocks/)
--s, --static-dir <dir>    (default: ./mockaton-static-mocks/)
-
 -H, --host <host>         (default: 127.0.0.1)
 -p, --port <port>         (default: 0) which means auto-assigned
+
+-m, --mocks-dir <dir>     (default: ./mockaton-mocks/)
+-s, --static-dir <dir>    (default: ./mockaton-static-mocks/)
 ```
 
 
 ## mockaton.config.js (Optional)
-As an overview, these are the defaults. The section below explains each option.
+As an overview, these are the default options:
 ```js
 import {
   defineConfig,
@@ -195,12 +191,13 @@ export default defineConfig({
 ```
 
 <details>
-<summary><b>Config Documentation</b></summary>
+<summary><b>See Config Documentation</b></summary>
 
-### `mocksDir: string`
-This is the only required field. The directory must exist.
+### `mocksDir?: string`
+Defaults to `'mockaton-mocks'`. 
 
 ### `staticDir?: string`
+Defaults to `'mockaton-static-mocks'`.
 This option is not needed besides serving partial content (e.g., videos). But
 it’s convenient for serving 200 GET requests without having to add the filename
 extension convention. For example, for using Mockaton as a standalone demo server,
@@ -226,7 +223,7 @@ tested against the basename (filename without directory path).
 
 
 ### `host?: string`
-Defaults to `'localhost'`
+Defaults to `'127.0.0.1'`
 
 ### `port?: number`
 Defaults to `0`, which means auto-assigned

@@ -118,7 +118,6 @@ They will be saved in your `config.mocksDir` following the filename convention.
 
 
 ## Basic Usage
-Mockaton is a Node.js program with no dependencies.
 
 ### Create a Sample Mock
 The default `--mocks-dir` is **mockaton-mocks** in the current working directory.
@@ -127,9 +126,9 @@ mkdir -p mockaton-mocks/api/
 echo "[1,2,3]" > mockaton-mocks/api/foo.GET.200.json
 ```
 
-### Install and Run
+### Run
+Mockaton is a Node.js program available as an NPM module:
 ```sh
-npm install mockaton
 npx mockaton --port 2345
 ```
 

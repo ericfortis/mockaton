@@ -14,18 +14,17 @@ import { DF, API, LONG_POLL_SERVER_TIMEOUT } from './ApiConstants.js'
 import { sendOK, sendJSON, sendUnprocessableContent, sendFile } from './utils/http-response.js'
 
 
-const dashboardAssets = [
-	'/ApiConstants.js',
-	'/ApiCommander.js',
-	'/Dashboard.css',
-	'/Dashboard.js',
-	'/Filename.js',
-	'/Logo.svg'
-]
-
 export const apiGetRequests = new Map([
-	[API.dashboard, serveDashboard],
-	...dashboardAssets.map(f => [API.dashboard + f, serveDashboardAsset(f)]),
+	[API.dashboard, serveDashboardAsset('Dashboard.html')],
+	...[
+		'/ApiConstants.js',
+		'/ApiCommander.js',
+		'/Dashboard.css',
+		'/Dashboard.js',
+		'/Filename.js',
+		'/Logo.svg'
+	].map(f => [API.dashboard + f, serveDashboardAsset(f)]),
+
 	[API.cors, getIsCorsAllowed],
 	[API.static, listStaticFiles],
 	[API.mocks, listMockBrokers],
@@ -55,13 +54,8 @@ export const apiPatchRequests = new Map([
 
 /** # GET */
 
-function serveDashboard(_, response) {
-	sendFile(response, join(import.meta.dirname, 'Dashboard.html'))
-}
-
 function serveDashboardAsset(f) {
-	return (_, response) =>
-		sendFile(response, join(import.meta.dirname, f))
+	return (_, response) => sendFile(response, join(import.meta.dirname, f))
 }
 
 function listCookies(_, response) { sendJSON(response, cookie.list()) }
@@ -81,12 +75,10 @@ function longPollClientSyncVersion(req, response) {
 		sendJSON(response, uiSyncVersion.version)
 		return
 	}
-
 	function onAddOrRemoveMock() {
 		uiSyncVersion.unsubscribe(onAddOrRemoveMock)
 		sendJSON(response, uiSyncVersion.version)
 	}
-
 	response.setTimeout(LONG_POLL_SERVER_TIMEOUT, onAddOrRemoveMock)
 	req.on('error', () => {
 		uiSyncVersion.unsubscribe(onAddOrRemoveMock)

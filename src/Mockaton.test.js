@@ -216,6 +216,7 @@ async function runTests() {
 	commander = new Commander(mockatonAddr())
 
 	await testItRendersDashboard()
+	await testLongPollSyncVersion()
 	await test404()
 
 	for (const [url, file, body] of fixtures)
@@ -297,6 +298,14 @@ async function testItRendersDashboard() {
 	const body = await res.text()
 	await describe('Dashboard', () =>
 		it('Renders HTML', () => match(body, new RegExp('<!DOCTYPE html>'))))
+}
+
+async function testLongPollSyncVersion() {
+	await it('route is bound', async () => {
+		const controller = new AbortController()
+		const response = await commander.getSyncVersion(-1, controller.signal)
+		equal(response.status, 200)
+	})
 }
 
 async function test404() {

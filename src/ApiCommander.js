@@ -60,7 +60,7 @@ export class Commander {
 
 	/** @type {JsonPromise<number>} */
 	getSyncVersion(currentSyncVersion, abortSignal) {
-		return fetch(API.syncVersion, {
+		return fetch(this.#addr + API.syncVersion, {
 			signal: AbortSignal.any([abortSignal, AbortSignal.timeout(LONG_POLL_SERVER_TIMEOUT + 1000)]),
 			headers: {
 				[DF.syncVersion]: currentSyncVersion

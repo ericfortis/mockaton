@@ -1,11 +1,13 @@
-import { testPixels, selectFromDropdown } from './_setup.js'
+import { testPixels, mockaton, clickLinkByText } from './_setup.js'
 
 
 testPixels(import.meta.filename, {
+	async beforeSuite() {
+		await mockaton.reset()
+		await mockaton.select('api/user/friends.GET.204.empty')
+	},
+	
 	async setup() {
-		await selectFromDropdown({
-			qaId: '/api/user/friends',
-			target: 'api/user/friends.GET.204.empty'
-		})
+		await clickLinkByText('/api/user/friends')
 	}
 })

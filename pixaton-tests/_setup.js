@@ -16,7 +16,7 @@ await new Promise(resolve => {
 	})
 })
 const mockatonAddr = `http://${mockatonServer.address().address}:${mockatonServer.address().port}`
-const mockaton = new Commander(mockatonAddr)
+export const mockaton = new Commander(mockatonAddr)
 
 const testsDir = join(import.meta.dirname, 'macos')
 
@@ -38,61 +38,21 @@ after(() => {
 })
 
 export function testPixels(testFileName, options = {}) {
-	options.beforeSuite = async () => {
+	options.beforeSuite ??= async () => {
 		await mockaton.reset()
-		await mockaton.setProxyFallback('')
-		await mockaton.setCollectProxied(false)
 	}
 	options.viewports ??= [{
 		width: 1024,
 		height: 800
 	}]
-	options.colorSchemes ??= ['light', 'dark']
+	options.colorSchemes ??= ['light']
 	options.outputDir = testsDir
 	_testPixels(page, testFileName, mockatonAddr + '/mockaton', 'body', options)
 }
 
 
-export async function selectFromDropdown({ qaId, target }) {
-	const selector = `select[data-qaid="${qaId}"]`
-	await page.waitForSelector(selector)
-	await page.click(selector) // Just for showing focus state
-	await page.select(selector, target)
-}
-
 export async function clickLinkByText(linkText) {
 	const selector = `a ::-p-text(${linkText})`
 	await page.waitForSelector(selector)
 	await page.locator(selector).click()
-}
-
-
-function selectorForCheckbox(method, urlMask, checkboxClass) {
-	return `tr[data-method="${method}"][data-urlMask="${urlMask}"] .${checkboxClass} input[type=checkbox]`
-}
-
-export async function clickDelayCheckbox(method, urlMask) {
-	await clickCheckbox(selectorForCheckbox(method, urlMask, 'DelayToggler'))
-}
-export async function click500Checkbox(method, urlMask) {
-	await clickCheckbox(selectorForCheckbox(method, urlMask, 'InternalServerErrorToggler'))
-}
-export async function clickProxiedCheckbox(method, urlMask) {
-	await clickCheckbox(selectorForCheckbox(method, urlMask, 'ProxyToggler'))
-}
-
-export async function clickSaveProxiedCheckbox() {
-	await clickCheckbox(`.FallbackBackend input[type=checkbox]`)
-}
-
-async function clickCheckbox(selector) {
-	await page.waitForFunction(selector => !document.querySelector(selector)?.disabled,
-		{ polling: 'mutation' }, selector)
-	await page.$eval(selector, el => el.click())
-}
-
-export async function typeFallbackBackend(serverAddress) {
-	const el = await page.waitForSelector('.FallbackBackend input[type=url]')
-	await el.type(serverAddress)
-	await el.evaluate(el => el.blur())
 }

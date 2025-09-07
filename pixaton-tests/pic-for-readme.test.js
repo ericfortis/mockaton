@@ -1,14 +1,21 @@
-import { testPixels, clickLinkByText, click500Checkbox, clickDelayCheckbox, clickSaveProxiedCheckbox, typeFallbackBackend, clickProxiedCheckbox } from './_setup.js'
+import { testPixels, mockaton, clickLinkByText } from './_setup.js'
 
 
 testPixels(import.meta.filename, {
+	async beforeSuite() {
+		await mockaton.setProxyFallback('http://mybackend')
+		await mockaton.setCollectProxied(true)
+		await mockaton.select('api/user/friends.GET.500.txt')
+		await mockaton.setRouteIsProxied('GET', '/api/video/[id]', true)
+		await mockaton.setRouteIsDelayed('GET', '/api/user/links?limit=[limit]', true)
+	},
+
+	async afterSuite() {
+		await mockaton.setProxyFallback('')
+		await mockaton.setCollectProxied(false)
+	},
+
 	async setup() {
-		await click500Checkbox('GET', '/api/user/friends')
-		await clickDelayCheckbox('GET', '/api/user/links?limit=[limit]')
-		await typeFallbackBackend('http://mybackend')
-		await clickSaveProxiedCheckbox()
-		await sleep()
-		await clickProxiedCheckbox('GET', '/api/video/[id]')
 		await clickLinkByText('/api/user/likes')
 	},
 
@@ -16,9 +23,7 @@ testPixels(import.meta.filename, {
 		width: 880,
 		height: 800,
 		deviceScaleFactor: 1.5
-	}]
-})
+	}],
 
-async function sleep(ms = 50) {
-	return new Promise(resolve => setTimeout(resolve, ms))
-}
+	colorSchemes: ['light', 'dark']
+})

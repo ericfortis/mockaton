@@ -1,11 +1,9 @@
-import { testPixels, selectFromDropdown } from './_setup.js'
+import { testPixels, mockaton } from './_setup.js'
 
 
 testPixels(import.meta.filename, {
-	async setup() {
-		await selectFromDropdown({
-			qaId: 'BulkSelector',
-			target: '(Mockaton 500)'
-		})
+	async beforeSuite() {
+		await mockaton.reset()
+		await mockaton.bulkSelectByComment('(Mockaton 500)')
 	}
 })

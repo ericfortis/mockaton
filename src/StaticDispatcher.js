@@ -15,6 +15,9 @@ export async function dispatchStatic(req, response) {
 			sendNotFound(response)
 			return
 		}
+
+		console.log('%s %s (static)', new Date().toISOString(), decodeURIComponent(req.url))
+
 		const file = join(config.staticDir, broker.route)
 		if (req.headers.range)
 			await sendPartialContent(response, req.headers.range, file)

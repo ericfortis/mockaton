@@ -118,9 +118,10 @@ They will be saved in your `config.mocksDir` following the filename convention.
 
 
 ## Basic Usage
-Mockaton is a Node.js program available as an NPM module. After you have
-Node.js, you can create a sample mock in the default mocks directory, which
-is `./mockaton-mocks`. Then run it with `npx`, which installs it if needed.
+- Install Node.js. It usually installs the `npm` and `npx` programs as well.
+
+- Create a sample mock in the default mocks directory (`./mockaton-mocks`).
+Then, execute it with `npx`, which installs it if needed.
 ```sh
 mkdir -p mockaton-mocks/api/
 echo "[1,2,3]" > mockaton-mocks/api/foo.GET.200.json
@@ -129,7 +130,7 @@ npx mockaton --port 2345
 ```
 
 ## CLI Options
-CLI options override their counterparts in `mockaton.config.js`
+The CLI options override their counterparts in `mockaton.config.js`
 
 ```txt
 -c, --config <file>    (default: ./mockaton.config.js)
@@ -147,7 +148,7 @@ CLI options override their counterparts in `mockaton.config.js`
 
 
 ## mockaton.config.js (Optional)
-As an overview, these are the default options:
+As an overview, these are the defaults:
 ```js
 import {
   defineConfig,

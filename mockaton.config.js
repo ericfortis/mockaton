@@ -1,5 +1,7 @@
 import { jwtCookie, defineConfig } from './index.js'
 
+// Non-default settings we use for developing Mockaton.
+// See src/config.js for all the options.
 export default defineConfig({
 	port: 2345,
 

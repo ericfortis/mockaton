@@ -851,9 +851,12 @@ function dittoSplitPaths(paths) {
 
 
 function syntaxJSON(json) {
+	const MAX_NODES = 1000
+	let nNodes = 0
 	const frag = document.createDocumentFragment()
 
 	function span(className, textContent) {
+		nNodes++
 		const s = document.createElement('span')
 		s.className = className
 		s.textContent = textContent
@@ -861,13 +864,17 @@ function syntaxJSON(json) {
 	}
 
 	function text(t) {
+		nNodes++
 		frag.appendChild(document.createTextNode(t))
 	}
 
 	let match
 	let lastIndex = 0
-	syntaxJSON.regex.lastIndex = 0
+	syntaxJSON.regex.lastIndex = 0 // resets regex
 	while ((match = syntaxJSON.regex.exec(json)) !== null) {
+		if (nNodes > MAX_NODES)
+			break
+		
 		if (match.index > lastIndex)
 			text(json.slice(lastIndex, match.index))
 
@@ -882,6 +889,7 @@ function syntaxJSON(json) {
 		else if (str) span(CSS.syntaxStr, str)
 		else span(CSS.syntaxVal, full)
 	}
+	frag.normalize()
 	text(json.slice(lastIndex))
 	return frag
 }
@@ -891,9 +899,12 @@ syntaxJSON.regex = /("(?:\\u[a-fA-F0-9]{4}|\\[^u]|[^\\"])*")(\s*:)?|([{}\[\],:\s
 
 
 function syntaxXML(xml) {
+	const MAX_NODES = 1000
+	let nNodes = 0
 	const frag = document.createDocumentFragment()
 
 	function span(className, textContent) {
+		nNodes++
 		const s = document.createElement('span')
 		s.className = className
 		s.textContent = textContent
@@ -901,6 +912,7 @@ function syntaxXML(xml) {
 	}
 
 	function text(t) {
+		nNodes++
 		frag.appendChild(document.createTextNode(t))
 	}
 
@@ -908,6 +920,9 @@ function syntaxXML(xml) {
 	let lastIndex = 0
 	syntaxXML.regex.lastIndex = 0
 	while ((match = syntaxXML.regex.exec(xml)) !== null) {
+		if (nNodes > MAX_NODES)
+			break
+		
 		if (match.index > lastIndex)
 			text(xml.slice(lastIndex, match.index))
 
@@ -919,6 +934,7 @@ function syntaxXML(xml) {
 		else if (match[4]) span(CSS.syntaxAttrVal, match[4])
 	}
 	text(xml.slice(lastIndex))
+	frag.normalize()
 	return frag
 }
 syntaxXML.regex = /(<\/?|\/?>|\?>)|(?<=<\??\/?)([A-Za-z_:][\w:.-]*)|([A-Za-z_:][\w:.-]*)(?==)|("(?:[^"\\]|\\.)*")/g

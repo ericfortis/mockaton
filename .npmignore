@@ -12,5 +12,5 @@ pixaton-tests/
 
 src/**/*.test.js
 
-dev.config.js
+mockaton.config.js
 TODO.md

@@ -10,6 +10,9 @@
 - More real-time updates. Currently, it's only for add/remove mock but not for
   static files and changes from another client (Browser, or Commander). 
 - static plugins (content disposition, compression)
+- In our syntaxJSON highlighter, after X number of nodes, we stop highlighting so
+  it doesn't choke the browser. Think about some virtualized paging, that doesn’t break
+  selecting across pages, (e.g. for selecting and copying)
 - Document cookies for scraping mocks
 
 

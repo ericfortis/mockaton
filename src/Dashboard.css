@@ -305,6 +305,10 @@ main {
 table {
 	border-collapse: collapse;
 
+	tr {
+		border-top: 2px solid transparent;
+	}
+
 	th {
 		padding-bottom: 2px;
 		padding-left: 4px;
@@ -313,12 +317,6 @@ table {
 
 	tbody {
 		border-bottom: 20px solid transparent;
-	}
-
-	td:nth-child(3),
-	td:nth-child(4),
-	td:nth-child(5) {
-		max-width: 280px;
 	}
 }
 
@@ -332,7 +330,7 @@ table {
 	left: -8px;
 	display: inline-block;
 	width: 100%;
-	padding: 8px;
+	padding: 6px 8px;
 	margin-left: 4px;
 	border-radius: var(--radius);
 	color: var(--colorAccent);
@@ -349,9 +347,8 @@ table {
 }
 
 .MockSelector {
-	width: 100%;
 	height: 26px;
-	padding-right: 16px;
+	padding-right: 20px;
 	padding-left: 8px;
 	text-overflow: ellipsis;
 	font-size: 12px;

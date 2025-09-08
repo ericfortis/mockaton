@@ -1,5 +1,5 @@
 import { DEFAULT_500_COMMENT, HEADER_FOR_502 } from './ApiConstants.js'
-import { parseFilename } from './Filename.js'
+import { parseFilename, extractComments } from './Filename.js'
 import { Commander } from './ApiCommander.js'
 
 
@@ -394,11 +394,15 @@ function MockSelector({ broker }) {
 				CSS.MockSelector,
 				selected !== files[0] && CSS.nonDefault,
 				status >= 400 && status < 500 && CSS.status4xx)
-		}, files.map(file =>
-			r('option', {
-				value: file,
-				selected: file === selected
-			}, file))))
+		}, files.map(file => {
+			const { status, ext } = parseFilename(file)
+			return (
+				r('option', {
+					value: file,
+					selected: file === selected
+				}, `${status} ${ext} ${extractComments(file).join(' ')}`)
+			)
+		})))
 }
 
 /** @param {{ broker: ClientMockBroker }} props */
@@ -582,7 +586,7 @@ function PayloadViewerTitle({ file, status, statusText }) {
 	const { urlMask, method, ext } = parseFilename(file)
 	return (
 		r('span', null,
-			urlMask + '.' + method + '.',
+			urlMask.replace(/^\//, '') + '.' + method + '.',
 			r('abbr', { title: statusText }, status),
 			'.' + ext))
 }

@@ -1,5 +1,6 @@
 import { createServer } from 'node:http'
 
+import { log } from './utils/log.js'
 import { API } from './ApiConstants.js'
 import { config, setup } from './config.js'
 import { dispatchMock } from './MockDispatcher.js'
@@ -18,7 +19,7 @@ process.on('unhandledRejection', error => { throw error })
 export function Mockaton(options) {
 	const error = setup(options)
 	if (error) {
-		console.error(error)
+		log.error(error)
 		process.exitCode = 1
 		return
 	}
@@ -32,19 +33,19 @@ export function Mockaton(options) {
 
 	server.listen(config.port, config.host, function (error) {
 		if (error) {
-			console.error(error)
+			log.error(error)
 			process.exit(1)
 			return
 		}
 		const { address, port } = this.address()
 		const url = `http://${address}:${port}`
-		console.log('Listening', url)
-		console.log('Dashboard', url + API.dashboard)
+		log.info('Listening', url)
+		log.info('Dashboard', url + API.dashboard)
 		config.onReady(url + API.dashboard)
 	})
 
 	server.on('error', error => {
-		console.error(error.message)
+		log.error(error.message)
 		process.exit(1)
 	})
 
@@ -53,7 +54,7 @@ export function Mockaton(options) {
 
 
 async function onRequest(req, response) {
-	response.on('error', console.error)
+	response.on('error', log.warn)
 
 	try {
 		response.setHeader('Server', 'Mockaton')

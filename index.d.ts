@@ -41,10 +41,12 @@ interface Config {
 	corsMaxAge?: number
 
 	onReady?: (address: string) => void
+	
+	logLevel?: 'normal' | 'quiet'
 }
 
 
-export function Mockaton(options: Partial<Config>): Server
+export function Mockaton(options: Partial<Config>): Server | undefined
 export function defineConfig(options: Partial<Config>): Config
 
 export const jsToJsonPlugin: Plugin

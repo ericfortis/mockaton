@@ -1,10 +1,11 @@
 import { basename } from 'node:path'
 
+import { log } from './utils/log.js'
 import { cookie } from './cookie.js'
 import { MockBroker } from './MockBroker.js'
 import { listFilesRecursively } from './utils/fs.js'
 import { config, isFileAllowed } from './config.js'
-import { parseFilename, filenameIsValid } from './Filename.js'
+import { parseFilename, validateFilename } from './Filename.js'
 
 
 /**
@@ -62,6 +63,13 @@ export function registerMock(file, isFromWatcher = false) {
 		collection[method][urlMask].ensureItHas500()
 
 	return true
+}
+
+function filenameIsValid(file) {
+	const error = validateFilename(file)
+	if (error)
+		log.warn(error, file)
+	return !error
 }
 
 export function unregisterMock(file) {

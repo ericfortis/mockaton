@@ -2,6 +2,7 @@ import { join } from 'node:path'
 import { readFileSync } from 'node:fs'
 import { pathToFileURL } from 'node:url'
 
+import { log } from './utils/log.js'
 import { proxy } from './ProxyRelay.js'
 import { cookie } from './cookie.js'
 import { mimeFor } from './utils/mime.js'
@@ -22,7 +23,7 @@ export async function dispatchMock(req, response) {
 			return
 		}
 
-		console.log('%s %s → %s', new Date().toISOString(), decodeURIComponent(req.url), broker.file)
+		log.access(req.url, broker.file)
 		response.statusCode = broker.status
 
 		if (cookie.getCurrent())
@@ -45,7 +46,7 @@ export async function dispatchMock(req, response) {
 			sendNotFound(response)
 		else if (error.code === 'ERR_UNKNOWN_FILE_EXTENSION') {
 			if (error.toString().includes('Unknown file extension ".ts'))
-				console.error('\nLooks like you need a TypeScript compiler\n')
+				log.warn('\nLooks like you need a TypeScript compiler\n')
 			sendInternalServerError(response, error)
 		}
 		else

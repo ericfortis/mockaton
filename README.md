@@ -132,13 +132,17 @@ npx mockaton --port 2345
 CLI options override their counterparts in `mockaton.config.js`
 
 ```txt
--c, --config <file>       (default: ./mockaton.config.js)
+-c, --config <file>    (default: ./mockaton.config.js)
 
--H, --host <host>         (default: 127.0.0.1)
--p, --port <port>         (default: 0) which means auto-assigned
+-m, --mocks-dir <dir>  (default: ./mockaton-mocks/)
+-s, --static-dir <dir> (default: ./mockaton-static-mocks/)
 
--m, --mocks-dir <dir>     (default: ./mockaton-mocks/)
--s, --static-dir <dir>    (default: ./mockaton-static-mocks/)
+-H, --host <host>      (default: 127.0.0.1)
+-p, --port <port>      (default: 0) which means auto-assigned
+
+-q, --quiet            Errors only
+-h, --help             Show this help
+-v, --version          Show version
 ```
 
 
@@ -151,7 +155,6 @@ import {
   openInBrowser,
   SUPPORTED_METHODS
 } from 'mockaton'
-
 
 export default defineConfig({
   mocksDir: 'mockaton-mocks',
@@ -186,7 +189,9 @@ export default defineConfig({
   corsCredentials: true,
   corsMaxAge: 0,
 
-  onReady: await openInBrowser
+  onReady: await openInBrowser,
+  
+  logLevel: 'normal'
 })
 ```
 
@@ -421,9 +426,29 @@ config.onReady = () => {}
 
 At any rate, you can trigger any command besides opening a browser.
 
+<br/>
+
+### `logLevel?: 'quiet' | 'normal'`
+Defaults to `'normal'`.
+
+- `quiet`: only errors (stderr)
+- `normal`: info, access, warnings, and errors
+
+</details>
 
 
+<details>
+<summary>Programmatic Launch (Optional)</summary>
 
+```js
+import { Mockaton } from 'mockaton'
+import mockatonConfig from './mockaton.config.js'
+
+Mockaton({
+  ...mockatonConfig, // Not required, but it’s not read by default.
+  port: 3333, // etc.
+})
+```
 </details>
 
 

@@ -1,4 +1,5 @@
 import fs, { readFileSync } from 'node:fs'
+import { log } from './log.js'
 import { mimeFor } from './mime.js'
 import { HEADER_FOR_502 } from '../ApiConstants.js'
 
@@ -28,19 +29,19 @@ export function sendNotFound(response) {
 }
 
 export function sendUnprocessableContent(response, error) {
-	console.error(error)
+	log.warn(error)
 	response.statusCode = 422
 	response.end(error)
 }
 
 export function sendInternalServerError(response, error) {
-	console.error(error)
+	log.error(error)
 	response.statusCode = 500
 	response.end()
 }
 
 export function sendBadGateway(response, error) {
-	console.error('Fallback Proxy Error:', error.cause.message)
+	log.warn('Fallback Proxy Error:', error.cause.message)
 	response.statusCode = 502
 	response.setHeader(HEADER_FOR_502, 1)
 	response.end()

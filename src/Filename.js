@@ -22,15 +22,8 @@ export const includesComment = (filename, search) =>
 	extractComments(filename).some(comment => comment.includes(search))
 
 
-export function filenameIsValid(file) {
-	const error = validateFilename(file)
-	if (error)
-		console.error(error, file)
-	return !error
-}
-
 // TODO ThinkAbout 206 (reject, handle, or send in full?)
-function validateFilename(file) {
+export function validateFilename(file) {
 	const tokens = file.replace(reComments, '').split('.')
 	if (tokens.length < 4)
 		return 'Invalid Filename Convention'

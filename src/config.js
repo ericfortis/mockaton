@@ -1,5 +1,6 @@
 import { join, isAbsolute } from 'node:path'
 
+import { log } from './utils/log.js'
 import { isDirectory } from './utils/fs.js'
 import { openInBrowser } from './utils/openInBrowser.js'
 import { jsToJsonPlugin } from './MockDispatcher.js'
@@ -48,7 +49,9 @@ const schema = {
 	corsCredentials: [true, is(Boolean)],
 	corsMaxAge: [0, is(Number)],
 
-	onReady: [await openInBrowser, is(Function)]
+	onReady: [await openInBrowser, is(Function)],
+
+	logLevel: ['normal', val => ['normal', 'quiet'].includes(val)]
 }
 
 
@@ -68,18 +71,19 @@ export const ConfigValidator = Object.freeze(validators)
 
 /** @param {Partial<Config>} options */
 export function setup(options) {
-	if (options.mocksDir && !isAbsolute(options.mocksDir)) 
+	if (options.mocksDir && !isAbsolute(options.mocksDir))
 		options.mocksDir = join(process.cwd(), options.mocksDir)
-	
+
 	if (options.staticDir && !isAbsolute(options.staticDir))
 		options.staticDir = join(process.cwd(), options.staticDir)
-	
-	if (!options.staticDir && !isDirectory(defaults.staticDir)) 
+
+	if (!options.staticDir && !isDirectory(defaults.staticDir))
 		options.staticDir = ''
 
 	try {
 		Object.assign(config, options)
 		validate(config, ConfigValidator)
+		log.setLevel(config.logLevel)
 	}
 	catch (err) {
 		return err.message

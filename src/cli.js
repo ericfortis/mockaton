@@ -19,7 +19,10 @@ const args = parseArgs({
 		'static-dir': { short: 's', type: 'string' },
 
 		help: { short: 'h', type: 'boolean' },
-		version: { short: 'v', type: 'boolean' }
+		version: { short: 'v', type: 'boolean' },
+
+		quiet: { short: 'q', type: 'boolean' },
+		debug: { type: 'boolean' }
 	}
 }).values
 
@@ -32,16 +35,17 @@ else if (args.help)
 Usage: mockaton [options]
 
 Options:
-  -c, --config <file>       (default: ./mockaton.config.js)
+  -c, --config <file>    (default: ./mockaton.config.js)
   
-  -m, --mocks-dir <dir>     (default: ./mockaton-mocks/)
-  -s, --static-dir <dir>    (default: ./mockaton-static-mocks/)
+  -m, --mocks-dir <dir>  (default: ./mockaton-mocks/)
+  -s, --static-dir <dir> (default: ./mockaton-static-mocks/)
   
-  -H, --host <host>         (default: 127.0.0.1)
-  -p, --port <port>         (default: 0) which means auto-assigned
+  -H, --host <host>      (default: 127.0.0.1)
+  -p, --port <port>      (default: 0) which means auto-assigned
   
-  -h, --help                Show this help
-  -v, --version             Show version
+  -q, --quiet            Errors only
+  -h, --help             Show this help
+  -v, --version          Show version
 
 Notes:
   * mockaton.config.js supports more options, see:
@@ -63,6 +67,8 @@ else {
 
 	if (args['mocks-dir']) opts.mocksDir = args['mocks-dir']
 	if (args['static-dir']) opts.staticDir = args['static-dir']
+
+	if (args.quiet) opts.logLevel = 'quiet'
 
 	Mockaton(opts)
 }

@@ -1,6 +1,7 @@
 import { join } from 'node:path'
 import { readFileSync } from 'node:fs'
 
+import { log } from './utils/log.js'
 import { mimeFor } from './utils/mime.js'
 import { brokerByRoute } from './staticCollection.js'
 import { config, calcDelay } from './config.js'
@@ -12,11 +13,12 @@ export async function dispatchStatic(req, response) {
 
 	setTimeout(async () => {
 		if (!broker || broker.status === 404) { // TESTME
+			log.access(req.url, 'static404')
 			sendNotFound(response)
 			return
 		}
 
-		console.log('%s %s (static)', new Date().toISOString(), decodeURIComponent(req.url))
+		log.access(req.url, 'static200')
 
 		const file = join(config.staticDir, broker.route)
 		if (req.headers.range)

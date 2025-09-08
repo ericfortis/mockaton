@@ -383,7 +383,7 @@ function MockSelector({ broker }) {
 		selected = Strings.proxied
 		files.push(selected)
 	}
-
+	
 	return (
 		r('select', {
 			onChange,
@@ -400,7 +400,9 @@ function MockSelector({ broker }) {
 				r('option', {
 					value: file,
 					selected: file === selected
-				}, `${status} ${ext} ${extractComments(file).join(' ')}`)
+				}, file === Strings.proxied 
+					? Strings.proxied 
+					: `${status} ${ext} ${extractComments(file).join(' ')}`)
 			)
 		})))
 }

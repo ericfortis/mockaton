@@ -55,9 +55,9 @@ Nonetheless, there’s a programmatic API, which is handy
 for setting up tests (see **Commander&nbsp;API** section below).
 
 <picture>
-  <source media="(prefers-color-scheme: light)" srcset="pixaton-tests/macos/pic-for-readme.vp880x768.light.gold.png">
-  <source media="(prefers-color-scheme: dark)" srcset="pixaton-tests/macos/pic-for-readme.vp880x768.dark.gold.png">
-  <img alt="Mockaton Dashboard" src="pixaton-tests/macos/pic-for-readme.vp880x768.light.gold.png">
+  <source media="(prefers-color-scheme: light)" srcset="pixaton-tests/macos/pic-for-readme.vp810x768.light.gold.png">
+  <source media="(prefers-color-scheme: dark)" srcset="pixaton-tests/macos/pic-for-readme.vp810x768.dark.gold.png">
+  <img alt="Mockaton Dashboard" src="pixaton-tests/macos/pic-for-readme.vp810x768.light.gold.png">
 </picture>
 
 
@@ -120,7 +120,7 @@ They will be saved in your `config.mocksDir` following the filename convention.
 - Zero dependencies (no runtime and no build packages).
 - Does not write to disk. Except when you select ✅ **Save Mocks** for scraping mocks from a backend.
 - Does not initiate network connections (no logs, no telemetry).
-- Does not hijack your HTTP client (like others do).
+- Does not hijack your HTTP client.
 - Auditable. Organized and small &mdash; under 4 KLoC (50% is UI and tests) with 92% code coverage.
 
 

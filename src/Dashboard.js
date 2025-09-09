@@ -12,11 +12,12 @@ const Strings = {
 	delay: 'Delay',
 	delay_ms: 'Delay (ms)',
 	empty_response_body: '/* Empty Response Body */',
-	fallback_server: 'Fallback Backend',
+	fallback_server: 'Fallback',
 	fallback_server_error: '⛔ Fallback Backend Error',
-	fallback_server_placeholder: 'Type Server Address',
+	fallback_server_placeholder: 'Type Backend Address',
 	fetching: 'Fetching…',
 	got: 'Got',
+	group_by_method: 'Group by Method',
 	internal_server_error: 'Internal Server Error',
 	no_mocks_found: 'No mocks found',
 	not_found: 'Not Found',
@@ -37,8 +38,9 @@ const CSS = {
 	FallbackBackend: null,
 	Field: null,
 	GlobalDelayField: null,
-	Help: null,
+	GroupByMethod: null,
 	InternalServerErrorToggler: null,
+	MenuTrigger: null,
 	MockList: null,
 	MockSelector: null,
 	NotFoundToggler: null,
@@ -92,6 +94,8 @@ const state = {
 
 	fallbackAddress: '',
 
+	groupByMethod: true, // TODO read from localstorage
+
 	get canProxy() {
 		return Boolean(this.fallbackAddress)
 	}
@@ -129,6 +133,7 @@ const s = createSvgElement
 function App() {
 	return [
 		r(Header),
+		r(Menu),
 		r('main', null,
 			r('div', className(CSS.leftSide),
 				r(MockList),
@@ -148,17 +153,42 @@ function Header() {
 				width: 160
 			}),
 			r('div', null,
+				r(GlobalDelayField),
 				r(CookieSelector),
 				r(BulkSelector),
-				r(GlobalDelayField),
 				r(ProxyFallbackField),
 				r(ResetButton)),
+			r('button', {
+				className: CSS.MenuTrigger,
+				popovertarget: 'Menu'
+			}, r(MenuIcon))
+		))
+}
+
+function Menu() {
+	return (
+		r('menu', {
+				id: 'Menu',
+				popover: ''
+			},
+			r('label', className(CSS.GroupByMethod),
+				r('input', {
+					type: 'checkbox',
+					checked: state.groupByMethod,
+					onChange() {
+						state.groupByMethod = !state.groupByMethod
+						updateState()
+						// TODO localstorage
+					}
+				}),
+				r('span', null, Strings.group_by_method)),
+
 			r('a', {
-				className: CSS.Help,
 				href: 'https://github.com/ericfortis/mockaton',
 				target: '_blank',
 				rel: 'noopener noreferrer'
-			}, r(HelpIcon))))
+			}, 'Documentation')
+		))
 }
 
 
@@ -306,38 +336,69 @@ function ResetButton() {
 /** # MockList */
 
 function MockList() {
-	const { brokersByMethod } = state
+	const { brokersByMethod, groupByMethod } = state
 	if (!Object.keys(brokersByMethod).length)
 		return (
 			r('div', className(CSS.empty),
 				Strings.no_mocks_found))
+
+	if (groupByMethod)
+		return (
+			r('div', null,
+				r('table', null, Object.entries(brokersByMethod).map(([method, brokers]) =>
+					r(RowsByMethod, { method, brokers })))))
+
 	return (
 		r('div', null,
-			r('table', null, Object.entries(brokersByMethod).map(([method, brokers]) =>
-				r(SectionByMethod, { method, brokers })))))
+			r('table', null,
+				r(RowsUngrouped))))
 }
 
-function SectionByMethod({ method, brokers }) {
+function RowsByMethod({ method, brokers }) {
 	const canProxy = state.canProxy
-	const brokersSorted = Object.entries(brokers)
-		.filter(([, broker]) => broker.mocks.length > 1) // >1 because of autogen500
-		.sort((a, b) => a[0].localeCompare(b[0]))
-
-	const urlMasks = brokersSorted.map(([urlMask]) => urlMask)
-	const urlMasksDittoed = dittoSplitPaths(urlMasks)
+	const rawRows = Object.entries(brokers).map(([urlMask, broker]) => [urlMask, broker, method])
 	return (
 		r('tbody', null,
 			r('tr', null,
 				r('th', { colspan: 2 + Number(canProxy) }),
 				r('th', null, method)),
-			brokersSorted.map(([urlMask, broker], i) =>
-				r('tr', { 'data-method': method, 'data-urlMask': urlMask },
-					canProxy && r('td', null, r(ProxyToggler, { broker })),
-					r('td', null, r(DelayRouteToggler, { broker })),
-					r('td', null, r(InternalServerErrorToggler, { broker })),
-					r('td', null, r(PreviewLink, { method, urlMask, urlMaskDittoed: urlMasksDittoed[i] })),
-					r('td', null, r(MockSelector, { broker }))
-				))))
+			Rows(rawRows)))
+}
+
+function RowsUngrouped() {
+	const { brokersByMethod } = state
+	const rawRows = []
+	for (const [method, brokers] of Object.entries(brokersByMethod))
+		for (const [urlMask, broker] of Object.entries(brokers))
+			rawRows.push([urlMask, broker, method])
+
+	return r('tbody', null, Rows(rawRows))
+}
+
+function Rows(rawRows) {
+	const sorted = rawRows
+		.filter(([, broker]) => broker.mocks.length > 1) // >1 because of autogen500
+		.sort(([aUrl], [bUrl]) => aUrl.localeCompare(bUrl))
+	const urlMasksDittoed = dittoSplitPaths(sorted.map(([urlMask]) => urlMask))
+	return sorted.map(([urlMask, broker, method], i) =>
+		r(Row, {
+			broker,
+			method,
+			urlMask,
+			urlMaskDittoed: urlMasksDittoed[i]
+		}))
+}
+
+function Row({ method, urlMask, urlMaskDittoed, broker }) {
+	const canProxy = state.canProxy
+	return (
+		r('tr', { 'data-method': method, 'data-urlMask': urlMask },
+			canProxy && r('td', null, r(ProxyToggler, { broker })),
+			r('td', null, r(DelayRouteToggler, { broker })),
+			r('td', null, r(InternalServerErrorToggler, { broker })),
+			r('td', null, r(PreviewLink, { method, urlMask, urlMaskDittoed })),
+			r('td', null, r(MockSelector, { broker }))
+		))
 }
 
 function PreviewLink({ method, urlMask, urlMaskDittoed }) {
@@ -365,6 +426,8 @@ function PreviewLink({ method, urlMask, urlMaskDittoed }) {
 
 /** @param {{ broker: ClientMockBroker }} props */
 function MockSelector({ broker }) {
+	const { groupByMethod } = state
+
 	function onChange() {
 		const { urlMask, method } = parseFilename(this.value)
 		mockaton.select(this.value)
@@ -383,7 +446,16 @@ function MockSelector({ broker }) {
 		selected = Strings.proxied
 		files.push(selected)
 	}
-	
+
+	function nameFor(file) {
+		if (file === Strings.proxied)
+			return Strings.proxied
+		const { status, ext, method } = parseFilename(file)
+		return groupByMethod
+			? `${status} ${ext} ${extractComments(file).join(' ')}`
+			: `${method} ${status} ${ext} ${extractComments(file).join(' ')}`
+	}
+
 	return (
 		r('select', {
 			onChange,
@@ -394,17 +466,11 @@ function MockSelector({ broker }) {
 				CSS.MockSelector,
 				selected !== files[0] && CSS.nonDefault,
 				status >= 400 && status < 500 && CSS.status4xx)
-		}, files.map(file => {
-			const { status, ext } = parseFilename(file)
-			return (
-				r('option', {
-					value: file,
-					selected: file === selected
-				}, file === Strings.proxied 
-					? Strings.proxied 
-					: `${status} ${ext} ${extractComments(file).join(' ')}`)
-			)
-		})))
+		}, files.map(file => (
+			r('option', {
+				value: file,
+				selected: file === selected
+			}, nameFor(file))))))
 }
 
 /** @param {{ broker: ClientMockBroker }} props */
@@ -712,10 +778,10 @@ function CloudIcon() {
 			s('path', { d: 'm6.1 9.1c2.8 0 5 2.3 5 5' })))
 }
 
-function HelpIcon() {
+function MenuIcon() {
 	return (
 		s('svg', { viewBox: '0 0 24 24' },
-			s('path', { d: 'M11 18h2v-2h-2zm1-16C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2m0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8m0-14c-2.21 0-4 1.79-4 4h2c0-1.1.9-2 2-2s2 .9 2 2c0 2-3 1.75-3 5h2c0-2.25 3-2.5 3-5 0-2.21-1.79-4-4-4' })))
+			s('path', { d: 'M3 18h18v-2H3zm0-5h18v-2H3zm0-7v2h18V6z' })))
 }
 
 /**
@@ -880,7 +946,7 @@ function syntaxJSON(json) {
 	while ((match = syntaxJSON.regex.exec(json)) !== null) {
 		if (nNodes > MAX_NODES)
 			break
-		
+
 		if (match.index > lastIndex)
 			text(json.slice(lastIndex, match.index))
 
@@ -928,7 +994,7 @@ function syntaxXML(xml) {
 	while ((match = syntaxXML.regex.exec(xml)) !== null) {
 		if (nNodes > MAX_NODES)
 			break
-		
+
 		if (match.index > lastIndex)
 			text(xml.slice(lastIndex, match.index))
 

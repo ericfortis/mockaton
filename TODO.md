@@ -1,7 +1,6 @@
 # TODO
 
 - Refactor tests
-- Group By Route/Method localstorage
 - openapi
   - parsing it for examples?
   - displaying documentation (.openapi)

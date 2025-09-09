@@ -87,8 +87,8 @@ body {
 	box-sizing: border-box;
 	padding: 0;
 	border: 0;
-	font-family: inherit;
 	margin: 0;
+	font-family: inherit;
 	font-size: 100%;
 	outline: 0;
 	scrollbar-width: thin;
@@ -150,19 +150,20 @@ header {
 		align-items: flex-end;
 		gap: 16px 10px;
 
-		@media (max-width: 879px) {
+		@media (max-width: 800px) {
 			max-width: 400px;
 		}
 	}
 
 	img {
-		width: 130px;
-		align-self: center;
+		width: 120px;
+		align-self: end;
 		margin-right: 22px;
+		margin-bottom: 5px;
 	}
 
 	.Field {
-		width: 132px;
+		width: 116px;
 
 		span {
 			display: flex;
@@ -219,7 +220,7 @@ header {
 
 		&.FallbackBackend {
 			position: relative;
-			width: 210px;
+			width: 160px;
 
 			.SaveProxiedCheckbox {
 				position: absolute;
@@ -258,19 +259,35 @@ header {
 		}
 	}
 
-	.Help {
+	.MenuTrigger {
 		min-width: 24px;
 		align-self: end;
 		margin-left: auto;
 		fill: var(--colorSecondaryAction);
+		background: transparent;
 
 		&:hover {
 			fill: var(--colorAccent);
 		}
+	}
+}
 
-		@media (max-width: 520px) {
-			display: none;
-		}
+#Menu {
+	position: absolute;
+	top: 62px;
+	right: 10px;
+	left: auto;
+	padding: 20px;
+	border: 1px solid var(--colorSecondaryActionBorder);
+	border-radius: var(--radius);
+	box-shadow: var(--boxShadow1);
+	background: var(--colorHeaderBackground);
+
+	.GroupByMethod {
+		display: flex;
+		align-items: center;
+		margin-bottom: 12px;
+		gap: 4px;
 	}
 }
 
@@ -280,11 +297,7 @@ main {
 	min-height: 0;
 	grid-template-columns: minmax(min-content, max-content) 1fr;
 
-	@media (max-width: 1160px) {
-		grid-template-columns: min(580px) 1fr;
-	}
-
-	@media (max-width: 879px) {
+	@media (max-width: 800px) {
 		grid-template-columns: 100%;
 		grid-template-rows: 1fr 1fr;
 	}

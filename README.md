@@ -116,18 +116,40 @@ They will be saved in your `config.mocksDir` following the filename convention.
 
 <br/>
 
+## Privacy and Security
+- Zero dependencies (no runtime and no build packages).
+- Does not write to disk. Except when you select ✅ **Save Mocks** for scraping mocks from a backend.
+- Does not initiate network connections (no logs, no telemetry).
+- Does not hijack your HTTP client (like others do).
+- Auditable. Organized and small &mdash; under 4 KLoC (50% is UI and tests) with 92% code coverage.
+
 
 ## Basic Usage
-- Install Node.js. It usually installs the `npm` and `npx` programs as well.
-
-- Create a sample mock in the default mocks directory (`./mockaton-mocks`).
-Then, execute it with `npx`, which installs it if needed.
+Create a sample mock in the default mocks directory (`./mockaton-mocks`).
 ```sh
 mkdir -p mockaton-mocks/api/
 echo "[1,2,3]" > mockaton-mocks/api/foo.GET.200.json
+```
 
+Mockaton is a Node.js program, so you install and run it with:
+```shell
 npx mockaton --port 2345
 ```
+
+Or, if you have a `package.json`
+```shell
+npm install mockaton --save-dev
+```
+
+```json
+{
+  "scripts": {
+    "mockaton": "mockaton --port 2345"
+  }
+}
+```
+
+
 
 ## CLI Options
 The CLI options override their counterparts in `mockaton.config.js`

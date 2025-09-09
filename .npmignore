@@ -4,13 +4,10 @@
 .github
 .idea
 
-
 demo-app-vite/
 mockaton-mocks/
 mockaton-static-mocks/
 pixaton-tests/
-
 src/**/*.test.js
-
 mockaton.config.js
 TODO.md

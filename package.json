@@ -18,10 +18,10 @@
 		"mockaton": "src/cli.js"
 	},
 	"scripts": {
-		"test": "node --test \"src/**/*.test.js\"",
-		"coverage": "node --test --test-reporter=lcov --test-reporter-destination=.coverage/lcov.info --experimental-test-coverage \"src/**/*.test.js\"",
+		"test": "node --test 'src/**/*.test.js'",
+		"coverage": "node --test --test-reporter=lcov --test-reporter-destination=.coverage/lcov.info --experimental-test-coverage 'src/**/*.test.js'",
 		"start": "node --watch src/cli.js",
-		"pixaton": "node --test --import=./pixaton-tests/_setup.js --experimental-test-isolation=none \"pixaton-tests/**/*.test.js\"",
+		"pixaton": "node --test --import=./pixaton-tests/_setup.js --experimental-test-isolation=none 'pixaton-tests/**/*.test.js'",
 		"outdated": "npm outdated --parseable | awk -F: '{ printf \"npm i %-30s ;# %s\\n\", $4, $2 }'"
 	},
 	"devDependencies": {

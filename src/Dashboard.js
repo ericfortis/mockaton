@@ -27,7 +27,7 @@ const Strings = {
 	proxy_toggler: 'Proxy Toggler',
 	reset: 'Reset',
 	save_proxied: 'Save Mocks',
-	static_get: 'Static Folder GET',
+	static_get: 'Static GET',
 	title: 'Mockaton'
 }
 
@@ -746,6 +746,8 @@ async function parseError(response) {
 }
 
 function onError(error) {
+	if (error?.name === 'AbortError')
+		return
 	if (error?.message === 'Failed to fetch')
 		showErrorToast('Looks like the Mockaton server is not running')
 	else

@@ -1,16 +1,16 @@
 :root {
-	--radius: 4px;
-	--boxShadow1: 0 3px 1px -1px rgba(0, 0, 0, 0.04), 0 1px 1px 0 rgba(0, 0, 0, 0.1), 0 1px 3px 0 rgba(0, 0, 0, 0.1);
+	--radius: 8px;
+	--boxShadow1: rgba(0, 0, 0, 0.18) 0 2px 1px -1px, rgba(0, 0, 0, 0.12) 0 1px 1px 0, rgba(0, 0, 0, 0.1) 0 1px 3px 0px;
 }
 
 @media (prefers-color-scheme: light) {
 	:root {
 		--color4xxBackground: #ffedd1;
-		--colorAccent: #0068c1;
+		--colorAccent: #0b61ec;
 		--colorBackground: #fff;
 		--colorComboBoxHeaderBackground: #fff;
 		--colorComboBoxBackground: #eee;
-		--colorHeaderBackground: #f0f0f0;
+		--colorHeaderBackground: #efefef;
 		--colorSecondaryButtonBackground: #fcfcfc;
 		--colorSecondaryActionBorder: #ddd;
 		--colorSecondaryAction: #666;
@@ -31,7 +31,7 @@
 		color: #9b71e8
 	}
 	.syntaxStr, .syntaxAttrVal {
-		color: #3e8300
+		color: #388E3C
 	}
 }
 @media (prefers-color-scheme: dark) {
@@ -94,9 +94,15 @@ body {
 	scrollbar-width: thin;
 }
 
-select, a, input, button, summary {
-	&:focus-visible {
+select, a, input, button {
+	&:focus {
 		outline: 2px solid var(--colorAccent);
+	}
+}
+
+input[type="checkbox"] {
+	&:focus {
+		outline: 0;
 	}
 }
 
@@ -116,7 +122,6 @@ select {
 	font-size: 100%;
 	color: var(--colorText);
 	cursor: pointer;
-	outline: 0;
 	border-radius: var(--radius);
 	appearance: none;
 	background: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%23888888'><path d='M16.59 8.59 12 13.17 7.41 8.59 6 10l6 6 6-6z'/></svg>") no-repeat;
@@ -141,14 +146,14 @@ header {
 	display: flex;
 	width: 100%;
 	padding: 16px;
+	border-bottom: 1px solid var(--colorSecondaryActionBorder);
 	background: var(--colorHeaderBackground);
-	box-shadow: var(--boxShadow1);
 
 	> div {
 		display: flex;
 		flex-wrap: wrap;
 		align-items: flex-end;
-		gap: 16px 10px;
+		gap: 16px 8px;
 
 		@media (max-width: 800px) {
 			max-width: 400px;
@@ -189,9 +194,9 @@ header {
 			height: 28px;
 			padding: 4px 8px;
 			border: 0;
+			border: 1px solid var(--colorSecondaryActionBorder);
 			border-right: 3px solid transparent;
 			margin-top: 4px;
-			outline: 1px solid var(--colorSecondaryActionBorder);
 			color: var(--colorText);
 			font-size: 11px;
 			background-color: var(--colorComboBoxHeaderBackground);
@@ -201,7 +206,7 @@ header {
 		select:enabled:hover {
 			background: var(--colorHover);
 		}
-
+		
 		&.GlobalDelayField {
 			width: 84px;
 
@@ -525,7 +530,7 @@ table {
 .StaticFilesList {
 	a {
 		display: inline-block;
-		padding: 8px 0;
+		padding: 6px 0;
 		margin-left: 4px;
 		border-radius: var(--radius);
 		color: var(--colorAccent);
@@ -585,8 +590,7 @@ table {
 }
 
 .dittoDir {
-	opacity: 0.9;
-	filter: saturate(0);
+	opacity: 0.6;
 }
 
 .ErrorToast {

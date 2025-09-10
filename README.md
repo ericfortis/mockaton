@@ -131,7 +131,8 @@ mkdir -p mockaton-mocks/api/
 echo "[1,2,3]" > mockaton-mocks/api/foo.GET.200.json
 ```
 
-Mockaton is a Node.js program, so you install and run it with:
+Mockaton is a Node.js program available as an NPM package,
+so you run it with NPX, which installs it if needed:
 ```shell
 npx mockaton --port 2345
 ```
@@ -148,6 +149,19 @@ npm install mockaton --save-dev
   }
 }
 ```
+
+
+<details>
+<summary>Want an executable without using NPM?</summary>
+
+Clone this repo, and make a link to `src/cli.js`
+```shell
+git clone https://github.com/ericfortis/mockaton.git
+ln -s `realpath mockaton/src/cli.js` ~/bin/mockaton # some dir in your $PATH
+```
+
+
+</details>
 
 
 

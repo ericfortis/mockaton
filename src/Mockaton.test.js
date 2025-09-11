@@ -212,6 +212,12 @@ function request(path, options = {}) {
 }
 
 let commander = new Commander('')
+
+/** @returns {State} */
+async function fetchState() {
+	return await (await commander.getState(false)).json()
+}
+
 async function runTests() {
 	commander = new Commander(mockatonAddr())
 
@@ -346,7 +352,7 @@ async function testMockDispatching(url, file, expectedBody, forcedMime = undefin
 async function testDefaultMock() {
 	await testMockDispatching(...fixtureDefaultInName)
 	await it('sorts mocks list with the user specified default first for dashboard display', async () => {
-		const body = await (await commander.listMocks()).json()
+		const body = (await fetchState()).brokersByMethod
 		const { mocks } = body['GET'][fixtureDefaultInName[0]]
 		equal(mocks[0], fixtureDefaultInName[1])
 		equal(mocks[1], fixtureNonDefaultInName[1])
@@ -364,7 +370,7 @@ async function testRegistering() {
 			await sleep()
 			write(fixtureForRegisteringPutA[1], '')
 			await sleep()
-			const collection = await (await commander.listMocks()).json()
+			const collection = (await fetchState()).brokersByMethod
 			deepEqual(collection['PUT'][fixtureForRegisteringPutA[0]].mocks, [
 				fixtureForRegisteringPutA[1],
 				fixtureForRegisteringPutB[1],
@@ -375,7 +381,7 @@ async function testRegistering() {
 			await commander.select(temp500)
 			write(fixtureForRegisteringPutA500[1], '')
 			await sleep()
-			const collection = await (await commander.listMocks()).json()
+			const collection = (await fetchState()).brokersByMethod
 			const { mocks, currentMock } = collection['PUT'][fixtureForRegisteringPutA[0]]
 			deepEqual(mocks, [
 				fixtureForRegisteringPutA[1],
@@ -391,7 +397,7 @@ async function testRegistering() {
 			await commander.select(fixtureForRegisteringPutA[1])
 			remove(fixtureForRegisteringPutA[1])
 			await sleep()
-			const collection = await (await commander.listMocks()).json()
+			const collection = (await fetchState()).brokersByMethod
 			const { mocks, currentMock } = collection['PUT'][fixtureForRegisteringPutA[0]]
 			deepEqual(mocks, [
 				fixtureForRegisteringPutB[1],
@@ -407,7 +413,7 @@ async function testRegistering() {
 			await sleep()
 			remove(fixtureForUnregisteringPutC[1])
 			await sleep()
-			const collection = await (await commander.listMocks()).json()
+			const collection = (await fetchState()).brokersByMethod
 			equal(collection['PUT'][fixtureForUnregisteringPutC[0]], undefined)
 		})
 
@@ -415,7 +421,7 @@ async function testRegistering() {
 			remove(fixtureForRegisteringPutB[1])
 			remove(fixtureForRegisteringPutA500[1])
 			await sleep()
-			const collection = await (await commander.listMocks()).json()
+			const collection = (await fetchState()).brokersByMethod
 			equal(collection['PUT'], undefined)
 		})
 	})
@@ -476,10 +482,8 @@ async function testPreservesExiting500(url, file, expectedBody) {
 }
 
 async function testExtractsAllComments(expected) {
-	const res = await commander.listComments()
-	const body = await res.json()
-	await it('Extracts all comments without duplicates', () =>
-		deepEqual(body, expected))
+	await it('Extracts all comments without duplicates', async () =>
+		deepEqual((await fetchState()).comments, expected))
 }
 
 async function testItBulkSelectsByComment(comment, tests) {
@@ -492,8 +496,7 @@ async function testItBulkSelectsByComment(comment, tests) {
 async function testItUpdatesCookie() {
 	await describe('Cookie', () => {
 		it('Defaults to the first key:value', async () => {
-			const res = await commander.listCookies()
-			deepEqual(await res.json(), [
+			deepEqual((await fetchState()).cookies, [
 				['userA', true],
 				['userB', false]
 			])
@@ -501,8 +504,7 @@ async function testItUpdatesCookie() {
 
 		it('Updates selected cookie', async () => {
 			await commander.selectCookie('userB')
-			const res = await commander.listCookies()
-			deepEqual(await res.json(), [
+			deepEqual((await fetchState()).cookies, [
 				['userA', false],
 				['userB', true]
 			])
@@ -563,8 +565,8 @@ async function testStaticFileServing() {
 
 async function testStaticFileList() {
 	await it('Static File List', async () => {
-		const res = await commander.listStaticFiles()
-		deepEqual(Object.keys(await res.json()).sort(), staticFiles.map(([file]) => '/' + file).sort())
+		const { staticBrokers } = await fetchState()
+		deepEqual(Object.keys(staticBrokers).sort(), staticFiles.map(([file]) => '/' + file).sort())
 	})
 }
 
@@ -629,12 +631,12 @@ async function testSetProxyFallbackURL() {
 	await it('sets fallback', async () => {
 		const res = await commander.setProxyFallback('http://example.com')
 		equal(res.status, 200)
-		equal(await (await commander.getProxyFallback()).json(), 'http://example.com')
+		equal((await fetchState()).proxyFallback, 'http://example.com')
 	})
 	await it('unsets fallback', async () => {
 		const res = await commander.setProxyFallback('')
 		equal(res.status, 200)
-		equal(await (await commander.getProxyFallback()).json(), '')
+		equal((await fetchState()).proxyFallback, '')
 	})
 }
 
@@ -648,10 +650,10 @@ async function testSetCollectProxied() {
 
 		it('200 set and unset', async () => {
 			await commander.setCollectProxied(true)
-			equal(await (await commander.getCollectProxied()).json(), true)
+			equal((await fetchState()).collectProxied, true)
 
 			await commander.setCollectProxied(false)
-			equal(await (await commander.getCollectProxied()).json(), false)
+			equal((await fetchState()).collectProxied, false)
 		})
 	})
 }
@@ -699,8 +701,8 @@ async function testSetRouteIsDelayed() {
 
 		await it('200', async () => {
 			await commander.setRouteIsDelayed('GET', route, true)
-			const mocks = await commander.listMocks()
-			equal((await mocks.json())['GET'][route].currentMock.delayed, true)
+			const mocks = (await fetchState()).brokersByMethod
+			equal(mocks['GET'][route].currentMock.delayed, true)
 		})
 	})
 }
@@ -731,8 +733,8 @@ async function testSetRouteIsProxied() {
 			await commander.setProxyFallback('https://example.com')
 			const res = await commander.setRouteIsProxied('GET', route, true)
 			equal(res.status, 200)
-			const mocks = await commander.listMocks()
-			equal((await mocks.json())['GET'][route].currentMock.file, '')
+			const collection = (await fetchState()).brokersByMethod
+			equal(collection['GET'][route].currentMock.file, '')
 		})
 	})
 }
@@ -748,10 +750,10 @@ async function testSetCorsAllowed() {
 		it('200', async () => {
 			const res = await commander.setCorsAllowed(true)
 			equal(res.status, 200)
-			equal(await (await commander.getCorsAllowed()).json(), true)
+			equal((await fetchState()).corsAllowed, true)
 
 			await commander.setCorsAllowed(false)
-			equal(await (await commander.getCorsAllowed()).json(), false)
+			equal((await fetchState()).corsAllowed, false)
 		})
 	})
 }
@@ -768,7 +770,7 @@ async function testSetGlobalDelay() {
 		it('200 for valid global delay value', async () => {
 			const res = await commander.setGlobalDelay(1000)
 			equal(res.status, 200)
-			equal(await (await commander.getGlobalDelay()).json(), 1000)
+			equal((await fetchState()).delay, 1000)
 		})
 	})
 }
@@ -791,8 +793,8 @@ async function testSetStaticRouteIsDelayed() {
 
 		await it('200', async () => {
 			await commander.setStaticRouteIsDelayed(route, true)
-			const mocks = await commander.listStaticFiles()
-			equal((await mocks.json())[route].delayed, true)
+			const { staticBrokers } = await fetchState()
+			equal(staticBrokers[route].delayed, true)
 		})
 	})
 }
@@ -814,8 +816,8 @@ async function testSetStaticRouteStatusCode() {
 
 		await it('200', async () => {
 			await commander.setStaticRouteStatus(route, 404)
-			const mocks = await commander.listStaticFiles()
-			equal((await mocks.json())[route].status, 404)
+			const { staticBrokers } = await fetchState()
+			equal(staticBrokers[route].status, 404)
 		})
 	})
 }
@@ -829,13 +831,13 @@ async function testResetStaticRoutes() {
 		await commander.reset()
 
 		await it('resets delayed', async () => {
-			const mocks = await commander.listStaticFiles()
-			equal((await mocks.json())[route].delayed, false)
+			const { staticBrokers } = await fetchState()
+			equal(staticBrokers[route].delayed, false)
 		})
 
 		await it('resets status', async () => {
-			const mocks = await commander.listStaticFiles()
-			equal((await mocks.json())[route].status, 200)
+			const { staticBrokers } = await fetchState()
+			equal(staticBrokers[route].status, 200)
 		})
 	})
 }

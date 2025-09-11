@@ -25,15 +25,8 @@ export const apiGetRequests = new Map([
 		'/Logo.svg'
 	].map(f => [API.dashboard + f, serveDashboardAsset(f)]),
 
-	[API.cors, getIsCorsAllowed],
-	[API.static, listStaticFiles],
-	[API.mocks, listMockBrokers],
-	[API.cookies, listCookies],
-	[API.fallback, getProxyFallback],
-	[API.comments, listComments],
-	[API.globalDelay, getGlobalDelay],
+	[API.state, getState],
 	[API.syncVersion, longPollClientSyncVersion],
-	[API.collectProxied, getCollectProxied]
 ])
 
 export const apiPatchRequests = new Map([
@@ -62,16 +55,22 @@ function serveDashboardAsset(f) {
 	}
 }
 
-function listCookies(_, response) { sendJSON(response, cookie.list()) }
-function listComments(_, response) { sendJSON(response, mockBrokersCollection.extractAllComments()) }
+function getState(_, response) {
+	sendJSON(response, {
+		cookies: cookie.list(),
+		comments: mockBrokersCollection.extractAllComments(),
 
-function listStaticFiles(_, response) { sendJSON(response, staticCollection.all()) }
-function listMockBrokers(_, response) { sendJSON(response, mockBrokersCollection.all()) }
+		brokersByMethod: mockBrokersCollection.all(),
+		staticBrokers: staticCollection.all(),
 
-function getGlobalDelay(_, response) { sendJSON(response, config.delay) }
-function getProxyFallback(_, response) { sendJSON(response, config.proxyFallback) }
-function getCollectProxied(_, response) { sendJSON(response, config.collectProxied) }
-function getIsCorsAllowed(_, response) { sendJSON(response, config.corsAllowed) }
+		delay: config.delay,
+		delayJitter: config.delayJitter,
+
+		proxyFallback: config.proxyFallback,
+		collectProxied: config.collectProxied,
+		corsAllowed: config.corsAllowed
+	})
+}
 
 function longPollClientSyncVersion(req, response) {
 	if (uiSyncVersion.version !== Number(req.headers[DF.syncVersion])) {

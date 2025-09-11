@@ -8,9 +8,6 @@ export class Commander {
 		this.#addr = addr
 	}
 
-	#get(api) {
-		return fetch(this.#addr + api)
-	}
 	#patch(api, body) {
 		return fetch(this.#addr + api, {
 			method: 'PATCH',
@@ -18,47 +15,12 @@ export class Commander {
 		})
 	}
 
-	/** @type {JsonPromise<ClientBrokersByMethod>} */
-	listMocks() {
-		return this.#get(API.mocks)
+	/** @returns {JsonPromise<State>} */
+	getState() {
+		return fetch(this.#addr + API.state)
 	}
-
-	/** @type {JsonPromise<ClientStaticBrokers>} */
-	listStaticFiles() {
-		return this.#get(API.static)
-	}
-
-	/** @type {JsonPromise<[label:string, selected:boolean][]>} */
-	listCookies() {
-		return this.#get(API.cookies)
-	}
-
-	/** @type {JsonPromise<string[]>} */
-	listComments() {
-		return this.#get(API.comments)
-	}
-
-	/** @type {JsonPromise<string>} */
-	getProxyFallback() {
-		return this.#get(API.fallback)
-	}
-
-	/** @type {JsonPromise<boolean>} */
-	getCollectProxied() {
-		return this.#get(API.collectProxied)
-	}
-
-	/** @type {JsonPromise<boolean>} */
-	getCorsAllowed() {
-		return this.#get(API.cors)
-	}
-
-	/** @type {JsonPromise<number>} */
-	getGlobalDelay() {
-		return this.#get(API.globalDelay)
-	}
-
-	/** @type {JsonPromise<number>} */
+	
+	/** @returns {JsonPromise<number>} */
 	getSyncVersion(currentSyncVersion, abortSignal) {
 		return fetch(this.#addr + API.syncVersion, {
 			signal: AbortSignal.any([abortSignal, AbortSignal.timeout(LONG_POLL_SERVER_TIMEOUT + 1000)]),

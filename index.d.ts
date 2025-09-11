@@ -46,7 +46,7 @@ interface Config {
 
 
 export function Mockaton(options: Partial<Config>): Server | undefined
-export function defineConfig(options: Partial<Config>): Config
+export function defineConfig(options: Partial<Config>): Partial<Config>
 
 export const jsToJsonPlugin: Plugin
 
@@ -85,3 +85,17 @@ export type ClientStaticBrokers = {
 }
 
 
+export interface State {
+	brokersByMethod: ClientBrokersByMethod
+	staticBrokers: ClientStaticBrokers
+	
+	cookies: [label:string, selected:boolean][] 
+	comments: string[]
+	
+	delay: number
+	
+	collectProxied: boolean
+	proxyFallback: string
+	
+	corsAllowed: boolean
+}

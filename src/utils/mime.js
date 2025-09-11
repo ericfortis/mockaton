@@ -38,7 +38,7 @@ const mimes = {
 	jar: 'application/java-archive',
 	jpeg: 'image/jpeg',
 	jpg: 'image/jpeg',
-	js: 'text/javascript',
+	js: 'application/javascript',
 	json: 'application/json',
 	jsonld: 'application/ld+json',
 	mid: 'audio/midi',

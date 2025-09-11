@@ -75,56 +75,41 @@ for (const k of Object.keys(CSS))
 	CSS[k] = k
 
 
+/** @type {State & {
+ *   groupByMethod: boolean,
+ *   canProxy: boolean
+ *  }} */
 const state = {
-	/** @type {ClientBrokersByMethod} */
 	brokersByMethod: {},
-
-	/** @type {ClientStaticBrokers} */
 	staticBrokers: {},
-
-	/** @type {[label:string, selected:boolean][]} */
 	cookies: [],
-
-	/** @type {string[]} */
 	comments: [],
-
 	delay: 0,
-
 	collectProxied: false,
-
-	fallbackAddress: '',
-
+	proxyFallback: '',
+	
 	groupByMethod: true, // TODO read from localstorage
 
 	get canProxy() {
-		return Boolean(this.fallbackAddress)
+		return Boolean(this.proxyFallback)
 	}
 }
 
 const mockaton = new Commander(window.location.origin)
 updateState()
 initLongPoll()
-function updateState() {
-	Promise.all([
-		mockaton.listMocks(),
-		mockaton.listStaticFiles(),
-		mockaton.listCookies(),
-		mockaton.listComments(),
-		mockaton.getGlobalDelay(),
-		mockaton.getCollectProxied(),
-		mockaton.getProxyFallback()
-	].map(api => api.then(response => response.ok && response.json())))
-		.then(data => {
-			state.brokersByMethod = data[0]
-			state.staticBrokers = data[1]
-			state.cookies = data[2]
-			state.comments = data[3]
-			state.delay = data[4]
-			state.collectProxied = data[5]
-			state.fallbackAddress = data[6]
-			document.body.replaceChildren(...App())
-		})
-		.catch(onError)
+
+async function updateState() {
+	try {
+		const response = await mockaton.getState()
+		if (!response.ok)
+			throw response.status
+		Object.assign(state, await response.json())
+		document.body.replaceChildren(...App())
+	}
+	catch (error) {
+		onError(parseError(error))
+	}
 }
 
 const r = createElement
@@ -268,7 +253,7 @@ function GlobalDelayField() {
 
 
 function ProxyFallbackField() {
-	const { fallbackAddress, collectProxied } = state
+	const { proxyFallback, collectProxied } = state
 	function onChange() {
 		const saveCheckbox = this.closest(`.${CSS.FallbackBackend}`).querySelector('[type=checkbox]')
 		saveCheckbox.disabled = !this.validity.valid || !this.value.trim()
@@ -289,12 +274,12 @@ function ProxyFallbackField() {
 					type: 'url',
 					autocomplete: 'none',
 					placeholder: Strings.fallback_server_placeholder,
-					value: fallbackAddress,
+					value: proxyFallback,
 					onChange
 				})),
 			r(SaveProxiedCheckbox, {
 				collectProxied,
-				disabled: !fallbackAddress
+				disabled: !proxyFallback
 			})))
 }
 

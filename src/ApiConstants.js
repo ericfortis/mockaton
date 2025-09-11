@@ -3,20 +3,18 @@ export const API = {
 	dashboard: MOUNT,
 	bulkSelect: MOUNT + '/bulk-select-by-comment',
 	collectProxied: MOUNT + '/collect-proxied',
-	comments: MOUNT + '/comments',
 	cookies: MOUNT + '/cookies',
 	cors: MOUNT + '/cors',
 	delay: MOUNT + '/delay',
 	delayStatic: MOUNT + '/delay-static',
 	fallback: MOUNT + '/fallback',
 	globalDelay: MOUNT + '/global-delay',
-	mocks: MOUNT + '/mocks',
 	proxied: MOUNT + '/proxied',
 	reset: MOUNT + '/reset',
 	select: MOUNT + '/select',
-	static: MOUNT + '/static',
+	state: MOUNT + '/state',
 	staticStatus: MOUNT + '/static-status',
-	syncVersion: MOUNT + '/sync_version'
+	syncVersion: MOUNT + '/sync-version'
 }
 
 export const DF = { // Dashboard Fields (XHR)

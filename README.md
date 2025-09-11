@@ -121,7 +121,7 @@ They will be saved in your `config.mocksDir` following the filename convention.
 - Does not write to disk. Except when you select ✅ **Save Mocks** for scraping mocks from a backend.
 - Does not initiate network connections (no logs, no telemetry).
 - Does not hijack your HTTP client.
-- Auditable. Organized and small &mdash; under 4 KLoC (50% is UI and tests) with 92% code coverage.
+- Auditable. Organized and small &mdash; under 4 KLoC (50% is UI and tests).
 
 
 ## Basic Usage

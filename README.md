@@ -125,19 +125,21 @@ They will be saved in your `config.mocksDir` following the filename convention.
 
 
 ## Basic Usage
-Create a sample mock in the default mocks directory (`./mockaton-mocks`).
+1. Install Node.js, which comes with `npm` and `npx`
+
+2. Create a sample mock in the default mocks directory (`./mockaton-mocks`)
 ```sh
 mkdir -p mockaton-mocks/api/
 echo "[1,2,3]" > mockaton-mocks/api/foo.GET.200.json
 ```
-
-Mockaton is a Node.js program available as an NPM package,
-so you run it with NPX, which installs it if needed:
+3. Run Mockaton (npx installs it if needed)
 ```shell
 npx mockaton --port 2345
 ```
 
-Or, if you have a `package.json`
+<details>
+<summary>Or, if you have a package.json</summary>
+
 ```shell
 npm install mockaton --save-dev
 ```
@@ -149,10 +151,11 @@ npm install mockaton --save-dev
   }
 }
 ```
+</details>
 
 
 <details>
-<summary>Want an executable without using NPM?</summary>
+<summary>Or, if want an executable without using NPM?</summary>
 
 Clone this repo, and make a link to `src/cli.js`
 ```shell

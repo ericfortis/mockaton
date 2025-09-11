@@ -16,21 +16,19 @@ interface Config {
 
 	host?: string,
 	port?: number
+	
+	logLevel?: 'normal' | 'quiet'
+
+	delay?: number
+	delayJitter?: number
 
 	proxyFallback?: string
 	collectProxied?: boolean
 	formatCollectedJSON?: boolean
 
-	delay?: number
-	delayJitter?: number
-
 	cookies?: { [label: string]: string }
-
 	extraHeaders?: string[]
-
 	extraMimes?: { [fileExt: string]: string }
-
-	plugins?: [filenameTester: RegExp, plugin: Plugin][]
 
 	corsAllowed?: boolean,
 	corsOrigins?: string[]
@@ -39,10 +37,11 @@ interface Config {
 	corsExposedHeaders?: string[]
 	corsCredentials?: boolean
 	corsMaxAge?: number
+	
+	
+	plugins?: [filenameTester: RegExp, plugin: Plugin][]
 
 	onReady?: (address: string) => void
-	
-	logLevel?: 'normal' | 'quiet'
 }
 
 

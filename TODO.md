@@ -13,6 +13,7 @@
   it doesn't choke the browser. Think about some virtualized paging, that doesn’t break
   selecting across pages, (e.g. for selecting and copying)
 - Document cookies for scraping mocks
+- Think about --quiet, should it prevent opening the dashboard? (config.onReady callback)
 
 
 ### Cookies WIP

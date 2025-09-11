@@ -203,23 +203,19 @@ export default defineConfig({
 
   host: '127.0.0.1',
   port: 0,
+  
+  logLevel: 'normal',
+  
+  delay: 1200,
+  delayJitter: 0,
 
   proxyFallback: '',
   collectProxied: false,
   formatCollectedJSON: true,
 
-  delay: 1200,
-  delayJitter: 0,
-
   cookies: {},
-
   extraHeaders: [],
-
   extraMimes: {},
-
-  plugins: [
-    [/\.(js|ts)$/, jsToJsonPlugin]
-  ],
 
   corsAllowed: true,
   corsOrigins: ['*'],
@@ -228,10 +224,13 @@ export default defineConfig({
   corsExposedHeaders: [],
   corsCredentials: true,
   corsMaxAge: 0,
+  
+  
+  plugins: [
+    [/\.(js|ts)$/, jsToJsonPlugin]
+  ],
 
   onReady: await openInBrowser,
-  
-  logLevel: 'normal'
 })
 ```
 

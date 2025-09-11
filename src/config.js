@@ -22,24 +22,19 @@ const schema = {
 
 	host: ['127.0.0.1', is(String)],
 	port: [0, port => Number.isInteger(port) && port >= 0 && port < 2 ** 16], // 0 means auto-assigned
+	
+	logLevel: ['normal', val => ['normal', 'quiet'].includes(val)],
+	
+	delay: [1200, ms => Number.isInteger(ms) && ms >= 0],
+	delayJitter: [0, percent => percent >= 0 && percent <= 3],
 
 	proxyFallback: ['', optional(URL.canParse)], // e.g. http://localhost:9999
 	collectProxied: [false, is(Boolean)],
 	formatCollectedJSON: [true, is(Boolean)],
 
-	delay: [1200, ms => Number.isInteger(ms) && ms >= 0],
-	delayJitter: [0, percent => percent >= 0 && percent <= 3],
-
 	cookies: [{}, is(Object)], // defaults to the first kv
-
 	extraHeaders: [[], val => Array.isArray(val) && val.length % 2 === 0],
-
 	extraMimes: [{}, is(Object)],
-
-	plugins: [
-		[
-			[/\.(js|ts)$/, jsToJsonPlugin]
-		], Array.isArray],
 
 	corsAllowed: [true, is(Boolean)],
 	corsOrigins: [['*'], validateCorsAllowedOrigins],
@@ -48,10 +43,13 @@ const schema = {
 	corsExposedHeaders: [[], Array.isArray],
 	corsCredentials: [true, is(Boolean)],
 	corsMaxAge: [0, is(Number)],
+	
+	plugins: [
+		[
+			[/\.(js|ts)$/, jsToJsonPlugin]
+		], Array.isArray],
 
 	onReady: [await openInBrowser, is(Function)],
-
-	logLevel: ['normal', val => ['normal', 'quiet'].includes(val)]
 }
 
 
@@ -79,7 +77,7 @@ export function setup(options) {
 
 	if (!options.staticDir && !isDirectory(defaults.staticDir))
 		options.staticDir = ''
-
+	
 	try {
 		Object.assign(config, options)
 		validate(config, ConfigValidator)

@@ -55,7 +55,11 @@ export const apiPatchRequests = new Map([
 /** # GET */
 
 function serveDashboardAsset(f) {
-	return (_, response) => sendFile(response, join(import.meta.dirname, f))
+	return (_, response) => {
+		if (f.endsWith('.html'))
+			response.setHeader('Content-Security-Policy', `default-src 'self'; img-src data: blob: 'self'`)
+		return sendFile(response, join(import.meta.dirname, f))
+	}
 }
 
 function listCookies(_, response) { sendJSON(response, cookie.list()) }

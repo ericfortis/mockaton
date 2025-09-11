@@ -337,6 +337,8 @@ function ResetButton() {
 
 function MockList() {
 	const { brokersByMethod, groupByMethod } = state
+	const canProxy = state.canProxy
+
 	if (!Object.keys(brokersByMethod).length)
 		return (
 			r('div', className(CSS.empty),
@@ -345,49 +347,19 @@ function MockList() {
 	if (groupByMethod)
 		return (
 			r('div', null,
-				r('table', null, Object.entries(brokersByMethod).map(([method, brokers]) =>
-					r(RowsByMethod, { method, brokers })))))
+				r('table', null, Object.keys(brokersByMethod).map(method =>
+					r('tbody', null,
+						r('tr', null,
+							r('th', { colspan: 2 + Number(canProxy) }),
+							r('th', null, method)),
+						rowsFor(method).map(Row))))))
 
 	return (
 		r('div', null,
 			r('table', null,
-				r(RowsUngrouped))))
+				r('tbody', null, rowsFor('*').map(Row)))))
 }
 
-function RowsByMethod({ method, brokers }) {
-	const canProxy = state.canProxy
-	const rawRows = Object.entries(brokers).map(([urlMask, broker]) => [urlMask, broker, method])
-	return (
-		r('tbody', null,
-			r('tr', null,
-				r('th', { colspan: 2 + Number(canProxy) }),
-				r('th', null, method)),
-			Rows(rawRows)))
-}
-
-function RowsUngrouped() {
-	const { brokersByMethod } = state
-	const rawRows = []
-	for (const [method, brokers] of Object.entries(brokersByMethod))
-		for (const [urlMask, broker] of Object.entries(brokers))
-			rawRows.push([urlMask, broker, method])
-
-	return r('tbody', null, Rows(rawRows))
-}
-
-function Rows(rawRows) {
-	const sorted = rawRows
-		.filter(([, broker]) => broker.mocks.length > 1) // >1 because of autogen500
-		.sort(([aUrl], [bUrl]) => aUrl.localeCompare(bUrl))
-	const urlMasksDittoed = dittoSplitPaths(sorted.map(([urlMask]) => urlMask))
-	return sorted.map(([urlMask, broker, method], i) =>
-		r(Row, {
-			broker,
-			method,
-			urlMask,
-			urlMaskDittoed: urlMasksDittoed[i]
-		}))
-}
 
 function Row({ method, urlMask, urlMaskDittoed, broker }) {
 	const canProxy = state.canProxy
@@ -397,8 +369,27 @@ function Row({ method, urlMask, urlMaskDittoed, broker }) {
 			r('td', null, r(DelayRouteToggler, { broker })),
 			r('td', null, r(InternalServerErrorToggler, { broker })),
 			r('td', null, r(PreviewLink, { method, urlMask, urlMaskDittoed })),
-			r('td', null, r(MockSelector, { broker }))
-		))
+			r('td', null, r(MockSelector, { broker }))))
+}
+
+function rowsFor(targetMethod) {
+	const { brokersByMethod } = state
+
+	const rows = []
+	for (const [method, brokers] of Object.entries(brokersByMethod))
+		if (targetMethod === '*' || targetMethod === method)
+			for (const [urlMask, broker] of Object.entries(brokers))
+				rows.push({ method, urlMask, broker })
+
+	const sorted = rows
+		.filter((r) => r.broker.mocks.length > 1) // >1 because of autogen500
+		.sort((rA, rB) => rA.urlMask.localeCompare(rB.urlMask))
+
+	const urlMasksDittoed = dittoSplitPaths(sorted.map(r => r.urlMask))
+	return sorted.map((r, i) => ({
+		...r,
+		urlMaskDittoed: urlMasksDittoed[i]
+	}))
 }
 
 function PreviewLink({ method, urlMask, urlMaskDittoed }) {

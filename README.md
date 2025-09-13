@@ -181,6 +181,8 @@ The CLI options override their counterparts in `mockaton.config.js`
 -p, --port <port>      (default: 0) which means auto-assigned
 
 -q, --quiet            Errors only
+--no-open              Don’t open dashboard in a browser (noops onReady callback)
+
 -h, --help             Show this help
 -v, --version          Show version
 ```
@@ -748,6 +750,14 @@ with many partial matches, their first mock in alphabetical order wins.
 ### Set route is delayed flag
 ```js
 await mockaton.setRouteIsDelayed('GET', '/api/foo', true)
+// or
+await mockaton.setStaticRouteIsDelayed('/api/foo', true)
+```
+<br/>
+
+### Set static route status
+```js
+await mockaton.setStaticRouteStatus('/api/foo', 404)
 ```
 
 ### Set route is proxied flag
@@ -777,6 +787,23 @@ await mockaton.setCollectProxied(true)
 ```
 
 <br/>
+
+### Set global delay value
+```js
+await mockaton.setGlobalDelsy(1200) // ms
+```
+
+<br/>
+
+
+### Set CORS allowed
+```js
+await mockaton.setCorsAllowed(true)
+```
+
+<br/>
+
+
 
 ### Reset
 Re-initialize the collection. The selected mocks, cookies, and delays go back to

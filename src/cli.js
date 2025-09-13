@@ -18,11 +18,11 @@ const args = parseArgs({
 		'mocks-dir': { short: 'm', type: 'string' },
 		'static-dir': { short: 's', type: 'string' },
 
+		quiet: { short: 'q', type: 'boolean' },
+		'no-open': { short: 'n', type: 'boolean' },
+		
 		help: { short: 'h', type: 'boolean' },
 		version: { short: 'v', type: 'boolean' },
-
-		quiet: { short: 'q', type: 'boolean' },
-		debug: { type: 'boolean' }
 	}
 }).values
 
@@ -44,6 +44,8 @@ Options:
   -p, --port <port>      (default: 0) which means auto-assigned
   
   -q, --quiet            Errors only
+  --no-open              Don’t open dashboard in a browser (noops onReady callback)
+  
   -h, --help             Show this help
   -v, --version          Show version
 
@@ -69,6 +71,7 @@ else {
 	if (args['static-dir']) opts.staticDir = args['static-dir']
 
 	if (args.quiet) opts.logLevel = 'quiet'
+	if (args['no-open']) opts.onReady = () => {}
 
 	Mockaton(opts)
 }

@@ -18,7 +18,7 @@ import { validateCorsAllowedMethods, validateCorsAllowedOrigins } from './utils/
 const schema = {
 	mocksDir: [join(process.cwd(), 'mockaton-mocks'), isDirectory],
 	staticDir: [join(process.cwd(), 'mockaton-static-mocks'), optional(isDirectory)],
-	ignore: [/(\.DS_Store|~)$/, is(RegExp)],
+	ignore: [/(\.DS_Store|~)$/, is(RegExp)], // TODO think about .well-known/appspecific/com.chrome.devtools
 
 	host: ['127.0.0.1', is(String)],
 	port: [0, port => Number.isInteger(port) && port >= 0 && port < 2 ** 16], // 0 means auto-assigned

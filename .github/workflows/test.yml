@@ -1,17 +1,30 @@
 name: Test
-on: [push]
+on: [ push, pull_request ]
+
 permissions:
   contents: read
   pull-requests: write
+
 jobs:
   build:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+
       - name: Use Node.js
         uses: actions/setup-node@v4
         with:
           node-version: 24
         env:
           TMPDIR: ${{ runner.temp }}
-      - run: node --test src/**.test.js
+
+      - name: Install deps
+        run: npm ci
+
+      - name: Run tests with coverage
+        run: npm run coverage
+
+      - name: Upload to Codecov
+        uses: codecov/codecov-action@v4
+        with:
+          files: .coverage/lcov.info

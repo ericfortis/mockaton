@@ -1,11 +1,14 @@
 import { config } from '../config.js'
 import { EXT_FOR_UNKNOWN_MIME } from '../ApiConstants.js'
 
+
+// Generated with:
 // https://developer.mozilla.org/en-US/docs/Web/HTTP/Basics_of_HTTP/MIME_types/Common_types
-// m = {}; 
+// m = {}
 // for (const row of tbody.children)
-//   m[row.children[0].querySelector('code').innerText] = row.children[2].querySelector('code').innerText
-const mimes = {
+//  m[row.children[0].querySelector('code').innerText] = row.children[2].querySelector('code').innerText
+
+const extToMime = {
 	'3g2': 'video/3gpp2',
 	'3gp': 'video/3gpp',
 	'7z': 'application/x-7z-compressed',
@@ -87,9 +90,18 @@ const mimes = {
 	zip: 'application/zip'
 }
 
+const mimeToExt = mapMimeToExt(extToMime)
+
+function mapMimeToExt(e2m) {
+	const m = {}
+	for (const [ext, mime] of Object.entries(e2m))
+		m[mime] = ext
+	return m
+}
+
 export function mimeFor(filename) {
 	const ext = extname(filename).toLowerCase()
-	return config.extraMimes[ext] || mimes[ext] || ''
+	return config.extraMimes[ext] || extToMime[ext] || ''
 }
 function extname(filename) {
 	const i = filename.lastIndexOf('.')
@@ -104,12 +116,13 @@ export function extFor(mime) {
 		? findExt(mime)
 		: 'empty'
 }
-function findExt(targetMime) {
-	for (const [ext, mime] of Object.entries(config.extraMimes))
-		if (targetMime === mime)
-			return ext
-	for (const [ext, mime] of Object.entries(mimes))
-		if (targetMime === mime)
-			return ext
-	return EXT_FOR_UNKNOWN_MIME
+function findExt(rawMime) {
+	const m = parseMime(rawMime)
+	const extraMimeToExt = mapMimeToExt(config.extraMimes)
+	return extraMimeToExt[m] || mimeToExt[m] || EXT_FOR_UNKNOWN_MIME
+}
+
+export function parseMime(mime) {
+	return mime.split(';')[0].toLowerCase()
+	// RFC 9110 §8.3.1
 }

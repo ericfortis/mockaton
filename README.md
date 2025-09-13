@@ -4,6 +4,8 @@
 ![NPM Version](https://img.shields.io/npm/l/mockaton)
 [![Test](https://github.com/ericfortis/mockaton/actions/workflows/test.yml/badge.svg)](https://github.com/ericfortis/mockaton/actions/workflows/test.yml)
 [![CodeQL](https://github.com/ericfortis/mockaton/actions/workflows/github-code-scanning/codeql/badge.svg)](https://github.com/ericfortis/mockaton/actions/workflows/github-code-scanning/codeql)
+[![Coverage Status](https://coveralls.io/repos/github/ericfortis/mockaton/badge.svg?branch=main)](https://coveralls.io/github/ericfortis/mockaton?branch=main)
+
 
 An HTTP mock server for simulating APIs with minimal setup
 &mdash; ideal for testing difficult to reproduce states.
@@ -372,7 +374,8 @@ config.extraHeaders = [
 ### `extraMimes?: { [fileExt: string]: string }`
 ```js
 config.extraMimes = {
-  jpe: 'application/jpeg'
+  jpe: 'application/jpeg',
+  html: 'text/html; charset=utf-8' // overrides built-in
 }
 ```
 Those extra media types take precedence over the built-in

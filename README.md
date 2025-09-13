@@ -94,9 +94,9 @@ api/videos.GET.<b>500</b>.txt   # Internal Server Error
 ## Scraping Mocks from your Backend
 
 ### Option 1: Browser Extension
-With the companion [browser-devtools
+The companion Chrome [devtools
 extension](https://github.com/ericfortis/download-http-requests-browser-ext)
-you can download all the HTTP responses, and they
+lets you download all the HTTP responses, and they
 get saved following Mockaton’s filename convention.
 
 ### Option 2: Fallback to Your Backend
@@ -123,7 +123,7 @@ They will be saved in your `config.mocksDir` following the filename convention.
 - Does not write to disk. Except when you select ✅ **Save Mocks** for scraping mocks from a backend.
 - Does not initiate network connections (no logs, no telemetry).
 - Does not hijack your HTTP client.
-- Auditable. Organized and small &mdash; under 4 KLoC (50% is UI and tests).
+- Auditable. Organized and small &mdash; under 4 KLoC (half is UI and tests).
 
 
 ## Basic Usage
@@ -174,9 +174,9 @@ git clone https://github.com/ericfortis/mockaton.git
 ln -s `realpath mockaton/src/cli.js` ~/bin/mockaton # some dir in your $PATH
 ```
 
-
 </details>
 
+<br/>
 
 
 ## CLI Options
@@ -502,6 +502,14 @@ Mockaton({
   port: 3333, // etc.
 })
 ```
+
+`Mockaton` returns a Node.js [http.Server](https://nodejs.org/api/http.html#class-httpserver) instance. 
+So you can, for example:
+```js
+const server = Mockaton({ port: 3333 })
+server?.close()
+```
+
 </details>
 
 

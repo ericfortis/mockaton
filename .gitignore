@@ -1,6 +1,6 @@
 .env
 .idea
-.coverage
+lcov.info
 node_modules/
 
 pixaton-tests/**/*.candidate.png

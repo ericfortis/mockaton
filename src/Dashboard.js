@@ -87,7 +87,7 @@ const state = {
 	delay: 0,
 	collectProxied: false,
 	proxyFallback: '',
-	
+
 	groupByMethod: true, // TODO read from localstorage
 
 	get canProxy() {
@@ -811,30 +811,25 @@ function className(...args) {
 }
 
 
-function createElement(elem, props, ...children) {
-	if (typeof elem === 'function')
-		return elem(props)
+function createElement(tag, props, ...children) {
+	if (typeof tag === 'function')
+		return tag(props)
 
-	const node = document.createElement(elem)
-	for (const [key, value] of Object.entries(props || {}))
-		if (key === 'ref')
-			value.current = node
-		else if (key.startsWith('on'))
-			node.addEventListener(key.replace(/^on/, '').toLowerCase(), value)
-		else if (key === 'style')
-			Object.assign(node.style, value)
-		else if (key in node)
-			node[key] = value
-		else
-			node.setAttribute(key, value)
+	const node = document.createElement(tag)
+	for (const [k, v] of Object.entries(props || {}))
+		if (k === 'ref') v.current = node
+		else if (k === 'style') Object.assign(node.style, v)
+		else if (k.startsWith('on')) node.addEventListener(k.replace(/^on/, '').toLowerCase(), v)
+		else if (k in node) node[k] = v
+		else node.setAttribute(k, v)
 	node.append(...children.flat().filter(Boolean))
 	return node
 }
 
 function createSvgElement(tagName, props, ...children) {
 	const elem = document.createElementNS('http://www.w3.org/2000/svg', tagName)
-	for (const [key, value] of Object.entries(props))
-		elem.setAttribute(key, value)
+	for (const [k, v] of Object.entries(props))
+		elem.setAttribute(k, v)
 	elem.append(...children.flat().filter(Boolean))
 	return elem
 }

@@ -35,7 +35,7 @@ export function sendUnprocessableContent(response, error) {
 }
 
 export function sendInternalServerError(response, error) {
-	log.error(error)
+	log.error(error?.message || error, error?.stack || undefined)
 	response.statusCode = 500
 	response.end()
 }

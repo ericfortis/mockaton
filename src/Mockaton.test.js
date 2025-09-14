@@ -16,6 +16,7 @@ import { CorsHeader } from './utils/http-cors.js'
 import { parseFilename } from './Filename.js'
 import { listFilesRecursively } from './utils/fs.js'
 import { API, DEFAULT_500_COMMENT, DEFAULT_MOCK_COMMENT } from './ApiConstants.js'
+import { log } from './utils/log.js'
 
 
 const tmpDir = mkdtempSync(tmpdir() + '/mocks') + '/'
@@ -224,6 +225,7 @@ async function runTests() {
 	await testItRendersDashboard()
 	await testLongPollSyncVersion()
 	await test404()
+	await test500()
 
 	for (const [url, file, body] of fixtures)
 		await testMockDispatching(url, file, body)
@@ -330,6 +332,15 @@ async function test404() {
 	await it('Ignores static files ending in ~ by default, e.g. JetBrains temp files', async () => {
 		const res = await request('/ignored.js~')
 		equal(res.status, 404)
+	})
+}
+
+async function test500() {
+	await it('returns 500 when a handler throws', async (t) => {
+		const loggerSpy = t.mock.method(log, 'error')
+		const res = await request(API.throws)
+		equal(res.status, 500)
+		equal(loggerSpy.mock.calls[0].arguments[0], 'Test500')
 	})
 }
 
@@ -572,16 +583,15 @@ async function testStaticFileList() {
 
 async function testInvalidFilenamesAreIgnored() {
 	await it('Invalid filenames get skipped, so they don’t crash the server', async (t) => {
-		const loggerSpy = t.mock.method(console, 'warn')
-		loggerSpy.mock.mockImplementation(() => {}) // so they don’t render in the test report
+		const loggerSpy = t.mock.method(log, 'warn')
 
 		write('api/_INVALID_FILENAME_CONVENTION_.json', '')
 		write('api/bad-filename-method._INVALID_METHOD_.200.json', '')
 		write('api/bad-filename-status.GET._INVALID_STATUS_.json', '')
 		await commander.reset()
-		equal(loggerSpy.mock.calls[0].arguments[0].split('::')[2], 'Invalid Filename Convention')
-		equal(loggerSpy.mock.calls[1].arguments[0].split('::')[2], 'Unrecognized HTTP Method: "_INVALID_METHOD_"')
-		equal(loggerSpy.mock.calls[2].arguments[0].split('::')[2], 'Invalid HTTP Response Status: "NaN"')
+		equal(loggerSpy.mock.calls[0].arguments[0], 'Invalid Filename Convention')
+		equal(loggerSpy.mock.calls[1].arguments[0], 'Unrecognized HTTP Method: "_INVALID_METHOD_"')
+		equal(loggerSpy.mock.calls[2].arguments[0], 'Invalid HTTP Response Status: "NaN"')
 	})
 }
 

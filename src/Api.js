@@ -27,6 +27,7 @@ export const apiGetRequests = new Map([
 
 	[API.state, getState],
 	[API.syncVersion, longPollClientSyncVersion],
+	[API.throws, () => { throw new Error('Test500') }]
 ])
 
 export const apiPatchRequests = new Map([

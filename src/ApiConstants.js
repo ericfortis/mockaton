@@ -14,7 +14,8 @@ export const API = {
 	select: MOUNT + '/select',
 	state: MOUNT + '/state',
 	staticStatus: MOUNT + '/static-status',
-	syncVersion: MOUNT + '/sync-version'
+	syncVersion: MOUNT + '/sync-version',
+	throws: MOUNT + '/throws',
 }
 
 export const DF = { // Dashboard Fields (XHR)

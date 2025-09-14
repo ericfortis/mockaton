@@ -31,12 +31,7 @@ export function Mockaton(options) {
 
 	const server = createServer(onRequest)
 
-	server.listen(config.port, config.host, function (error) {
-		if (error) {
-			log.error(error)
-			process.exit(1)
-			return
-		}
+	server.listen(config.port, config.host, function () {
 		const { address, port } = this.address()
 		const url = `http://${address}:${port}`
 		log.info('Listening', url)

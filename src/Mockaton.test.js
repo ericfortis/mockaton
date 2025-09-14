@@ -297,6 +297,7 @@ async function runTests() {
 	await testSetStaticRouteIsDelayed()
 	await testSetStaticRouteStatusCode()
 	await testResetStaticRoutes()
+	await testUnregisterStaticRoute()
 
 	server.close()
 }
@@ -764,7 +765,7 @@ async function testSetRouteIsProxied() {
 			const collection2 = (await fetchState()).brokersByMethod
 			equal(collection2['GET'][route].currentMock.file, file) // default file
 		})
-		
+
 		await it('200 when unsetting', async () => {
 			const res = await commander.setRouteIsProxied('GET', route, false)
 			equal(res.status, 200)
@@ -877,6 +878,16 @@ async function testResetStaticRoutes() {
 	})
 }
 
+async function testUnregisterStaticRoute() {
+	await it('unregisters', async () => {
+		const route = fixtureStaticIndex[0]
+		removeStatic(route)
+		await sleep()
+		const { staticBrokers } = await fetchState()
+		equal(staticBrokers['/' + route], undefined)
+	})
+}
+
 
 
 
@@ -896,6 +907,9 @@ function write(filename, data) {
 
 function remove(filename) {
 	unlinkSync(tmpDir + filename)
+}
+function removeStatic(filename) {
+	unlinkSync(staticTmpDir + filename)
 }
 
 function writeStatic(filename, data) {

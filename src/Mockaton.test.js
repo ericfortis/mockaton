@@ -8,7 +8,6 @@ import { equal, deepEqual, match } from 'node:assert/strict'
 import { writeFileSync, mkdtempSync, mkdirSync, unlinkSync, readFileSync } from 'node:fs'
 
 import { log } from './utils/log.js'
-import { config } from './config.js' // TODO refactor so it's not needed here
 import { mimeFor } from './utils/mime.js'
 import { Mockaton } from './Mockaton.js'
 import { readBody } from './utils/http-request.js'
@@ -189,7 +188,6 @@ for (const [file, body] of staticFiles)
 const server = Mockaton({
 	mocksDir: tmpDir,
 	staticDir: staticTmpDir,
-	delay: 80,
 	onReady: () => {},
 	cookies: {
 		userA: 'CookieA',
@@ -232,6 +230,7 @@ async function runTests() {
 
 	await testDefaultMock()
 
+	await testSetGlobalDelay()
 	await testItUpdatesRouteDelay(...fixtureDelayed)
 	await testBadRequestWhenUpdatingNonExistingMockAlternative()
 
@@ -292,7 +291,6 @@ async function runTests() {
 	await commander.setProxyFallback('')
 
 	await testSetCorsAllowed()
-	await testSetGlobalDelay()
 
 	await testSetStaticRouteIsDelayed()
 	await testSetStaticRouteStatusCode()
@@ -449,16 +447,33 @@ async function testItUpdatesTheCurrentSelectedMock(url, file, expectedStatus, ex
 	})
 }
 
+async function testSetGlobalDelay() {
+	await describe('Set Global Delay', () => {
+		it('422 for invalid global delay value', async () => {
+			const res = await commander.setGlobalDelay('not-a-number')
+			equal(res.status, 422)
+			equal(await res.text(), 'Expected non-negative integer for "delay"')
+		})
+
+		it('200 for valid global delay value', async () => {
+			const res = await commander.setGlobalDelay(150)
+			equal(res.status, 200)
+			equal((await fetchState()).delay, 150)
+		})
+	})
+}
+
 async function testItUpdatesRouteDelay(url, file, expectedBody) {
 	const { method } = parseFilename(file)
+	const delay = 80
+	await commander.setGlobalDelay(delay)
 	await commander.setRouteIsDelayed(method, url, true)
 	const now = new Date()
 	const res = await request(url)
 	const body = await res.text()
 	await describe('url: ' + url, () => {
 		it('body is: ' + expectedBody, () => equal(body, JSON.stringify(expectedBody)))
-		it('delay', () => equal((new Date()).getTime() - now.getTime() > config.delay, true))
-		// TODO flaky test ^
+		it('delay', () => equal((new Date()).getTime() - now.getTime() > delay, true))
 	})
 }
 
@@ -781,21 +796,6 @@ async function testSetCorsAllowed() {
 }
 
 
-async function testSetGlobalDelay() {
-	await describe('Set Global Delay', () => {
-		it('422 for invalid global delay value', async () => {
-			const res = await commander.setGlobalDelay('not-a-number')
-			equal(res.status, 422)
-			equal(await res.text(), 'Expected non-negative integer for "delay"')
-		})
-
-		it('200 for valid global delay value', async () => {
-			const res = await commander.setGlobalDelay(1000)
-			equal(res.status, 200)
-			equal((await fetchState()).delay, 1000)
-		})
-	})
-}
 
 
 async function testSetStaticRouteIsDelayed() {
@@ -896,7 +896,7 @@ async function testStaticPartialContent() {
 
 function testWindowsPaths() {
 	it('normalizes backslashes with forward ones', () => {
-		const files = listFilesRecursively(config.mocksDir)
+		const files = listFilesRecursively(tmpDir)
 		equal(files[0], 'api/.GET.200.json')
 	})
 }

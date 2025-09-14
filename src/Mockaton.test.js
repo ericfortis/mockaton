@@ -7,6 +7,7 @@ import { randomUUID } from 'node:crypto'
 import { equal, deepEqual, match } from 'node:assert/strict'
 import { writeFileSync, mkdtempSync, mkdirSync, unlinkSync, readFileSync } from 'node:fs'
 
+import { log } from './utils/log.js'
 import { config } from './config.js'
 import { mimeFor } from './utils/mime.js'
 import { Mockaton } from './Mockaton.js'
@@ -16,7 +17,6 @@ import { CorsHeader } from './utils/http-cors.js'
 import { parseFilename } from './Filename.js'
 import { listFilesRecursively } from './utils/fs.js'
 import { API, DEFAULT_500_COMMENT, DEFAULT_MOCK_COMMENT } from './ApiConstants.js'
-import { log } from './utils/log.js'
 
 
 const tmpDir = mkdtempSync(tmpdir() + '/mocks') + '/'
@@ -720,7 +720,7 @@ async function testSetRouteIsProxied() {
 	await describe('Set Route is Proxied', async () => {
 		await commander.setProxyFallback('')
 
-		const [route] = fixtureGetSimple
+		const [route, file] = fixtureGetSimple
 		await it('422 for non-existing route', async () => {
 			const res = await commander.setRouteIsProxied('GET', route + '/non-existing', true)
 			equal(res.status, 422)
@@ -739,12 +739,24 @@ async function testSetRouteIsProxied() {
 			equal(await res.text(), `There’s no proxy fallback`)
 		})
 
-		await it('200', async () => {
+		await it('200 when setting', async () => {
 			await commander.setProxyFallback('https://example.com')
 			const res = await commander.setRouteIsProxied('GET', route, true)
 			equal(res.status, 200)
 			const collection = (await fetchState()).brokersByMethod
 			equal(collection['GET'][route].currentMock.file, '')
+
+			const res2 = await commander.setRouteIsProxied('GET', route, false)
+			equal(res2.status, 200)
+			const collection2 = (await fetchState()).brokersByMethod
+			equal(collection2['GET'][route].currentMock.file, file) // default file
+		})
+		
+		await it('200 when unsetting', async () => {
+			const res = await commander.setRouteIsProxied('GET', route, false)
+			equal(res.status, 200)
+			const collection = (await fetchState()).brokersByMethod
+			equal(collection['GET'][route].currentMock.file, file) // default file
 		})
 	})
 }

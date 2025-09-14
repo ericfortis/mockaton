@@ -290,6 +290,7 @@ async function runTests() {
 	await testRegistering()
 	await testSetRouteIsDelayed()
 	await testSetRouteIsProxied()
+	await commander.setProxyFallback('')
 
 	await testSetCorsAllowed()
 	await testSetGlobalDelay()
@@ -297,6 +298,7 @@ async function runTests() {
 	await testSetStaticRouteIsDelayed()
 	await testSetStaticRouteStatusCode()
 	await testResetStaticRoutes()
+	await testStaticPartialContent()
 	await testUnregisterStaticRoute()
 
 	server.close()
@@ -885,6 +887,24 @@ async function testUnregisterStaticRoute() {
 		await sleep()
 		const { staticBrokers } = await fetchState()
 		equal(staticBrokers['/' + route], undefined)
+	})
+}
+
+async function testStaticPartialContent() {
+	const route = '/' + fixtureStaticIndex[0]
+	const expectedBody = fixtureStaticIndex[1]
+	await it('206 serves partial content', async () => {
+		const res1 = await request(route, { headers: { range: 'bytes=0-3' } })
+		const res2 = await request(route, { headers: { range: 'bytes=4-' } })
+		equal(res1.status, 206)
+		equal(res2.status, 206)
+		const body = await res1.text() + await res2.text()
+		equal(body, expectedBody)
+	})
+
+	await it('416 on invalid range (end > start)', async () => {
+		const res1 = await request(route, { headers: { range: 'bytes=3-0' } })
+		equal(res1.status, 416)
 	})
 }
 

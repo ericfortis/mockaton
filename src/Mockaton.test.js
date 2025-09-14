@@ -361,8 +361,8 @@ async function testMockDispatching(url, file, expectedBody, forcedMime = undefin
 async function testDefaultMock() {
 	await testMockDispatching(...fixtureDefaultInName)
 	await it('sorts mocks list with the user specified default first for dashboard display', async () => {
-		const body = (await fetchState()).brokersByMethod
-		const { mocks } = body['GET'][fixtureDefaultInName[0]]
+		const { brokersByMethod } = await fetchState()
+		const { mocks } = brokersByMethod['GET'][fixtureDefaultInName[0]]
 		equal(mocks[0], fixtureDefaultInName[1])
 		equal(mocks[1], fixtureNonDefaultInName[1])
 	})
@@ -379,8 +379,8 @@ async function testRegistering() {
 			await sleep()
 			write(fixtureForRegisteringPutA[1], '')
 			await sleep()
-			const collection = (await fetchState()).brokersByMethod
-			deepEqual(collection['PUT'][fixtureForRegisteringPutA[0]].mocks, [
+			const { brokersByMethod } = await fetchState()
+			deepEqual(brokersByMethod['PUT'][fixtureForRegisteringPutA[0]].mocks, [
 				fixtureForRegisteringPutA[1],
 				fixtureForRegisteringPutB[1],
 				temp500
@@ -390,8 +390,8 @@ async function testRegistering() {
 			await commander.select(temp500)
 			write(fixtureForRegisteringPutA500[1], '')
 			await sleep()
-			const collection = (await fetchState()).brokersByMethod
-			const { mocks, currentMock } = collection['PUT'][fixtureForRegisteringPutA[0]]
+			const { brokersByMethod } = await fetchState()
+			const { mocks, currentMock } = brokersByMethod['PUT'][fixtureForRegisteringPutA[0]]
 			deepEqual(mocks, [
 				fixtureForRegisteringPutA[1],
 				fixtureForRegisteringPutB[1],
@@ -406,8 +406,8 @@ async function testRegistering() {
 			await commander.select(fixtureForRegisteringPutA[1])
 			remove(fixtureForRegisteringPutA[1])
 			await sleep()
-			const collection = (await fetchState()).brokersByMethod
-			const { mocks, currentMock } = collection['PUT'][fixtureForRegisteringPutA[0]]
+			const { brokersByMethod } = await fetchState()
+			const { mocks, currentMock } = brokersByMethod['PUT'][fixtureForRegisteringPutA[0]]
 			deepEqual(mocks, [
 				fixtureForRegisteringPutB[1],
 				fixtureForRegisteringPutA500[1]
@@ -422,16 +422,16 @@ async function testRegistering() {
 			await sleep()
 			remove(fixtureForUnregisteringPutC[1])
 			await sleep()
-			const collection = (await fetchState()).brokersByMethod
-			equal(collection['PUT'][fixtureForUnregisteringPutC[0]], undefined)
+			const { brokersByMethod } = await fetchState()
+			equal(brokersByMethod['PUT'][fixtureForUnregisteringPutC[0]], undefined)
 		})
 
 		await it('unregistering the last PUT mock removes PUT from collection', async () => {
 			remove(fixtureForRegisteringPutB[1])
 			remove(fixtureForRegisteringPutA500[1])
 			await sleep()
-			const collection = (await fetchState()).brokersByMethod
-			equal(collection['PUT'], undefined)
+			const { brokersByMethod } = await fetchState()
+			equal(brokersByMethod['PUT'], undefined)
 		})
 	})
 }
@@ -726,8 +726,8 @@ async function testSetRouteIsDelayed() {
 
 		await it('200', async () => {
 			await commander.setRouteIsDelayed('GET', route, true)
-			const mocks = (await fetchState()).brokersByMethod
-			equal(mocks['GET'][route].currentMock.delayed, true)
+			const { brokersByMethod } = await fetchState()
+			equal(brokersByMethod['GET'][route].currentMock.delayed, true)
 		})
 	})
 }
@@ -758,20 +758,20 @@ async function testSetRouteIsProxied() {
 			await commander.setProxyFallback('https://example.com')
 			const res = await commander.setRouteIsProxied('GET', route, true)
 			equal(res.status, 200)
-			const collection = (await fetchState()).brokersByMethod
-			equal(collection['GET'][route].currentMock.file, '')
+			const { brokersByMethod } = await fetchState()
+			equal(brokersByMethod['GET'][route].currentMock.file, '')
 
 			const res2 = await commander.setRouteIsProxied('GET', route, false)
 			equal(res2.status, 200)
-			const collection2 = (await fetchState()).brokersByMethod
-			equal(collection2['GET'][route].currentMock.file, file) // default file
+			const { brokersByMethod: b2 } = await fetchState()
+			equal(b2['GET'][route].currentMock.file, file) // default file
 		})
 
 		await it('200 when unsetting', async () => {
 			const res = await commander.setRouteIsProxied('GET', route, false)
 			equal(res.status, 200)
-			const collection = (await fetchState()).brokersByMethod
-			equal(collection['GET'][route].currentMock.file, file) // default file
+			const { brokersByMethod } = await fetchState()
+			equal(brokersByMethod['GET'][route].currentMock.file, file) // default file
 		})
 	})
 }

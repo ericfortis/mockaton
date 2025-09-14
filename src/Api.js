@@ -17,13 +17,13 @@ import { sendOK, sendJSON, sendUnprocessableContent, sendFile } from './utils/ht
 export const apiGetRequests = new Map([
 	[API.dashboard, serveDashboardAsset('Dashboard.html')],
 	...[
-		'/ApiConstants.js',
-		'/ApiCommander.js',
-		'/Dashboard.css',
-		'/Dashboard.js',
-		'/Filename.js',
-		'/Logo.svg'
-	].map(f => [API.dashboard + f, serveDashboardAsset(f)]),
+		API.dashboard + '/ApiConstants.js',
+		API.dashboard + '/ApiCommander.js',
+		API.dashboard + '/Dashboard.css',
+		API.dashboard + '/Dashboard.js',
+		API.dashboard + '/Filename.js',
+		API.dashboard + '/Logo.svg'
+	].map(serveDashboardAsset),
 
 	[API.state, getState],
 	[API.syncVersion, longPollClientSyncVersion],
@@ -52,7 +52,7 @@ function serveDashboardAsset(f) {
 	return (_, response) => {
 		if (f.endsWith('.html'))
 			response.setHeader('Content-Security-Policy', `default-src 'self'; img-src data: blob: 'self'`)
-		return sendFile(response, join(import.meta.dirname, f))
+		sendFile(response, join(import.meta.dirname, f))
 	}
 }
 

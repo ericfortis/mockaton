@@ -226,6 +226,7 @@ async function runTests() {
 	await testLongPollSyncVersion()
 	await test404()
 	await test500()
+	await testBodyParser()
 
 	for (const [url, file, body] of fixtures)
 		await testMockDispatching(url, file, body)
@@ -341,6 +342,18 @@ async function test500() {
 		const res = await request(API.throws)
 		equal(res.status, 500)
 		equal(loggerSpy.mock.calls[0].arguments[0], 'Test500')
+	})
+}
+
+async function testBodyParser() {
+	await it('rejects invalid json', async (t) => {
+		const loggerSpy = t.mock.method(log, 'warn')
+		const res = await request(API.cookies, {
+			method: 'PATCH',
+			body: '[invalid_json]'
+		})
+		equal(res.status, 422)
+		equal(loggerSpy.mock.calls[0].arguments[0], 'BodyReaderError: Could not parse')
 	})
 }
 

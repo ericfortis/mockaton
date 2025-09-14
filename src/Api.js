@@ -17,13 +17,13 @@ import { sendOK, sendJSON, sendUnprocessableContent, sendFile } from './utils/ht
 export const apiGetRequests = new Map([
 	[API.dashboard, serveDashboardAsset('Dashboard.html')],
 	...[
-		API.dashboard + '/ApiConstants.js',
-		API.dashboard + '/ApiCommander.js',
-		API.dashboard + '/Dashboard.css',
-		API.dashboard + '/Dashboard.js',
-		API.dashboard + '/Filename.js',
-		API.dashboard + '/Logo.svg'
-	].map(serveDashboardAsset),
+		'/ApiConstants.js',
+		'/ApiCommander.js',
+		'/Dashboard.css',
+		'/Dashboard.js',
+		'/Filename.js',
+		'/Logo.svg'
+	].map(f => [API.dashboard + f, serveDashboardAsset(f)]),
 
 	[API.state, getState],
 	[API.syncVersion, longPollClientSyncVersion],

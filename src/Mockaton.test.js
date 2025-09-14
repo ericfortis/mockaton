@@ -8,7 +8,7 @@ import { equal, deepEqual, match } from 'node:assert/strict'
 import { writeFileSync, mkdtempSync, mkdirSync, unlinkSync, readFileSync } from 'node:fs'
 
 import { log } from './utils/log.js'
-import { config } from './config.js'
+import { config } from './config.js' // TODO refactor so it's not needed here
 import { mimeFor } from './utils/mime.js'
 import { Mockaton } from './Mockaton.js'
 import { readBody } from './utils/http-request.js'
@@ -181,6 +181,7 @@ const staticFiles = [
 	['assets/app.js', 'const app = 1'],
 	['another-entry/index.html', '<h1>Another</h1>']
 ]
+const fixtureStaticAddAtRuntime = ['runtime.html', '<h1>Runtime</h1>']
 writeStatic('ignored.js~', 'ignored_file_body')
 for (const [file, body] of staticFiles)
 	writeStatic(file, body)
@@ -223,10 +224,8 @@ async function runTests() {
 	commander = new Commander(mockatonAddr())
 
 	await testItRendersDashboard()
-	await testLongPollSyncVersion()
 	await test404()
 	await test500()
-	await testBodyParser()
 
 	for (const [url, file, body] of fixtures)
 		await testMockDispatching(url, file, body)
@@ -301,6 +300,9 @@ async function runTests() {
 	await testStaticPartialContent()
 	await testUnregisterStaticRoute()
 
+	await testLongPollSyncVersion()
+	await testBodyParser()
+
 	server.close()
 }
 
@@ -312,13 +314,6 @@ async function testItRendersDashboard() {
 		it('Renders HTML', () => match(body, new RegExp('<!DOCTYPE html>'))))
 }
 
-async function testLongPollSyncVersion() {
-	await it('route is bound', async () => {
-		const controller = new AbortController()
-		const response = await commander.getSyncVersion(-1, controller.signal)
-		equal(response.status, 200)
-	})
-}
 
 async function test404() {
 	await it('Sends 404 when there is no mock', async () => {
@@ -348,17 +343,6 @@ async function test500() {
 	})
 }
 
-async function testBodyParser() {
-	await it('rejects invalid json', async (t) => {
-		const loggerSpy = t.mock.method(log, 'warn')
-		const res = await request(API.cookies, {
-			method: 'PATCH',
-			body: '[invalid_json]'
-		})
-		equal(res.status, 422)
-		equal(loggerSpy.mock.calls[0].arguments[0], 'BodyReaderError: Could not parse')
-	})
-}
 
 async function testMockDispatching(url, file, expectedBody, forcedMime = undefined) {
 	const { urlMask, method, status } = parseFilename(file)
@@ -910,11 +894,40 @@ async function testStaticPartialContent() {
 
 
 
-
 function testWindowsPaths() {
 	it('normalizes backslashes with forward ones', () => {
 		const files = listFilesRecursively(config.mocksDir)
 		equal(files[0], 'api/.GET.200.json')
+	})
+}
+
+
+async function testLongPollSyncVersion() {
+	await it('responds immediately when version mismatches', async () => {
+		const controller = new AbortController()
+		const res1 = await commander.getSyncVersion(-1, controller.signal)
+		equal(res1.status, 200)
+		const version = await res1.json()
+
+		const res2Prom = commander.getSyncVersion(version, controller.signal)
+		writeStatic(...fixtureStaticAddAtRuntime)
+		await sleep()
+		const res2 = await res2Prom
+		equal(res2.status, 200)
+		equal(await res2.json(), version + 1)
+	})
+}
+
+
+async function testBodyParser() {
+	await it('rejects invalid json in API requests', async (t) => {
+		const loggerSpy = t.mock.method(log, 'warn')
+		const res = await request(API.cookies, {
+			method: 'PATCH',
+			body: '[invalid_json]'
+		})
+		equal(res.status, 422)
+		equal(loggerSpy.mock.calls[0].arguments[0], 'BodyReaderError: Could not parse')
 	})
 }
 

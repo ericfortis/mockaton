@@ -7,9 +7,8 @@ import { proxy } from './ProxyRelay.js'
 import { cookie } from './cookie.js'
 import { mimeFor } from './utils/mime.js'
 import { config, calcDelay } from './config.js'
-import { BodyReaderError } from './utils/http-request.js'
 import * as mockBrokerCollection from './mockBrokersCollection.js'
-import { sendInternalServerError, sendNotFound, sendUnprocessableContent } from './utils/http-response.js'
+import { sendInternalServerError, sendNotFound } from './utils/http-response.js'
 
 
 export async function dispatchMock(req, response) {
@@ -40,11 +39,9 @@ export async function dispatchMock(req, response) {
 		setTimeout(() => response.end(body), Number(broker.delayed && calcDelay()))
 	}
 	catch (error) {
-		if (error instanceof BodyReaderError)
-			sendUnprocessableContent(response, error.name)
-		else if (error.code === 'ENOENT') // mock-file has been deleted
+		if (error?.code === 'ENOENT') // mock-file has been deleted
 			sendNotFound(response)
-		else if (error.code === 'ERR_UNKNOWN_FILE_EXTENSION') {
+		else if (error?.code === 'ERR_UNKNOWN_FILE_EXTENSION') {
 			if (error.toString().includes('Unknown file extension ".ts'))
 				log.warn('\nLooks like you need a TypeScript compiler\n')
 			sendInternalServerError(response, error)

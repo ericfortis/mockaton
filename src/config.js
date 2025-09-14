@@ -22,9 +22,9 @@ const schema = {
 
 	host: ['127.0.0.1', is(String)],
 	port: [0, port => Number.isInteger(port) && port >= 0 && port < 2 ** 16], // 0 means auto-assigned
-	
+
 	logLevel: ['normal', val => ['normal', 'quiet'].includes(val)],
-	
+
 	delay: [1200, ms => Number.isInteger(ms) && ms >= 0],
 	delayJitter: [0, percent => percent >= 0 && percent <= 3],
 
@@ -43,13 +43,13 @@ const schema = {
 	corsExposedHeaders: [[], Array.isArray],
 	corsCredentials: [true, is(Boolean)],
 	corsMaxAge: [0, is(Number)],
-	
+
 	plugins: [
 		[
 			[/\.(js|ts)$/, jsToJsonPlugin]
 		], Array.isArray],
 
-	onReady: [await openInBrowser, is(Function)],
+	onReady: [await openInBrowser, is(Function)]
 }
 
 
@@ -77,15 +77,10 @@ export function setup(options) {
 
 	if (!options.staticDir && !isDirectory(defaults.staticDir))
 		options.staticDir = ''
-	
-	try {
-		Object.assign(config, options)
-		validate(config, ConfigValidator)
-		log.setLevel(config.logLevel)
-	}
-	catch (err) {
-		return err.message
-	}
+
+	Object.assign(config, options)
+	validate(config, ConfigValidator)
+	log.setLevel(config.logLevel)
 }
 
 

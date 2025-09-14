@@ -8,26 +8,35 @@ import { Mockaton } from '../index.js'
 import pkgJSON from '../package.json' with { type: 'json' }
 
 
-const args = parseArgs({
-	options: {
-		config: { short: 'c', type: 'string' },
+process.on('unhandledRejection', error => { throw error })
 
-		port: { short: 'p', type: 'string' },
-		host: { short: 'H', type: 'string' },
+let args
+try {
+	args = parseArgs({
+		options: {
+			config: { short: 'c', type: 'string' },
 
-		'mocks-dir': { short: 'm', type: 'string' },
-		'static-dir': { short: 's', type: 'string' },
+			port: { short: 'p', type: 'string' },
+			host: { short: 'H', type: 'string' },
 
-		quiet: { short: 'q', type: 'boolean' },
-		'no-open': { short: 'n', type: 'boolean' },
-		
-		help: { short: 'h', type: 'boolean' },
-		version: { short: 'v', type: 'boolean' },
-	}
-}).values
+			'mocks-dir': { short: 'm', type: 'string' },
+			'static-dir': { short: 's', type: 'string' },
+
+			quiet: { short: 'q', type: 'boolean' },
+			'no-open': { short: 'n', type: 'boolean' },
+
+			help: { short: 'h', type: 'boolean' },
+			version: { short: 'v', type: 'boolean' }
+		}
+	}).values
+}
+catch (error) {
+	console.error(error.message)
+	process.exit(1)
+}
 
 
-if (args.version)
+if (args.version) 
 	console.log(pkgJSON.version)
 
 else if (args.help)
@@ -73,5 +82,14 @@ else {
 	if (args.quiet) opts.logLevel = 'quiet'
 	if (args['no-open']) opts.onReady = () => {}
 
-	Mockaton(opts)
+	try {
+		Mockaton(opts).on('error', error => {
+			console.error(error.message)
+			process.exit(1)
+		})
+	}
+	catch (err) {
+		console.error(err?.message || err)
+		process.exit(1)
+	}
 }

@@ -14,15 +14,8 @@ import { apiPatchRequests, apiGetRequests } from './Api.js'
 import { sendNoContent, sendInternalServerError, sendUnprocessableContent } from './utils/http-response.js'
 
 
-process.on('unhandledRejection', error => { throw error })
-
 export function Mockaton(options) {
-	const error = setup(options)
-	if (error) {
-		log.error(error)
-		process.exitCode = 1
-		return
-	}
+	setup(options)
 
 	mockBrokerCollection.init()
 	staticCollection.init()
@@ -37,11 +30,6 @@ export function Mockaton(options) {
 		log.info('Listening', url)
 		log.info('Dashboard', url + API.dashboard)
 		config.onReady(url + API.dashboard)
-	})
-
-	server.on('error', error => {
-		log.error(error.message)
-		process.exit(1)
 	})
 
 	return server

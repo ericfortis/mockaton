@@ -493,22 +493,16 @@ Defaults to `'normal'`.
 <details>
 <summary>Programmatic Launch (Optional)</summary>
 
+
 ```js
 import { Mockaton } from 'mockaton'
 import mockatonConfig from './mockaton.config.js'
 
-Mockaton({
+const server = Mockaton({
   ...mockatonConfig, // Not required, but it’s not read by default.
-  port: 3333, // etc.
 })
 ```
-
-`Mockaton` returns a Node.js [http.Server](https://nodejs.org/api/http.html#class-httpserver) instance. 
-So you can, for example:
-```js
-const server = Mockaton({ port: 3333 })
-server?.close()
-```
+See [src/cli.js](src/cli.js)
 
 </details>
 

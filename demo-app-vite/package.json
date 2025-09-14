@@ -16,7 +16,7 @@
 	},
 	"devDependencies": {
 		"@vitejs/plugin-react": "5.0.2",
-		"mockaton": "8.27.0",
+		"mockaton": "9.1.1",
 		"pixaton": "1.1.3",
 		"react-cookies": "0.1.1",
 		"vite": "7.1.5"

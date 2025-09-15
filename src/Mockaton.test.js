@@ -300,6 +300,7 @@ async function runTests() {
 
 	await testLongPollSyncVersion()
 	await testBodyParser()
+	await testHeadForGet()
 
 	server.close()
 }
@@ -928,6 +929,17 @@ async function testBodyParser() {
 		})
 		equal(res.status, 422)
 		equal(loggerSpy.mock.calls[0].arguments[0], 'BodyReaderError: Could not parse')
+	})
+}
+
+
+async function testHeadForGet() {
+	await it('returns the headers without body only for GETs requested as HEAD', async () => {
+		const [route, , body] = fixtureGetSimple
+		const res = await request(route, { method: 'HEAD' })
+		equal(res.status, 200)
+		equal(res.headers.get('content-length'), String(Buffer.byteLength(JSON.stringify(body))))
+		equal(await res.text(), '')
 	})
 }
 

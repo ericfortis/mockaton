@@ -13,7 +13,10 @@ import { sendInternalServerError, sendNotFound } from './utils/http-response.js'
 
 export async function dispatchMock(req, response) {
 	try {
-		const broker = mockBrokerCollection.brokerByRoute(req.method, req.url)
+		let broker = mockBrokerCollection.brokerByRoute(req.method, req.url)
+		const isHead = req.method === 'HEAD'
+		if (!broker && isHead)
+			broker = mockBrokerCollection.brokerByRoute('GET', req.url)
 		if (!broker || broker.proxied) {
 			if (config.proxyFallback)
 				await proxy(req, response, Number(broker?.delayed && calcDelay()))
@@ -36,7 +39,9 @@ export async function dispatchMock(req, response) {
 			: await applyPlugins(join(config.mocksDir, broker.file), req, response)
 
 		response.setHeader('Content-Type', mime)
-		setTimeout(() => response.end(body), Number(broker.delayed && calcDelay()))
+		response.setHeader('Content-Length', length(body))
+		setTimeout(() => response.end(isHead ? null : body),
+			Number(broker.delayed && calcDelay()))
 	}
 	catch (error) {
 		if (error?.code === 'ENOENT') // mock-file has been deleted
@@ -51,7 +56,6 @@ export async function dispatchMock(req, response) {
 	}
 }
 
-
 async function applyPlugins(filePath, req, response) {
 	for (const [regex, plugin] of config.plugins)
 		if (regex.test(filePath))
@@ -62,7 +66,6 @@ async function applyPlugins(filePath, req, response) {
 	}
 }
 
-
 export async function jsToJsonPlugin(filePath, req, response) {
 	const jsExport = (await import(pathToFileURL(filePath) + '?' + Date.now())).default // date for cache busting
 	const body = typeof jsExport === 'function'
@@ -72,4 +75,11 @@ export async function jsToJsonPlugin(filePath, req, response) {
 		mime: response.getHeader('Content-Type') || mimeFor('.json'), // jsFunc are allowed to set it
 		body
 	}
+}
+
+function length(body) {
+	if (typeof body === 'string') return Buffer.byteLength(body)
+	if (Buffer.isBuffer(body)) return body.length
+	if (body instanceof Uint8Array) return body.byteLength
+	return 0
 }

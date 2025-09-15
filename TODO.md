@@ -13,7 +13,6 @@
   it doesn't choke the browser. Think about some virtualized paging, that doesn’t break
   selecting across pages, (e.g. for selecting and copying)
 - Document cookies for scraping mocks
-- Think about responding to `HEAD` requests, perhaps a flag for auto-generating them
 
 
 ### Cookies WIP

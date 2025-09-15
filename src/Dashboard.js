@@ -692,11 +692,16 @@ async function updatePayloadViewer(method, urlMask, response) {
 		const body = await response.text() || Strings.empty_response_body
 		if (mime === 'application/json')
 			payloadViewerRef.current.replaceChildren(r('span', className(CSS.json), syntaxJSON(body)))
-		else if (mime === 'application/xml')
+		else if (isXML(mime))
 			payloadViewerRef.current.replaceChildren(syntaxXML(body))
 		else
 			payloadViewerRef.current.innerText = body
 	}
+}
+
+function isXML(mime) {
+	return ['text/html', 'text/xml', 'application/xml'].includes(mime)
+		|| /application\/.*\+xml/.test(mime)
 }
 
 

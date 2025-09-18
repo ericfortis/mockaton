@@ -15,22 +15,25 @@ An HTTP mock server for simulating APIs with minimal setup
 ## Motivation
 
 **No API state should be too hard to test.**
-With Mockaton, developers can achieve correctness without sacrificing speed.
+With Mockaton, developers can achieve correctness and increase speed.
 
 ### Correctness
-- Enables testing of complex scenarios that would otherwise be
-  skipped. For example, triggering an error on a third-party API. Or if
-  you are a frontend developer, triggering it on your project’s backend.
-- Allows for deterministic, comprehensive, and consistent state, which helps
-  spot inadvertent regressions during development, or for setting up screenshot
-  tests, e.g., with [pixaton](https://github.com/ericfortis/pixaton).
+- Enables testing of complex scenarios that would otherwise be skipped. e.g.,
+  - Triggering errors on third-party APIs. 
+  - Triggering errors on your project’s backend (if you are a frontend developer).
+- Allows for deterministic, comprehensive, and consistent state.
+  - Spot inadvertent regressions during development.
+  - Use it to set up screenshot tests, e.g., with [pixaton](https://github.com/ericfortis/pixaton).
 
 ### Speed
-- Prevents progress from being blocked by waiting for APIs.
 - Works around unstable dev backends while developing UIs.
-- Time travel. If you commit the mocks to your repo, it’s straightforward
-  to check out long-lived branches and bisect bugs, so you don’t
-  have to downgrade backends to old API contracts or databases.
+  - Spinning up development infrastructure.
+  - Syncing database states.
+- Prevents progress from being blocked by waiting for APIs.
+- Time travel. If you commit the mocks to your repo, 
+  you don’t have to downgrade backends for:
+  - checking out long-lived branches 
+  - bisecting bugs
 
 <br/>
 
@@ -125,6 +128,7 @@ They will be saved in your `config.mocksDir` following the filename convention.
 - Does not hijack your HTTP client.
 - Auditable. Organized and small &mdash; under 4 KLoC (half is UI and tests).
 
+<br/>
 
 ## Basic Usage
 1. Install Node.js, which comes with `npm` and `npx`
@@ -141,18 +145,18 @@ npx mockaton --port 2345
 
 4. Test it
 ```shell
-curl http://localhost:2345/api/foo 
+curl localhost:2345/api/foo 
 ```
 
 ### Alternative Installations
 <details>
-<summary>With NPM…</summary>
+<summary>With NPM (package.json)…</summary>
 
 ```shell
 npm install mockaton --save-dev
 ```
 
-Then in your, `package.json`:
+Then, add the script to your `package.json`:
 ```json
 {
   "scripts": {
@@ -248,7 +252,7 @@ export default defineConfig({
 ```
 
 <details>
-<summary><b>See Config Documentation</b></summary>
+<summary><b>Config Documentation</b></summary>
 
 ### `mocksDir?: string`
 Defaults to `'mockaton-mocks'`. 
@@ -502,7 +506,7 @@ const server = Mockaton({
   ...mockatonConfig, // Not required, but it’s not read by default.
 })
 ```
-See [src/cli.js](src/cli.js)
+See [src/cli.js](src/cli.js) or [src/Mockaton.test.js](src/Mockaton.test.js) for more examples.
 
 </details>
 

@@ -14,7 +14,7 @@ import { readBody } from './utils/http-request.js'
 import { Commander } from './ApiCommander.js'
 import { CorsHeader } from './utils/http-cors.js'
 import { parseFilename } from './Filename.js'
-import { listFilesRecursively } from './utils/fs.js'
+import { listFilesRecursively } from './utils/fs.js' 
 import { API, DEFAULT_500_COMMENT, DEFAULT_MOCK_COMMENT } from './ApiConstants.js'
 
 
@@ -228,6 +228,7 @@ beforeEach(async () => {
 	await commander.reset()
 })
 
+// TODO this a Windows test. And it should not use the function but read the getState payload
 it('normalizes backslashes with forward ones', () => {
 	const files = listFilesRecursively(mocksDir)
 	equal(files[0], 'api/.GET.200.json')
@@ -863,4 +864,3 @@ function _write(absPath, data) {
 async function sleep(ms = 50) {
 	return new Promise(resolve => setTimeout(resolve, ms))
 }
-

@@ -49,6 +49,7 @@ const CSS = {
 	ProgressBar: null,
 	ProxyToggler: null,
 	ResetButton: null,
+	Resizer: null,
 	SaveProxiedCheckbox: null,
 	StaticFilesList: null,
 
@@ -87,12 +88,12 @@ const state = {
 	delay: 0,
 	collectProxied: false,
 	proxyFallback: '',
-
-	groupByMethod: true, // TODO read from localstorage
-
 	get canProxy() {
 		return Boolean(this.proxyFallback)
-	}
+	},
+
+	groupByMethod: true, // TODO read from localstorage
+	leftSideWidth: undefined
 }
 
 const mockaton = new Commander(window.location.origin)
@@ -115,15 +116,23 @@ async function updateState() {
 const r = createElement
 const s = createSvgElement
 
+const leftSideRef = useRef()
+
 function App() {
+	const { leftSideWidth } = state
 	return [
 		r(Header),
 		r(Menu),
 		r('main', null,
-			r('div', className(CSS.leftSide),
+			r('div', {
+					ref: leftSideRef,
+					style: { width: leftSideWidth + 'px' },
+					className: CSS.leftSide
+				},
 				r(MockList),
 				r(StaticFilesList)),
-			r('div', className(CSS.rightSide),
+			r('div', { className: CSS.rightSide },
+				r(Resizer),
 				r(PayloadViewer)))
 	]
 }
@@ -146,7 +155,7 @@ function Header() {
 			r('button', {
 				className: CSS.MenuTrigger,
 				popovertarget: 'Menu'
-			}, r(MenuIcon))
+			}, r(SettingsIcon))
 		))
 }
 
@@ -606,6 +615,39 @@ function ProxyStaticToggler({}) { // TODO
 }
 
 
+function Resizer() {
+	return (
+		r('div', {
+			className: CSS.Resizer,
+			onPointerDown: Resizer.onPointerDown
+		}))
+}
+Resizer.raf = 0
+Resizer.initialX = 0
+Resizer.panelWidth = 0
+Resizer.onPointerDown = function (event) {
+	Resizer.initialX = event.clientX
+	Resizer.panelWidth = leftSideRef.current.clientWidth
+	window.addEventListener('pointerup', Resizer.onUp)
+	window.addEventListener('pointermove', Resizer.onMove)
+	document.body.style.userSelect = 'none'
+	document.body.style.cursor = 'col-resize'
+}
+Resizer.onMove = function (event) {
+	Resizer.raf = Resizer.raf || requestAnimationFrame(() => {
+		state.leftSideWidth = Resizer.panelWidth - (Resizer.initialX - event.clientX)
+		leftSideRef.current.style.width = state.leftSideWidth + 'px'
+		Resizer.raf = 0
+	})
+}
+Resizer.onUp = function () {
+	window.removeEventListener('pointermove', Resizer.onMove)
+	window.removeEventListener('pointerup', Resizer.onUp)
+	cancelAnimationFrame(Resizer.raf)
+	document.body.style.userSelect = 'auto'
+	document.body.style.cursor = 'auto'
+}
+
 
 /** # Payload Preview */
 
@@ -761,10 +803,10 @@ function CloudIcon() {
 			s('path', { d: 'm6.1 9.1c2.8 0 5 2.3 5 5' })))
 }
 
-function MenuIcon() {
+function SettingsIcon() {
 	return (
 		s('svg', { viewBox: '0 0 24 24' },
-			s('path', { d: 'M3 18h18v-2H3zm0-5h18v-2H3zm0-7v2h18V6z' })))
+			s('path', { d: 'M19.14 12.94c.04-.3.06-.61.06-.94 0-.32-.02-.64-.07-.94l2.03-1.58c.18-.14.23-.41.12-.61l-1.92-3.32c-.12-.22-.37-.29-.59-.22l-2.39.96c-.5-.38-1.03-.7-1.62-.94l-.36-2.54c-.04-.24-.24-.41-.48-.41h-3.84c-.24 0-.43.17-.47.41l-.36 2.54c-.59.24-1.13.57-1.62.94l-2.39-.96c-.22-.08-.47 0-.59.22L2.74 8.87c-.12.21-.08.47.12.61l2.03 1.58c-.05.3-.09.63-.09.94s.02.64.07.94l-2.03 1.58c-.18.14-.23.41-.12.61l1.92 3.32c.12.22.37.29.59.22l2.39-.96c.5.38 1.03.7 1.62.94l.36 2.54c.05.24.24.41.48.41h3.84c.24 0 .44-.17.47-.41l.36-2.54c.59-.24 1.13-.56 1.62-.94l2.39.96c.22.08.47 0 .59-.22l1.92-3.32c.12-.22.07-.47-.12-.61zM12 15.6c-1.98 0-3.6-1.62-3.6-3.6s1.62-3.6 3.6-3.6 3.6 1.62 3.6 3.6-1.62 3.6-3.6 3.6' })))
 }
 
 /**

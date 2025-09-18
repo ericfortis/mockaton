@@ -206,7 +206,7 @@ header {
 		select:enabled:hover {
 			background: var(--colorHover);
 		}
-		
+
 		&.GlobalDelayField {
 			width: 84px;
 
@@ -305,6 +305,14 @@ main {
 	@media (max-width: 800px) {
 		grid-template-columns: 100%;
 		grid-template-rows: 1fr 1fr;
+
+		.Resizer {
+			display: none;
+		}
+
+		.leftSide {
+			min-width: 100%;
+		}
 	}
 
 	.leftSide {
@@ -315,8 +323,25 @@ main {
 	}
 
 	.rightSide {
+		position: relative;
 		padding: 16px;
+		border-left: 1px solid var(--colorSecondaryActionBorder);
 		overflow-y: auto;
+
+		.Resizer {
+			position: absolute;
+			top: 0;
+			left: 0;
+			width: 8px;
+			height: 100%;
+			border-left: 3px solid transparent;
+			cursor: col-resize;
+
+			&:active {
+				border-color: var(--colorSecondaryActionBorder);
+			}
+		}
+
 	}
 }
 

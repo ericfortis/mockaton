@@ -15,8 +15,12 @@ testPixels(import.meta.filename, {
 		await mockaton.setCollectProxied(false)
 	},
 
-	async setup() {
+	async setup(page) {
 		await clickLinkByText('/api/user/likes')
+		await page.evaluate(() => {
+			const el = document.querySelector('.leftSide')
+			if (el) el.style.width = '495px'
+		})
 	},
 
 	viewports: [{

@@ -100,6 +100,14 @@ select, a, input, button {
 	}
 }
 
+a {
+	text-decoration: none;
+	
+	&:hover {
+		text-decoration: underline;
+	}
+}
+
 input[type="checkbox"] {
 	&:focus {
 		outline: 0;
@@ -144,7 +152,7 @@ select {
 
 header {
 	display: flex;
-	width: 100%;
+	width: 100vw;
 	padding: 16px;
 	border-bottom: 1px solid var(--colorSecondaryActionBorder);
 	background: var(--colorHeaderBackground);
@@ -193,7 +201,6 @@ header {
 			width: 100%;
 			height: 28px;
 			padding: 4px 8px;
-			border: 0;
 			border: 1px solid var(--colorSecondaryActionBorder);
 			border-right: 3px solid transparent;
 			margin-top: 4px;
@@ -284,9 +291,14 @@ header {
 	left: auto;
 	padding: 20px;
 	border: 1px solid var(--colorSecondaryActionBorder);
+	color: var(--colorText);
 	border-radius: var(--radius);
 	box-shadow: var(--boxShadow1);
 	background: var(--colorHeaderBackground);
+	
+	a {
+		color: var(--colorAccent);
+	}
 
 	.GroupByMethod {
 		display: flex;
@@ -298,13 +310,12 @@ header {
 
 
 main {
-	display: grid;
+	display: flex;
+	min-width: 0;
 	min-height: 0;
-	grid-template-columns: minmax(min-content, max-content) 1fr;
 
 	@media (max-width: 800px) {
-		grid-template-columns: 100%;
-		grid-template-rows: 1fr 1fr;
+		flex-direction: column;
 
 		.Resizer {
 			display: none;
@@ -312,21 +323,26 @@ main {
 
 		.leftSide {
 			min-width: 100%;
+			min-height: 50%;
+			max-height: 50%;
+			border: 0;
 		}
 	}
 
 	.leftSide {
+		width: max-content;
 		padding: 16px;
 		padding-bottom: 0;
+		border-right: 1px solid var(--colorSecondaryActionBorder);
 		overflow-y: auto;
 		box-shadow: var(--boxShadow1);
 	}
 
 	.rightSide {
 		position: relative;
-		padding: 16px;
-		border-left: 1px solid var(--colorSecondaryActionBorder);
-		overflow-y: auto;
+		min-width: 100px;
+		min-height: 0;
+		flex: 1;
 
 		.Resizer {
 			position: absolute;
@@ -377,11 +393,11 @@ table {
 	margin-left: 4px;
 	border-radius: var(--radius);
 	color: var(--colorAccent);
-	text-decoration: none;
 	word-break: break-word;
 
 	&:hover {
 		background: var(--colorHover);
+		text-decoration: none;
 	}
 	&.chosen {
 		color: white;
@@ -559,18 +575,24 @@ table {
 		margin-left: 4px;
 		border-radius: var(--radius);
 		color: var(--colorAccent);
-		text-decoration: none;
-
-		&:hover {
-			text-decoration: underline;
-		}
 	}
 }
 
 
 .PayloadViewer {
+	display: flex;
+	height: 100%;
+	flex-direction: column;
+	padding-top: 16px;
+
+	h2 {
+		padding-left: 16px;
+	}
+
 	pre {
-		padding-top: 12px;
+		overflow: auto;
+		height: 100%;
+		padding: 16px;
 		font-family: monospace;
 
 		code {

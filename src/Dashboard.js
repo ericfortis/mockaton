@@ -634,8 +634,9 @@ Resizer.onPointerDown = function (event) {
 	document.body.style.cursor = 'col-resize'
 }
 Resizer.onMove = function (event) {
+	const MIN_LEFT_WIDTH = 380
 	Resizer.raf = Resizer.raf || requestAnimationFrame(() => {
-		state.leftSideWidth = Resizer.panelWidth - (Resizer.initialX - event.clientX)
+		state.leftSideWidth = Math.max(Resizer.panelWidth - (Resizer.initialX - event.clientX), MIN_LEFT_WIDTH)
 		leftSideRef.current.style.width = state.leftSideWidth + 'px'
 		Resizer.raf = 0
 	})

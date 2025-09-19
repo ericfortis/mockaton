@@ -17,7 +17,7 @@ interface Config {
 	host?: string,
 	port?: number
 	
-	logLevel?: 'normal' | 'quiet'
+	logLevel?: 'normal' | 'verbose' | 'quiet'
 
 	delay?: number
 	delayJitter?: number

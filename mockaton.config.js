@@ -14,4 +14,6 @@ export default defineConfig({
 		}),
 		'None': ''
 	},
+	
+	logLevel: 'verbose',
 })

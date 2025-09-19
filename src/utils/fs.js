@@ -1,6 +1,6 @@
 import { join, dirname, sep, posix } from 'node:path'
 import { lstatSync, readdirSync, writeFileSync, mkdirSync } from 'node:fs'
-import { log } from './log.js'
+import { logger } from './logger.js'
 
 
 export const isFile = path => lstatSync(path, { throwIfNoEntry: false })?.isFile()
@@ -25,6 +25,6 @@ export const write = (path, body) => {
 		writeFileSync(path, body)
 	}
 	catch (err) {
-		log.warn('Write access denied', err)
+		logger.warn('Write access denied', err)
 	}
 }

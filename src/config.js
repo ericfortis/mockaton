@@ -1,6 +1,6 @@
 import { join, isAbsolute } from 'node:path'
 
-import { log } from './utils/log.js'
+import { logger } from './utils/logger.js'
 import { isDirectory } from './utils/fs.js'
 import { openInBrowser } from './utils/openInBrowser.js'
 import { jsToJsonPlugin } from './MockDispatcher.js'
@@ -23,7 +23,7 @@ const schema = {
 	host: ['127.0.0.1', is(String)],
 	port: [0, port => Number.isInteger(port) && port >= 0 && port < 2 ** 16], // 0 means auto-assigned
 
-	logLevel: ['normal', val => ['normal', 'quiet'].includes(val)],
+	logLevel: ['normal', val => ['normal', 'quiet', 'verbose'].includes(val)],
 
 	delay: [1200, ms => Number.isInteger(ms) && ms >= 0],
 	delayJitter: [0, percent => percent >= 0 && percent <= 3],
@@ -80,7 +80,7 @@ export function setup(options) {
 
 	Object.assign(config, options)
 	validate(config, ConfigValidator)
-	log.setLevel(config.logLevel)
+	logger.setLevel(config.logLevel)
 }
 
 

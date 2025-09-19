@@ -1,6 +1,6 @@
 import { basename } from 'node:path'
 
-import { log } from './utils/log.js'
+import { logger } from './utils/logger.js'
 import { cookie } from './cookie.js'
 import { MockBroker } from './MockBroker.js'
 import { listFilesRecursively } from './utils/fs.js'
@@ -68,7 +68,7 @@ export function registerMock(file, isFromWatcher = false) {
 function filenameIsValid(file) {
 	const error = validateFilename(file)
 	if (error)
-		log.warn(error, file)
+		logger.warn(error, file)
 	return !error
 }
 

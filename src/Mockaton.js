@@ -1,6 +1,6 @@
 import { createServer } from 'node:http'
 
-import { log } from './utils/log.js'
+import { logger } from './utils/logger.js'
 import { API } from './ApiConstants.js'
 import { config, setup } from './config.js'
 import { dispatchMock } from './MockDispatcher.js'
@@ -27,8 +27,8 @@ export function Mockaton(options) {
 	server.listen(config.port, config.host, function () {
 		const { address, port } = this.address()
 		const url = `http://${address}:${port}`
-		log.info('Listening', url)
-		log.info('Dashboard', url + API.dashboard)
+		logger.info('Listening', url)
+		logger.info('Dashboard', url + API.dashboard)
 		config.onReady(url + API.dashboard)
 	})
 
@@ -37,7 +37,7 @@ export function Mockaton(options) {
 
 
 async function onRequest(req, response) {
-	response.on('error', log.warn)
+	response.on('error', logger.warn)
 
 	try {
 		response.setHeader('Server', 'Mockaton')

@@ -1,47 +1,54 @@
 import fs, { readFileSync } from 'node:fs'
-import { log } from './log.js'
+import { logger } from './logger.js'
 import { mimeFor } from './mime.js'
 import { HEADER_FOR_502 } from '../ApiConstants.js'
 
 
 export function sendOK(response) {
-	response.end()
-}
-
-export function sendNoContent(response) {
-	response.statusCode = 204
+	logger.access(response)
 	response.end()
 }
 
 export function sendJSON(response, payload) {
+	logger.access(response)
 	response.setHeader('Content-Type', 'application/json')
 	response.end(JSON.stringify(payload))
 }
 
 export function sendFile(response, file) {
+	logger.access(response)
 	response.setHeader('Content-Type', mimeFor(file))
 	response.end(readFileSync(file, 'utf8'))
 }
 
+export function sendNoContent(response) {
+	response.statusCode = 204
+	logger.access(response)
+	response.end()
+}
+
+
 export function sendNotFound(response) {
 	response.statusCode = 404
+	logger.access(response)
 	response.end()
 }
 
 export function sendUnprocessableContent(response, error) {
-	log.warn(error)
+	logger.warn(error)
 	response.statusCode = 422
 	response.end(error)
 }
 
+
 export function sendInternalServerError(response, error) {
-	log.error(error?.message || error, error?.stack || undefined)
+	logger.error(error?.message || error, error?.stack || undefined)
 	response.statusCode = 500
 	response.end()
 }
 
 export function sendBadGateway(response, error) {
-	log.warn('Fallback Proxy Error:', error.cause.message)
+	logger.warn('Fallback Proxy Error:', error.cause.message)
 	response.statusCode = 502
 	response.setHeader(HEADER_FOR_502, 1)
 	response.end()

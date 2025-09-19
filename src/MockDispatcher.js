@@ -2,7 +2,7 @@ import { join } from 'node:path'
 import { readFileSync } from 'node:fs'
 import { pathToFileURL } from 'node:url'
 
-import { log } from './utils/log.js'
+import { logger } from './utils/logger.js'
 import { proxy } from './ProxyRelay.js'
 import { cookie } from './cookie.js'
 import { mimeFor } from './utils/mime.js'
@@ -25,7 +25,7 @@ export async function dispatchMock(req, response) {
 			return
 		}
 
-		log.access(req.url, broker.file)
+		logger.accessMock(req.url, broker.file)
 		response.statusCode = broker.status
 
 		if (cookie.getCurrent())
@@ -46,11 +46,6 @@ export async function dispatchMock(req, response) {
 	catch (error) {
 		if (error?.code === 'ENOENT') // mock-file has been deleted
 			sendNotFound(response)
-		else if (error?.code === 'ERR_UNKNOWN_FILE_EXTENSION') {
-			if (error.toString().includes('Unknown file extension ".ts'))
-				log.warn('\nLooks like you need a TypeScript compiler\n')
-			sendInternalServerError(response, error)
-		}
 		else
 			sendInternalServerError(response, error)
 	}

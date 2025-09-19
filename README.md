@@ -485,11 +485,12 @@ At any rate, you can trigger any command besides opening a browser.
 
 <br/>
 
-### `logLevel?: 'quiet' | 'normal'`
+### `logLevel?: 'quiet' | 'normal' | 'verbose'` 
 Defaults to `'normal'`.
 
 - `quiet`: only errors (stderr)
-- `normal`: info, access, warnings, and errors
+- `normal`: info, mock access, warnings, and errors
+- `verbose`: normal + API access
 
 </details>
 

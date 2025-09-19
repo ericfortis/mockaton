@@ -7,7 +7,7 @@ import { equal, deepEqual, match } from 'node:assert/strict'
 import { describe, it, before, beforeEach, after } from 'node:test'
 import { writeFileSync, mkdtempSync, mkdirSync, unlinkSync, readFileSync } from 'node:fs'
 
-import { log } from './utils/log.js'
+import { logger } from './utils/logger.js'
 import { mimeFor } from './utils/mime.js'
 import { Mockaton } from './Mockaton.js'
 import { readBody } from './utils/http-request.js'
@@ -254,7 +254,7 @@ describe('404', () => {
 })
 
 it('returns 500 when a handler throws', async t => {
-	const spy = t.mock.method(log, 'error')
+	const spy = t.mock.method(logger, 'error')
 	equal((await request(API.throws)).status, 500)
 	equal(spy.mock.calls[0].arguments[0], 'Test500')
 })
@@ -447,7 +447,7 @@ it('Static File List', async () => {
 })
 
 it('Invalid filenames get skipped, so they don’t crash the server', async t => {
-	const spy = t.mock.method(log, 'warn')
+	const spy = t.mock.method(logger, 'warn')
 	write('api/_INVALID_FILENAME_CONVENTION_.json', '')
 	write('api/bad-filename-method._INVALID_METHOD_.200.json', '')
 	write('api/bad-filename-status.GET._INVALID_STATUS_.json', '')
@@ -812,12 +812,12 @@ it('longPollSyncVersion responds immediately when version mismatches', async () 
 })
 
 it('body parser rejects invalid json in API requests', async t => {
-	const loggerSpy = t.mock.method(log, 'warn')
+	const spy = t.mock.method(logger, 'warn')
 	equal((await request(API.cookies, {
 		method: 'PATCH',
 		body: '[invalid_json]'
 	})).status, 422)
-	equal(loggerSpy.mock.calls[0].arguments[0], 'BodyReaderError: Could not parse')
+	equal(spy.mock.calls[0].arguments[0], 'BodyReaderError: Could not parse')
 })
 
 await it('head for get. returns the headers without body only for GETs requested as HEAD', async () => {

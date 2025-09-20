@@ -33,6 +33,7 @@ const Strings = {
 
 const CSS = {
 	BulkSelector: null,
+	CookieSelector: null,
 	DelayToggler: null,
 	ErrorToast: null,
 	FallbackBackend: null,
@@ -195,7 +196,7 @@ function CookieSelector() {
 	}
 	const disabled = cookies.length <= 1
 	return (
-		r('label', className(CSS.Field),
+		r('label', className(CSS.Field, CSS.CookieSelector),
 			r('span', null, Strings.cookie),
 			r('select', {
 				autocomplete: 'off',

@@ -102,15 +102,9 @@ select, a, input, button {
 
 a {
 	text-decoration: none;
-	
+
 	&:hover {
 		text-decoration: underline;
-	}
-}
-
-input[type="checkbox"] {
-	&:focus {
-		outline: 0;
 	}
 }
 
@@ -161,7 +155,7 @@ header {
 		display: flex;
 		flex-wrap: wrap;
 		align-items: flex-end;
-		gap: 16px 8px;
+		gap: 16px 10px;
 
 		@media (max-width: 800px) {
 			max-width: 400px;
@@ -202,8 +196,7 @@ header {
 			height: 28px;
 			padding: 4px 8px;
 			border: 1px solid var(--colorSecondaryActionBorder);
-			border-right: 3px solid transparent;
-			margin-top: 4px;
+			margin-top: 2px;
 			color: var(--colorText);
 			font-size: 11px;
 			background-color: var(--colorComboBoxHeaderBackground);
@@ -211,6 +204,7 @@ header {
 		}
 
 		select:enabled:hover {
+			border-color: var(--colorSecondaryActionBorder);
 			background: var(--colorHover);
 		}
 
@@ -218,7 +212,7 @@ header {
 			width: 84px;
 
 			input[type=number] {
-				padding-right: 0;
+				padding-right: 4px;
 			}
 
 			svg {
@@ -228,6 +222,10 @@ header {
 				stroke-width: 3px;
 				border-radius: 50%;
 			}
+		}
+
+		&.CookieSelector {
+			width: 100px;
 		}
 
 		&.FallbackBackend {
@@ -272,11 +270,14 @@ header {
 	}
 
 	.MenuTrigger {
-		min-width: 24px;
+		width: 24px;
+		height: 24px;
+		flex-shrink: 0;
 		align-self: end;
 		margin-left: auto;
 		fill: var(--colorSecondaryAction);
 		background: transparent;
+		border-radius: 50%;
 
 		&:hover {
 			fill: var(--colorAccent);
@@ -295,7 +296,7 @@ header {
 	border-radius: var(--radius);
 	box-shadow: var(--boxShadow1);
 	background: var(--colorHeaderBackground);
-	
+
 	a {
 		color: var(--colorAccent);
 	}
@@ -438,7 +439,7 @@ table {
 	> input {
 		appearance: none;
 
-		&:focus-visible {
+		&:focus {
 			outline: 0;
 			& ~ svg {
 				outline: 2px solid var(--colorAccent)
@@ -530,7 +531,7 @@ table {
 .InternalServerErrorToggler,
 .NotFoundToggler {
 	display: flex;
-	margin-right: 12px;
+	margin-right: 10px;
 	margin-left: 8px;
 	cursor: pointer;
 

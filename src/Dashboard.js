@@ -93,8 +93,13 @@ const state = {
 		return Boolean(this.proxyFallback)
 	},
 
-	groupByMethod: true, // TODO read from localstorage
-	leftSideWidth: undefined
+	groupByMethod: localStorage.getItem('groupByMethod') !== 'false',
+	toggleGroupByMethod() {
+		this.groupByMethod = !this.groupByMethod
+		localStorage.setItem('groupByMethod', String(this.groupByMethod))
+	},
+	
+	leftSideWidth: undefined,
 }
 
 const mockaton = new Commander(window.location.origin)
@@ -171,9 +176,8 @@ function Menu() {
 					type: 'checkbox',
 					checked: state.groupByMethod,
 					onChange() {
-						state.groupByMethod = !state.groupByMethod
+						state.toggleGroupByMethod()
 						updateState()
-						// TODO localstorage
 					}
 				}),
 				r('span', null, Strings.group_by_method)),
@@ -185,7 +189,6 @@ function Menu() {
 			}, 'Documentation')
 		))
 }
-
 
 function CookieSelector() {
 	const { cookies } = state
@@ -206,7 +209,6 @@ function CookieSelector() {
 			}, cookies.map(([value, selected]) =>
 				r('option', { value, selected }, value)))))
 }
-
 
 function BulkSelector() {
 	const { comments } = state
@@ -239,7 +241,6 @@ function BulkSelector() {
 				r('option', { value }, value)))))
 }
 
-
 function GlobalDelayField() {
 	const { delay } = state
 	function onChange() {
@@ -260,7 +261,6 @@ function GlobalDelayField() {
 				onChange
 			})))
 }
-
 
 function ProxyFallbackField() {
 	const { proxyFallback, collectProxied } = state
@@ -311,7 +311,6 @@ function SaveProxiedCheckbox({ disabled }) {
 			r('span', null, Strings.save_proxied)))
 }
 
-
 function ResetButton() {
 	function onClick() {
 		mockaton.reset()
@@ -354,7 +353,6 @@ function MockList() {
 			r('table', null,
 				r('tbody', null, rowsFor('*').map(Row)))))
 }
-
 
 function Row({ method, urlMask, urlMaskDittoed, broker }) {
 	const canProxy = state.canProxy

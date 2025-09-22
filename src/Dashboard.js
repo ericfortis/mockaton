@@ -644,6 +644,7 @@ Resizer.onUp = function () {
 	window.removeEventListener('pointermove', Resizer.onMove)
 	window.removeEventListener('pointerup', Resizer.onUp)
 	cancelAnimationFrame(Resizer.raf)
+	Resizer.raf = 0
 	document.body.style.userSelect = 'auto'
 	document.body.style.cursor = 'auto'
 }

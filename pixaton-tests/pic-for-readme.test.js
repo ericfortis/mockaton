@@ -19,13 +19,13 @@ testPixels(import.meta.filename, {
 		await clickLinkByText('/api/user/likes')
 		await page.evaluate(() => {
 			const el = document.querySelector('.leftSide')
-			if (el) el.style.width = '495px'
+			if (el) el.style.width = '505px'
 		})
 	},
 
 	viewports: [{
-		width: 810,
-		height: 768,
+		width: 781,
+		height: 772,
 		deviceScaleFactor: 1.5
 	}],
 

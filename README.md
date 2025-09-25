@@ -15,7 +15,7 @@ An HTTP mock server for simulating APIs with minimal setup
 ## Motivation
 
 **No API state should be too hard to test.**
-With Mockaton, developers can achieve correctness and increase speed.
+With Mockaton, developers can achieve correctness and speed.
 
 ### Correctness
 - Enables testing of complex scenarios that would otherwise be skipped. e.g.,
@@ -60,9 +60,9 @@ Nonetheless, there’s a programmatic API, which is handy
 for setting up tests (see **Commander&nbsp;API** section below).
 
 <picture>
-  <source media="(prefers-color-scheme: light)" srcset="pixaton-tests/macos/pic-for-readme.vp810x768.light.gold.png">
-  <source media="(prefers-color-scheme: dark)" srcset="pixaton-tests/macos/pic-for-readme.vp810x768.dark.gold.png">
-  <img alt="Mockaton Dashboard" src="pixaton-tests/macos/pic-for-readme.vp810x768.light.gold.png">
+  <source media="(prefers-color-scheme: light)" srcset="pixaton-tests/macos/pic-for-readme.vp781x772.light.gold.png">
+  <source media="(prefers-color-scheme: dark)" srcset="pixaton-tests/macos/pic-for-readme.vp781x772.dark.gold.png">
+  <img alt="Mockaton Dashboard" src="pixaton-tests/macos/pic-for-readme.vp781x772.light.gold.png">
 </picture>
 
 

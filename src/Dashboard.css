@@ -157,7 +157,7 @@ header {
 		align-items: flex-end;
 		gap: 16px 10px;
 
-		@media (max-width: 800px) {
+		@media (max-width: 780px) {
 			max-width: 400px;
 		}
 	}
@@ -315,7 +315,7 @@ main {
 	min-width: 0;
 	min-height: 0;
 
-	@media (max-width: 800px) {
+	@media (max-width: 780px) {
 		flex-direction: column;
 
 		.Resizer {

@@ -501,14 +501,12 @@ Defaults to `'normal'`.
 
 ```js
 import { Mockaton } from 'mockaton'
-import mockatonConfig from './mockaton.config.js'
+import config from './mockaton.config.js'
 
-const server = Mockaton({
-  ...mockatonConfig, // Not required, but it’s not read by default.
-})
+const server = await Mockaton(
+  config // Not required, but it’s not read by default.
+)
 ```
-See [src/cli.js](src/cli.js) or [src/Mockaton.test.js](src/Mockaton.test.js) for more examples.
-
 </details>
 
 

@@ -15,26 +15,27 @@ import { sendNoContent, sendInternalServerError, sendUnprocessableContent } from
 
 
 export function Mockaton(options) {
-	setup(options)
+	return new Promise((resolve, reject) => {
+		setup(options)
 
-	mockBrokerCollection.init()
-	staticCollection.init()
-	watchMocksDir()
-	watchStaticDir()
+		mockBrokerCollection.init()
+		staticCollection.init()
+		watchMocksDir()
+		watchStaticDir()
 
-	const server = createServer(onRequest)
-
-	server.listen(config.port, config.host, function () {
-		const { address, port } = this.address()
-		const url = `http://${address}:${port}`
-		logger.info('Listening', url)
-		logger.info('Dashboard', url + API.dashboard)
-		config.onReady(url + API.dashboard)
+		const server = createServer(onRequest)
+		server.on('error', reject)
+		server.listen(config.port, config.host, () => {
+			const { address, port } = server.address()
+			const url = `http://${address}:${port}`
+			const dashboardUrl = url + API.dashboard
+			logger.info('Listening', url)
+			logger.info('Dashboard', dashboardUrl)
+			config.onReady(dashboardUrl)
+			resolve(server)
+		})
 	})
-
-	return server
 }
-
 
 async function onRequest(req, response) {
 	response.on('error', logger.warn)

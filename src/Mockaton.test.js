@@ -14,7 +14,7 @@ import { readBody } from './utils/http-request.js'
 import { Commander } from './ApiCommander.js'
 import { CorsHeader } from './utils/http-cors.js'
 import { parseFilename } from './Filename.js'
-import { listFilesRecursively } from './utils/fs.js' 
+import { listFilesRecursively } from './utils/fs.js'
 import { API, DEFAULT_500_COMMENT, DEFAULT_MOCK_COMMENT } from './ApiConstants.js'
 
 
@@ -186,25 +186,20 @@ for (const [file, body] of staticFiles)
 	writeStatic(file, body)
 
 
-
-// TODO promisify ctor
-let server
-await new Promise(resolve => {
-	server = Mockaton({
-		mocksDir,
-		staticDir,
-		onReady: resolve,
-		cookies: {
-			userA: 'CookieA',
-			userB: 'CookieB'
-		},
-		extraHeaders: ['Server', 'MockatonTester'],
-		extraMimes: {
-			my_custom_extension: 'my_custom_mime'
-		},
-		corsOrigins: ['http://example.com'],
-		corsExposedHeaders: ['Content-Encoding']
-	})
+const server = await Mockaton({
+	mocksDir,
+	staticDir,
+	onReady: () => {},
+	cookies: {
+		userA: 'CookieA',
+		userB: 'CookieB'
+	},
+	extraHeaders: ['Server', 'MockatonTester'],
+	extraMimes: {
+		my_custom_extension: 'my_custom_mime'
+	},
+	corsOrigins: ['http://example.com'],
+	corsExposedHeaders: ['Content-Encoding']
 })
 
 function mockatonAddr() {

@@ -7,13 +7,10 @@ import { Commander, Mockaton } from '../index.js'
 import { removeDiffsAndCandidates, testPixels as _testPixels, diffServer } from 'pixaton'
 
 
-let mockatonServer
-await new Promise(resolve => {
-	mockatonServer = Mockaton({
-		...devConfig,
-		port: 0,
-		onReady: resolve
-	})
+const mockatonServer = await Mockaton({
+	...devConfig,
+	port: 0,
+	onReady: () => {}
 })
 const mockatonAddr = `http://${mockatonServer.address().address}:${mockatonServer.address().port}`
 export const mockaton = new Commander(mockatonAddr)

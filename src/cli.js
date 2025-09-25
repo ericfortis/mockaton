@@ -36,7 +36,7 @@ catch (error) {
 }
 
 
-if (args.version) 
+if (args.version)
 	console.log(pkgJSON.version)
 
 else if (args.help)
@@ -83,10 +83,7 @@ else {
 	if (args['no-open']) opts.onReady = () => {}
 
 	try {
-		Mockaton(opts).on('error', error => {
-			console.error(error.message)
-			process.exit(1)
-		})
+		await Mockaton(opts)
 	}
 	catch (err) {
 		console.error(err?.message || err)

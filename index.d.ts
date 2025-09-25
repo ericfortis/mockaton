@@ -45,7 +45,7 @@ interface Config {
 }
 
 
-export function Mockaton(options: Partial<Config>): Server | undefined
+export function Mockaton(options: Partial<Config>): Promise<Server | undefined>
 export function defineConfig(options: Partial<Config>): Partial<Config>
 
 export const jsToJsonPlugin: Plugin

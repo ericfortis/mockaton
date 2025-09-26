@@ -127,19 +127,19 @@ const leftSideRef = useRef()
 function App() {
 	const { leftSideWidth } = state
 	return [
-		r(Header),
-		r(Menu),
+		Header(),
+		Menu(),
 		r('main', null,
 			r('div', {
 					ref: leftSideRef,
 					style: { width: leftSideWidth + 'px' },
 					className: CSS.leftSide
 				},
-				r(MockList),
-				r(StaticFilesList)),
+				MockList(),
+				StaticFilesList()),
 			r('div', { className: CSS.rightSide },
-				r(Resizer),
-				r(PayloadViewer)))
+				Resizer(),
+				PayloadViewer()))
 	]
 }
 
@@ -153,15 +153,15 @@ function Header() {
 				width: 160
 			}),
 			r('div', null,
-				r(GlobalDelayField),
-				r(CookieSelector),
-				r(BulkSelector),
-				r(ProxyFallbackField),
-				r(ResetButton)),
+				GlobalDelayField(),
+				CookieSelector(),
+				BulkSelector(),
+				ProxyFallbackField(),
+				ResetButton()),
 			r('button', {
 				className: CSS.MenuTrigger,
 				popovertarget: 'Menu'
-			}, r(SettingsIcon))
+			}, SettingsIcon())
 		))
 }
 
@@ -251,7 +251,7 @@ function GlobalDelayField() {
 	}
 	return (
 		r('label', className(CSS.Field, CSS.GlobalDelayField),
-			r('span', null, r(TimerIcon), Strings.delay_ms),
+			r('span', null, TimerIcon(), Strings.delay_ms),
 			r('input', {
 				type: 'number',
 				min: 0,
@@ -279,7 +279,7 @@ function ProxyFallbackField() {
 	return (
 		r('div', className(CSS.Field, CSS.FallbackBackend),
 			r('label', null,
-				r('span', null, r(CloudIcon), Strings.fallback_server),
+				r('span', null, CloudIcon(), Strings.fallback_server),
 				r('input', {
 					type: 'url',
 					autocomplete: 'none',
@@ -287,7 +287,7 @@ function ProxyFallbackField() {
 					value: proxyFallback,
 					onChange
 				})),
-			r(SaveProxiedCheckbox, {
+			SaveProxiedCheckbox({
 				collectProxied,
 				disabled: !proxyFallback
 			})))
@@ -358,11 +358,11 @@ function Row({ method, urlMask, urlMaskDittoed, broker }) {
 	const canProxy = state.canProxy
 	return (
 		r('tr', { 'data-method': method, 'data-urlMask': urlMask },
-			canProxy && r('td', null, r(ProxyToggler, { broker })),
-			r('td', null, r(DelayRouteToggler, { broker })),
-			r('td', null, r(InternalServerErrorToggler, { broker })),
-			r('td', null, r(PreviewLink, { method, urlMask, urlMaskDittoed })),
-			r('td', null, r(MockSelector, { broker }))))
+			canProxy && r('td', null, ProxyToggler({ broker })),
+			r('td', null, DelayRouteToggler({ broker })),
+			r('td', null, InternalServerErrorToggler({ broker })),
+			r('td', null, PreviewLink({ method, urlMask, urlMaskDittoed })),
+			r('td', null, MockSelector({ broker }))))
 }
 
 function rowsFor(targetMethod) {
@@ -519,7 +519,7 @@ function ProxyToggler({ broker }) {
 				checked: !broker.currentMock.file,
 				onChange
 			}),
-			r(CloudIcon)))
+			CloudIcon()))
 }
 
 
@@ -543,9 +543,9 @@ function StaticFilesList() {
 			r('tbody', null,
 				Object.values(staticBrokers).map((broker, i) =>
 					r('tr', null,
-						canProxy && r('td', null, r(ProxyStaticToggler, {})),
-						r('td', null, r(DelayStaticRouteToggler, { broker })),
-						r('td', null, r(NotFoundToggler, { broker })),
+						canProxy && r('td', null, ProxyStaticToggler({})),
+						r('td', null, DelayStaticRouteToggler({ broker })),
+						r('td', null, NotFoundToggler({ broker })),
 						r('td', null, r('a', { href: broker.route, target: '_blank' }, dp[i]))
 					)))))
 }
@@ -597,13 +597,13 @@ function ProxyStaticToggler({}) { // TODO
 				disabled: true,
 				onChange
 			}),
-			r(CloudIcon)))
+			CloudIcon()))
 }
 
 
 function ClickDragToggler({ checked, commit }) {
 	function onPointerEnter(event) {
-		if (event.buttons === 1) 
+		if (event.buttons === 1)
 			onPointerDown.call(this)
 	}
 	function onPointerDown() {
@@ -881,9 +881,6 @@ function className(...args) {
 
 
 function createElement(tag, props, ...children) {
-	if (typeof tag === 'function')
-		return tag(props)
-
 	const node = document.createElement(tag)
 	for (const [k, v] of Object.entries(props || {}))
 		if (k === 'ref') v.current = node

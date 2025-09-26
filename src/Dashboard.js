@@ -98,8 +98,8 @@ const state = {
 		this.groupByMethod = !this.groupByMethod
 		localStorage.setItem('groupByMethod', String(this.groupByMethod))
 	},
-	
-	leftSideWidth: undefined,
+
+	leftSideWidth: undefined
 }
 
 const mockaton = new Commander(window.location.origin)
@@ -459,24 +459,18 @@ function MockSelector({ broker }) {
 
 /** @param {{ broker: ClientMockBroker }} props */
 function DelayRouteToggler({ broker }) {
-	function onChange() {
+	function commit(checked) {
 		const { method, urlMask } = parseFilename(broker.mocks[0])
-		mockaton.setRouteIsDelayed(method, urlMask, this.checked)
+		mockaton.setRouteIsDelayed(method, urlMask, checked)
 			.then(parseError)
 			.catch(onError)
 	}
-	return (
-		r('label', {
-				className: CSS.DelayToggler,
-				title: Strings.delay
-			},
-			r('input', {
-				type: 'checkbox',
-				checked: broker.currentMock.delayed,
-				onChange
-			}),
-			TimerIcon()))
+	return ClickDragToggler({
+		checked: broker.currentMock.delayed,
+		commit
+	})
 }
+
 
 /** @param {{ broker: ClientMockBroker }} props */
 function InternalServerErrorToggler({ broker }) {
@@ -558,22 +552,15 @@ function StaticFilesList() {
 
 /** @param {{ broker: ClientStaticBroker }} props */
 function DelayStaticRouteToggler({ broker }) {
-	function onChange() {
-		mockaton.setStaticRouteIsDelayed(broker.route, this.checked)
+	function commit(checked) {
+		mockaton.setStaticRouteIsDelayed(broker.route, checked)
 			.then(parseError)
 			.catch(onError)
 	}
-	return (
-		r('label', {
-				className: CSS.DelayToggler,
-				title: Strings.delay
-			},
-			r('input', {
-				type: 'checkbox',
-				checked: broker.delayed,
-				onChange
-			}),
-			TimerIcon()))
+	return ClickDragToggler({
+		checked: broker.delayed,
+		commit
+	})
 }
 
 /** @param {{ broker: ClientStaticBroker }} props */
@@ -614,6 +601,40 @@ function ProxyStaticToggler({}) { // TODO
 }
 
 
+function ClickDragToggler({ checked, commit }) {
+	function onPointerEnter(event) {
+		if (event.buttons === 1) 
+			onPointerDown.call(this)
+	}
+	function onPointerDown() {
+		this.checked = !this.checked
+		commit(this.checked)
+	}
+	function onClick(event) {
+		if (event.pointerType === 'mouse')
+			event.preventDefault()
+	}
+	function onChange() {
+		commit(this.checked)
+	}
+	return (
+		r('label', {
+				className: CSS.DelayToggler,
+				title: Strings.delay
+			},
+			r('input', {
+				type: 'checkbox',
+				checked,
+				onPointerEnter,
+				onPointerDown,
+				onClick,
+				onChange
+			}),
+			TimerIcon()))
+}
+
+
+
 function Resizer() {
 	return (
 		r('div', {
@@ -627,8 +648,8 @@ Resizer.panelWidth = 0
 Resizer.onPointerDown = function (event) {
 	Resizer.initialX = event.clientX
 	Resizer.panelWidth = leftSideRef.current.clientWidth
-	window.addEventListener('pointerup', Resizer.onUp)
-	window.addEventListener('pointermove', Resizer.onMove)
+	addEventListener('pointerup', Resizer.onUp)
+	addEventListener('pointermove', Resizer.onMove)
 	document.body.style.userSelect = 'none'
 	document.body.style.cursor = 'col-resize'
 }
@@ -641,8 +662,8 @@ Resizer.onMove = function (event) {
 	})
 }
 Resizer.onUp = function () {
-	window.removeEventListener('pointermove', Resizer.onMove)
-	window.removeEventListener('pointerup', Resizer.onUp)
+	removeEventListener('pointermove', Resizer.onMove)
+	removeEventListener('pointerup', Resizer.onUp)
 	cancelAnimationFrame(Resizer.raf)
 	Resizer.raf = 0
 	document.body.style.userSelect = 'auto'

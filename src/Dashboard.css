@@ -335,6 +335,7 @@ main {
 		padding: 16px;
 		padding-bottom: 0;
 		border-right: 1px solid var(--colorSecondaryActionBorder);
+		user-select: none;
 		overflow-y: auto;
 		box-shadow: var(--boxShadow1);
 	}
@@ -437,7 +438,11 @@ table {
 	display: flex;
 
 	> input {
-		appearance: none;
+		/* For click drag target */
+		position: absolute;
+		width: 22px;
+		height: 22px;
+		opacity: 0;
 
 		&:focus {
 			outline: 0;

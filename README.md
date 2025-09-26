@@ -174,7 +174,7 @@ Since Mockaton has no dependencies, you can create an executable
 by linking to `src/cli.js`.
 
 ```shell
-git clone https://github.com/ericfortis/mockaton.git
+git clone https://github.com/ericfortis/mockaton.git --depth 1
 ln -s `realpath mockaton/src/cli.js` ~/bin/mockaton # some dir in your $PATH
 ```
 
@@ -516,7 +516,7 @@ const server = await Mockaton(
 ## Demo App (Vite + React)
 
 ```sh  
-git clone https://github.com/ericfortis/mockaton.git
+git clone https://github.com/ericfortis/mockaton.git --depth 1
 cd mockaton/demo-app-vite
 npm install 
 

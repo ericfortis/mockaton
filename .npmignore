@@ -1,13 +1,14 @@
-.coverage
 .editorconfig
 .env
 .github
 .idea
-
 demo-app-vite/
+docs/
 mockaton-mocks/
 mockaton-static-mocks/
 pixaton-tests/
+lcov.info
 src/**/*.test.js
 mockaton.config.js
 TODO.md
+CHANGELOG.md

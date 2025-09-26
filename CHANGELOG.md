@@ -1,6 +1,6 @@
 # Changelog
 - 10.1.0 dashboard: toggle delay with click-drag 
-<video src="docs/10.1.0-click-drag-toggle.mp4" />
+![](docs/10.1.0-click-drag-toggle.gif)
  
 - 10.0.0 **Breaking Change**: `Mockaton` constructor is now async. 
 So if you launch it programmatically, change:
@@ -15,7 +15,7 @@ await Mockaton()
 - 9.6.0 dashboard: persist `groupByMethod` preference in localStorage
 - 9.5.0 cli: new `config.logLevel=verbose`
 - 9.4.0 dashboard: users can resize panels
-<video src="docs/9.4.0-resize-panels.mp4" />
+![](docs/9.4.0-resize-panels.gif)
 
 - 9.3.0 handle head requests for get mocks
 - 9.2.0 dashboard: syntax highlight more xml files (such as html)

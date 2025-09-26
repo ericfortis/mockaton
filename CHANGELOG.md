@@ -28,6 +28,9 @@ await Mockaton()
 ---
 
 - 8.27.0 dashboard: group by method checkbox
+ 
+![](docs/8.27.0-group-by-method.gif)
+ 
 - 8.26.0 ui simplify mock-selector label text
 - 8.25.0 `--quiet` and `config.logLevel` options
 - 8.24.0 show iso date in logs and log static file dispatch
@@ -42,7 +45,8 @@ await Mockaton()
 - 8.15.0 add `config.delayJitter`
 - 8.14.0 static files controls
 - 8.13.0 dashboard: dim repeated dirs
-<img src="docs/8.13.0-ditto-dirs.png">
+ 
+![](docs/8.13.0-ditto-dirs.png)
 
 - 8.12.0 add `config.formatCollectedJSON`
 - 8.11.0 allow all the HTTP methods Node.js supports

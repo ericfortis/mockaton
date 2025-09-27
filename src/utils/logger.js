@@ -1,3 +1,6 @@
+import { decode, reControlAndDelChars } from './http-request.js'
+
+
 export const logger = new class {
 	#level = 'normal'
 
@@ -12,16 +15,17 @@ export const logger = new class {
 
 	accessMock(url, ...msg) {
 		if (this.#level !== 'quiet')
-			console.log(this.#msg('MOCK', this.#sanitizeURL(url), ...msg))
+			console.log(this.#msg('MOCK', this.sanitizeURL(url), ...msg))
 	}
 
-	access(response) {
+	access(response, error) {
 		if (this.#level === 'verbose')
 			console.log(this.#msg(
 				'ACCESS',
 				response.req.method,
 				response.statusCode,
-				this.#sanitizeURL(response.req.url)))
+				this.sanitizeURL(response.req.url),
+				error))
 	}
 
 	warn(...msg) {
@@ -33,10 +37,22 @@ export const logger = new class {
 	}
 
 	#msg(...msg) {
+		if (!msg.at(-1))
+			msg.pop()
 		return [new Date().toISOString(), ...msg].join('::')
 	}
-	
-	#sanitizeURL(url) {
-		return decodeURIComponent(url).replace(/[\x00-\x1F\x7F\x9B]/g, '')
+
+	sanitizeURL(url) {
+		try {
+			const decoded = decode(url)
+			if (!decoded)
+				return '__MULTI_ENCODED_URL__'
+			return decoded
+				.replace(reControlAndDelChars, '')
+				.slice(0, 200)
+		}
+		catch {
+			return '__NON_DECODABLE_URL__'
+		}
 	}
 }

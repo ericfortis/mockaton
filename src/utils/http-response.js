@@ -28,21 +28,33 @@ export function sendNoContent(response) {
 }
 
 
+export function sendBadRequest(response) {
+	response.statusCode = 400
+	logger.access(response)
+	response.end()
+}
+
 export function sendNotFound(response) {
 	response.statusCode = 404
 	logger.access(response)
 	response.end()
 }
 
+export function sendTooLongURI(response) {
+	response.statusCode = 414
+	logger.access(response)
+	response.end()
+}
+
 export function sendUnprocessableContent(response, error) {
-	logger.warn(error)
+	logger.access(response, error)
 	response.statusCode = 422
 	response.end(error)
 }
 
 
 export function sendInternalServerError(response, error) {
-	logger.error(error?.message || error, error?.stack || undefined)
+	logger.error(500, logger.sanitizeURL(response.req.url), error?.message || error, error?.stack || '')
 	response.statusCode = 500
 	response.end()
 }

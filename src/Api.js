@@ -104,7 +104,7 @@ function reinitialize(_, response) {
 async function selectCookie(req, response) {
 	const error = cookie.setCurrent(await parseJSON(req))
 	if (error)
-		sendUnprocessableContent(response, error)
+		sendUnprocessableContent(response, error?.message || error)
 	else
 		sendOK(response)
 }

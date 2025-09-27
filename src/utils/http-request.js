@@ -48,3 +48,21 @@ export function readBody(req, parser = a => a) {
 		}
 	})
 }
+
+export const reControlAndDelChars = /[\x00-\x1f\x7f]/
+export function isControlCharFree(url) {
+	try {
+		const decoded = decode(url)
+		return decoded && !reControlAndDelChars.test(decoded)
+	}
+	catch {
+		return false
+	}
+}
+
+export function decode(url) {
+	const candidate = decodeURIComponent(url)
+	return candidate === decodeURIComponent(candidate) 
+		? candidate 
+		: '' // reject multiple encodings
+}

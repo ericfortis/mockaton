@@ -6,12 +6,12 @@ import { config, setup } from './config.js'
 import { dispatchMock } from './MockDispatcher.js'
 import { dispatchStatic } from './StaticDispatcher.js'
 import * as staticCollection from './staticCollection.js'
-import { BodyReaderError } from './utils/http-request.js'
 import * as mockBrokerCollection from './mockBrokersCollection.js'
 import { setCorsHeaders, isPreflight } from './utils/http-cors.js'
 import { watchMocksDir, watchStaticDir } from './Watcher.js'
 import { apiPatchRequests, apiGetRequests } from './Api.js'
-import { sendNoContent, sendInternalServerError, sendUnprocessableContent } from './utils/http-response.js'
+import { BodyReaderError, isControlCharFree } from './utils/http-request.js'
+import { sendNoContent, sendInternalServerError, sendUnprocessableContent, sendTooLongURI, sendBadRequest } from './utils/http-response.js'
 
 
 export function Mockaton(options) {
@@ -39,27 +39,34 @@ export function Mockaton(options) {
 
 async function onRequest(req, response) {
 	response.on('error', logger.warn)
+	response.setHeader('Server', 'Mockaton')
+
+	const url = req.url || ''
+
+	if (url.length > 2048) {
+		sendTooLongURI(response)
+		return
+	}
+
+	if (!isControlCharFree(url)) {
+		sendBadRequest(response)               
+		return
+	}
 
 	try {
-		response.setHeader('Server', 'Mockaton')
+		const { method } = req
 
 		if (config.corsAllowed)
 			setCorsHeaders(req, response, config)
 
-		const { url, method } = req
-
 		if (isPreflight(req))
 			sendNoContent(response)
-
 		else if (method === 'PATCH' && apiPatchRequests.has(url))
 			await apiPatchRequests.get(url)(req, response)
-
 		else if (method === 'GET' && apiGetRequests.has(url))
 			apiGetRequests.get(url)(req, response)
-
 		else if (method === 'GET' && staticCollection.brokerByRoute(url))
 			await dispatchStatic(req, response)
-
 		else
 			await dispatchMock(req, response)
 	}

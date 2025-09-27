@@ -230,6 +230,22 @@ it('normalizes backslashes with forward ones', () => {
 	equal(files[0], 'api/.GET.200.json')
 })
 
+describe('Rejects malicious URLs', () => {
+	[
+		['double-encoded', `/api${encodeURIComponent(encodeURIComponent('/'))}user`, 400],
+		['encoded null byte', '/api/user%00/admin', 400],
+		['invalid percent-encoding', '/api/user%ZZ', 400],
+		['overlong/illegal UTF-8 sequence', '/api/user%C0%AF', 400],
+		['encoded CRLF sequence', '/api/user%0d%0aSet-Cookie:%20x=1', 400],
+		['double-double-encoding trick', '/api%25252Fuser', 400],
+		['zero-width/invisible char', '/api/user%E2%80%8Binfo', 404],
+		['raw path traversal', '/api/../user', 404],
+		['encoded path traversal', '/api/user/..%2Fadmin', 404],
+		['very long path', '/api' + 'A'.repeat(2048), 414]
+	].map(([title, url, status]) =>
+		it(title, async () => equal((await request(url)).status, status)))
+})
+
 it('Dashboard renders', async () => {
 	const res = await request(API.dashboard)
 	match(await res.text(), new RegExp('<!DOCTYPE html>'))
@@ -252,7 +268,7 @@ describe('404', () => {
 it('returns 500 when a handler throws', async t => {
 	const spy = spyLogger(t, 'error')
 	equal((await request(API.throws)).status, 500)
-	equal(spy.calls[0].arguments[0], 'Test500')
+	equal(spy.calls[0].arguments[2], 'Test500')
 })
 
 for (const [url, file, body] of fixtures)
@@ -808,12 +824,12 @@ it('longPollSyncVersion responds immediately when version mismatches', async () 
 })
 
 it('body parser rejects invalid json in API requests', async t => {
-	const spy = spyLogger(t, 'warn')
+	const spy = spyLogger(t, 'access')
 	equal((await request(API.cookies, {
 		method: 'PATCH',
 		body: '[invalid_json]'
 	})).status, 422)
-	equal(spy.calls[0].arguments[0], 'BodyReaderError: Could not parse')
+	equal(spy.calls[0].arguments[1], 'BodyReaderError: Could not parse')
 })
 
 await it('head for get. returns the headers without body only for GETs requested as HEAD', async () => {

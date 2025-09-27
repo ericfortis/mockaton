@@ -460,13 +460,20 @@ it('Static File List', async () => {
 
 it('Invalid filenames get skipped, so they don’t crash the server', async t => {
 	const spy = spyLogger(t, 'warn')
-	write('api/_INVALID_FILENAME_CONVENTION_.json', '')
-	write('api/bad-filename-method._INVALID_METHOD_.200.json', '')
-	write('api/bad-filename-status.GET._INVALID_STATUS_.json', '')
+	const files = [
+		'api/_INVALID_FILENAME_CONVENTION_.json',
+		'api/bad-filename-method._INVALID_METHOD_.200.json',
+		'api/bad-filename-status.GET._INVALID_STATUS_.json'
+	]
+	for (const f of files)
+		write(f, '')
 	await sleep()
 	equal(spy.calls[0].arguments[0], 'Invalid Filename Convention')
 	equal(spy.calls[1].arguments[0], 'Unrecognized HTTP Method: "_INVALID_METHOD_"')
 	equal(spy.calls[2].arguments[0], 'Invalid HTTP Response Status: "NaN"')
+	for (const f of files)
+		remove(f)
+	await sleep()
 })
 
 describe('Fallback', () => {

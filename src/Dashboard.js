@@ -78,8 +78,10 @@ for (const k of Object.keys(CSS))
 
 
 /** @type {State & {
- *   groupByMethod: boolean,
  *   canProxy: boolean
+ *   groupByMethod: boolean
+ *   toggleGroupByMethod: () => void
+ *   leftSideWidth?: number
  *  }} */
 const state = {
 	brokersByMethod: {},
@@ -87,6 +89,7 @@ const state = {
 	cookies: [],
 	comments: [],
 	delay: 0,
+	
 	collectProxied: false,
 	proxyFallback: '',
 	get canProxy() {
@@ -263,7 +266,7 @@ function GlobalDelayField() {
 }
 
 function ProxyFallbackField() {
-	const { proxyFallback, collectProxied } = state
+	const { proxyFallback } = state
 	function onChange() {
 		const saveCheckbox = this.closest(`.${CSS.FallbackBackend}`).querySelector('[type=checkbox]')
 		saveCheckbox.disabled = !this.validity.valid || !this.value.trim()
@@ -287,14 +290,11 @@ function ProxyFallbackField() {
 					value: proxyFallback,
 					onChange
 				})),
-			SaveProxiedCheckbox({
-				collectProxied,
-				disabled: !proxyFallback
-			})))
+			SaveProxiedCheckbox()))
 }
 
-function SaveProxiedCheckbox({ disabled }) {
-	const { collectProxied } = state
+function SaveProxiedCheckbox() {
+	const { collectProxied, canProxy } = state
 	function onChange() {
 		mockaton.setCollectProxied(this.checked)
 			.then(parseError)
@@ -304,7 +304,7 @@ function SaveProxiedCheckbox({ disabled }) {
 		r('label', className(CSS.SaveProxiedCheckbox),
 			r('input', {
 				type: 'checkbox',
-				disabled,
+				disabled: !canProxy,
 				checked: collectProxied,
 				onChange
 			}),
@@ -330,8 +330,7 @@ function ResetButton() {
 /** # MockList */
 
 function MockList() {
-	const { brokersByMethod, groupByMethod } = state
-	const canProxy = state.canProxy
+	const { brokersByMethod, groupByMethod, canProxy } = state
 
 	if (!Object.keys(brokersByMethod).length)
 		return (
@@ -355,14 +354,14 @@ function MockList() {
 }
 
 function Row({ method, urlMask, urlMaskDittoed, broker }) {
-	const canProxy = state.canProxy
+	const { canProxy } = state
 	return (
 		r('tr', { 'data-method': method, 'data-urlMask': urlMask },
-			canProxy && r('td', null, ProxyToggler({ broker })),
-			r('td', null, DelayRouteToggler({ broker })),
-			r('td', null, InternalServerErrorToggler({ broker })),
-			r('td', null, PreviewLink({ method, urlMask, urlMaskDittoed })),
-			r('td', null, MockSelector({ broker }))))
+			canProxy && r('td', null, ProxyToggler(broker)),
+			r('td', null, DelayRouteToggler(broker)),
+			r('td', null, InternalServerErrorToggler(broker)),
+			r('td', null, PreviewLink(method, urlMask, urlMaskDittoed)),
+			r('td', null, MockSelector(broker))))
 }
 
 function rowsFor(targetMethod) {
@@ -385,7 +384,7 @@ function rowsFor(targetMethod) {
 	}))
 }
 
-function PreviewLink({ method, urlMask, urlMaskDittoed }) {
+function PreviewLink(method, urlMask, urlMaskDittoed) {
 	async function onClick(event) {
 		event.preventDefault()
 		try {
@@ -408,8 +407,8 @@ function PreviewLink({ method, urlMask, urlMaskDittoed }) {
 			: tail))
 }
 
-/** @param {{ broker: ClientMockBroker }} props */
-function MockSelector({ broker }) {
+/** @param {ClientMockBroker} broker */
+function MockSelector(broker) {
 	const { groupByMethod } = state
 
 	function onChange() {
@@ -457,8 +456,8 @@ function MockSelector({ broker }) {
 			}, nameFor(file))))))
 }
 
-/** @param {{ broker: ClientMockBroker }} props */
-function DelayRouteToggler({ broker }) {
+/** @param {ClientMockBroker} broker */
+function DelayRouteToggler(broker) {
 	function commit(checked) {
 		const { method, urlMask } = parseFilename(broker.mocks[0])
 		mockaton.setRouteIsDelayed(method, urlMask, checked)
@@ -472,8 +471,8 @@ function DelayRouteToggler({ broker }) {
 }
 
 
-/** @param {{ broker: ClientMockBroker }} props */
-function InternalServerErrorToggler({ broker }) {
+/** @param {ClientMockBroker} broker */
+function InternalServerErrorToggler(broker) {
 	function onChange() {
 		const { urlMask, method } = parseFilename(broker.mocks[0])
 		mockaton.select(
@@ -499,8 +498,8 @@ function InternalServerErrorToggler({ broker }) {
 			r('span', null, '500')))
 }
 
-/** @param {{ broker: ClientMockBroker }} props */
-function ProxyToggler({ broker }) {
+/** @param {ClientMockBroker} broker */
+function ProxyToggler(broker) {
 	function onChange() {
 		const { urlMask, method } = parseFilename(broker.mocks[0])
 		mockaton.setRouteIsProxied(method, urlMask, this.checked)
@@ -527,8 +526,7 @@ function ProxyToggler({ broker }) {
 /** # StaticFilesList */
 
 function StaticFilesList() {
-	const { staticBrokers } = state
-	const canProxy = state.canProxy
+	const { staticBrokers, canProxy } = state
 	if (!Object.keys(staticBrokers).length)
 		return null
 	const dp = dittoSplitPaths(Object.keys(staticBrokers)).map(([ditto, tail]) => ditto
@@ -543,15 +541,15 @@ function StaticFilesList() {
 			r('tbody', null,
 				Object.values(staticBrokers).map((broker, i) =>
 					r('tr', null,
-						canProxy && r('td', null, ProxyStaticToggler({})),
-						r('td', null, DelayStaticRouteToggler({ broker })),
-						r('td', null, NotFoundToggler({ broker })),
+						canProxy && r('td', null, ProxyStaticToggler()),
+						r('td', null, DelayStaticRouteToggler(broker)),
+						r('td', null, NotFoundToggler(broker)),
 						r('td', null, r('a', { href: broker.route, target: '_blank' }, dp[i]))
 					)))))
 }
 
-/** @param {{ broker: ClientStaticBroker }} props */
-function DelayStaticRouteToggler({ broker }) {
+/** @param {ClientStaticBroker} broker */
+function DelayStaticRouteToggler(broker) {
 	function commit(checked) {
 		mockaton.setStaticRouteIsDelayed(broker.route, checked)
 			.then(parseError)
@@ -563,8 +561,8 @@ function DelayStaticRouteToggler({ broker }) {
 	})
 }
 
-/** @param {{ broker: ClientStaticBroker }} props */
-function NotFoundToggler({ broker }) {
+/** @param {ClientStaticBroker} broker */
+function NotFoundToggler(broker) {
 	function onChange() {
 		mockaton.setStaticRouteStatus(broker.route, this.checked ? 404 : 200)
 			.then(parseError)
@@ -583,7 +581,7 @@ function NotFoundToggler({ broker }) {
 			r('span', null, '404')))
 }
 
-function ProxyStaticToggler({}) { // TODO
+function ProxyStaticToggler() { // TODO
 	function onChange() {
 	}
 	return (

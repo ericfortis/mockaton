@@ -198,6 +198,7 @@ const server = await Mockaton({
 	extraMimes: {
 		my_custom_extension: 'my_custom_mime'
 	},
+	logLevel: 'quiet',
 	corsOrigins: ['http://example.com'],
 	corsExposedHeaders: ['Content-Encoding']
 })
@@ -249,9 +250,9 @@ describe('404', () => {
 })
 
 it('returns 500 when a handler throws', async t => {
-	const spy = t.mock.method(logger, 'error')
+	const spy = spyLogger(t, 'error')
 	equal((await request(API.throws)).status, 500)
-	equal(spy.mock.calls[0].arguments[0], 'Test500')
+	equal(spy.calls[0].arguments[0], 'Test500')
 })
 
 for (const [url, file, body] of fixtures)
@@ -442,14 +443,14 @@ it('Static File List', async () => {
 })
 
 it('Invalid filenames get skipped, so they don’t crash the server', async t => {
-	const spy = t.mock.method(logger, 'warn')
+	const spy = spyLogger(t, 'warn')
 	write('api/_INVALID_FILENAME_CONVENTION_.json', '')
 	write('api/bad-filename-method._INVALID_METHOD_.200.json', '')
 	write('api/bad-filename-status.GET._INVALID_STATUS_.json', '')
 	await sleep()
-	equal(spy.mock.calls[0].arguments[0], 'Invalid Filename Convention')
-	equal(spy.mock.calls[1].arguments[0], 'Unrecognized HTTP Method: "_INVALID_METHOD_"')
-	equal(spy.mock.calls[2].arguments[0], 'Invalid HTTP Response Status: "NaN"')
+	equal(spy.calls[0].arguments[0], 'Invalid Filename Convention')
+	equal(spy.calls[1].arguments[0], 'Unrecognized HTTP Method: "_INVALID_METHOD_"')
+	equal(spy.calls[2].arguments[0], 'Invalid HTTP Response Status: "NaN"')
 })
 
 describe('Fallback', () => {
@@ -807,12 +808,12 @@ it('longPollSyncVersion responds immediately when version mismatches', async () 
 })
 
 it('body parser rejects invalid json in API requests', async t => {
-	const spy = t.mock.method(logger, 'warn')
+	const spy = spyLogger(t, 'warn')
 	equal((await request(API.cookies, {
 		method: 'PATCH',
 		body: '[invalid_json]'
 	})).status, 422)
-	equal(spy.mock.calls[0].arguments[0], 'BodyReaderError: Could not parse')
+	equal(spy.calls[0].arguments[0], 'BodyReaderError: Could not parse')
 })
 
 await it('head for get. returns the headers without body only for GETs requested as HEAD', async () => {
@@ -840,6 +841,12 @@ function testMockDispatching(url, file, expectedBody, forcedMime = undefined) {
 		equal(res.headers.get('server'), 'MockatonTester')
 		deepEqual(body, expectedBody)
 	})
+}
+
+function spyLogger(t, method) {
+	const spy = t.mock.method(logger, method)
+	spy.mock.mockImplementation(() => null)
+	return spy.mock
 }
 
 

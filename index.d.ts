@@ -97,5 +97,5 @@ export interface State {
 	collectProxied: boolean
 	proxyFallback: string
 	
-	corsAllowed: boolean
+	corsAllowed?: boolean
 }

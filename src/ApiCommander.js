@@ -19,7 +19,7 @@ export class Commander {
 	getState() {
 		return fetch(this.#addr + API.state)
 	}
-	
+
 	/** @returns {JsonPromise<number>} */
 	getSyncVersion(currentSyncVersion, abortSignal) {
 		return fetch(this.#addr + API.syncVersion, {
@@ -37,6 +37,13 @@ export class Commander {
 
 	select(file) {
 		return this.#patch(API.select, file)
+	}
+
+	toggle500(routeMethod, routeUrlMask) {
+		return this.#patch(API.toggle500, {
+			[DF.routeMethod]: routeMethod,
+			[DF.routeUrlMask]: routeUrlMask,
+		})
 	}
 
 	bulkSelectByComment(comment) {

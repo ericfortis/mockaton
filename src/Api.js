@@ -38,6 +38,7 @@ export const apiPatchRequests = new Map([
 	[API.proxied, setRouteIsProxied],
 	[API.cookies, selectCookie],
 	[API.fallback, updateProxyFallback],
+	[API.toggle500, toggle500],
 	[API.bulkSelect, bulkUpdateBrokersByCommentTag],
 	[API.globalDelay, setGlobalDelay],
 	[API.collectProxied, setCollectProxied],
@@ -116,6 +117,19 @@ async function selectMock(req, response) {
 		sendUnprocessableContent(response, `Missing Mock: ${file}`)
 	else {
 		broker.selectFile(file)
+		sendOK(response)
+	}
+}
+
+async function toggle500(req, response) {
+	const body = await parseJSON(req)
+	const broker = mockBrokersCollection.brokerByRoute(
+		body[DF.routeMethod],
+		body[DF.routeUrlMask])
+	if (!broker)
+		sendUnprocessableContent(response, `Route does not exist: ${body[DF.routeMethod]} ${body[DF.routeUrlMask]}`)
+	else {
+		broker.toggle500()
 		sendOK(response)
 	}
 }

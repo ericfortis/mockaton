@@ -54,7 +54,7 @@ export function sendUnprocessableContent(response, error) {
 
 
 export function sendInternalServerError(response, error) {
-	logger.error(500, logger.sanitizeURL(response.req.url), error?.message || error, error?.stack || '')
+	logger.error(500, response.req.url, error?.message || error, error?.stack || '')
 	response.statusCode = 500
 	response.end()
 }

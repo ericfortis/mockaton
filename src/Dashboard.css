@@ -485,7 +485,6 @@ table {
 }
 
 .ProxyToggler {
-	padding: 1px 3px;
 	border: 1px solid var(--colorSecondaryActionBorder);
 	margin-right: 8px;
 	border-radius: var(--radius);
@@ -504,7 +503,7 @@ table {
 			path:last-of-type { /* inner cloud curve */
 				stroke: var(--colorBackground);
 			}
-			transform: scale(1.2);
+			transform: scale(1.1);
 		}
 
 		&:enabled:hover:not(:checked) ~ svg {
@@ -526,8 +525,9 @@ table {
 	}
 
 	> svg {
-		width: 18px;
-		height: 18px;
+		width: 22px;
+		height: 22px;
+		padding: 1px 3px;
 		stroke-width: 2px;
 		border-radius: var(--radius);
 	}
@@ -543,7 +543,7 @@ table {
 	> input {
 		appearance: none;
 
-		&:focus-visible {
+		&:focus {
 			outline: 0;
 			& ~ span {
 				outline: 2px solid var(--colorAccent)

@@ -1,4 +1,5 @@
 # Changelog
+- 10.3.0 new api `commander.toggle500(method, route)`
 - 10.2.0 reject malicious URLs
 - 10.1.0 dashboard: toggle delay with click-drag 
  

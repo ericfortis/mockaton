@@ -15,16 +15,16 @@ export const logger = new class {
 
 	accessMock(url, ...msg) {
 		if (this.#level !== 'quiet')
-			console.log(this.#msg('MOCK', this.sanitizeURL(url), ...msg))
+			console.log(this.#msg('MOCK', url, ...msg))
 	}
 
-	access(response, error) {
+	access(response, error = '') {
 		if (this.#level === 'verbose')
 			console.log(this.#msg(
 				'ACCESS',
 				response.req.method,
 				response.statusCode,
-				this.sanitizeURL(response.req.url),
+				response.req.url,
 				error))
 	}
 
@@ -39,20 +39,20 @@ export const logger = new class {
 	#msg(...msg) {
 		if (!msg.at(-1))
 			msg.pop()
-		return [new Date().toISOString(), ...msg].join('::')
+		return [new Date().toISOString(), ...msg.map(this.#sanitize)].join('::')
 	}
 
-	sanitizeURL(url) {
+	#sanitize(url) {
 		try {
 			const decoded = decode(url)
 			if (!decoded)
-				return '__MULTI_ENCODED_URL__'
+				return '__MULTI_ENCODED__'
 			return decoded
 				.replace(reControlAndDelChars, '')
 				.slice(0, 200)
 		}
 		catch {
-			return '__NON_DECODABLE_URL__'
+			return '__NON_DECODABLE__'
 		}
 	}
 }

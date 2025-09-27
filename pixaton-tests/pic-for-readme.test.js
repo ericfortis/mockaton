@@ -20,7 +20,13 @@ testPixels(import.meta.filename, {
 		await page.evaluate(() => {
 			const el = document.querySelector('.leftSide')
 			if (el) el.style.width = '505px'
+			document.activeElement?.blur()
 		})
+		
+		// Avoid hover styles. Moving twice, because there two tests, so we
+		// need to move the pointer to a new location. Otherwise, it’s a noop.
+		await page.mouse.move(0, 0)
+		await page.mouse.move(1, 0)
 	},
 
 	viewports: [{

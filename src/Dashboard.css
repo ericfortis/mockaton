@@ -285,13 +285,14 @@ header {
 	}
 }
 
-#Menu {
+.SettingsMenu {
 	position: absolute;
 	top: 62px;
 	right: 10px;
 	left: auto;
 	padding: 20px;
 	border: 1px solid var(--colorSecondaryActionBorder);
+	text-align: left;
 	color: var(--colorText);
 	border-radius: var(--radius);
 	box-shadow: var(--boxShadow1);
@@ -305,7 +306,7 @@ header {
 		display: flex;
 		align-items: center;
 		margin-bottom: 12px;
-		gap: 4px;
+		gap: 6px;
 	}
 }
 

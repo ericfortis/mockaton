@@ -1,5 +1,5 @@
 :root {
-	--radius: 8px;
+	--radius: 16px;
 	--boxShadow1: rgba(0, 0, 0, 0.18) 0 2px 1px -1px, rgba(0, 0, 0, 0.12) 0 1px 1px 0, rgba(0, 0, 0, 0.1) 0 1px 3px 0px;
 }
 
@@ -16,7 +16,7 @@
 		--colorSecondaryAction: #666;
 		--colorDisabledMockSelector: #444;
 		--colorHover: #dfefff;
-		--colorLabel: #444;
+		--colorLabel: #555;
 		--colorLightRed: #ffe4ee;
 		--colorRed: #da0f00;
 		--colorText: #000;
@@ -111,7 +111,7 @@ a {
 a,
 button,
 input[type=checkbox],
-input[type=checkbox] ~ svg {
+input[type=checkbox] + svg {
 	cursor: pointer;
 
 	&:active {
@@ -128,7 +128,7 @@ select {
 	appearance: none;
 	background: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%23888888'><path d='M16.59 8.59 12 13.17 7.41 8.59 6 10l6 6 6-6z'/></svg>") no-repeat;
 	background-size: 16px;
-	background-position: 100% center;
+	background-position: calc(100% - 3px) center;
 
 	&:enabled {
 		border-color: var(--colorSecondaryActionBorder);
@@ -155,9 +155,9 @@ header {
 		display: flex;
 		flex-wrap: wrap;
 		align-items: flex-end;
-		gap: 16px 10px;
+		gap: 16px 8px;
 
-		@media (max-width: 780px) {
+		@media (max-width: 760px) {
 			max-width: 400px;
 		}
 	}
@@ -175,18 +175,10 @@ header {
 		span {
 			display: flex;
 			align-items: center;
+			margin-left: 8px;
 			color: var(--colorLabel);
 			font-size: 11px;
 			gap: 4px;
-
-			svg {
-				width: 14px;
-				height: 14px;
-				stroke: var(--colorLabel);
-				stroke-width: 1.5px;
-				fill: none;
-				opacity: .7;
-			}
 		}
 
 		input[type=url],
@@ -209,10 +201,10 @@ header {
 		}
 
 		&.GlobalDelayField {
-			width: 84px;
+			width: 76px;
 
 			input[type=number] {
-				padding-right: 4px;
+				padding-right: 6px;
 			}
 
 			svg {
@@ -243,6 +235,9 @@ header {
 				font-size: 11px;
 				gap: 4px;
 
+				input + span {
+					margin: 0;
+				}
 				input:disabled + span {
 					opacity: 0.8;
 				}
@@ -316,7 +311,7 @@ main {
 	min-width: 0;
 	min-height: 0;
 
-	@media (max-width: 780px) {
+	@media (max-width: 760px) {
 		flex-direction: column;
 
 		.Resizer {
@@ -368,7 +363,7 @@ table {
 	border-collapse: collapse;
 
 	tr {
-		border-top: 2px solid transparent;
+		border-top: 3px solid transparent;
 	}
 
 	th {
@@ -414,7 +409,6 @@ table {
 	padding-left: 8px;
 	text-overflow: ellipsis;
 	font-size: 12px;
-	background-position: calc(100% - 4px) center;
 
 	&.nonDefault {
 		font-weight: bold;
@@ -447,7 +441,7 @@ table {
 
 		&:focus {
 			outline: 0;
-			& ~ svg {
+			& + svg {
 				outline: 2px solid var(--colorAccent)
 			}
 		}
@@ -462,14 +456,14 @@ table {
 
 .DelayToggler {
 	> input {
-		&:checked ~ svg {
+		&:checked + svg {
 			border-color: var(--colorAccent);
 			fill: var(--colorAccent);
 			background: var(--colorAccent);
 			stroke: var(--colorBackground);
 		}
 
-		&:enabled:hover:not(:checked) ~ svg {
+		&:enabled:hover:not(:checked) + svg {
 			border-color: var(--colorHover);
 			background: var(--colorHover);
 			stroke: var(--colorText);
@@ -497,7 +491,7 @@ table {
 	}
 
 	> input {
-		&:checked ~ svg {
+		&:checked + svg {
 			fill: var(--colorAccent);
 			stroke: var(--colorAccent);
 
@@ -507,12 +501,12 @@ table {
 			transform: scale(1.1);
 		}
 
-		&:enabled:hover:not(:checked) ~ svg {
+		&:enabled:hover:not(:checked) + svg {
 			fill: var(--colorHover);
 			stroke: var(--colorText);
 		}
 
-		&:disabled ~ svg {
+		&:disabled + svg {
 			stroke-opacity: 0.4;
 			cursor: not-allowed;
 			box-shadow: none;
@@ -526,9 +520,8 @@ table {
 	}
 
 	> svg {
-		width: 22px;
-		height: 22px;
-		padding: 1px 3px;
+		width: 26px;
+		padding: 1px 4px;
 		stroke-width: 2px;
 		border-radius: var(--radius);
 	}
@@ -546,12 +539,12 @@ table {
 
 		&:focus {
 			outline: 0;
-			& ~ span {
+			& + span {
 				outline: 2px solid var(--colorAccent)
 			}
 		}
 
-		&:checked ~ span {
+		&:checked + span {
 			border-color: var(--colorRed);
 			color: white;
 			background: var(--colorRed);

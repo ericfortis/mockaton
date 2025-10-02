@@ -272,7 +272,7 @@ function GlobalDelayField() {
 	}
 	return (
 		r('label', className(CSS.Field, CSS.GlobalDelayField),
-			r('span', null, TimerIcon(), Strings.delay_ms),
+			r('span', null, Strings.delay_ms),
 			r('input', {
 				type: 'number',
 				min: 0,
@@ -300,7 +300,7 @@ function ProxyFallbackField() {
 	return (
 		r('div', className(CSS.Field, CSS.FallbackBackend),
 			r('label', null,
-				r('span', null, CloudIcon(), Strings.fallback_server),
+				r('span', null, Strings.fallback_server),
 				r('input', {
 					type: 'url',
 					autocomplete: 'none',
@@ -980,7 +980,7 @@ function dittoSplitPaths(paths) {
 
 
 function syntaxJSON(json) {
-	const MAX_NODES = 1000
+	const MAX_NODES = 50_000
 	let nNodes = 0
 	const frag = document.createDocumentFragment()
 
@@ -1028,7 +1028,7 @@ syntaxJSON.regex = /("(?:\\u[a-fA-F0-9]{4}|\\[^u]|[^\\"])*")(\s*:)?|([{}\[\],:\s
 
 
 function syntaxXML(xml) {
-	const MAX_NODES = 1000
+	const MAX_NODES = 50_000
 	let nNodes = 0
 	const frag = document.createDocumentFragment()
 

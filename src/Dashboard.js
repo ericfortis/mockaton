@@ -708,14 +708,18 @@ function PayloadViewerProgressBar() {
 			r('div', { style: { animationDuration: state.delay + 'ms' } })))
 }
 
-function PayloadViewerTitle({ file, status, statusText }) {
-	const { urlMask, method, ext } = parseFilename(file)
+function PayloadViewerTitle({ file, statusText }) {
+	const tokens = file.split('.')
+	const ext = tokens.pop()
+	const status = tokens.pop()
+	const urlAndMethod = '/' + tokens.join('.') + '.'
 	return (
 		r('span', null,
-			urlMask.replace(/^\//, '') + '.' + method + '.',
+			urlAndMethod,
 			r('abbr', { title: statusText }, status),
 			'.' + ext))
 }
+
 function PayloadViewerTitleWhenProxied({ mime, status, statusText, gatewayIsBad }) {
 	return (
 		r('span', null,
@@ -759,7 +763,6 @@ async function updatePayloadViewer(method, urlMask, response) {
 		}))
 	else
 		payloadViewerTitleRef.current.replaceChildren(PayloadViewerTitle({
-			status: response.status,
 			statusText: response.statusText,
 			file
 		}))

@@ -586,6 +586,7 @@ table {
 	padding-top: 16px;
 
 	h2 {
+		padding-bottom: 4px;
 		padding-left: 16px;
 	}
 
@@ -593,6 +594,7 @@ table {
 		overflow: auto;
 		height: 100%;
 		padding: 16px;
+		padding-top: 12px;
 		font-family: monospace;
 
 		code {

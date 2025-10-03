@@ -239,6 +239,7 @@ function BulkSelector() {
 		mockaton.bulkSelectByComment(value)
 			.then(parseError)
 			.then(updateState)
+			.then(() => focus(`.${CSS.BulkSelector}`))
 			.catch(onError)
 	}
 	const disabled = !comments.length
@@ -295,6 +296,7 @@ function ProxyFallbackField() {
 			mockaton.setProxyFallback(this.value.trim())
 				.then(parseError)
 				.then(updateState)
+				.then(() => focus(`.${CSS.FallbackBackend} input`))
 				.catch(onError)
 	}
 	return (
@@ -334,6 +336,7 @@ function ResetButton() {
 		mockaton.reset()
 			.then(parseError)
 			.then(updateState)
+			.then(() => focus(`.${CSS.ResetButton}`))
 			.catch(onError)
 	}
 	return (
@@ -800,6 +803,9 @@ function mockSelectorFor(method, urlMask) {
 	return trFor(method, urlMask)?.querySelector(`select.${CSS.MockSelector}`)
 }
 
+function focus(selector) {
+	document.querySelector(selector)?.focus()
+}
 
 /** # Misc */
 

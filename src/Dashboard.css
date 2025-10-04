@@ -102,10 +102,6 @@ select, a, input, button {
 
 a {
 	text-decoration: none;
-
-	&:hover {
-		text-decoration: underline;
-	}
 }
 
 a,
@@ -141,6 +137,7 @@ select {
 	}
 	&:disabled {
 		cursor: not-allowed;
+		opacity: 0.5;
 	}
 }
 
@@ -151,22 +148,38 @@ header {
 	border-bottom: 1px solid var(--colorSecondaryActionBorder);
 	background: var(--colorHeaderBackground);
 
-	> div {
-		display: flex;
-		flex-wrap: wrap;
-		align-items: flex-end;
-		gap: 16px 8px;
-
-		@media (max-width: 760px) {
-			max-width: 400px;
-		}
-	}
-
-	img {
+	> img {
 		width: 120px;
 		align-self: end;
 		margin-right: 22px;
 		margin-bottom: 5px;
+	}
+
+	> div {
+		display: flex;
+		width: 100%;
+		flex-wrap: wrap;
+		align-items: flex-end;
+		gap: 16px 8px;
+	}
+
+	@media (max-width: 760px) {
+		> img {
+			width: 100px;
+			align-self: center;
+		}
+		
+		> div {
+			width: 400px;
+			.MenuTrigger {
+				margin-left: unset;
+			}
+		}
+	}
+	@media (max-width: 424px) {
+		> img {
+			display: none;
+		}
 	}
 
 	.Field {
@@ -253,7 +266,9 @@ header {
 	.ResetButton {
 		padding: 6px 12px;
 		border: 1px solid var(--colorRed);
+		margin-right: 8px;
 		margin-left: 4px;
+		outline-offset: 1px;
 		background: transparent;
 		color: var(--colorRed);
 		border-radius: 50px;
@@ -269,6 +284,7 @@ header {
 		height: 24px;
 		flex-shrink: 0;
 		align-self: end;
+		margin-bottom: 2px;
 		margin-left: auto;
 		fill: var(--colorSecondaryAction);
 		background: transparent;
@@ -278,6 +294,7 @@ header {
 			fill: var(--colorAccent);
 		}
 	}
+
 }
 
 .SettingsMenu {
@@ -362,10 +379,6 @@ main {
 table {
 	border-collapse: collapse;
 
-	tr {
-		border-top: 3px solid transparent;
-	}
-
 	th {
 		padding-bottom: 2px;
 		padding-left: 4px;
@@ -395,7 +408,6 @@ table {
 
 	&:hover {
 		background: var(--colorHover);
-		text-decoration: none;
 	}
 	&.chosen {
 		color: white;
@@ -404,7 +416,7 @@ table {
 }
 
 .MockSelector {
-	height: 26px;
+	height: 24px;
 	padding-right: 20px;
 	padding-left: 8px;
 	text-overflow: ellipsis;

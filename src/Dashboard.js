@@ -20,7 +20,9 @@ const Strings = {
 	got: 'Got',
 	group_by_method: 'Group by Method',
 	internal_server_error: 'Internal Server Error',
+	mock_selector: 'Mock Selector',
 	no_mocks_found: 'No mocks found',
+	none: 'None',
 	not_found: 'Not Found',
 	pick_comment: 'Pick Comment…',
 	preview: 'Preview',
@@ -28,6 +30,7 @@ const Strings = {
 	proxy_toggler: 'Proxy Toggler',
 	reset: 'Reset',
 	save_proxied: 'Save Mocks',
+	settings: 'Settings',
 	static_get: 'Static GET',
 	title: 'Mockaton'
 }
@@ -158,11 +161,11 @@ function Header() {
 			}),
 			r('div', null,
 				GlobalDelayField(),
-				CookieSelector(),
 				BulkSelector(),
+				CookieSelector(),
 				ProxyFallbackField(),
-				ResetButton()),
-			SettingsMenu()))
+				ResetButton(),
+				SettingsMenu())))
 }
 
 function SettingsMenu() {
@@ -199,6 +202,7 @@ function SettingsMenu() {
 
 	return (
 		r('button', {
+			title: Strings.settings,
 			onClick() {
 				if (!this.querySelector('menu'))
 					this.appendChild(MenuContent())
@@ -216,6 +220,7 @@ function CookieSelector() {
 			.catch(onError)
 	}
 	const disabled = cookies.length <= 1
+	const list = cookies.length ? cookies : [[Strings.none, true]]
 	return (
 		r('label', className(CSS.Field, CSS.CookieSelector),
 			r('span', null, Strings.cookie),
@@ -224,7 +229,7 @@ function CookieSelector() {
 				disabled,
 				title: disabled ? Strings.cookie_disabled_title : '',
 				onChange
-			}, cookies.map(([value, selected]) =>
+			}, list.map(([value, selected]) =>
 				r('option', { value, selected }, value)))))
 }
 
@@ -248,7 +253,6 @@ function BulkSelector() {
 			r('span', null, Strings.bulk_select),
 			r('select', {
 					className: CSS.BulkSelector,
-					'data-qaid': 'BulkSelector',
 					autocomplete: 'off',
 					disabled,
 					title: disabled ? Strings.bulk_select_disabled_title : '',
@@ -469,7 +473,7 @@ function MockSelector(broker) {
 		r('select', {
 			onChange,
 			autocomplete: 'off',
-			'data-qaid': urlMask,
+			'aria-label': Strings.mock_selector,
 			disabled: files.length <= 1,
 			...className(
 				CSS.MockSelector,
@@ -669,7 +673,7 @@ Resizer.panelWidth = 0
 Resizer.onPointerDown = function (event) {
 	Resizer.initialX = event.clientX
 	Resizer.panelWidth = leftSideRef.current.clientWidth
-	addEventListener('pointerup', Resizer.onUp)
+	addEventListener('pointerup', Resizer.onUp, { once: true })
 	addEventListener('pointermove', Resizer.onMove)
 	document.body.style.userSelect = 'none'
 	document.body.style.cursor = 'col-resize'
@@ -684,7 +688,6 @@ Resizer.onMove = function (event) {
 }
 Resizer.onUp = function () {
 	removeEventListener('pointermove', Resizer.onMove)
-	removeEventListener('pointerup', Resizer.onUp)
 	cancelAnimationFrame(Resizer.raf)
 	Resizer.raf = 0
 	document.body.style.userSelect = 'auto'
@@ -715,7 +718,7 @@ function PayloadViewerTitle({ file, statusText }) {
 	const tokens = file.split('.')
 	const ext = tokens.pop()
 	const status = tokens.pop()
-	const urlAndMethod = '/' + tokens.join('.') + '.'
+	const urlAndMethod = tokens.join('.') + '.'
 	return (
 		r('span', null,
 			urlAndMethod,

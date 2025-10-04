@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 
-import { join } from 'node:path'
+import { resolve } from 'node:path'
 import { parseArgs } from 'node:util'
 
 import { isFile } from './utils/fs.js'
@@ -68,7 +68,7 @@ else if (args.config && !isFile(args.config)) {
 	process.exitCode = 1
 }
 else {
-	const userConf = join(process.cwd(), args.config ?? 'mockaton.config.js')
+	const userConf = resolve(args.config ?? 'mockaton.config.js')
 	const opts = isFile(userConf)
 		? (await import(userConf)).default ?? {}
 		: {}

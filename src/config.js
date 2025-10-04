@@ -1,4 +1,4 @@
-import { join, isAbsolute } from 'node:path'
+import { resolve } from 'node:path'
 
 import { logger } from './utils/logger.js'
 import { isDirectory } from './utils/fs.js'
@@ -16,8 +16,8 @@ import { validateCorsAllowedMethods, validateCorsAllowedOrigins } from './utils/
  * 	]
  * }} */
 const schema = {
-	mocksDir: [join(process.cwd(), 'mockaton-mocks'), isDirectory],
-	staticDir: [join(process.cwd(), 'mockaton-static-mocks'), optional(isDirectory)],
+	mocksDir: [resolve('mockaton-mocks'), isDirectory],
+	staticDir: [resolve('mockaton-static-mocks'), optional(isDirectory)],
 	ignore: [/(\.DS_Store|~)$/, is(RegExp)], // TODO think about .well-known/appspecific/com.chrome.devtools
 
 	host: ['127.0.0.1', is(String)],
@@ -69,13 +69,12 @@ export const ConfigValidator = Object.freeze(validators)
 
 /** @param {Partial<Config>} options */
 export function setup(options) {
-	if (options.mocksDir && !isAbsolute(options.mocksDir))
-		options.mocksDir = join(process.cwd(), options.mocksDir)
+	if (options.mocksDir)
+		options.mocksDir = resolve(options.mocksDir)
 
-	if (options.staticDir && !isAbsolute(options.staticDir))
-		options.staticDir = join(process.cwd(), options.staticDir)
-
-	if (!options.staticDir && !isDirectory(defaults.staticDir))
+	if (options.staticDir)
+		options.staticDir = resolve(options.staticDir)
+	else if (!isDirectory(defaults.staticDir))
 		options.staticDir = ''
 
 	Object.assign(config, options)

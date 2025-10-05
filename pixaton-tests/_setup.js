@@ -20,7 +20,7 @@ const testsDir = join(import.meta.dirname, 'macos')
 removeDiffsAndCandidates(testsDir)
 let browser
 try {
-	browser = await launch({ headless: 'shell' })
+	browser = await launch({ headless: false })
 }
 catch (error) {
 	console.error(error)

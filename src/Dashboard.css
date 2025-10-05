@@ -250,6 +250,7 @@ header {
 
 				input + span {
 					margin: 0;
+					margin-right: 4px;
 				}
 				input:disabled + span {
 					opacity: 0.8;

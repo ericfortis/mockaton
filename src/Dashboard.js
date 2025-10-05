@@ -15,7 +15,7 @@ const Strings = {
 	empty_response_body: '/* Empty Response Body */',
 	fallback_server: 'Fallback',
 	fallback_server_error: '⛔ Fallback Backend Error',
-	fallback_server_placeholder: 'Type Backend Address',
+	fallback_server_placeholder: 'Type backend address',
 	fetching: 'Fetching…',
 	got: 'Got',
 	group_by_method: 'Group by Method',

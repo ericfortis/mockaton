@@ -43,7 +43,7 @@
 		--colorComboBoxBackground: #2a2a2a;
 		--colorSecondaryButtonBackground: #2a2a2a;
 		--colorSecondaryActionBorder: #333;
-		--colorSecondaryAction: #999;
+		--colorSecondaryAction: #aaa;
 		--colorComboBoxHeaderBackground: #222;
 		--colorDisabledMockSelector: #b9b9b9;
 		--colorHover: #023661;
@@ -168,7 +168,7 @@ header {
 			width: 100px;
 			align-self: center;
 		}
-		
+
 		> div {
 			width: 400px;
 			.MenuTrigger {
@@ -347,7 +347,6 @@ main {
 	.leftSide {
 		width: 50%;
 		padding: 16px;
-		padding-bottom: 0;
 		border-right: 1px solid var(--colorSecondaryActionBorder);
 		user-select: none;
 		overflow-y: auto;
@@ -383,11 +382,12 @@ table {
 	th {
 		padding-bottom: 2px;
 		padding-left: 4px;
+		border-top: 20px solid transparent;
 		text-align: left;
 	}
-
-	tbody {
-		border-bottom: 20px solid transparent;
+	
+	> tr:first-child > th {
+		border-top: 0;
 	}
 }
 
@@ -395,12 +395,19 @@ table {
 	margin-top: 80px;
 }
 
+.Method {
+	padding-right: 8px;
+	color: var(--colorSecondaryAction);
+	text-align: center;
+	font-size: 11px;
+}
 
 .PreviewLink {
 	position: relative;
 	left: -8px;
 	display: inline-block;
 	width: 100%;
+	min-width: 140px;
 	padding: 6px 8px;
 	margin-left: 4px;
 	border-radius: var(--radius);
@@ -581,14 +588,12 @@ table {
 }
 
 
-.StaticFilesList {
-	a {
-		display: inline-block;
-		padding: 6px 0;
-		margin-left: 4px;
-		border-radius: var(--radius);
-		color: var(--colorAccent);
-	}
+.StaticFileLink {
+	display: inline-block;
+	padding: 6px 0;
+	margin-left: 4px;
+	border-radius: var(--radius);
+	color: var(--colorAccent);
 }
 
 

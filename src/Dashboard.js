@@ -277,6 +277,12 @@ function GlobalDelayField() {
 			.then(parseError)
 			.catch(onError)
 	}
+	function onWheel(event) {
+		const val = this.valueAsNumber - event.deltaY * 10
+		this.valueAsNumber = Math.max(val, 0)
+		clearTimeout(onWheel.timer)
+		onWheel.timer = setTimeout(onChange.bind(this), 300)
+	}
 	return (
 		r('label', className(CSS.Field, CSS.GlobalDelayField),
 			r('span', null, Strings.delay_ms),
@@ -286,7 +292,8 @@ function GlobalDelayField() {
 				step: 100,
 				autocomplete: 'none',
 				value: delay,
-				onChange
+				onChange,
+				onWheel
 			})))
 }
 

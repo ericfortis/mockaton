@@ -642,8 +642,7 @@ table {
 		background: var(--colorAccent);
 		animation-name: _kfProgress;
 		animation-timing-function: linear;
-		animation-delay: 80ms;
-		/*animation-duration: It's in JavaScript */
+		/* duration in JavaScript */
 	}
 }
 @keyframes _kfProgress {

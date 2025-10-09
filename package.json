@@ -2,7 +2,7 @@
 	"name": "mockaton",
 	"description": "HTTP Mock Server",
 	"type": "module",
-	"version": "10.4.0",
+	"version": "10.4.1",
 	"main": "index.js",
 	"types": "index.d.ts",
 	"license": "MIT",

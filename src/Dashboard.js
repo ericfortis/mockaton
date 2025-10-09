@@ -716,7 +716,12 @@ function PayloadViewer() {
 function PayloadViewerProgressBar() {
 	return (
 		r('div', className(CSS.ProgressBar),
-			r('div', { style: { animationDuration: state.delay + 'ms' } })))
+			r('div', {
+				style: {
+					animationDelay: 80 + 'ms',
+					animationDuration: -80 + state.delay + 'ms'
+				}
+			})))
 }
 
 function PayloadViewerTitle({ file, statusText }) {

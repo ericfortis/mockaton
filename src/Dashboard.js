@@ -122,8 +122,8 @@ async function updateState() {
 		const response = await mockaton.getState()
 		if (!response.ok)
 			throw response.status
-			Object.assign(state, await response.json())
-			document.body.replaceChildren(...App())
+		Object.assign(state, await response.json())
+		document.body.replaceChildren(...App())
 	}
 	catch (error) {
 		onError(error)
@@ -718,12 +718,7 @@ function PayloadViewer() {
 function PayloadViewerProgressBar() {
 	return (
 		r('div', className(CSS.ProgressBar),
-			r('div', {
-				style: {
-					animationDelay: 80 + 'ms',
-					animationDuration: -80 + state.delay + 'ms'
-				}
-			})))
+			r('div', { style: { animationDuration: state.delay + 'ms' } })))
 }
 
 function PayloadViewerTitle({ file, statusText }) {
@@ -752,14 +747,17 @@ async function previewMock(method, urlMask, href) {
 	previewMock.controller?.abort()
 	previewMock.controller = new AbortController
 
-	payloadViewerTitleRef.current.replaceChildren(r('span', null, Strings.fetching))
-	payloadViewerRef.current.replaceChildren(PayloadViewerProgressBar())
+	const spinnerTimer = setTimeout(() => {
+		payloadViewerTitleRef.current.replaceChildren(Strings.fetching)
+		payloadViewerRef.current.replaceChildren(PayloadViewerProgressBar())
+	}, 80)
 
 	try {
 		const response = await fetch(href, {
 			method,
 			signal: previewMock.controller.signal
 		})
+		clearTimeout(spinnerTimer)
 		await updatePayloadViewer(method, urlMask, response)
 	}
 	catch (err) {

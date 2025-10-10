@@ -385,7 +385,7 @@ table {
 		border-top: 20px solid transparent;
 		text-align: left;
 	}
-	
+
 	> tr:first-child > th {
 		border-top: 0;
 	}
@@ -633,7 +633,7 @@ table {
 	height: 2px;
 	background: var(--colorComboBoxHeaderBackground);
 
-	div {
+	> div {
 		position: absolute;
 		top: 0;
 		left: 0;

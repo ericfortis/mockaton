@@ -101,13 +101,13 @@ const state = {
 	collectProxied: false,
 	proxyFallback: '',
 	get canProxy() {
-		return Boolean(this.proxyFallback)
+		return Boolean(state.proxyFallback)
 	},
 
 	groupByMethod: localStorage.getItem('groupByMethod') !== 'false',
 	toggleGroupByMethod() {
-		this.groupByMethod = !this.groupByMethod
-		localStorage.setItem('groupByMethod', String(this.groupByMethod))
+		state.groupByMethod = !state.groupByMethod
+		localStorage.setItem('groupByMethod', String(state.groupByMethod))
 	},
 
 	leftSideWidth: undefined
@@ -173,25 +173,28 @@ function Header() {
 }
 
 function SettingsMenu() {
-	const id = '_SettingsMenu_'
+	const { groupByMethod, toggleGroupByMethod } = state
 
+	const menuRef = useRef()
 	function MenuContent() {
 		return (
 			r('menu', {
-					id,
+					ref: menuRef,
 					popover: '',
 					className: CSS.SettingsMenu,
 					onToggle(event) {
-						if (event.newState === 'closed')
-							this.parentNode.removeChild(this)
+						if (event.newState === 'closed') {
+							menuRef.current.remove()
+							menuRef.current = null
+						}
 					}
 				},
 				r('label', className(CSS.GroupByMethod),
 					r('input', {
 						type: 'checkbox',
-						checked: state.groupByMethod,
+						checked: groupByMethod,
 						onChange() {
-							state.toggleGroupByMethod()
+							toggleGroupByMethod()
 							updateState()
 						}
 					}),
@@ -208,11 +211,12 @@ function SettingsMenu() {
 		r('button', {
 			title: Strings.settings,
 			onClick() {
-				if (!this.querySelector('menu'))
+				if (!menuRef.current) {
 					this.appendChild(MenuContent())
+					menuRef.current.showPopover()
+				}
 			},
-			className: CSS.MenuTrigger,
-			popovertarget: id
+			className: CSS.MenuTrigger
 		}, SettingsIcon()))
 }
 

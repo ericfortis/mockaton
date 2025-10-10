@@ -431,8 +431,12 @@ config.plugins = [
   // IOW, your plugins array overwrites the default list. This way you can remove it.
   [/\.(js|ts)$/, jsToJsonPlugin],
 
+  
   [/\.yml$/, yamlToJsonPlugin],
-  [/foo\.GET\.200\.txt$/, capitalizePlugin], // e.g. GET /api/foo would be capitalized
+
+
+  // e.g. GET /api/foo would be capitalized
+  [/foo\.GET\.200\.txt$/, capitalizePlugin]
 ]
 
 function yamlToJsonPlugin(filePath) {

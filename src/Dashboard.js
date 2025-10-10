@@ -193,6 +193,7 @@ function SettingsMenu() {
 					r('input', {
 						type: 'checkbox',
 						checked: groupByMethod,
+						autofocus: true,
 						onChange() {
 							toggleGroupByMethod()
 							updateState()

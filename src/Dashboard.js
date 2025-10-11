@@ -44,7 +44,7 @@ const CSS = {
 	syntaxPunc: null,
 	syntaxStr: null,
 	syntaxTag: null,
-	syntaxVal: null,
+	syntaxVal: null
 }
 for (const k of Object.keys(CSS))
 	CSS[k] = k
@@ -67,6 +67,7 @@ const state = /** @type {State} */ {
 	toggleGroupByMethod() {
 		state.groupByMethod = !state.groupByMethod
 		localStorage.setItem('groupByMethod', String(state.groupByMethod))
+		updateState()
 	},
 
 	leftSideWidth: undefined
@@ -136,29 +137,28 @@ function Header() {
 function SettingsMenu() {
 	const { groupByMethod, toggleGroupByMethod } = state
 
-	const menuRef = useRef()
-	function MenuContent() {
-		return (
+	const id = '_settings_menu_'
+	return (
+		r('button', {
+				title: t`Settings`,
+				popovertarget: id,
+				className: CSS.MenuTrigger
+			},
+			SettingsIcon(),
+
 			r('menu', {
-					ref: menuRef,
+					id,
+					deferred: true,
 					popover: '',
-					className: CSS.SettingsMenu,
-					onToggle(event) {
-						if (event.newState === 'closed') {
-							menuRef.current.remove()
-							menuRef.current = null
-						}
-					}
+					className: CSS.SettingsMenu
 				},
+
 				r('label', className(CSS.GroupByMethod),
 					r('input', {
 						type: 'checkbox',
 						checked: groupByMethod,
 						autofocus: true,
-						onChange() {
-							toggleGroupByMethod()
-							updateState()
-						}
+						onChange: toggleGroupByMethod
 					}),
 					r('span', null, t`Group by Method`)),
 
@@ -166,20 +166,7 @@ function SettingsMenu() {
 					href: 'https://github.com/ericfortis/mockaton',
 					target: '_blank',
 					rel: 'noopener noreferrer'
-				}, t`Documentation`)))
-	}
-
-	return (
-		r('button', {
-			title: t`Settings`,
-			onClick() {
-				if (!menuRef.current) {
-					this.appendChild(MenuContent())
-					menuRef.current.showPopover()
-				}
-			},
-			className: CSS.MenuTrigger
-		}, SettingsIcon()))
+				}, t`Documentation`))))
 }
 
 function CookieSelector() {
@@ -427,7 +414,7 @@ function MockSelector(broker) {
 		selected = STR_PROXIED
 		files.push(selected)
 	}
-	
+
 	function nameFor(file) {
 		if (file === STR_PROXIED)
 			return STR_PROXIED
@@ -873,6 +860,14 @@ function className(...args) {
 
 
 function createElement(tag, props, ...children) {
+	if (props?.deferred) {
+		delete props.deferred
+		const placeholder = document.createComment('')
+		deferred(() =>
+			placeholder.replaceWith(createElement(tag, props, ...children)))
+		return placeholder
+	}
+
 	const node = document.createElement(tag)
 	for (const [k, v] of Object.entries(props || {}))
 		if (k === 'ref') v.current = node
@@ -906,6 +901,11 @@ function Fragment(...args) {
 	return frag
 }
 
+function deferred(cb) {
+	return window.requestIdleCallback
+		? requestIdleCallback(cb)
+		: setTimeout(cb, 100) // Safari
+}
 
 /**
  * Think of this as a way of printing a directory tree in which

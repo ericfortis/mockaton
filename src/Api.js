@@ -4,26 +4,29 @@
  */
 
 import { join } from 'node:path'
+import { randomBytes } from 'node:crypto'
+
 import { cookie } from './cookie.js'
+import DashboardHtml from './DashboardHtml.js'
 import { parseJSON } from './utils/http-request.js'
 import { uiSyncVersion } from './Watcher.js'
 import * as staticCollection from './staticCollection.js'
 import * as mockBrokersCollection from './mockBrokersCollection.js'
 import { config, ConfigValidator } from './config.js'
 import { DF, API, LONG_POLL_SERVER_TIMEOUT } from './ApiConstants.js'
-import { sendOK, sendJSON, sendUnprocessableContent, sendFile } from './utils/http-response.js'
+import { sendOK, sendJSON, sendUnprocessableContent, sendFile, sendHTML } from './utils/http-response.js'
 
 
 export const apiGetRequests = new Map([
-	[API.dashboard, serveDashboardAsset('Dashboard.html')],
+	[API.dashboard, serveHtml],
 	...[
-		'/ApiConstants.js',
-		'/ApiCommander.js',
 		'/Dashboard.css',
 		'/Dashboard.js',
+		'/ApiConstants.js',
+		'/ApiCommander.js',
 		'/Filename.js',
 		'/Logo.svg'
-	].map(f => [API.dashboard + f, serveDashboardAsset(f)]),
+	].map(f => [API.dashboard + f, serveStatic(f)]),
 
 	[API.state, getState],
 	[API.syncVersion, longPollClientSyncVersion],
@@ -49,12 +52,18 @@ export const apiPatchRequests = new Map([
 
 /** # GET */
 
-function serveDashboardAsset(f) {
-	return (_, response) => {
-		if (f.endsWith('.html'))
-			response.setHeader('Content-Security-Policy', `default-src 'self'; img-src data: blob: 'self'`)
-		sendFile(response, join(import.meta.dirname, f))
-	}
+function serveHtml(_, response) {
+	const nonce = randomBytes(12).toString('base64url')
+	response.setHeader('Content-Security-Policy', [
+		`default-src 'self'`,
+		`img-src data: blob: 'self'`,
+		`script-src 'nonce-${nonce}' 'self'`
+	].join(';'))
+	sendHTML(response, DashboardHtml(nonce))
+}
+
+function serveStatic(f) {
+	return (_, response) => sendFile(response, join(import.meta.dirname, f))
 }
 
 function getState(_, response) {

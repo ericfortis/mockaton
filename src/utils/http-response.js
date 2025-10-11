@@ -9,6 +9,12 @@ export function sendOK(response) {
 	response.end()
 }
 
+export function sendHTML(response, html) {
+	logger.access(response)
+	response.setHeader('Content-Type', mimeFor('html'))
+	response.end(html)
+}
+
 export function sendJSON(response, payload) {
 	logger.access(response)
 	response.setHeader('Content-Type', 'application/json')

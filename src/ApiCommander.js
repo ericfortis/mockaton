@@ -17,7 +17,13 @@ export class Commander {
 
 	/** @returns {JsonPromise<State>} */
 	getState() {
-		return fetch(this.#addr + API.state)
+		const url = this.#addr + API.state
+		if (globalThis._aotFetch?.[url]) { // github.com/ericfortis/aot-fetch-demo
+			const promise = globalThis._aotFetch[url]
+			delete globalThis._aotFetch[url]
+			return promise
+		}
+		return fetch(url)
 	}
 
 	/** @returns {JsonPromise<number>} */

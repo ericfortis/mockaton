@@ -246,9 +246,16 @@ describe('Rejects malicious URLs', () => {
 		it(title, async () => equal((await request(url)).status, status)))
 })
 
-it('Dashboard renders', async () => {
-	const res = await request(API.dashboard)
-	match(await res.text(), new RegExp('<!DOCTYPE html>'))
+describe('Dashboard', () => {
+	it('renders', async () => {
+		const res = await request(API.dashboard)
+		match(await res.text(), new RegExp('<!DOCTYPE html>'))
+	})
+	
+	it('query string is accepted', async () => {
+		const res = await request(API.dashboard + '?foo=bar')
+		match(await res.text(), new RegExp('<!DOCTYPE html>'))
+	})
 })
 
 describe('404', () => {
@@ -335,7 +342,7 @@ describe('500', () => {
 		equal(res.status, 500)
 		equal(await res.text(), expectedBody)
 	})
-	
+
 	it('toggles 500', async () => {
 		const [route] = fixtureGetSimple
 		equal((await request(route)).status, 200)

@@ -63,15 +63,16 @@ const state = /** @type {State} */ {
 		return Boolean(state.proxyFallback)
 	},
 
-	groupByMethod: localStorage.getItem('groupByMethod') !== 'false',
+	groupByMethod: initPreference('groupByMethod'),
 	toggleGroupByMethod() {
 		state.groupByMethod = !state.groupByMethod
-		localStorage.setItem('groupByMethod', String(state.groupByMethod))
+		togglePreference('groupByMethod', state.groupByMethod)
 		updateState()
 	},
 
 	leftSideWidth: undefined
 }
+
 
 const mockaton = new Commander(location.origin)
 updateState()
@@ -906,6 +907,38 @@ function deferred(cb) {
 		? requestIdleCallback(cb)
 		: setTimeout(cb, 100) // Safari
 }
+
+
+// When false, the URL will be updated with param=false
+function initPreference(param) {
+	const qs = new URLSearchParams(location.search)
+	if (!qs.has(param)) {
+		const group = localStorage.getItem(param) !== 'false'
+		if (!group) {
+			const url = new URL(location.href)
+			url.searchParams.set(param, false)
+			history.replaceState(null, '', url)
+		}
+		return group
+	}
+	return qs.get(param) !== 'false'
+}
+
+// When false, the URL and localStorage will have param=false
+function togglePreference(param, nextVal) {
+	if (nextVal)
+		localStorage.removeItem(param)
+	else
+		localStorage.setItem(param, nextVal)
+
+	const url = new URL(location.href)
+	if (nextVal)
+		url.searchParams.delete(param)
+	else
+		url.searchParams.set(param, false)
+	history.replaceState(null, '', url)
+}
+
 
 /**
  * Think of this as a way of printing a directory tree in which

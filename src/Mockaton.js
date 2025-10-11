@@ -52,8 +52,9 @@ async function onRequest(req, response) {
 		sendBadRequest(response)               
 		return
 	}
-
+	
 	try {
+		const route = new URL(url, 'http://_').pathname
 		const { method } = req
 
 		if (config.corsAllowed)
@@ -61,11 +62,11 @@ async function onRequest(req, response) {
 
 		if (isPreflight(req))
 			sendNoContent(response)
-		else if (method === 'PATCH' && apiPatchRequests.has(url))
-			await apiPatchRequests.get(url)(req, response)
-		else if (method === 'GET' && apiGetRequests.has(url))
-			apiGetRequests.get(url)(req, response)
-		else if (method === 'GET' && staticCollection.brokerByRoute(url))
+		else if (method === 'PATCH' && apiPatchRequests.has(route))
+			await apiPatchRequests.get(route)(req, response)
+		else if (method === 'GET' && apiGetRequests.has(route))
+			apiGetRequests.get(route)(req, response)
+		else if (method === 'GET' && staticCollection.brokerByRoute(route))
 			await dispatchStatic(req, response)
 		else
 			await dispatchMock(req, response)

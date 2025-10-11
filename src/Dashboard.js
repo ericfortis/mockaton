@@ -76,7 +76,7 @@ const state = /** @type {State} */ {
 
 const mockaton = new Commander(location.origin)
 updateState()
-initLongPoll()
+deferred(initLongPoll)
 
 async function updateState() {
 	try {
@@ -93,7 +93,6 @@ async function updateState() {
 
 const r = createElement
 const s = createSvgElement
-
 const t = translation => translation[0]
 
 const leftSideRef = useRef()
@@ -124,7 +123,8 @@ function Header() {
 			r('img', {
 				alt: t`Mockaton`,
 				src: 'mockaton/Logo.svg',
-				width: 160
+				width: 120,
+				height: 22
 			}),
 			r('div', null,
 				GlobalDelayField(),
@@ -645,6 +645,7 @@ Resizer.onUp = function () {
 
 const payloadViewerTitleRef = useRef()
 const payloadViewerRef = useRef()
+const SPINNER_DELAY = 80
 
 function PayloadViewer() {
 	return (
@@ -657,7 +658,7 @@ function PayloadViewer() {
 function PayloadViewerProgressBar() {
 	return (
 		r('div', className(CSS.ProgressBar),
-			r('div', { style: { animationDuration: state.delay + 'ms' } })))
+			r('div', { style: { animationDuration: state.delay - SPINNER_DELAY + 'ms' } })))
 }
 
 function PayloadViewerTitle({ file, statusText }) {
@@ -689,7 +690,7 @@ async function previewMock(method, urlMask, href) {
 	const spinnerTimer = setTimeout(() => {
 		payloadViewerTitleRef.current.replaceChildren(t`Fetching…`)
 		payloadViewerRef.current.replaceChildren(PayloadViewerProgressBar())
-	}, 80)
+	}, SPINNER_DELAY)
 
 	try {
 		const response = await fetch(href, {
@@ -970,7 +971,7 @@ function dittoSplitPaths(paths) {
 	return result
 }
 
-(function testDittoSplitPaths() {
+dittoSplitPaths.test = function () {
 	const input = [
 		'/api/user',
 		'/api/user/avatar',
@@ -992,7 +993,7 @@ function dittoSplitPaths(paths) {
 		['/v2/foo/', 'bar']
 	]
 	console.assert(JSON.stringify(dittoSplitPaths(input)) === JSON.stringify(expected))
-}())
+}
 
 
 

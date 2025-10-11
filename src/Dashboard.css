@@ -149,7 +149,6 @@ header {
 	background: var(--colorHeaderBackground);
 
 	> img {
-		width: 120px;
 		align-self: end;
 		margin-right: 22px;
 		margin-bottom: 5px;

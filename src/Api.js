@@ -4,29 +4,21 @@
  */
 
 import { join } from 'node:path'
-import { randomBytes } from 'node:crypto'
 
 import { cookie } from './cookie.js'
-import DashboardHtml from './DashboardHtml.js'
 import { parseJSON } from './utils/http-request.js'
 import { uiSyncVersion } from './Watcher.js'
 import * as staticCollection from './staticCollection.js'
 import * as mockBrokersCollection from './mockBrokersCollection.js'
 import { config, ConfigValidator } from './config.js'
+import { LinkHeader, DashboardHtml, CSP, dashboardAssets } from './DashboardHtml.js'
 import { DF, API, LONG_POLL_SERVER_TIMEOUT } from './ApiConstants.js'
 import { sendOK, sendJSON, sendUnprocessableContent, sendFile, sendHTML } from './utils/http-response.js'
 
 
 export const apiGetRequests = new Map([
-	[API.dashboard, serveHtml],
-	...[
-		'/Dashboard.css',
-		'/Dashboard.js',
-		'/ApiConstants.js',
-		'/ApiCommander.js',
-		'/Filename.js',
-		'/Logo.svg'
-	].map(f => [API.dashboard + f, serveStatic(f)]),
+	[API.dashboard, serveDashboard],
+	...dashboardAssets.map(f => [API.dashboard + f, serveStatic(f)]),
 
 	[API.state, getState],
 	[API.syncVersion, longPollClientSyncVersion],
@@ -52,14 +44,8 @@ export const apiPatchRequests = new Map([
 
 /** # GET */
 
-function serveHtml(_, response) {
-	const nonce = randomBytes(12).toString('base64url')
-	response.setHeader('Content-Security-Policy', [
-		`default-src 'self'`,
-		`img-src data: blob: 'self'`,
-		`script-src 'nonce-${nonce}' 'self'`
-	].join(';'))
-	sendHTML(response, DashboardHtml(nonce))
+function serveDashboard(_, response) {
+	sendHTML(response, DashboardHtml, CSP, LinkHeader)
 }
 
 function serveStatic(f) {

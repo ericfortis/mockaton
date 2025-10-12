@@ -11,14 +11,19 @@ import { uiSyncVersion } from './Watcher.js'
 import * as staticCollection from './staticCollection.js'
 import * as mockBrokersCollection from './mockBrokersCollection.js'
 import { config, ConfigValidator } from './config.js'
-import { LinkHeader, DashboardHtml, CSP, dashboardAssets } from './DashboardHtml.js'
+import { DashboardHtml, CSP } from './DashboardHtml.js'
 import { DF, API, LONG_POLL_SERVER_TIMEOUT } from './ApiConstants.js'
 import { sendOK, sendJSON, sendUnprocessableContent, sendFile, sendHTML } from './utils/http-response.js'
 
 
 export const apiGetRequests = new Map([
 	[API.dashboard, serveDashboard],
-	...dashboardAssets.map(f => [API.dashboard + f, serveStatic(f)]),
+	...[
+		'Dashboard.css',
+		'Dashboard.js',
+		'ApiConstants.js', 'ApiCommander.js', 'Filename.js',
+		'Logo.svg'
+	].map(f => [API.dashboard + '/' + f, serveStatic(f)]),
 
 	[API.state, getState],
 	[API.syncVersion, longPollClientSyncVersion],
@@ -45,7 +50,7 @@ export const apiPatchRequests = new Map([
 /** # GET */
 
 function serveDashboard(_, response) {
-	sendHTML(response, DashboardHtml, CSP, LinkHeader)
+	sendHTML(response, DashboardHtml, CSP)
 }
 
 function serveStatic(f) {

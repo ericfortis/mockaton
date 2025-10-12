@@ -9,11 +9,10 @@ export function sendOK(response) {
 	response.end()
 }
 
-export function sendHTML(response, html, csp, link) {
+export function sendHTML(response, html, csp) {
 	logger.access(response)
 	response.setHeader('Content-Type', mimeFor('html'))
 	response.setHeader('Content-Security-Policy', csp)
-	response.setHeader('Link', link)
 	response.end(html)
 }
 

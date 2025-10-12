@@ -122,7 +122,7 @@ function Header() {
 		r('header', null,
 			r('img', {
 				alt: t`Mockaton`,
-				src: 'mockaton/Logo.svg',
+				src: 'Logo.svg',
 				width: 120,
 				height: 22
 			}),

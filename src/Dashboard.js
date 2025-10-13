@@ -149,7 +149,6 @@ function SettingsMenu() {
 
 			r('menu', {
 					id,
-					deferred: true,
 					popover: '',
 					className: CSS.SettingsMenu
 				},
@@ -249,7 +248,7 @@ function GlobalDelayField() {
 				autocomplete: 'none',
 				value: delay,
 				onChange,
-				onWheel
+				onWheel: [onWheel, { passive: true }]
 			})))
 }
 
@@ -862,19 +861,11 @@ function className(...args) {
 
 
 function createElement(tag, props, ...children) {
-	if (props?.deferred) {
-		delete props.deferred
-		const placeholder = document.createComment('')
-		deferred(() =>
-			placeholder.replaceWith(createElement(tag, props, ...children)))
-		return placeholder
-	}
-
 	const node = document.createElement(tag)
 	for (const [k, v] of Object.entries(props || {}))
 		if (k === 'ref') v.current = node
 		else if (k === 'style') Object.assign(node.style, v)
-		else if (k.startsWith('on')) node.addEventListener(k.replace(/^on/, '').toLowerCase(), v)
+		else if (k.startsWith('on')) node.addEventListener(k.slice(2).toLowerCase(), ...[v].flat())
 		else if (k in node) node[k] = v
 		else node.setAttribute(k, v)
 	node.append(...children.flat().filter(Boolean))

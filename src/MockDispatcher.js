@@ -8,7 +8,7 @@ import { cookie } from './cookie.js'
 import { mimeFor } from './utils/mime.js'
 import { config, calcDelay } from './config.js'
 import * as mockBrokerCollection from './mockBrokersCollection.js'
-import { sendInternalServerError, sendNotFound } from './utils/http-response.js'
+import { sendInternalServerError, sendMockNotFound } from './utils/http-response.js'
 
 
 export async function dispatchMock(req, response) {
@@ -21,12 +21,9 @@ export async function dispatchMock(req, response) {
 			if (config.proxyFallback)
 				await proxy(req, response, broker?.delayed ? calcDelay() : 0)
 			else
-				sendNotFound(response)
+				sendMockNotFound(response)
 			return
 		}
-
-		logger.accessMock(req.url, broker.file)
-		response.statusCode = broker.status
 
 		if (cookie.getCurrent())
 			response.setHeader('Set-Cookie', cookie.getCurrent())
@@ -34,10 +31,12 @@ export async function dispatchMock(req, response) {
 		for (let i = 0; i < config.extraHeaders.length; i += 2)
 			response.setHeader(config.extraHeaders[i], config.extraHeaders[i + 1])
 
+		response.statusCode = broker.status // TESTME plugins can change it
 		const { mime, body } = broker.temp500IsSelected
 			? { mime: '', body: '' }
 			: await applyPlugins(join(config.mocksDir, broker.file), req, response)
 
+		logger.accessMock(req.url, broker.file)
 		response.setHeader('Content-Type', mime)
 		response.setHeader('Content-Length', length(body))
 		setTimeout(() => response.end(isHead ? null : body),
@@ -45,7 +44,7 @@ export async function dispatchMock(req, response) {
 	}
 	catch (error) {
 		if (error?.code === 'ENOENT') // mock-file has been deleted
-			sendNotFound(response)
+			sendMockNotFound(response)
 		else
 			sendInternalServerError(response, error)
 	}

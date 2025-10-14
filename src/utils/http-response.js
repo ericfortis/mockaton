@@ -41,9 +41,9 @@ export function sendBadRequest(response) {
 	response.end()
 }
 
-export function sendNotFound(response) {
+export function sendMockNotFound(response) {
 	response.statusCode = 404
-	logger.access(response)
+	logger.accessMock(response.req.url, '404')
 	response.end()
 }
 

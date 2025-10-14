@@ -23,12 +23,12 @@ export function init() {
 	collection = {}
 	listFilesRecursively(config.staticDir)
 		.sort()
-		.forEach(registerStaticMock)
+		.forEach(registerMock)
 }
 
 
 /** @returns {boolean} registered */
-export function registerStaticMock(relativeFile) {
+export function registerMock(relativeFile) {
 	if (!isFileAllowed(basename(relativeFile)))
 		return false
 
@@ -41,7 +41,7 @@ export function registerStaticMock(relativeFile) {
 }
 
 
-export function unregisterStaticMock(relativeFile) {
+export function unregisterMock(relativeFile) {
 	delete collection['/' + relativeFile]
 }
 

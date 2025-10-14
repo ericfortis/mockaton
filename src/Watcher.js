@@ -3,24 +3,24 @@ import { watch } from 'node:fs'
 import { EventEmitter } from 'node:events'
 
 import { config } from './config.js'
-import { isFile } from './utils/fs.js'
+import { isFile, isDirectory } from './utils/fs.js'
+import * as staticCollection from './staticCollection.js'
 import * as mockBrokerCollection from './mockBrokersCollection.js'
-import { registerStaticMock, unregisterStaticMock } from './staticCollection.js'
 
 
-/** # AR = Add or Remove Mock Event */
+/** # ARR = Add, Remove, or Rename Mock Event */
 export const uiSyncVersion = new class extends EventEmitter {
 	version = 0
 
 	increment() {
 		this.version++
-		super.emit('AR')
+		super.emit('ARR')
 	}
 	subscribe(listener) {
-		this.once('AR', listener)
+		this.once('ARR', listener)
 	}
 	unsubscribe(listener) {
-		this.removeListener('AR', listener)
+		this.removeListener('ARR', listener)
 	}
 }
 
@@ -29,7 +29,16 @@ export function watchMocksDir() {
 	watch(dir, { recursive: true, persistent: false }, (_, file) => {
 		if (!file)
 			return
-		if (isFile(join(dir, file))) {
+		
+		const path = join(dir, file)
+
+		if (isDirectory(path)) {
+			mockBrokerCollection.init()
+			uiSyncVersion.increment()
+			return
+		}
+
+		if (isFile(path)) {
 			if (mockBrokerCollection.registerMock(file, Boolean('isFromWatcher')))
 				uiSyncVersion.increment()
 		}
@@ -47,12 +56,21 @@ export function watchStaticDir() {
 	watch(dir, { recursive: true, persistent: false }, (_, file) => {
 		if (!file)
 			return
-		if (isFile(join(dir, file))) {
-			if (registerStaticMock(file))
+		
+		const path = join(dir, file)
+
+		if (isDirectory(path)) {
+			staticCollection.init()
+			uiSyncVersion.increment()
+			return
+		}
+
+		if (isFile(path)) {
+			if (staticCollection.registerMock(file))
 				uiSyncVersion.increment()
 		}
 		else {
-			unregisterStaticMock(file)
+			staticCollection.unregisterMock(file)
 			uiSyncVersion.increment()
 		}
 	})

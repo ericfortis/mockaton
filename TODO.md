@@ -13,6 +13,7 @@
   it doesn't choke the browser. Think about some virtualized paging, that doesn’t break
   selecting across pages, (e.g. for selecting and copying)
 - Document cookies for scraping mocks
+- Handle renaming mocks dir
 
 
 ### Cookies WIP

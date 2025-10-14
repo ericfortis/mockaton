@@ -132,12 +132,10 @@ function Header() {
 				CookieSelector(),
 				ProxyFallbackField(),
 				ResetButton(),
-				SettingsMenu())))
+				SettingsMenuTrigger())))
 }
 
-function SettingsMenu() {
-	const { groupByMethod, toggleGroupByMethod } = state
-
+function SettingsMenuTrigger() {
 	const id = '_settings_menu_'
 	return (
 		r('button', {
@@ -146,28 +144,34 @@ function SettingsMenu() {
 				className: CSS.MenuTrigger
 			},
 			SettingsIcon(),
-
-			r('menu', {
-					id,
-					popover: '',
-					className: CSS.SettingsMenu
-				},
-
-				r('label', className(CSS.GroupByMethod),
-					r('input', {
-						type: 'checkbox',
-						checked: groupByMethod,
-						autofocus: true,
-						onChange: toggleGroupByMethod
-					}),
-					r('span', null, t`Group by Method`)),
-
-				r('a', {
-					href: 'https://github.com/ericfortis/mockaton',
-					target: '_blank',
-					rel: 'noopener noreferrer'
-				}, t`Documentation`))))
+			Defer(() => SettingsMenu(id))))
 }
+
+function SettingsMenu(id) {
+	const { groupByMethod, toggleGroupByMethod } = state
+	return (
+		r('menu', {
+			id,
+			popover: '',
+			className: CSS.SettingsMenu
+		},
+
+		r('label', className(CSS.GroupByMethod),
+			r('input', {
+				type: 'checkbox',
+				checked: groupByMethod,
+				autofocus: true,
+				onChange: toggleGroupByMethod
+			}),
+			r('span', null, t`Group by Method`)),
+
+		r('a', {
+			href: 'https://github.com/ericfortis/mockaton',
+			target: '_blank',
+			rel: 'noopener noreferrer'
+		}, t`Documentation`)))
+}
+
 
 function CookieSelector() {
 	const { cookies } = state
@@ -892,6 +896,12 @@ function Fragment(...args) {
 		else
 			frag.appendChild(arg)
 	return frag
+}
+
+function Defer(cb) {
+	const placeholder = document.createComment('')
+	deferred(() => placeholder.replaceWith(cb()))
+	return placeholder
 }
 
 function deferred(cb) {

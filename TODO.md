@@ -14,6 +14,7 @@
   selecting across pages, (e.g. for selecting and copying)
 - Document cookies for scraping mocks
 - Handle renaming mocks dir
+- Think about what to do for /.well-known/appspecific/com.chrome.devtools.json
 
 
 ### Cookies WIP

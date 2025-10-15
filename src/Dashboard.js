@@ -69,7 +69,15 @@ const state = /** @type {State} */ {
 		updateState()
 	},
 
-	leftSideWidth: undefined
+	leftSideWidth: undefined,
+
+	chosenLink: {
+		method: '',
+		urlMask: ''
+	},
+	setChosenLink(method, urlMask) {
+		state.chosenLink = { method, urlMask } 
+	}
 }
 
 
@@ -84,6 +92,7 @@ async function updateState() {
 			throw response.status
 		Object.assign(state, await response.json())
 		document.body.replaceChildren(...App())
+		findChosenLink()?.click()
 	}
 	catch (error) {
 		onError(error)
@@ -374,26 +383,34 @@ function rowsFor(targetMethod) {
 }
 
 function PreviewLink(method, urlMask, urlMaskDittoed) {
+	const { chosenLink, setChosenLink } = state
 	async function onClick(event) {
 		event.preventDefault()
 		try {
-			document.querySelector(`.${CSS.PreviewLink}.${CSS.chosen}`)?.classList.remove(CSS.chosen)
+			findChosenLink()?.classList.remove(CSS.chosen)
 			this.classList.add(CSS.chosen)
+			setChosenLink(method, urlMask)
 			await previewMock(method, urlMask, this.href)
 		}
 		catch (error) {
 			onError(error)
 		}
 	}
+	const isChosen = chosenLink.method === method && chosenLink.urlMask === urlMask
 	const [ditto, tail] = urlMaskDittoed
 	return (
 		r('a', {
-			className: CSS.PreviewLink,
+			...className(CSS.PreviewLink, isChosen && CSS.chosen),
 			href: urlMask,
 			onClick
 		}, ditto
 			? [r('span', className(CSS.dittoDir), ditto), tail]
 			: tail))
+}
+
+function findChosenLink() {
+	return document.querySelector(
+		`body > main > .${CSS.leftSide} table .${CSS.PreviewLink}.${CSS.chosen}`)
 }
 
 const STR_PROXIED = t`Proxied`

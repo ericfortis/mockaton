@@ -68,6 +68,8 @@ const state = /** @type {State} */ {
 	get canProxy() {
 		return Boolean(state.proxyFallback)
 	},
+	
+	leftSideWidth: window.innerWidth / 2,
 
 	groupByMethod: initPreference('groupByMethod'),
 	toggleGroupByMethod() {
@@ -75,8 +77,6 @@ const state = /** @type {State} */ {
 		togglePreference('groupByMethod', state.groupByMethod)
 		updateState()
 	},
-
-	leftSideWidth: window.innerWidth / 2,
 
 	chosenLink: { method: '', urlMask: '' },
 	clearChosenLink() { state.setChosenLink('', '') },
@@ -96,13 +96,15 @@ async function updateState() {
 		const response = await mockaton.getState()
 		if (!response.ok)
 			throw response.status
+		
 		Object.assign(state, await response.json())
 		document.body.replaceChildren(...App())
 
-		findChosenLink()?.focus()
 		const { method, urlMask } = state.chosenLink
-		if (method && urlMask)
+		if (method && urlMask) {
+			findChosenLink()?.focus()
 			await previewMock(method, urlMask)
+		}
 	}
 	catch (error) {
 		onError(error)
@@ -167,7 +169,7 @@ function SettingsMenuTrigger() {
 
 function SettingsMenu(id) {
 	const { groupByMethod, toggleGroupByMethod } = state
-	
+
 	const firstInputRef = useRef()
 	function onToggle(event) {
 		if (event.newState === 'open')
@@ -825,7 +827,7 @@ function initKeyboardNavigation() {
 			case 'ArrowLeft': {
 				if (pivot.hasAttribute('data-focus-group') || pivot.classList.contains(CSS.MockSelector)) {
 					const offset = event.key === 'ArrowRight' ? +1 : -1
-					rowFocusable(pivot, offset)?.focus()
+					rowFocusable(pivot, offset).focus()
 				}
 				break
 			}
@@ -850,7 +852,7 @@ function initKeyboardNavigation() {
 	}
 }
 
-/** # Misc */
+/** # Error */
 
 async function parseError(response) {
 	if (response.ok)
@@ -882,6 +884,9 @@ function showErrorToast(msg) {
 		}, msg))
 }
 
+
+/** # Icons */
+
 function TimerIcon() {
 	return (
 		s('svg', { viewBox: '0 0 24 24' },
@@ -903,42 +908,42 @@ function SettingsIcon() {
 
 /**
  * # Poll UI Sync Version
- * The version increments when a mock file is added or removed
+ * The version increments when a mock file is added, removed, or renamed
  */
-
 function initLongPoll() {
-	poll.oldSyncVersion = -1
-	poll.controller = new AbortController()
+	let oldSyncVersion = -1
+	let controller = new AbortController()
+	
 	poll()
 	document.addEventListener('visibilitychange', () => {
 		if (document.hidden) {
-			poll.controller.abort('_hidden_tab_')
-			poll.controller = new AbortController()
+			controller.abort('_hidden_tab_')
+			controller = new AbortController()
 		}
 		else
 			poll()
 	})
-}
 
-async function poll() {
-	try {
-		const response = await mockaton.getSyncVersion(poll.oldSyncVersion, poll.controller.signal)
-		if (response.ok) {
-			const syncVersion = await response.json()
-			const skipUpdate = poll.oldSyncVersion === -1
-			if (poll.oldSyncVersion !== syncVersion) { // because it could be < or >
-				poll.oldSyncVersion = syncVersion
-				if (!skipUpdate)
-					await updateState()
+	async function poll() {
+		try {
+			const response = await mockaton.getSyncVersion(oldSyncVersion, controller.signal)
+			if (response.ok) {
+				const syncVersion = await response.json()
+				const skipUpdate = oldSyncVersion === -1
+				if (oldSyncVersion !== syncVersion) { // because it could be < or >
+					oldSyncVersion = syncVersion
+					if (!skipUpdate)
+						await updateState()
+				}
+				poll()
 			}
-			poll()
+			else
+				throw response.status
 		}
-		else
-			throw response.status
-	}
-	catch (error) {
-		if (error !== '_hidden_tab_')
-			setTimeout(poll, 3000)
+		catch (error) {
+			if (error !== '_hidden_tab_')
+				setTimeout(poll, 3000)
+		}
 	}
 }
 
@@ -950,7 +955,6 @@ function className(...args) {
 		className: args.filter(Boolean).join(' ')
 	}
 }
-
 
 function createElement(tag, props, ...children) {
 	const node = document.createElement(tag)

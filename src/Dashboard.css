@@ -378,9 +378,9 @@ table {
 	border-collapse: collapse;
 
 	th {
-		padding-bottom: 2px;
+		padding-bottom: 4px;
 		padding-left: 4px;
-		border-top: 20px solid transparent;
+		border-top: 24px solid transparent;
 		text-align: left;
 	}
 

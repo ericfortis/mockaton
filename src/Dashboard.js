@@ -49,6 +49,13 @@ for (const k of Object.keys(CSS))
 	CSS[k] = k
 
 
+const FocusGroup = {
+	ProxyToggler: 0,
+	DelayToggler: 1,
+	StatusToggler: 2,
+	PreviewLink: 3
+}
+
 const state = /** @type {State} */ {
 	brokersByMethod: {},
 	staticBrokers: {},
@@ -71,19 +78,20 @@ const state = /** @type {State} */ {
 
 	leftSideWidth: undefined,
 
-	chosenLink: {
-		method: '',
-		urlMask: ''
+	chosenLink: { method: '', urlMask: '' },
+	clearChosenLink() {
+		state.chosenLink = { method: '', urlMask: '' }
 	},
 	setChosenLink(method, urlMask) {
-		state.chosenLink = { method, urlMask } 
+		state.chosenLink = { method, urlMask }
 	}
 }
 
 
 const mockaton = new Commander(location.origin)
 updateState()
-deferred(initLongPoll)
+initLongPoll()
+initKeyboardNavigation()
 
 async function updateState() {
 	try {
@@ -92,7 +100,10 @@ async function updateState() {
 			throw response.status
 		Object.assign(state, await response.json())
 		document.body.replaceChildren(...App())
-		findChosenLink()?.click()
+		findChosenLink()?.focus()
+		const { method, urlMask } = state.chosenLink
+		if (method && urlMask)
+			await previewMock(method, urlMask)
 	}
 	catch (error) {
 		onError(error)
@@ -168,7 +179,7 @@ function SettingsMenu(id) {
 				r('input', {
 					type: 'checkbox',
 					checked: groupByMethod,
-					autofocus: true,
+					// autofocus: true, // TODO
 					onChange: toggleGroupByMethod
 				}),
 				r('span', null, t`Group by Method`)),
@@ -208,6 +219,7 @@ function BulkSelector() {
 	// But this way is easier to implement, with a few hacks.
 	const firstOption = t`Pick Comment…`
 	function onChange() {
+		state.clearChosenLink()
 		const value = this.value
 		this.value = firstOption // Hack 
 		mockaton.bulkSelectByComment(value)
@@ -316,6 +328,7 @@ function SaveProxiedCheckbox(ref) {
 
 function ResetButton() {
 	function onClick() {
+		state.clearChosenLink()
 		mockaton.reset()
 			.then(parseError)
 			.then(updateState)
@@ -352,7 +365,7 @@ function MockList() {
 }
 
 
-function Row({ method, urlMask, urlMaskDittoed, broker }) {
+function Row({ method, urlMask, urlMaskDittoed, broker }, i) {
 	const { canProxy, groupByMethod } = state
 	return (
 		r('tr', { 'data-method': method, 'data-urlMask': urlMask },
@@ -360,7 +373,7 @@ function Row({ method, urlMask, urlMaskDittoed, broker }) {
 			r('td', null, DelayRouteToggler(broker)),
 			r('td', null, InternalServerErrorToggler(broker)),
 			!groupByMethod && r('td', className(CSS.Method), method),
-			r('td', null, PreviewLink(method, urlMask, urlMaskDittoed)),
+			r('td', null, PreviewLink(method, urlMask, urlMaskDittoed, i === 0)),
 			r('td', null, MockSelector(broker))))
 }
 
@@ -382,26 +395,29 @@ function rowsFor(targetMethod) {
 	}))
 }
 
-function PreviewLink(method, urlMask, urlMaskDittoed) {
-	const { chosenLink, setChosenLink } = state
+
+function PreviewLink(method, urlMask, urlMaskDittoed, autofocus) {
 	async function onClick(event) {
 		event.preventDefault()
 		try {
 			findChosenLink()?.classList.remove(CSS.chosen)
 			this.classList.add(CSS.chosen)
-			setChosenLink(method, urlMask)
-			await previewMock(method, urlMask, this.href)
+			state.setChosenLink(method, urlMask)
+			await previewMock(method, urlMask)
 		}
 		catch (error) {
 			onError(error)
 		}
 	}
+	const { chosenLink } = state
 	const isChosen = chosenLink.method === method && chosenLink.urlMask === urlMask
 	const [ditto, tail] = urlMaskDittoed
 	return (
 		r('a', {
 			...className(CSS.PreviewLink, isChosen && CSS.chosen),
 			href: urlMask,
+			autofocus,
+			'data-focus-group': FocusGroup.PreviewLink,
 			onClick
 		}, ditto
 			? [r('span', className(CSS.dittoDir), ditto), tail]
@@ -410,7 +426,7 @@ function PreviewLink(method, urlMask, urlMaskDittoed) {
 
 function findChosenLink() {
 	return document.querySelector(
-		`body > main > .${CSS.leftSide} table .${CSS.PreviewLink}.${CSS.chosen}`)
+		`body > main > .${CSS.leftSide} .${CSS.PreviewLink}.${CSS.chosen}`)
 }
 
 const STR_PROXIED = t`Proxied`
@@ -418,11 +434,11 @@ const STR_PROXIED = t`Proxied`
 /** @param {ClientMockBroker} broker */
 function MockSelector(broker) {
 	function onChange() {
-		const { urlMask, method } = parseFilename(this.value)
+		const { method, urlMask } = parseFilename(this.value)
+		state.setChosenLink(method, urlMask)
 		mockaton.select(this.value)
 			.then(parseError)
 			.then(updateState)
-			.then(() => linkFor(method, urlMask)?.click())
 			.catch(onError)
 	}
 
@@ -476,7 +492,8 @@ function DelayRouteToggler(broker) {
 	}
 	return ClickDragToggler({
 		checked: broker.currentMock.delayed,
-		commit
+		commit,
+		focusGroup: FocusGroup.DelayToggler
 	})
 }
 
@@ -485,10 +502,10 @@ function DelayRouteToggler(broker) {
 function InternalServerErrorToggler(broker) {
 	function onChange() {
 		const { method, urlMask } = parseFilename(broker.mocks[0])
+		state.setChosenLink(method, urlMask)
 		mockaton.toggle500(method, urlMask)
 			.then(parseError)
 			.then(updateState)
-			.then(() => linkFor(method, urlMask)?.click())
 			.catch(onError)
 	}
 	return (
@@ -498,6 +515,7 @@ function InternalServerErrorToggler(broker) {
 			},
 			r('input', {
 				type: 'checkbox',
+				'data-focus-group': FocusGroup.StatusToggler,
 				name: broker.currentMock.file,
 				checked: parseFilename(broker.currentMock.file).status === 500,
 				onChange
@@ -509,10 +527,10 @@ function InternalServerErrorToggler(broker) {
 function ProxyToggler(broker) {
 	function onChange() {
 		const { urlMask, method } = parseFilename(broker.mocks[0])
+		state.setChosenLink(method, urlMask)
 		mockaton.setRouteIsProxied(method, urlMask, this.checked)
 			.then(parseError)
 			.then(updateState)
-			.then(() => linkFor(method, urlMask)?.click())
 			.catch(onError)
 	}
 	return (
@@ -523,7 +541,8 @@ function ProxyToggler(broker) {
 			r('input', {
 				type: 'checkbox',
 				checked: !broker.currentMock.file,
-				onChange
+				onChange,
+				'data-focus-group': FocusGroup.ProxyToggler
 			}),
 			CloudIcon()))
 }
@@ -553,7 +572,8 @@ function StaticFilesList() {
 					r('td', null, r('a', {
 						href: broker.route,
 						target: '_blank',
-						className: CSS.PreviewLink
+						className: CSS.PreviewLink,
+						'data-focus-group': FocusGroup.PreviewLink
 					}, dp[i]))
 				))))
 }
@@ -567,7 +587,8 @@ function DelayStaticRouteToggler(broker) {
 	}
 	return ClickDragToggler({
 		checked: broker.delayed,
-		commit
+		commit,
+		focusGroup: FocusGroup.DelayToggler
 	})
 }
 
@@ -586,13 +607,14 @@ function NotFoundToggler(broker) {
 			r('input', {
 				type: 'checkbox',
 				checked: broker.status === 404,
-				onChange
+				onChange,
+				'data-focus-group': FocusGroup.StatusToggler
 			}),
 			r('span', null, t`404`)))
 }
 
 
-function ClickDragToggler({ checked, commit }) {
+function ClickDragToggler({ checked, commit, focusGroup }) {
 	function onPointerEnter(event) {
 		if (event.buttons === 1)
 			onPointerDown.call(this)
@@ -615,6 +637,7 @@ function ClickDragToggler({ checked, commit }) {
 			},
 			r('input', {
 				type: 'checkbox',
+				'data-focus-group': focusGroup,
 				checked,
 				onPointerEnter,
 				onPointerDown,
@@ -623,7 +646,6 @@ function ClickDragToggler({ checked, commit }) {
 			}),
 			TimerIcon()))
 }
-
 
 
 function Resizer() {
@@ -703,7 +725,7 @@ function PayloadViewerTitleWhenProxied({ mime, status, statusText, gatewayIsBad 
 			' ' + mime))
 }
 
-async function previewMock(method, urlMask, href) {
+async function previewMock(method, urlMask) {
 	previewMock.controller?.abort()
 	previewMock.controller = new AbortController
 
@@ -713,7 +735,7 @@ async function previewMock(method, urlMask, href) {
 	}, SPINNER_DELAY)
 
 	try {
-		const response = await fetch(href, {
+		const response = await fetch(urlMask, {
 			method,
 			signal: previewMock.controller.signal
 		})
@@ -781,6 +803,50 @@ function focus(selector) {
 	document.querySelector(selector)?.focus()
 }
 
+function initKeyboardNavigation() {
+	addEventListener('keydown', onKeyDown)
+
+	function onKeyDown(event) {
+		const pivot = document.activeElement
+		switch (event.key) {
+			case 'ArrowDown':
+			case 'ArrowUp': {
+				let fg = pivot.getAttribute('data-focus-group')
+				if (fg !== null) {
+					const offset = event.key === 'ArrowDown' ? +1 : -1
+					circularAdjacent(offset, allInFocusGroup(+fg), pivot).focus()
+				}
+				break
+			}
+			case 'ArrowRight':
+			case 'ArrowLeft': {
+				if (pivot.hasAttribute('data-focus-group') || pivot.classList.contains(CSS.MockSelector)) {
+					const offset = event.key === 'ArrowRight' ? +1 : -1
+					rowFocusable(pivot, offset)?.focus()
+				}
+				break
+			}
+		}
+	}
+
+	function rowFocusable(el, step) {
+		const row = el.closest('tr')
+		if (row) {
+			const focusables = Array.from(row.querySelectorAll('a, input, select:not(:disabled)'))
+			return circularAdjacent(step, focusables, el)
+		}
+	}
+
+	function allInFocusGroup(focusGroup) {
+		return Array.from(document.querySelectorAll(
+			`body > main > .${CSS.leftSide} table > tr > td [data-focus-group="${focusGroup}"]:is(input, a)`))
+	}
+
+	function circularAdjacent(step = 1, arr, pivot) {
+		return arr[(arr.indexOf(pivot) + step + arr.length) % arr.length]
+	}
+}
+
 /** # Misc */
 
 async function parseError(response) {
@@ -838,7 +904,7 @@ function SettingsIcon() {
  */
 
 function initLongPoll() {
-	poll.oldSyncVersion = 0
+	poll.oldSyncVersion = -1
 	poll.controller = new AbortController()
 	poll()
 	document.addEventListener('visibilitychange', () => {
@@ -856,9 +922,11 @@ async function poll() {
 		const response = await mockaton.getSyncVersion(poll.oldSyncVersion, poll.controller.signal)
 		if (response.ok) {
 			const syncVersion = await response.json()
+			const skipUpdate = poll.oldSyncVersion === -1
 			if (poll.oldSyncVersion !== syncVersion) { // because it could be < or >
 				poll.oldSyncVersion = syncVersion
-				await updateState()
+				if (!skipUpdate)
+					await updateState()
 			}
 			poll()
 		}

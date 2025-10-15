@@ -343,7 +343,7 @@ main {
 	}
 
 	.leftSide {
-		width: 50%;
+		/* the width is set in js (it’s resizable) */
 		padding: 16px;
 		border-right: 1px solid var(--colorSecondaryActionBorder);
 		user-select: none;

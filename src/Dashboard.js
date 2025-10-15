@@ -76,12 +76,10 @@ const state = /** @type {State} */ {
 		updateState()
 	},
 
-	leftSideWidth: undefined,
+	leftSideWidth: window.innerWidth / 2,
 
 	chosenLink: { method: '', urlMask: '' },
-	clearChosenLink() {
-		state.chosenLink = { method: '', urlMask: '' }
-	},
+	clearChosenLink() { state.setChosenLink('', '') },
 	setChosenLink(method, urlMask) {
 		state.chosenLink = { method, urlMask }
 	}
@@ -100,6 +98,7 @@ async function updateState() {
 			throw response.status
 		Object.assign(state, await response.json())
 		document.body.replaceChildren(...App())
+
 		findChosenLink()?.focus()
 		const { method, urlMask } = state.chosenLink
 		if (method && urlMask)
@@ -168,18 +167,25 @@ function SettingsMenuTrigger() {
 
 function SettingsMenu(id) {
 	const { groupByMethod, toggleGroupByMethod } = state
+	
+	const firstInputRef = useRef()
+	function onToggle(event) {
+		if (event.newState === 'open')
+			firstInputRef.current.focus()
+	}
 	return (
 		r('menu', {
 				id,
 				popover: '',
-				className: CSS.SettingsMenu
+				className: CSS.SettingsMenu,
+				onToggle
 			},
 
 			r('label', className(CSS.GroupByMethod),
 				r('input', {
+					ref: firstInputRef,
 					type: 'checkbox',
 					checked: groupByMethod,
-					// autofocus: true, // TODO
 					onChange: toggleGroupByMethod
 				}),
 				r('span', null, t`Group by Method`)),
@@ -789,14 +795,11 @@ function isXML(mime) {
 }
 
 
-function trFor(method, urlMask) {
-	return document.querySelector(`tr[data-method="${method}"][data-urlMask="${urlMask}"]`)
-}
-function linkFor(method, urlMask) {
-	return trFor(method, urlMask)?.querySelector(`a.${CSS.PreviewLink}`)
-}
 function mockSelectorFor(method, urlMask) {
 	return trFor(method, urlMask)?.querySelector(`select.${CSS.MockSelector}`)
+}
+function trFor(method, urlMask) {
+	return document.querySelector(`tr[data-method="${method}"][data-urlMask="${urlMask}"]`)
 }
 
 function focus(selector) {

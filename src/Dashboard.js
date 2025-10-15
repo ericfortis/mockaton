@@ -68,7 +68,7 @@ const state = /** @type {State} */ {
 	get canProxy() {
 		return Boolean(state.proxyFallback)
 	},
-	
+
 	leftSideWidth: window.innerWidth / 2,
 
 	groupByMethod: initPreference('groupByMethod'),
@@ -96,7 +96,7 @@ async function updateState() {
 		const response = await mockaton.getState()
 		if (!response.ok)
 			throw response.status
-		
+
 		Object.assign(state, await response.json())
 		document.body.replaceChildren(...App())
 
@@ -657,37 +657,47 @@ function ClickDragToggler({ checked, commit, focusGroup }) {
 
 
 function Resizer() {
+	let raf = 0
+	let initialX = 0
+	let panelWidth = 0
+
+	function onPointerDown(event) {
+		initialX = event.clientX
+		panelWidth = leftSideRef.current.clientWidth
+		addEventListener('pointerup', onUp, { once: true })
+		addEventListener('pointermove', onMove)
+		Object.assign(document.body.style, {
+			cursor: 'col-resize',
+			userSelect: 'none',
+			pointerEvents: 'none'
+		})
+	}
+
+	function onMove(event) {
+		const MIN_LEFT_WIDTH = 380
+		raf = raf || requestAnimationFrame(() => {
+			state.leftSideWidth = Math.max(panelWidth - (initialX - event.clientX), MIN_LEFT_WIDTH)
+			leftSideRef.current.style.width = state.leftSideWidth + 'px'
+			raf = 0
+		})
+	}
+
+	function onUp() {
+		removeEventListener('pointermove', onMove)
+		cancelAnimationFrame(raf)
+		raf = 0
+		Object.assign(document.body.style, {
+			cursor: 'auto',
+			userSelect: 'auto',
+			pointerEvents: 'auto'
+		})
+	}
+
 	return (
 		r('div', {
 			className: CSS.Resizer,
-			onPointerDown: Resizer.onPointerDown
+			onPointerDown
 		}))
-}
-Resizer.raf = 0
-Resizer.initialX = 0
-Resizer.panelWidth = 0
-Resizer.onPointerDown = function (event) {
-	Resizer.initialX = event.clientX
-	Resizer.panelWidth = leftSideRef.current.clientWidth
-	addEventListener('pointerup', Resizer.onUp, { once: true })
-	addEventListener('pointermove', Resizer.onMove)
-	document.body.style.userSelect = 'none'
-	document.body.style.cursor = 'col-resize'
-}
-Resizer.onMove = function (event) {
-	const MIN_LEFT_WIDTH = 380
-	Resizer.raf = Resizer.raf || requestAnimationFrame(() => {
-		state.leftSideWidth = Math.max(Resizer.panelWidth - (Resizer.initialX - event.clientX), MIN_LEFT_WIDTH)
-		leftSideRef.current.style.width = state.leftSideWidth + 'px'
-		Resizer.raf = 0
-	})
-}
-Resizer.onUp = function () {
-	removeEventListener('pointermove', Resizer.onMove)
-	cancelAnimationFrame(Resizer.raf)
-	Resizer.raf = 0
-	document.body.style.userSelect = 'auto'
-	document.body.style.cursor = 'auto'
 }
 
 
@@ -913,7 +923,7 @@ function SettingsIcon() {
 function initLongPoll() {
 	let oldSyncVersion = -1
 	let controller = new AbortController()
-	
+
 	poll()
 	document.addEventListener('visibilitychange', () => {
 		if (document.hidden) {

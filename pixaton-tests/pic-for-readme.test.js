@@ -20,7 +20,6 @@ testPixels(import.meta.filename, {
 		await page.evaluate(() => {
 			const el = document.querySelector('.leftSide')
 			if (el) el.style.width = '505px'
-			document.activeElement?.blur()
 		})
 		
 		// Avoid hover styles. Moving twice, because there two tests, so we

@@ -26,7 +26,6 @@ const CSS = {
 	Resizer: null,
 	SaveProxiedCheckbox: null,
 	SettingsMenu: null,
-	StaticFileLink: null,
 
 	chosen: null,
 	dittoDir: null,
@@ -151,25 +150,25 @@ function SettingsMenu(id) {
 	const { groupByMethod, toggleGroupByMethod } = state
 	return (
 		r('menu', {
-			id,
-			popover: '',
-			className: CSS.SettingsMenu
-		},
+				id,
+				popover: '',
+				className: CSS.SettingsMenu
+			},
 
-		r('label', className(CSS.GroupByMethod),
-			r('input', {
-				type: 'checkbox',
-				checked: groupByMethod,
-				autofocus: true,
-				onChange: toggleGroupByMethod
-			}),
-			r('span', null, t`Group by Method`)),
+			r('label', className(CSS.GroupByMethod),
+				r('input', {
+					type: 'checkbox',
+					checked: groupByMethod,
+					autofocus: true,
+					onChange: toggleGroupByMethod
+				}),
+				r('span', null, t`Group by Method`)),
 
-		r('a', {
-			href: 'https://github.com/ericfortis/mockaton',
-			target: '_blank',
-			rel: 'noopener noreferrer'
-		}, t`Documentation`)))
+			r('a', {
+				href: 'https://github.com/ericfortis/mockaton',
+				target: '_blank',
+				rel: 'noopener noreferrer'
+			}, t`Documentation`)))
 }
 
 
@@ -237,8 +236,10 @@ function GlobalDelayField() {
 			.catch(onError)
 	}
 	function onWheel(event) {
-		const val = this.valueAsNumber - event.deltaY * 10
-		this.valueAsNumber = Math.max(val, 0)
+		if (event.deltaY > 0)
+			this.stepUp()
+		else
+			this.stepDown()
 		clearTimeout(onWheel.timer)
 		onWheel.timer = setTimeout(onChange.bind(this), 300)
 	}
@@ -258,9 +259,9 @@ function GlobalDelayField() {
 
 function ProxyFallbackField() {
 	const { proxyFallback } = state
+	const checkboxRef = useRef()
 	function onChange() {
-		const saveCheckbox = this.closest(`.${CSS.FallbackBackend}`).querySelector('[type=checkbox]')
-		saveCheckbox.disabled = !this.validity.valid || !this.value.trim()
+		checkboxRef.current.disabled = !this.validity.valid || !this.value.trim()
 
 		if (!this.validity.valid)
 			this.reportValidity()
@@ -282,10 +283,10 @@ function ProxyFallbackField() {
 					value: proxyFallback,
 					onChange
 				})),
-			SaveProxiedCheckbox()))
+			SaveProxiedCheckbox(checkboxRef)))
 }
 
-function SaveProxiedCheckbox() {
+function SaveProxiedCheckbox(ref) {
 	const { collectProxied, canProxy } = state
 	function onChange() {
 		mockaton.setCollectProxied(this.checked)
@@ -295,6 +296,7 @@ function SaveProxiedCheckbox() {
 	return (
 		r('label', className(CSS.SaveProxiedCheckbox),
 			r('input', {
+				ref,
 				type: 'checkbox',
 				disabled: !canProxy,
 				checked: collectProxied,
@@ -331,7 +333,7 @@ function MockList() {
 				t`No mocks found`))
 
 	if (groupByMethod)
-		return Object.keys(brokersByMethod).map((method) => Fragment(
+		return Object.keys(brokersByMethod).map(method => Fragment(
 			r('tr', null,
 				r('th', { colspan: 2 + Number(canProxy) }),
 				r('th', null, method)),
@@ -362,9 +364,7 @@ function rowsFor(targetMethod) {
 			for (const [urlMask, broker] of Object.entries(brokers))
 				rows.push({ method, urlMask, broker })
 
-	const sorted = rows
-		.filter((r) => r.broker.mocks.length > 1) // >1 because of autogen500
-		.sort((rA, rB) => rA.urlMask.localeCompare(rB.urlMask))
+	const sorted = rows.sort((a, b) => a.urlMask.localeCompare(b.urlMask))
 
 	const urlMasksDittoed = dittoSplitPaths(sorted.map(r => r.urlMask))
 	return sorted.map((r, i) => ({
@@ -536,7 +536,7 @@ function StaticFilesList() {
 					r('td', null, r('a', {
 						href: broker.route,
 						target: '_blank',
-						className: CSS.StaticFileLink
+						className: CSS.PreviewLink
 					}, dp[i]))
 				))))
 }
@@ -740,7 +740,7 @@ async function updatePayloadViewer(method, urlMask, response) {
 		else if (isXML(mime))
 			payloadViewerRef.current.replaceChildren(syntaxXML(body))
 		else
-			payloadViewerRef.current.innerText = body
+			payloadViewerRef.current.textContent = body
 	}
 }
 

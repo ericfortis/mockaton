@@ -95,7 +95,7 @@ body {
 }
 
 select, a, input, button {
-	&:focus {
+	&:focus-visible {
 		outline: 2px solid var(--colorAccent);
 	}
 }
@@ -294,7 +294,6 @@ header {
 			fill: var(--colorAccent);
 		}
 	}
-
 }
 
 .SettingsMenu {
@@ -422,6 +421,7 @@ table {
 	}
 }
 
+
 .MockSelector {
 	height: 24px;
 	padding-right: 20px;
@@ -458,7 +458,7 @@ table {
 		height: 22px;
 		opacity: 0;
 
-		&:focus {
+		&:focus-visible {
 			outline: 0;
 			& + svg {
 				outline: 2px solid var(--colorAccent)
@@ -556,7 +556,7 @@ table {
 	> input {
 		appearance: none;
 
-		&:focus {
+		&:focus-visible {
 			outline: 0;
 			& + span {
 				outline: 2px solid var(--colorAccent)
@@ -584,15 +584,6 @@ table {
 			color: var(--colorRed);
 		}
 	}
-}
-
-
-.StaticFileLink {
-	display: inline-block;
-	padding: 6px 0;
-	margin-left: 4px;
-	border-radius: var(--radius);
-	color: var(--colorAccent);
 }
 
 

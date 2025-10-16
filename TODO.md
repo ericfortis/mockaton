@@ -5,7 +5,6 @@
   - parsing it for examples?
   - displaying documentation (.openapi)
     - perhaps instead using .js functions `export const doc`
-- Preserve focus when refreshing dashboard `init()`
 - More real-time updates. Currently, it's only for add/remove mock but not for
   static files and changes from another client (Browser, or Commander). 
 - static plugins (content disposition, compression)
@@ -13,7 +12,6 @@
   it doesn't choke the browser. Think about some virtualized paging, that doesn’t break
   selecting across pages, (e.g. for selecting and copying)
 - Document cookies for scraping mocks
-- Handle renaming mocks dir
 - Think about what to do for /.well-known/appspecific/com.chrome.devtools.json
 
 

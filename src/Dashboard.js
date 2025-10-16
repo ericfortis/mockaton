@@ -79,7 +79,6 @@ const state = /** @type {State} */ {
 	},
 
 	chosenLink: { method: '', urlMask: '' },
-	clearChosenLink() { state.setChosenLink('', '') },
 	setChosenLink(method, urlMask) {
 		state.chosenLink = { method, urlMask }
 	}
@@ -88,7 +87,7 @@ const state = /** @type {State} */ {
 
 const mockaton = new Commander(location.origin)
 updateState()
-initLongPoll()
+initRealTimeUpdates()
 initKeyboardNavigation()
 
 async function updateState() {
@@ -96,15 +95,18 @@ async function updateState() {
 		const response = await mockaton.getState()
 		if (!response.ok)
 			throw response.status
-
+		
 		Object.assign(state, await response.json())
+
+		const focusedElem = selectorFor(document.activeElement)
 		document.body.replaceChildren(...App())
+		if (focusedElem)
+			document.querySelector(focusedElem)?.focus()
 
 		const { method, urlMask } = state.chosenLink
-		if (method && urlMask) {
-			findChosenLink()?.focus()
+		if (method && urlMask)
 			await previewMock(method, urlMask)
-		}
+
 	}
 	catch (error) {
 		onError(error)
@@ -227,13 +229,11 @@ function BulkSelector() {
 	// But this way is easier to implement, with a few hacks.
 	const firstOption = t`Pick Comment…`
 	function onChange() {
-		state.clearChosenLink()
 		const value = this.value
 		this.value = firstOption // Hack 
 		mockaton.bulkSelectByComment(value)
 			.then(parseError)
 			.then(updateState)
-			.then(() => focus(`.${CSS.BulkSelector}`))
 			.catch(onError)
 	}
 	const disabled = !comments.length
@@ -298,7 +298,6 @@ function ProxyFallbackField() {
 			mockaton.setProxyFallback(this.value.trim())
 				.then(parseError)
 				.then(updateState)
-				.then(() => focus(`.${CSS.FallbackBackend} input`))
 				.catch(onError)
 	}
 	return (
@@ -336,11 +335,9 @@ function SaveProxiedCheckbox(ref) {
 
 function ResetButton() {
 	function onClick() {
-		state.clearChosenLink()
 		mockaton.reset()
 			.then(parseError)
 			.then(updateState)
-			.then(() => focus(`.${CSS.ResetButton}`))
 			.catch(onError)
 	}
 	return (
@@ -376,7 +373,7 @@ function MockList() {
 function Row({ method, urlMask, urlMaskDittoed, broker }, i) {
 	const { canProxy, groupByMethod } = state
 	return (
-		r('tr', { 'data-method': method, 'data-urlMask': urlMask },
+		r('tr', { key: method + '::' + urlMask },
 			canProxy && r('td', null, ProxyToggler(broker)),
 			r('td', null, DelayRouteToggler(broker)),
 			r('td', null, InternalServerErrorToggler(broker)),
@@ -629,6 +626,7 @@ function ClickDragToggler({ checked, commit, focusGroup }) {
 	}
 	function onPointerDown() {
 		this.checked = !this.checked
+		this.focus()
 		commit(this.checked)
 	}
 	function onClick(event) {
@@ -770,7 +768,9 @@ async function previewMock(method, urlMask) {
 async function updatePayloadViewer(method, urlMask, response) {
 	const mime = response.headers.get('content-type') || ''
 
-	const file = mockSelectorFor(method, urlMask).value
+	const file = mockSelectorFor(method, urlMask)?.value
+	if (!file)
+		return // e.g. selected was deleted
 	if (file === STR_PROXIED)
 		payloadViewerTitleRef.current.replaceChildren(PayloadViewerTitleWhenProxied({
 			status: response.status,
@@ -808,15 +808,10 @@ function isXML(mime) {
 
 
 function mockSelectorFor(method, urlMask) {
-	return trFor(method, urlMask)?.querySelector(`select.${CSS.MockSelector}`)
-}
-function trFor(method, urlMask) {
-	return document.querySelector(`tr[data-method="${method}"][data-urlMask="${urlMask}"]`)
+	const tr = document.querySelector(`tr[key="${method}::${urlMask}"]`)
+	return tr?.querySelector(`.${CSS.MockSelector}`)
 }
 
-function focus(selector) {
-	document.querySelector(selector)?.focus()
-}
 
 function initKeyboardNavigation() {
 	addEventListener('keydown', onKeyDown)
@@ -917,10 +912,10 @@ function SettingsIcon() {
 }
 
 /**
- * # Poll UI Sync Version
- * The version increments when a mock file is added, removed, or renamed
+ * # Long polls UI sync version
+ * The version increments when a mock file is added, removed, or renamed.
  */
-function initLongPoll() {
+function initRealTimeUpdates() {
 	let oldSyncVersion = -1
 	let controller = new AbortController()
 
@@ -1010,6 +1005,30 @@ function deferred(cb) {
 	return window.requestIdleCallback
 		? requestIdleCallback(cb)
 		: setTimeout(cb, 100) // Safari
+}
+
+function selectorFor(elem) {
+	if (!(elem instanceof Element))
+		return
+
+	const path = []
+	while (elem) {
+		let mod = ''
+		if (elem.hasAttribute('key'))
+			mod = `[key="${elem.getAttribute('key')}"]`
+		else {
+			let i = 0
+			let sib = elem
+			while ((sib = sib.previousElementSibling))
+				if (sib.nodeName === elem.nodeName)
+					i++
+			if (i)
+				mod = `:nth-of-type(${i + 1})`
+		}
+		path.push(elem.nodeName + mod)
+		elem = elem.parentElement
+	}
+	return path.reverse().join('>')
 }
 
 

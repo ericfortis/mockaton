@@ -69,6 +69,10 @@ const state = /** @type {State} */ {
 		return Boolean(state.proxyFallback)
 	},
 
+	fileFor(method, urlMask) {
+		return state.brokersByMethod?.[method]?.[urlMask]?.currentMock.file
+	},
+
 	leftSideWidth: window.innerWidth / 2,
 
 	groupByMethod: initPreference('groupByMethod'),
@@ -95,7 +99,7 @@ async function updateState() {
 		const response = await mockaton.getState()
 		if (!response.ok)
 			throw response.status
-		
+
 		Object.assign(state, await response.json())
 
 		const focusedElem = selectorFor(document.activeElement)
@@ -702,31 +706,22 @@ function Resizer() {
 /** # Payload Preview */
 
 const payloadViewerTitleRef = useRef()
-const payloadViewerRef = useRef()
-const SPINNER_DELAY = 80
+const payloadViewerCodeRef = useRef()
 
 function PayloadViewer() {
 	return (
 		r('div', className(CSS.PayloadViewer),
 			r('h2', { ref: payloadViewerTitleRef }, t`Preview`),
 			r('pre', null,
-				r('code', { ref: payloadViewerRef }, t`Click a link to preview it`))))
-}
-
-function PayloadViewerProgressBar() {
-	return (
-		r('div', className(CSS.ProgressBar),
-			r('div', { style: { animationDuration: state.delay - SPINNER_DELAY + 'ms' } })))
+				r('code', { ref: payloadViewerCodeRef }, t`Click a link to preview it`))))
 }
 
 function PayloadViewerTitle({ file, statusText }) {
-	const tokens = file.split('.')
-	const ext = tokens.pop()
-	const status = tokens.pop()
-	const urlAndMethod = tokens.join('.') + '.'
+	const { method, status, ext } = parseFilename(file)
+	const fileNameWithComments = file.split('.').slice(0, -3).join('.')
 	return (
 		r('span', null,
-			urlAndMethod,
+			fileNameWithComments + '.' + method + '.',
 			r('abbr', { title: statusText }, status),
 			'.' + ext))
 }
@@ -741,13 +736,20 @@ function PayloadViewerTitleWhenProxied({ mime, status, statusText, gatewayIsBad 
 			' ' + mime))
 }
 
+const SPINNER_DELAY = 80
+function PayloadViewerProgressBar() {
+	return (
+		r('div', className(CSS.ProgressBar),
+			r('div', { style: { animationDuration: state.delay - SPINNER_DELAY + 'ms' } })))
+}
+
 async function previewMock(method, urlMask) {
 	previewMock.controller?.abort()
 	previewMock.controller = new AbortController
 
 	const spinnerTimer = setTimeout(() => {
 		payloadViewerTitleRef.current.replaceChildren(t`Fetching…`)
-		payloadViewerRef.current.replaceChildren(PayloadViewerProgressBar())
+		payloadViewerCodeRef.current.replaceChildren(PayloadViewerProgressBar())
 	}, SPINNER_DELAY)
 
 	try {
@@ -756,60 +758,53 @@ async function previewMock(method, urlMask) {
 			signal: previewMock.controller.signal
 		})
 		clearTimeout(spinnerTimer)
-		await updatePayloadViewer(method, urlMask, response)
+		const file = state.fileFor(method, urlMask)
+		if (file)
+			await updatePayloadViewer(file, response)
+		else {/* e.g. selected was deleted */}
 	}
 	catch (err) {
 		onError(err)
-		payloadViewerRef.current.replaceChildren()
+		payloadViewerCodeRef.current.replaceChildren()
 	}
 }
 
-
-async function updatePayloadViewer(method, urlMask, response) {
+async function updatePayloadViewer(file, response) {
 	const mime = response.headers.get('content-type') || ''
 
-	const file = mockSelectorFor(method, urlMask)?.value
-	if (!file)
-		return // e.g. selected was deleted
-	if (file === STR_PROXIED)
-		payloadViewerTitleRef.current.replaceChildren(PayloadViewerTitleWhenProxied({
-			status: response.status,
-			statusText: response.statusText,
-			mime,
-			gatewayIsBad: response.headers.get(HEADER_FOR_502)
-		}))
-	else
-		payloadViewerTitleRef.current.replaceChildren(PayloadViewerTitle({
-			statusText: response.statusText,
-			file
-		}))
+	payloadViewerTitleRef.current.replaceChildren(
+		file === STR_PROXIED
+			? PayloadViewerTitleWhenProxied({
+				mime,
+				status: response.status,
+				statusText: response.statusText,
+				gatewayIsBad: response.headers.get(HEADER_FOR_502)
+			})
+			: PayloadViewerTitle({
+				file,
+				statusText: response.statusText
+			}))
 
-	if (mime.startsWith('image/')) { // Naively assumes GET.200
-		payloadViewerRef.current.replaceChildren(
+	if (mime.startsWith('image/'))  // Naively assumes GET.200
+		payloadViewerCodeRef.current.replaceChildren(
 			r('img', {
 				src: URL.createObjectURL(await response.blob())
 			}))
-	}
 	else {
 		const body = await response.text() || t`/* Empty Response Body */`
 		if (mime === 'application/json')
-			payloadViewerRef.current.replaceChildren(r('span', className(CSS.json), syntaxJSON(body)))
+			payloadViewerCodeRef.current.replaceChildren(r('span', className(CSS.json), syntaxJSON(body)))
 		else if (isXML(mime))
-			payloadViewerRef.current.replaceChildren(syntaxXML(body))
+			payloadViewerCodeRef.current.replaceChildren(syntaxXML(body))
 		else
-			payloadViewerRef.current.textContent = body
+			payloadViewerCodeRef.current.textContent = body
 	}
 }
+
 
 function isXML(mime) {
 	return ['text/html', 'text/xml', 'application/xml'].includes(mime)
 		|| /application\/.*\+xml/.test(mime)
-}
-
-
-function mockSelectorFor(method, urlMask) {
-	const tr = document.querySelector(`tr[key="${method}::${urlMask}"]`)
-	return tr?.querySelector(`.${CSS.MockSelector}`)
 }
 
 

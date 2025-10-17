@@ -70,7 +70,7 @@ const state = /** @type {State} */ {
 	},
 
 	fileFor(method, urlMask) {
-		return state.brokersByMethod?.[method]?.[urlMask]?.currentMock.file
+		return state.brokersByMethod[method]?.[urlMask]?.currentMock.file
 	},
 
 	leftSideWidth: window.innerWidth / 2,
@@ -759,7 +759,9 @@ async function previewMock(method, urlMask) {
 		})
 		clearTimeout(spinnerTimer)
 		const file = state.fileFor(method, urlMask)
-		if (file)
+		if (file === '')
+			await updatePayloadViewer(STR_PROXIED, response)
+		else if (file)
 			await updatePayloadViewer(file, response)
 		else {/* e.g. selected was deleted */}
 	}

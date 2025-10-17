@@ -339,6 +339,7 @@ function SaveProxiedCheckbox(ref) {
 
 function ResetButton() {
 	function onClick() {
+		state.setChosenLink('', '')
 		mockaton.reset()
 			.then(parseError)
 			.then(updateState)
@@ -803,7 +804,6 @@ async function updatePayloadViewer(file, response) {
 	}
 }
 
-
 function isXML(mime) {
 	return ['text/html', 'text/xml', 'application/xml'].includes(mime)
 		|| /application\/.*\+xml/.test(mime)
@@ -1010,19 +1010,19 @@ function selectorFor(elem) {
 
 	const path = []
 	while (elem) {
-		let mod = ''
+		let qualifier = ''
 		if (elem.hasAttribute('key'))
-			mod = `[key="${elem.getAttribute('key')}"]`
+			qualifier = `[key="${elem.getAttribute('key')}"]`
 		else {
 			let i = 0
 			let sib = elem
 			while ((sib = sib.previousElementSibling))
-				if (sib.nodeName === elem.nodeName)
+				if (sib.tagName === elem.tagName)
 					i++
 			if (i)
-				mod = `:nth-of-type(${i + 1})`
+				qualifier = `:nth-of-type(${i + 1})`
 		}
-		path.push(elem.nodeName + mod)
+		path.push(elem.tagName + qualifier)
 		elem = elem.parentElement
 	}
 	return path.reverse().join('>')

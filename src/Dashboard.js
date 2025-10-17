@@ -85,6 +85,9 @@ const state = /** @type {State} */ {
 	chosenLink: { method: '', urlMask: '' },
 	setChosenLink(method, urlMask) {
 		state.chosenLink = { method, urlMask }
+	},
+	get hasChosenLink() {
+		return state.chosenLink.method && state.chosenLink.urlMask
 	}
 }
 
@@ -107,10 +110,8 @@ async function updateState() {
 		if (focusedElem)
 			document.querySelector(focusedElem)?.focus()
 
-		const { method, urlMask } = state.chosenLink
-		if (method && urlMask)
-			await previewMock(method, urlMask)
-
+		if (state.hasChosenLink)
+			await previewMock(state.chosenLink.method, state.chosenLink.urlMask)
 	}
 	catch (error) {
 		onError(error)
@@ -710,11 +711,14 @@ const payloadViewerTitleRef = useRef()
 const payloadViewerCodeRef = useRef()
 
 function PayloadViewer() {
+	const { hasChosenLink } = state
 	return (
 		r('div', className(CSS.PayloadViewer),
-			r('h2', { ref: payloadViewerTitleRef }, t`Preview`),
+			r('h2', { ref: payloadViewerTitleRef },
+				!hasChosenLink && t`Preview`),
 			r('pre', null,
-				r('code', { ref: payloadViewerCodeRef }, t`Click a link to preview it`))))
+				r('code', { ref: payloadViewerCodeRef },
+					!hasChosenLink && t`Click a link to preview it`))))
 }
 
 function PayloadViewerTitle({ file, statusText }) {

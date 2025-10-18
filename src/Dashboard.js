@@ -56,7 +56,9 @@ const FocusGroup = {
 	PreviewLink: 3
 }
 
-const state = /** @type {State} */ {
+const mockaton = new Commander(location.origin, parseError, onError)
+
+const store = /** @type {State} */ {
 	brokersByMethod: {},
 	staticBrokers: {},
 	cookies: [],
@@ -66,56 +68,142 @@ const state = /** @type {State} */ {
 	collectProxied: false,
 	proxyFallback: '',
 	get canProxy() {
-		return Boolean(state.proxyFallback)
-	},
-
-	fileFor(method, urlMask) {
-		return state.brokersByMethod[method]?.[urlMask]?.currentMock.file
+		return Boolean(store.proxyFallback)
 	},
 
 	leftSideWidth: window.innerWidth / 2,
 
 	groupByMethod: initPreference('groupByMethod'),
 	toggleGroupByMethod() {
-		state.groupByMethod = !state.groupByMethod
-		togglePreference('groupByMethod', state.groupByMethod)
-		updateState()
+		store.groupByMethod = !store.groupByMethod
+		togglePreference('groupByMethod', store.groupByMethod)
+		render()
 	},
 
-	chosenLink: { method: '', urlMask: '' },
-	setChosenLink(method, urlMask) {
-		state.chosenLink = { method, urlMask }
+	chosenLink: {
+		method: '',
+		urlMask: ''
 	},
 	get hasChosenLink() {
-		return state.chosenLink.method && state.chosenLink.urlMask
+		return store.chosenLink.method
+			&& store.chosenLink.urlMask
+	},
+	setChosenLink(method, urlMask) {
+		store.chosenLink = { method, urlMask }
+	},
+
+	reset() {
+		store.setChosenLink('', '')
+		mockaton.reset()
+			.then(fetchState)
+	},
+
+	bulkSelectByComment(value) {
+		mockaton.bulkSelectByComment(value)
+			.then(fetchState)
+	},
+
+
+	setGlobalDelay(value) {
+		store.delay = value
+		mockaton.setGlobalDelay(value)
+	},
+
+	selectCookie(name) {
+		store.cookies = store.cookies.map(([n]) => [n, n === name])
+		mockaton.selectCookie(name)
+	},
+
+	setProxyFallback(value) {
+		store.proxyFallback = value
+		mockaton.setProxyFallback(value)
+			.then(render)
+	},
+
+	setCollectProxied(checked) {
+		store.collectProxied = checked
+		mockaton.setCollectProxied(checked)
+	},
+
+	brokerFor(method, urlMask) { return store.brokersByMethod[method]?.[urlMask] },
+	fileFor(method, urlMask) { return store.brokerFor(method, urlMask)?.currentMock.file },
+	staticBrokerFor(route) { return store.staticBrokers[route] },
+
+	previewLink(method, urlMask) {
+		store.setChosenLink(method, urlMask)
+		renderRow(method, urlMask)
+	},
+
+	selectFile(file) {
+		const { method, urlMask } = parseFilename(file)
+		store.brokerFor(method, urlMask).currentMock.file = file
+		store.setChosenLink(method, urlMask)
+		mockaton.select(file)
+			.then(() => renderRow(method, urlMask))
+	},
+
+	toggleProxied(method, urlMask, checked) {
+		const broker = store.brokerFor(method, urlMask)
+		broker.currentMock.file = checked ? '' : broker.mocks[0]
+		store.setChosenLink(method, urlMask)
+		mockaton.setRouteIsProxied(method, urlMask, checked)
+			.then(() => renderRow(method, urlMask))
+	},
+
+	toggle500(method, urlMask, checked) {
+		const broker = store.brokerFor(method, urlMask)
+		const file = checked
+			? broker.mocks.find(f => parseFilename(f).status === 500)
+			: broker.mocks[0]
+		store.selectFile(file)
+	},
+
+	setDelayed(method, urlMask, checked) {
+		store.brokerFor(method, urlMask).currentMock.delayed = checked
+		mockaton.setRouteIsDelayed(method, urlMask, checked)
+	},
+
+
+	setDelayedStatic(route, checked) {
+		store.staticBrokerFor(route).delayed = checked
+		mockaton.setStaticRouteIsDelayed(route, checked)
+	},
+
+	setStaticRouteStatus(route, status) {
+		store.staticBrokerFor(route).status = status
+		mockaton.setStaticRouteStatus(route, status)
 	}
 }
 
 
-const mockaton = new Commander(location.origin)
-updateState()
+fetchState()
 initRealTimeUpdates()
 initKeyboardNavigation()
 
-async function updateState() {
+async function fetchState() {
 	try {
 		const response = await mockaton.getState()
 		if (!response.ok)
 			throw response.status
-
-		Object.assign(state, await response.json())
-
-		const focusedElem = selectorFor(document.activeElement)
-		document.body.replaceChildren(...App())
-		if (focusedElem)
-			document.querySelector(focusedElem)?.focus()
-
-		if (state.hasChosenLink)
-			await previewMock(state.chosenLink.method, state.chosenLink.urlMask)
+		Object.assign(store, await response.json())
+		render()
 	}
 	catch (error) {
 		onError(error)
 	}
+}
+
+function render() {
+	restoreFocus(() => document.body.replaceChildren(...App()))
+	if (store.hasChosenLink)
+		previewMock(store.chosenLink.method, store.chosenLink.urlMask)
+}
+
+function restoreFocus(cb) {
+	const focusQuery = selectorFor(document.activeElement)
+	cb()
+	if (focusQuery)
+		document.querySelector(focusQuery)?.focus()
 }
 
 const r = createElement
@@ -125,7 +213,7 @@ const t = translation => translation[0]
 const leftSideRef = useRef()
 
 function App() {
-	const { leftSideWidth } = state
+	const { leftSideWidth } = store
 	return [
 		Header(),
 		r('main', null,
@@ -162,112 +250,9 @@ function Header() {
 				SettingsMenuTrigger())))
 }
 
-function SettingsMenuTrigger() {
-	const id = '_settings_menu_'
-	return (
-		r('button', {
-				title: t`Settings`,
-				popovertarget: id,
-				className: CSS.MenuTrigger
-			},
-			SettingsIcon(),
-			Defer(() => SettingsMenu(id))))
-}
-
-function SettingsMenu(id) {
-	const { groupByMethod, toggleGroupByMethod } = state
-
-	const firstInputRef = useRef()
-	function onToggle(event) {
-		if (event.newState === 'open')
-			firstInputRef.current.focus()
-	}
-	return (
-		r('menu', {
-				id,
-				popover: '',
-				className: CSS.SettingsMenu,
-				onToggle
-			},
-
-			r('label', className(CSS.GroupByMethod),
-				r('input', {
-					ref: firstInputRef,
-					type: 'checkbox',
-					checked: groupByMethod,
-					onChange: toggleGroupByMethod
-				}),
-				r('span', null, t`Group by Method`)),
-
-			r('a', {
-				href: 'https://github.com/ericfortis/mockaton',
-				target: '_blank',
-				rel: 'noopener noreferrer'
-			}, t`Documentation`)))
-}
-
-
-function CookieSelector() {
-	const { cookies } = state
-	function onChange() {
-		mockaton.selectCookie(this.value)
-			.then(parseError)
-			.catch(onError)
-	}
-	const disabled = cookies.length <= 1
-	const list = cookies.length ? cookies : [[t`None`, true]]
-	return (
-		r('label', className(CSS.Field, CSS.CookieSelector),
-			r('span', null, t`Cookie`),
-			r('select', {
-				autocomplete: 'off',
-				disabled,
-				title: disabled ? t`No cookies specified in config.cookies` : '',
-				onChange
-			}, list.map(([value, selected]) =>
-				r('option', { value, selected }, value)))))
-}
-
-function BulkSelector() {
-	const { comments } = state
-	// UX wise this should be a menu instead of this `select`.
-	// But this way is easier to implement, with a few hacks.
-	const firstOption = t`Pick Comment…`
-	function onChange() {
-		const value = this.value
-		this.value = firstOption // Hack 
-		mockaton.bulkSelectByComment(value)
-			.then(parseError)
-			.then(updateState)
-			.catch(onError)
-	}
-	const disabled = !comments.length
-	return (
-		r('label', className(CSS.Field),
-			r('span', null, t`Bulk Select`),
-			r('select', {
-					className: CSS.BulkSelector,
-					autocomplete: 'off',
-					disabled,
-					title: disabled ? t`No mock files have comments which are anything within parentheses on the filename.` : '',
-					onChange
-				},
-				r('option', { value: firstOption }, firstOption),
-				r('hr'),
-				comments.map(value =>
-					r('option', { value }, value)),
-				r('hr'),
-				r('option', { value: AUTOGENERATED_500_COMMENT }, t`Auto500`)
-			)))
-}
-
 function GlobalDelayField() {
-	const { delay } = state
 	function onChange() {
-		state.delay = this.valueAsNumber
-		mockaton.setGlobalDelay(state.delay)
-			.then(parseError)
-			.catch(onError)
+		store.setGlobalDelay(this.valueAsNumber)
 	}
 	function onWheel(event) {
 		if (event.deltaY > 0)
@@ -285,14 +270,58 @@ function GlobalDelayField() {
 				min: 0,
 				step: 100,
 				autocomplete: 'none',
-				value: delay,
+				value: store.delay,
 				onChange,
 				onWheel: [onWheel, { passive: true }]
 			})))
 }
 
+function BulkSelector() {
+	const { comments } = store
+	// UX wise this should be a menu instead of this `select`.
+	// But this way is easier to implement, with a few hacks.
+	const firstOption = t`Pick Comment…`
+	function onChange() {
+		const value = this.value
+		this.value = firstOption // Hack 
+		store.bulkSelectByComment(value)
+	}
+	const disabled = !comments.length
+	return (
+		r('label', className(CSS.Field),
+			r('span', null, t`Bulk Select`),
+			r('select', {
+					className: CSS.BulkSelector,
+					autocomplete: 'off',
+					disabled,
+					title: disabled ? t`No mock files have comments which are anything within parentheses on the filename.` : '',
+					onChange
+				},
+				r('option', { value: firstOption }, firstOption),
+				r('hr'),
+				comments.map(value => r('option', { value }, value)),
+				r('hr'),
+				r('option', { value: AUTOGENERATED_500_COMMENT }, t`Auto500`)
+			)))
+}
+
+function CookieSelector() {
+	const { cookies } = store
+	const disabled = cookies.length <= 1
+	const list = cookies.length ? cookies : [[t`None`, true]]
+	return (
+		r('label', className(CSS.Field, CSS.CookieSelector),
+			r('span', null, t`Cookie`),
+			r('select', {
+				autocomplete: 'off',
+				disabled,
+				title: disabled ? t`No cookies specified in config.cookies` : '',
+				onChange() { store.selectCookie(this.value) }
+			}, list.map(([value, selected]) =>
+				r('option', { value, selected }, value)))))
+}
+
 function ProxyFallbackField() {
-	const { proxyFallback } = state
 	const checkboxRef = useRef()
 	function onChange() {
 		checkboxRef.current.disabled = !this.validity.valid || !this.value.trim()
@@ -300,10 +329,7 @@ function ProxyFallbackField() {
 		if (!this.validity.valid)
 			this.reportValidity()
 		else
-			mockaton.setProxyFallback(this.value.trim())
-				.then(parseError)
-				.then(updateState)
-				.catch(onError)
+			store.setProxyFallback(this.value.trim())
 	}
 	return (
 		r('div', className(CSS.Field, CSS.FallbackBackend),
@@ -313,44 +339,73 @@ function ProxyFallbackField() {
 					type: 'url',
 					autocomplete: 'none',
 					placeholder: t`Type backend address`,
-					value: proxyFallback,
+					value: store.proxyFallback,
 					onChange
 				})),
 			SaveProxiedCheckbox(checkboxRef)))
 }
 
 function SaveProxiedCheckbox(ref) {
-	const { collectProxied, canProxy } = state
-	function onChange() {
-		mockaton.setCollectProxied(this.checked)
-			.then(parseError)
-			.catch(onError)
-	}
 	return (
 		r('label', className(CSS.SaveProxiedCheckbox),
 			r('input', {
 				ref,
 				type: 'checkbox',
-				disabled: !canProxy,
-				checked: collectProxied,
-				onChange
+				disabled: !store.canProxy,
+				checked: store.collectProxied,
+				onChange() { store.setCollectProxied(this.checked) }
 			}),
 			r('span', null, t`Save Mocks`)))
 }
 
 function ResetButton() {
-	function onClick() {
-		state.setChosenLink('', '')
-		mockaton.reset()
-			.then(parseError)
-			.then(updateState)
-			.catch(onError)
-	}
 	return (
 		r('button', {
 			className: CSS.ResetButton,
-			onClick
+			onClick: store.reset
 		}, t`Reset`))
+}
+
+function SettingsMenuTrigger() {
+	const id = '_settings_menu_'
+	return (
+		r('button', {
+				title: t`Settings`,
+				popovertarget: id,
+				className: CSS.MenuTrigger
+			},
+			SettingsIcon(),
+			Defer(() => SettingsMenu(id))))
+}
+
+function SettingsMenu(id) {
+	const firstInputRef = useRef()
+	function onToggle(event) {
+		if (event.newState === 'open')
+			firstInputRef.current.focus()
+	}
+	return (
+		r('menu', {
+				id,
+				popover: '',
+				className: CSS.SettingsMenu,
+				onToggle
+			},
+
+			r('label', className(CSS.GroupByMethod),
+				r('input', {
+					ref: firstInputRef,
+					type: 'checkbox',
+					checked: store.groupByMethod,
+					onChange: store.toggleGroupByMethod
+				}),
+				r('span', null, t`Group by Method`)),
+
+			r('a', {
+				href: 'https://github.com/ericfortis/mockaton',
+				target: '_blank',
+				rel: 'noopener noreferrer'
+			}, t`Documentation`)))
 }
 
 
@@ -358,47 +413,29 @@ function ResetButton() {
 /** # MockList */
 
 function MockList() {
-	const { brokersByMethod, groupByMethod, canProxy } = state
-
-	if (!Object.keys(brokersByMethod).length)
+	if (!Object.keys(store.brokersByMethod).length)
 		return (
 			r('div', className(CSS.empty),
 				t`No mocks found`))
 
-	if (groupByMethod)
-		return Object.keys(brokersByMethod).map(method => Fragment(
+	if (store.groupByMethod)
+		return Object.keys(store.brokersByMethod).map(method => Fragment(
 			r('tr', null,
-				r('th', { colspan: 2 + Number(canProxy) }),
+				r('th', { colspan: 2 + Number(store.canProxy) }),
 				r('th', null, method)),
 			rowsFor(method).map(Row)))
 
 	return rowsFor('*').map(Row)
 }
 
-
-function Row({ method, urlMask, urlMaskDittoed, broker }, i) {
-	const { canProxy, groupByMethod } = state
-	return (
-		r('tr', { key: method + '::' + urlMask },
-			canProxy && r('td', null, ProxyToggler(broker)),
-			r('td', null, DelayRouteToggler(broker)),
-			r('td', null, InternalServerErrorToggler(broker)),
-			!groupByMethod && r('td', className(CSS.Method), method),
-			r('td', null, PreviewLink(method, urlMask, urlMaskDittoed, i === 0)),
-			r('td', null, MockSelector(broker))))
-}
-
 function rowsFor(targetMethod) {
-	const { brokersByMethod } = state
-
 	const rows = []
-	for (const [method, brokers] of Object.entries(brokersByMethod))
+	for (const [method, brokers] of Object.entries(store.brokersByMethod))
 		if (targetMethod === '*' || targetMethod === method)
 			for (const [urlMask, broker] of Object.entries(brokers))
 				rows.push({ method, urlMask, broker })
 
 	const sorted = rows.sort((a, b) => a.urlMask.localeCompare(b.urlMask))
-
 	const urlMasksDittoed = dittoSplitPaths(sorted.map(r => r.urlMask))
 	return sorted.map((r, i) => ({
 		...r,
@@ -406,22 +443,50 @@ function rowsFor(targetMethod) {
 	}))
 }
 
+function Row({ method, urlMask, urlMaskDittoed, broker }, i) {
+	const key = Row.key(method, urlMask)
+	Row.ditto.set(key, urlMaskDittoed)
+	return (
+		r('tr', { key },
+			store.canProxy && r('td', null, ProxyToggler(broker)),
+			r('td', null, DelayRouteToggler(broker)),
+			r('td', null, InternalServerErrorToggler(broker)),
+			!store.groupByMethod && r('td', className(CSS.Method), method),
+			r('td', null, PreviewLink(method, urlMask, urlMaskDittoed, i === 0)),
+			r('td', null, MockSelector(broker))))
+}
+Row.key = (method, urlMask) => method + '::' + urlMask
+Row.ditto = new Map()
+
+function renderRow(method, urlMask) {
+	restoreFocus(() => {
+		unChooseOld()
+		const key = Row.key(method, urlMask)
+		trFor(key).replaceWith(Row({
+			method,
+			urlMask,
+			urlMaskDittoed: Row.ditto.get(key),
+			broker: store.brokerFor(method, urlMask)
+		}))
+		previewMock(method, urlMask)
+	})
+
+	function trFor(key) {
+		return document.querySelector(`body > main > .${CSS.leftSide} tr[key="${key}"]`)
+	}
+	function unChooseOld() {
+		return document.querySelector(`body > main > .${CSS.leftSide} tr .${CSS.chosen}`)
+			?.classList.remove(CSS.chosen)
+	}
+}
+
 
 function PreviewLink(method, urlMask, urlMaskDittoed, autofocus) {
-	async function onClick(event) {
+	function onClick(event) {
 		event.preventDefault()
-		try {
-			findChosenLink()?.classList.remove(CSS.chosen)
-			this.classList.add(CSS.chosen)
-			state.setChosenLink(method, urlMask)
-			await previewMock(method, urlMask)
-		}
-		catch (error) {
-			onError(error)
-		}
+		store.previewLink(method, urlMask)
 	}
-	const { chosenLink } = state
-	const isChosen = chosenLink.method === method && chosenLink.urlMask === urlMask
+	const isChosen = store.chosenLink.method === method && store.chosenLink.urlMask === urlMask
 	const [ditto, tail] = urlMaskDittoed
 	return (
 		r('a', {
@@ -435,24 +500,10 @@ function PreviewLink(method, urlMask, urlMaskDittoed, autofocus) {
 			: tail))
 }
 
-function findChosenLink() {
-	return document.querySelector(
-		`body > main > .${CSS.leftSide} .${CSS.PreviewLink}.${CSS.chosen}`)
-}
-
 const STR_PROXIED = t`Proxied`
 
 /** @param {ClientMockBroker} broker */
 function MockSelector(broker) {
-	function onChange() {
-		const { method, urlMask } = parseFilename(this.value)
-		state.setChosenLink(method, urlMask)
-		mockaton.select(this.value)
-			.then(parseError)
-			.then(updateState)
-			.catch(onError)
-	}
-
 	let selected = broker.currentMock.file
 	const { status } = parseFilename(selected)
 	const files = broker.mocks.filter(item =>
@@ -478,7 +529,7 @@ function MockSelector(broker) {
 
 	return (
 		r('select', {
-			onChange,
+			onChange() { store.selectFile(this.value) },
 			autocomplete: 'off',
 			'aria-label': t`Mock Selector`,
 			disabled: files.length <= 1,
@@ -497,9 +548,7 @@ function MockSelector(broker) {
 function DelayRouteToggler(broker) {
 	function commit(checked) {
 		const { method, urlMask } = parseFilename(broker.mocks[0])
-		mockaton.setRouteIsDelayed(method, urlMask, checked)
-			.then(parseError)
-			.catch(onError)
+		store.setDelayed(method, urlMask, checked)
 	}
 	return ClickDragToggler({
 		checked: broker.currentMock.delayed,
@@ -513,11 +562,7 @@ function DelayRouteToggler(broker) {
 function InternalServerErrorToggler(broker) {
 	function onChange() {
 		const { method, urlMask } = parseFilename(broker.mocks[0])
-		state.setChosenLink(method, urlMask)
-		mockaton.toggle500(method, urlMask)
-			.then(parseError)
-			.then(updateState)
-			.catch(onError)
+		store.toggle500(method, urlMask, this.checked)
 	}
 	return (
 		r('label', {
@@ -527,7 +572,6 @@ function InternalServerErrorToggler(broker) {
 			r('input', {
 				type: 'checkbox',
 				'data-focus-group': FocusGroup.StatusToggler,
-				name: broker.currentMock.file,
 				checked: parseFilename(broker.currentMock.file).status === 500,
 				onChange
 			}),
@@ -538,11 +582,7 @@ function InternalServerErrorToggler(broker) {
 function ProxyToggler(broker) {
 	function onChange() {
 		const { urlMask, method } = parseFilename(broker.mocks[0])
-		state.setChosenLink(method, urlMask)
-		mockaton.setRouteIsProxied(method, urlMask, this.checked)
-			.then(parseError)
-			.then(updateState)
-			.catch(onError)
+		store.toggleProxied(method, urlMask, this.checked)
 	}
 	return (
 		r('label', {
@@ -563,7 +603,7 @@ function ProxyToggler(broker) {
 /** # StaticFilesList */
 
 function StaticFilesList() {
-	const { staticBrokers, canProxy, groupByMethod } = state
+	const { staticBrokers, canProxy, groupByMethod } = store
 	if (!Object.keys(staticBrokers).length)
 		return null
 	const dp = dittoSplitPaths(Object.keys(staticBrokers)).map(([ditto, tail]) => ditto
@@ -591,25 +631,17 @@ function StaticFilesList() {
 
 /** @param {ClientStaticBroker} broker */
 function DelayStaticRouteToggler(broker) {
-	function commit(checked) {
-		mockaton.setStaticRouteIsDelayed(broker.route, checked)
-			.then(parseError)
-			.catch(onError)
-	}
 	return ClickDragToggler({
 		checked: broker.delayed,
-		commit,
-		focusGroup: FocusGroup.DelayToggler
+		focusGroup: FocusGroup.DelayToggler,
+		commit(checked) {
+			store.setDelayedStatic(broker.route, checked)
+		}
 	})
 }
 
 /** @param {ClientStaticBroker} broker */
 function NotFoundToggler(broker) {
-	function onChange() {
-		mockaton.setStaticRouteStatus(broker.route, this.checked ? 404 : 200)
-			.then(parseError)
-			.catch(onError)
-	}
 	return (
 		r('label', {
 				className: CSS.NotFoundToggler,
@@ -618,8 +650,10 @@ function NotFoundToggler(broker) {
 			r('input', {
 				type: 'checkbox',
 				checked: broker.status === 404,
-				onChange,
-				'data-focus-group': FocusGroup.StatusToggler
+				'data-focus-group': FocusGroup.StatusToggler,
+				onChange() {
+					store.setStaticRouteStatus(broker.route, this.checked ? 404 : 200)
+				}
 			}),
 			r('span', null, t`404`)))
 }
@@ -659,7 +693,6 @@ function ClickDragToggler({ checked, commit, focusGroup }) {
 			TimerIcon()))
 }
 
-
 function Resizer() {
 	let raf = 0
 	let initialX = 0
@@ -680,8 +713,8 @@ function Resizer() {
 	function onMove(event) {
 		const MIN_LEFT_WIDTH = 380
 		raf = raf || requestAnimationFrame(() => {
-			state.leftSideWidth = Math.max(panelWidth - (initialX - event.clientX), MIN_LEFT_WIDTH)
-			leftSideRef.current.style.width = state.leftSideWidth + 'px'
+			store.leftSideWidth = Math.max(panelWidth - (initialX - event.clientX), MIN_LEFT_WIDTH)
+			leftSideRef.current.style.width = store.leftSideWidth + 'px'
 			raf = 0
 		})
 	}
@@ -711,14 +744,13 @@ const payloadViewerTitleRef = useRef()
 const payloadViewerCodeRef = useRef()
 
 function PayloadViewer() {
-	const { hasChosenLink } = state
 	return (
 		r('div', className(CSS.PayloadViewer),
 			r('h2', { ref: payloadViewerTitleRef },
-				!hasChosenLink && t`Preview`),
+				!store.hasChosenLink && t`Preview`),
 			r('pre', null,
 				r('code', { ref: payloadViewerCodeRef },
-					!hasChosenLink && t`Click a link to preview it`))))
+					!store.hasChosenLink && t`Click a link to preview it`))))
 }
 
 function PayloadViewerTitle({ file, statusText }) {
@@ -745,7 +777,7 @@ const SPINNER_DELAY = 80
 function PayloadViewerProgressBar() {
 	return (
 		r('div', className(CSS.ProgressBar),
-			r('div', { style: { animationDuration: state.delay - SPINNER_DELAY + 'ms' } })))
+			r('div', { style: { animationDuration: store.delay - SPINNER_DELAY + 'ms' } })))
 }
 
 async function previewMock(method, urlMask) {
@@ -763,7 +795,7 @@ async function previewMock(method, urlMask) {
 			signal: previewMock.controller.signal
 		})
 		clearTimeout(spinnerTimer)
-		const file = state.fileFor(method, urlMask)
+		const file = store.fileFor(method, urlMask)
 		if (file === '')
 			await updatePayloadViewer(STR_PROXIED, response)
 		else if (file)
@@ -794,9 +826,7 @@ async function updatePayloadViewer(file, response) {
 
 	if (mime.startsWith('image/'))  // Naively assumes GET.200
 		payloadViewerCodeRef.current.replaceChildren(
-			r('img', {
-				src: URL.createObjectURL(await response.blob())
-			}))
+			r('img', { src: URL.createObjectURL(await response.blob()) }))
 	else {
 		const body = await response.text() || t`/* Empty Response Body */`
 		if (mime === 'application/json')
@@ -813,50 +843,6 @@ function isXML(mime) {
 		|| /application\/.*\+xml/.test(mime)
 }
 
-
-function initKeyboardNavigation() {
-	addEventListener('keydown', onKeyDown)
-
-	function onKeyDown(event) {
-		const pivot = document.activeElement
-		switch (event.key) {
-			case 'ArrowDown':
-			case 'ArrowUp': {
-				let fg = pivot.getAttribute('data-focus-group')
-				if (fg !== null) {
-					const offset = event.key === 'ArrowDown' ? +1 : -1
-					circularAdjacent(offset, allInFocusGroup(+fg), pivot).focus()
-				}
-				break
-			}
-			case 'ArrowRight':
-			case 'ArrowLeft': {
-				if (pivot.hasAttribute('data-focus-group') || pivot.classList.contains(CSS.MockSelector)) {
-					const offset = event.key === 'ArrowRight' ? +1 : -1
-					rowFocusable(pivot, offset).focus()
-				}
-				break
-			}
-		}
-	}
-
-	function rowFocusable(el, step) {
-		const row = el.closest('tr')
-		if (row) {
-			const focusables = Array.from(row.querySelectorAll('a, input, select:not(:disabled)'))
-			return circularAdjacent(step, focusables, el)
-		}
-	}
-
-	function allInFocusGroup(focusGroup) {
-		return Array.from(document.querySelectorAll(
-			`body > main > .${CSS.leftSide} table > tr > td [data-focus-group="${focusGroup}"]:is(input, a)`))
-	}
-
-	function circularAdjacent(step = 1, arr, pivot) {
-		return arr[(arr.indexOf(pivot) + step + arr.length) % arr.length]
-	}
-}
 
 /** # Error */
 
@@ -939,7 +925,7 @@ function initRealTimeUpdates() {
 				if (oldSyncVersion !== syncVersion) { // because it could be < or >
 					oldSyncVersion = syncVersion
 					if (!skipUpdate)
-						await updateState()
+						await fetchState()
 				}
 				poll()
 			}
@@ -950,6 +936,50 @@ function initRealTimeUpdates() {
 			if (error !== '_hidden_tab_')
 				setTimeout(poll, 3000)
 		}
+	}
+}
+
+function initKeyboardNavigation() {
+	addEventListener('keydown', onKeyDown)
+
+	function onKeyDown(event) {
+		const pivot = document.activeElement
+		switch (event.key) {
+			case 'ArrowDown':
+			case 'ArrowUp': {
+				let fg = pivot.getAttribute('data-focus-group')
+				if (fg !== null) {
+					const offset = event.key === 'ArrowDown' ? +1 : -1
+					circularAdjacent(offset, allInFocusGroup(+fg), pivot).focus()
+				}
+				break
+			}
+			case 'ArrowRight':
+			case 'ArrowLeft': {
+				if (pivot.hasAttribute('data-focus-group') || pivot.classList.contains(CSS.MockSelector)) {
+					const offset = event.key === 'ArrowRight' ? +1 : -1
+					rowFocusable(pivot, offset).focus()
+				}
+				break
+			}
+		}
+	}
+
+	function rowFocusable(el, step) {
+		const row = el.closest('tr')
+		if (row) {
+			const focusables = Array.from(row.querySelectorAll('a, input, select:not(:disabled)'))
+			return circularAdjacent(step, focusables, el)
+		}
+	}
+
+	function allInFocusGroup(focusGroup) {
+		return Array.from(document.querySelectorAll(
+			`body > main > .${CSS.leftSide} table > tr > td [data-focus-group="${focusGroup}"]:is(input, a)`))
+	}
+
+	function circularAdjacent(step = 1, arr, pivot) {
+		return arr[(arr.indexOf(pivot) + step + arr.length) % arr.length]
 	}
 }
 
@@ -1119,7 +1149,6 @@ dittoSplitPaths.test = function () {
 }
 
 
-
 function syntaxJSON(json) {
 	const MAX_NODES = 50_000
 	let nNodes = 0
@@ -1165,7 +1194,6 @@ function syntaxJSON(json) {
 }
 syntaxJSON.regex = /("(?:\\u[a-fA-F0-9]{4}|\\[^u]|[^\\"])*")(\s*:)?|([{}\[\],:\s]+)|\S+/g
 // Capture group order: [string, optional colon, punc]
-
 
 
 function syntaxXML(xml) {

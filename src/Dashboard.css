@@ -579,8 +579,7 @@ table {
 		border-radius: var(--radius);
 
 		&:hover {
-			border-color: var(--colorLightRed);
-			background: var(--colorLightRed);
+			border-color: var(--colorRed);
 			color: var(--colorRed);
 		}
 	}

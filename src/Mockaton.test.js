@@ -305,7 +305,7 @@ describe('Set Global Delay', () => {
 })
 
 it('updates route delay', async () => {
-	const delay = 80
+	const delay = 120
 	const [url, file, expectedBody] = fixtureDelayed
 	const { method } = parseFilename(file)
 	await commander.setGlobalDelay(delay)

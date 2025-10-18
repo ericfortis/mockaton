@@ -4,8 +4,13 @@ import { API, DF, LONG_POLL_SERVER_TIMEOUT } from './ApiConstants.js'
 /** Client for controlling Mockaton via its HTTP API */
 export class Commander {
 	#addr = ''
-	constructor(addr) {
+	#then = a => a
+	#catch = e => { throw e }
+
+	constructor(addr, _then = undefined, _catch = undefined) {
 		this.#addr = addr
+		if (_then) this.#then = _then
+		if (_catch) this.#catch = _catch
 	}
 
 	#patch(api, body) {
@@ -13,6 +18,8 @@ export class Commander {
 			method: 'PATCH',
 			body: JSON.stringify(body)
 		})
+			.then(this.#then)
+			.catch(this.#catch)
 	}
 
 	/** @returns {JsonPromise<State>} */
@@ -42,7 +49,7 @@ export class Commander {
 	toggle500(routeMethod, routeUrlMask) {
 		return this.#patch(API.toggle500, {
 			[DF.routeMethod]: routeMethod,
-			[DF.routeUrlMask]: routeUrlMask,
+			[DF.routeUrlMask]: routeUrlMask
 		})
 	}
 

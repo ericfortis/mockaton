@@ -67,6 +67,7 @@ export type ClientMockBroker = {
 	currentMock: {
 		file: string
 		delayed: boolean
+		proxied: boolean
 	}
 }
 export type ClientBrokersByMethod = {

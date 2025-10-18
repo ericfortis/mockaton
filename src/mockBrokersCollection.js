@@ -125,13 +125,6 @@ export function setMocksMatchingComment(comment) {
 		broker.setByMatchingComment(comment))
 }
 
-export function ensureAllRoutesHaveSelectedMock() {
-	forEachBroker(broker => {
-		if (broker.proxied)
-			broker.selectDefaultFile()
-	})
-}
-
 function forEachBroker(fn) {
 	for (const brokers of Object.values(collection))
 		Object.values(brokers).forEach(fn)

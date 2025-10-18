@@ -10,15 +10,17 @@ export class MockBroker {
 		this.mocks = []
 		this.currentMock = {
 			file: '',
-			delayed: false
+			delayed: false,
+			proxied: false
 		}
 		this.register(file)
 	}
 
 	get file() { return this.currentMock.file }
-	get status() { return parseFilename(this.file).status }
 	get delayed() { return this.currentMock.delayed }
-	get proxied() { return !this.currentMock.file }
+	get proxied() { return this.currentMock.proxied }
+
+	get status() { return parseFilename(this.file).status }
 	get temp500IsSelected() { return this.#isTemp500(this.file) }
 
 	hasMock(file) { return this.mocks.includes(file) }
@@ -80,25 +82,18 @@ export class MockBroker {
 	}
 
 	selectFile(filename) {
+		this.currentMock.proxied = false
 		this.currentMock.file = filename
 	}
-	
+
 	toggle500() {
 		this.#is500(this.currentMock.file)
 			? this.selectDefaultFile()
 			: this.selectFile(this.mocks.find(this.#is500))
 	}
 
-	setDelayed(delayed) {
-		this.currentMock.delayed = delayed
-	}
-
-	setProxied(proxied) {
-		if (proxied)
-			this.selectFile('')
-		else
-			this.selectDefaultFile()
-	}
+	setDelayed(delayed) { this.currentMock.delayed = delayed }
+	setProxied(proxied) { this.currentMock.proxied = proxied }
 
 	setByMatchingComment(comment) {
 		for (const file of this.mocks)

@@ -117,7 +117,7 @@ async function selectMock(req, response) {
 		sendUnprocessableContent(response, `Missing Mock: ${file}`)
 	else {
 		broker.selectFile(file)
-		sendOK(response)
+		sendJSON(response, broker.currentMock)
 	}
 }
 
@@ -130,7 +130,7 @@ async function toggle500(req, response) {
 		sendUnprocessableContent(response, `Route does not exist: ${body[DF.routeMethod]} ${body[DF.routeUrlMask]}`)
 	else {
 		broker.toggle500()
-		sendJSON(response, broker.file)
+		sendJSON(response, broker.currentMock)
 	}
 }
 
@@ -176,8 +176,6 @@ async function updateProxyFallback(req, response) {
 		sendUnprocessableContent(response, `Invalid Proxy Fallback URL`)
 		return
 	}
-	if (!fallback)
-		mockBrokersCollection.ensureAllRoutesHaveSelectedMock()
 	config.proxyFallback = fallback
 	sendOK(response)
 }

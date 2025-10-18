@@ -13,15 +13,19 @@ import { sendInternalServerError, sendMockNotFound } from './utils/http-response
 
 export async function dispatchMock(req, response) {
 	try {
-		let broker = mockBrokerCollection.brokerByRoute(req.method, req.url)
 		const isHead = req.method === 'HEAD'
+		
+		let broker = mockBrokerCollection.brokerByRoute(req.method, req.url)
 		if (!broker && isHead)
 			broker = mockBrokerCollection.brokerByRoute('GET', req.url)
-		if (!broker || broker.proxied) {
-			if (config.proxyFallback)
-				await proxy(req, response, broker?.delayed ? calcDelay() : 0)
-			else
-				sendMockNotFound(response)
+		
+		if (config.proxyFallback && (!broker || broker.proxied)) {
+			await proxy(req, response, broker?.delayed ? calcDelay() : 0)
+			return
+		}
+		
+		if (!broker) {
+			sendMockNotFound(response)
 			return
 		}
 

@@ -130,7 +130,7 @@ async function toggle500(req, response) {
 		sendUnprocessableContent(response, `Route does not exist: ${body[DF.routeMethod]} ${body[DF.routeUrlMask]}`)
 	else {
 		broker.toggle500()
-		sendOK(response)
+		sendJSON(response, broker.file)
 	}
 }
 

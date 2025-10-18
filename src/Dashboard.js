@@ -138,24 +138,24 @@ const store = /** @type {State} */ {
 		const { method, urlMask } = parseFilename(file)
 		store.brokerFor(method, urlMask).currentMock.file = file
 		store.setChosenLink(method, urlMask)
-		mockaton.select(file)
-			.then(() => renderRow(method, urlMask))
+		mockaton.select(file).then(() => 
+			renderRow(method, urlMask))
+	},
+
+	toggle500(method, urlMask) {
+		mockaton.toggle500(method, urlMask).then(async response => {
+			store.brokerFor(method, urlMask).currentMock.file = await response.json()
+			store.setChosenLink(method, urlMask)
+			renderRow(method, urlMask)
+		})
 	},
 
 	toggleProxied(method, urlMask, checked) {
 		const broker = store.brokerFor(method, urlMask)
 		broker.currentMock.file = checked ? '' : broker.mocks[0]
 		store.setChosenLink(method, urlMask)
-		mockaton.setRouteIsProxied(method, urlMask, checked)
-			.then(() => renderRow(method, urlMask))
-	},
-
-	toggle500(method, urlMask, checked) {
-		const broker = store.brokerFor(method, urlMask)
-		const file = checked
-			? broker.mocks.find(f => parseFilename(f).status === 500)
-			: broker.mocks[0]
-		store.selectFile(file)
+		mockaton.setRouteIsProxied(method, urlMask, checked).then(() => 
+			renderRow(method, urlMask))
 	},
 
 	setDelayed(method, urlMask, checked) {
@@ -562,7 +562,7 @@ function DelayRouteToggler(broker) {
 function InternalServerErrorToggler(broker) {
 	function onChange() {
 		const { method, urlMask } = parseFilename(broker.mocks[0])
-		store.toggle500(method, urlMask, this.checked)
+		store.toggle500(method, urlMask)
 	}
 	return (
 		r('label', {
@@ -848,7 +848,7 @@ function isXML(mime) {
 
 async function parseError(response) {
 	if (response.ok)
-		return
+		return response
 	if (response.status === 422)
 		throw await response.text()
 	throw response.statusText

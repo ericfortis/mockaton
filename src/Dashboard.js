@@ -446,7 +446,7 @@ function Row({ method, urlMask, urlMaskDittoed, broker }, i) {
 			store.canProxy && r('td', null, ProxyToggler(method, urlMask, proxied)),
 			r('td', null, DelayRouteToggler(method, urlMask, delayed)),
 			r('td', null, InternalServerErrorToggler(method, urlMask, parseFilename(file).status === 500)),
-			
+
 			!store.groupByMethod && r('td', className(CSS.Method), method),
 			r('td', null, PreviewLink(method, urlMask, urlMaskDittoed, i === 0)),
 			r('td', null, MockSelector(broker))))
@@ -594,14 +594,14 @@ function StaticFilesList() {
 			r('tr', null,
 				r('th', { colspan: (2 + Number(!groupByMethod)) + Number(canProxy) }),
 				r('th', null, t`Static GET`)),
-			Object.values(staticBrokers).map((broker, i) =>
+			Object.values(staticBrokers).map(({ route, status, delayed }, i) =>
 				r('tr', null,
 					canProxy && r('td'),
-					r('td', null, DelayStaticRouteToggler(broker)),
-					r('td', null, NotFoundToggler(broker)),
+					r('td', null, DelayStaticRouteToggler(route, delayed)),
+					r('td', null, NotFoundToggler(route, status === 404)),
 					!groupByMethod && r('td', className(CSS.Method), 'GET'),
 					r('td', null, r('a', {
-						href: broker.route,
+						href: route,
 						target: '_blank',
 						className: CSS.PreviewLink,
 						'data-focus-group': FocusGroup.PreviewLink
@@ -609,19 +609,17 @@ function StaticFilesList() {
 				))))
 }
 
-/** @param {ClientStaticBroker} broker */
-function DelayStaticRouteToggler(broker) {
+function DelayStaticRouteToggler(route, checked) {
 	return ClickDragToggler({
-		checked: broker.delayed,
+		checked,
 		focusGroup: FocusGroup.DelayToggler,
 		commit(checked) {
-			store.setDelayedStatic(broker.route, checked)
+			store.setDelayedStatic(route, checked)
 		}
 	})
 }
 
-/** @param {ClientStaticBroker} broker */
-function NotFoundToggler(broker) {
+function NotFoundToggler(route, checked) {
 	return (
 		r('label', {
 				className: CSS.NotFoundToggler,
@@ -629,10 +627,10 @@ function NotFoundToggler(broker) {
 			},
 			r('input', {
 				type: 'checkbox',
-				checked: broker.status === 404,
+				checked,
 				'data-focus-group': FocusGroup.StatusToggler,
 				onChange() {
-					store.setStaticRouteStatus(broker.route, this.checked ? 404 : 200)
+					store.setStaticRouteStatus(route, this.checked ? 404 : 200)
 				}
 			}),
 			r('span', null, t`404`)))

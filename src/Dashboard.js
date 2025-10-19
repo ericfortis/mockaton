@@ -374,16 +374,15 @@ function SettingsMenuTrigger() {
 
 function SettingsMenu(id) {
 	const firstInputRef = useRef()
-	function onToggle(event) {
-		if (event.newState === 'open')
-			firstInputRef.current.focus()
-	}
 	return (
 		r('menu', {
 				id,
 				popover: '',
 				className: CSS.SettingsMenu,
-				onToggle
+				onToggle(event) {
+					if (event.newState === 'open')
+						firstInputRef.current.focus()
+				}
 			},
 
 			r('label', className(CSS.GroupByMethod),
@@ -443,13 +442,23 @@ function Row({ method, urlMask, urlMaskDittoed, broker }, i) {
 	const { proxied, delayed, file } = broker.currentMock
 	return (
 		r('tr', { key },
-			store.canProxy && r('td', null, ProxyToggler(method, urlMask, proxied)),
-			r('td', null, DelayRouteToggler(method, urlMask, delayed)),
-			r('td', null, InternalServerErrorToggler(method, urlMask, parseFilename(file).status === 500)),
+			store.canProxy && r('td', null,
+				ProxyToggler(method, urlMask, proxied)),
 
-			!store.groupByMethod && r('td', className(CSS.Method), method),
-			r('td', null, PreviewLink(method, urlMask, urlMaskDittoed, i === 0)),
-			r('td', null, MockSelector(broker))))
+			r('td', null,
+				DelayRouteToggler(method, urlMask, delayed)),
+
+			r('td', null,
+				InternalServerErrorToggler(method, urlMask, parseFilename(file).status === 500)),
+
+			!store.groupByMethod && r('td', className(CSS.Method),
+				method),
+
+			r('td', null,
+				PreviewLink(method, urlMask, urlMaskDittoed, i === 0)),
+
+			r('td', null,
+				MockSelector(broker))))
 }
 Row.key = (method, urlMask) => method + '::' + urlMask
 Row.ditto = new Map()
@@ -597,15 +606,22 @@ function StaticFilesList() {
 			Object.values(staticBrokers).map(({ route, status, delayed }, i) =>
 				r('tr', null,
 					canProxy && r('td'),
-					r('td', null, DelayStaticRouteToggler(route, delayed)),
-					r('td', null, NotFoundToggler(route, status === 404)),
-					!groupByMethod && r('td', className(CSS.Method), 'GET'),
-					r('td', null, r('a', {
-						href: route,
-						target: '_blank',
-						className: CSS.PreviewLink,
-						'data-focus-group': FocusGroup.PreviewLink
-					}, dp[i]))
+					r('td', null,
+						DelayStaticRouteToggler(route, delayed)),
+
+					r('td', null,
+						NotFoundToggler(route, status === 404)),
+
+					!groupByMethod && r('td', className(CSS.Method),
+						'GET'),
+
+					r('td', null,
+						r('a', {
+							href: route,
+							target: '_blank',
+							className: CSS.PreviewLink,
+							'data-focus-group': FocusGroup.PreviewLink
+						}, dp[i]))
 				))))
 }
 
@@ -774,11 +790,8 @@ async function previewMock(method, urlMask) {
 		})
 		clearTimeout(spinnerTimer)
 		const { proxied, file } = store.brokerFor(method, urlMask).currentMock
-		if (proxied)
-			await updatePayloadViewer(true, '', response)
-		else if (file)
-			await updatePayloadViewer(false, file, response)
-		else {/* e.g. selected was deleted */}
+		if (proxied || file)
+			await updatePayloadViewer(proxied, file, response)
 	}
 	catch (err) {
 		onError(err)
@@ -876,6 +889,7 @@ function SettingsIcon() {
 			s('path', { d: 'M19.14 12.94c.04-.3.06-.61.06-.94 0-.32-.02-.64-.07-.94l2.03-1.58c.18-.14.23-.41.12-.61l-1.92-3.32c-.12-.22-.37-.29-.59-.22l-2.39.96c-.5-.38-1.03-.7-1.62-.94l-.36-2.54c-.04-.24-.24-.41-.48-.41h-3.84c-.24 0-.43.17-.47.41l-.36 2.54c-.59.24-1.13.57-1.62.94l-2.39-.96c-.22-.08-.47 0-.59.22L2.74 8.87c-.12.21-.08.47.12.61l2.03 1.58c-.05.3-.09.63-.09.94s.02.64.07.94l-2.03 1.58c-.18.14-.23.41-.12.61l1.92 3.32c.12.22.37.29.59.22l2.39-.96c.5.38 1.03.7 1.62.94l.36 2.54c.05.24.24.41.48.41h3.84c.24 0 .44-.17.47-.41l.36-2.54c.59-.24 1.13-.56 1.62-.94l2.39.96c.22.08.47 0 .59-.22l1.92-3.32c.12-.22.07-.47-.12-.61zM12 15.6c-1.98 0-3.6-1.62-3.6-3.6s1.62-3.6 3.6-3.6 3.6 1.62 3.6 3.6-1.62 3.6-3.6 3.6' })))
 }
 
+
 /**
  * # Long polls UI sync version
  * The version increments when a mock file is added, removed, or renamed.
@@ -916,6 +930,7 @@ function initRealTimeUpdates() {
 		}
 	}
 }
+
 
 function initKeyboardNavigation() {
 	addEventListener('keydown', onKeyDown)
@@ -1108,7 +1123,6 @@ function dittoSplitPaths(paths) {
 	}
 	return result
 }
-
 dittoSplitPaths.test = function () {
 	const input = [
 		'/api/user',

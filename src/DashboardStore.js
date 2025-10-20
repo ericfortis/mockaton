@@ -1,3 +1,4 @@
+import { deferred } from './DashboardDom.js'
 import { Commander } from './ApiCommander.js'
 import { parseFilename } from './Filename.js'
 
@@ -10,7 +11,7 @@ export const store = {
 	},
 
 	render() {},
-	renderRow() {},
+	renderRow(method, urlMask) {},
 
 	/** @type {State.brokersByMethod} */
 	brokersByMethod: {},
@@ -193,3 +194,64 @@ function togglePreference(param, nextVal) {
 		url.searchParams.set(param, false)
 	history.replaceState(null, '', url)
 }
+
+
+
+/**
+ * Think of this as a way of printing a directory tree in which
+ * the repeated folder paths are kept but styled differently.
+ * @param {string[]} paths - sorted
+ */
+export function dittoSplitPaths(paths) {
+	const result = [['', paths[0]]]
+	const pathsInParts = paths.map(p => p.split('/').filter(Boolean))
+
+	for (let i = 1; i < paths.length; i++) {
+		const prevParts = pathsInParts[i - 1]
+		const currParts = pathsInParts[i]
+
+		let j = 0
+		while (
+			j < currParts.length &&
+			j < prevParts.length &&
+			currParts[j] === prevParts[j])
+			j++
+
+		if (!j) // no common dirs
+			result.push(['', paths[i]])
+		else {
+			const ditto = '/' + currParts.slice(0, j).join('/') + '/'
+			result.push([ditto, paths[i].slice(ditto.length)])
+		}
+	}
+	return result
+}
+dittoSplitPaths.test = function () {
+	const input = [
+		'/api/user',
+		'/api/user/avatar',
+		'/api/user/friends',
+		'/api/vid',
+		'/api/video/id',
+		'/api/video/stats',
+		'/v2/foo',
+		'/v2/foo/bar'
+	]
+	const expected = [
+		['', '/api/user'],
+		['/api/user/', 'avatar'],
+		['/api/user/', 'friends'],
+		['/api/', 'vid'],
+		['/api/', 'video/id'],
+		['/api/video/', 'stats'],
+		['', '/v2/foo'],
+		['/v2/foo/', 'bar']
+	]
+	console.assert(deepEqual(dittoSplitPaths(input), expected))
+}
+deferred(dittoSplitPaths.test)
+
+function deepEqual(a, b) {
+	return JSON.stringify(a) === JSON.stringify(b)
+}
+

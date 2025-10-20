@@ -1,7 +1,7 @@
-import { restoreFocus, deferred, Defer, Fragment, useRef, createSvgElement, createElement, className } from './DashboardDom.js'
+import { createElement as r, createSvgElement as s, className, restoreFocus, deferred, Defer, Fragment, useRef } from './DashboardDom.js'
 import { AUTO_500_COMMENT, HEADER_FOR_502 } from './ApiConstants.js'
 import { parseFilename, extractComments } from './Filename.js'
-import { store } from './DashboardStore.js'
+import { store, dittoSplitPaths } from './DashboardStore.js'
 
 
 const CSS = {
@@ -71,8 +71,6 @@ function render() {
 		previewMock(store.chosenLink.method, store.chosenLink.urlMask)
 }
 
-const r = createElement
-const s = createSvgElement
 const t = translation => translation[0]
 
 const leftSideRef = useRef()
@@ -398,7 +396,6 @@ function MockSelector(broker) {
 				selected: file === selected
 			}, name)))))
 }
-
 function baseOptionsFor(mocks, selectedIs500) {
 	return mocks
 		.filter(f => selectedIs500 || !f.includes(AUTO_500_COMMENT))
@@ -731,9 +728,9 @@ async function updatePayloadViewer(proxied, file, response) {
 	else {
 		const body = await response.text() || t`/* Empty Response Body */`
 		if (mime === 'application/json')
-			payloadViewerCodeRef.current.replaceChildren(r('span', className(CSS.json), syntaxJSON(body)))
+			payloadViewerCodeRef.current.replaceChildren(r('span', className(CSS.json), SyntaxJSON(body)))
 		else if (isXML(mime))
-			payloadViewerCodeRef.current.replaceChildren(syntaxXML(body))
+			payloadViewerCodeRef.current.replaceChildren(SyntaxXML(body))
 		else
 			payloadViewerCodeRef.current.textContent = body
 	}
@@ -887,62 +884,7 @@ function initKeyboardNavigation() {
 }
 
 
-/**
- * Think of this as a way of printing a directory tree in which
- * the repeated folder paths are kept but styled differently.
- * @param {string[]} paths - sorted
- */
-function dittoSplitPaths(paths) {
-	const result = [['', paths[0]]]
-	const pathsInParts = paths.map(p => p.split('/').filter(Boolean))
-
-	for (let i = 1; i < paths.length; i++) {
-		const prevParts = pathsInParts[i - 1]
-		const currParts = pathsInParts[i]
-
-		let j = 0
-		while (
-			j < currParts.length &&
-			j < prevParts.length &&
-			currParts[j] === prevParts[j])
-			j++
-
-		if (!j) // no common dirs
-			result.push(['', paths[i]])
-		else {
-			const ditto = '/' + currParts.slice(0, j).join('/') + '/'
-			result.push([ditto, paths[i].slice(ditto.length)])
-		}
-	}
-	return result
-}
-dittoSplitPaths.test = function () {
-	const input = [
-		'/api/user',
-		'/api/user/avatar',
-		'/api/user/friends',
-		'/api/vid',
-		'/api/video/id',
-		'/api/video/stats',
-		'/v2/foo',
-		'/v2/foo/bar'
-	]
-	const expected = [
-		['', '/api/user'],
-		['/api/user/', 'avatar'],
-		['/api/user/', 'friends'],
-		['/api/', 'vid'],
-		['/api/', 'video/id'],
-		['/api/video/', 'stats'],
-		['', '/v2/foo'],
-		['/v2/foo/', 'bar']
-	]
-	console.assert(deepEqual(dittoSplitPaths(input), expected))
-}
-deferred(dittoSplitPaths.test)
-
-
-function syntaxJSON(json) {
+function SyntaxJSON(json) {
 	const MAX_NODES = 50_000
 	let nNodes = 0
 	const frag = new DocumentFragment()
@@ -962,8 +904,8 @@ function syntaxJSON(json) {
 
 	let match
 	let lastIndex = 0
-	syntaxJSON.regex.lastIndex = 0 // resets regex
-	while ((match = syntaxJSON.regex.exec(json)) !== null) {
+	SyntaxJSON.regex.lastIndex = 0 // resets regex
+	while ((match = SyntaxJSON.regex.exec(json)) !== null) {
 		if (nNodes > MAX_NODES)
 			break
 
@@ -985,11 +927,11 @@ function syntaxJSON(json) {
 	text(json.slice(lastIndex))
 	return frag
 }
-syntaxJSON.regex = /("(?:\\u[a-fA-F0-9]{4}|\\[^u]|[^\\"])*")(\s*:)?|([{}\[\],:\s]+)|\S+/g
+SyntaxJSON.regex = /("(?:\\u[a-fA-F0-9]{4}|\\[^u]|[^\\"])*")(\s*:)?|([{}\[\],:\s]+)|\S+/g
 // Capture group order: [string, optional colon, punc]
 
 
-function syntaxXML(xml) {
+function SyntaxXML(xml) {
 	const MAX_NODES = 50_000
 	let nNodes = 0
 	const frag = new DocumentFragment()
@@ -1009,8 +951,8 @@ function syntaxXML(xml) {
 
 	let match
 	let lastIndex = 0
-	syntaxXML.regex.lastIndex = 0
-	while ((match = syntaxXML.regex.exec(xml)) !== null) {
+	SyntaxXML.regex.lastIndex = 0
+	while ((match = SyntaxXML.regex.exec(xml)) !== null) {
 		if (nNodes > MAX_NODES)
 			break
 
@@ -1028,11 +970,10 @@ function syntaxXML(xml) {
 	frag.normalize()
 	return frag
 }
-syntaxXML.regex = /(<\/?|\/?>|\?>)|(?<=<\??\/?)([A-Za-z_:][\w:.-]*)|([A-Za-z_:][\w:.-]*)(?==)|("(?:[^"\\]|\\.)*")/g
+SyntaxXML.regex = /(<\/?|\/?>|\?>)|(?<=<\??\/?)([A-Za-z_:][\w:.-]*)|([A-Za-z_:][\w:.-]*)(?==)|("(?:[^"\\]|\\.)*")/g
 // Capture groups order:  [tagPunc, tagName, attrName, attrVal]
 
 
-/** # Test Utils */
 function deepEqual(a, b) {
 	return JSON.stringify(a) === JSON.stringify(b)
 }

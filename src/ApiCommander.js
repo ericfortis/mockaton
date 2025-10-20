@@ -7,13 +7,16 @@ export class Commander {
 	#then = a => a
 	#catch = e => { throw e }
 
-	constructor(addr, _then = undefined, _catch = undefined) {
+	constructor(addr) {
 		this.#addr = addr
+	}
+
+	setupPatchCallbacks(_then = undefined, _catch = undefined) {
 		if (_then) this.#then = _then
 		if (_catch) this.#catch = _catch
 	}
 
-	#patch(api, body) {
+	#patch = (api, body) => {
 		return fetch(this.#addr + api, {
 			method: 'PATCH',
 			body: JSON.stringify(body)
@@ -23,12 +26,12 @@ export class Commander {
 	}
 
 	/** @returns {JsonPromise<State>} */
-	getState() {
+	getState = () => {
 		return fetch(this.#addr + API.state)
 	}
 
 	/** @returns {JsonPromise<number>} */
-	getSyncVersion(currentSyncVersion, abortSignal) {
+	getSyncVersion = (currentSyncVersion, abortSignal) => {
 		return fetch(this.#addr + API.syncVersion, {
 			signal: AbortSignal.any([abortSignal, AbortSignal.timeout(LONG_POLL_SERVER_TIMEOUT + 1000)]),
 			headers: {

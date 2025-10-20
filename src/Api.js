@@ -21,7 +21,7 @@ export const apiGetRequests = new Map([
 	...[
 		'Dashboard.css',
 		'Dashboard.js',
-		'ApiConstants.js', 'ApiCommander.js', 'Filename.js',
+		'ApiConstants.js', 'ApiCommander.js', 'Filename.js', 'DashboardStore.js', 'DashboardDom.js',
 		'Logo.svg'
 	].map(f => [API.dashboard + '/' + f, serveStatic(f)]),
 

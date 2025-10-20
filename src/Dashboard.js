@@ -1,6 +1,7 @@
+import { restoreFocus, deferred, Defer, Fragment, useRef, createSvgElement, createElement, className } from './DashboardDom.js'
 import { AUTO_500_COMMENT, HEADER_FOR_502 } from './ApiConstants.js'
 import { parseFilename, extractComments } from './Filename.js'
-import { Commander } from './ApiCommander.js'
+import { store } from './DashboardStore.js'
 
 
 const CSS = {
@@ -56,145 +57,13 @@ const FocusGroup = {
 	PreviewLink: 3
 }
 
-const mockaton = new Commander(location.origin, parseError, onError)
+store.render = render
+store.renderRow = renderRow
+store.setupPatchCallbacks(parseError, onError)
+store.fetchState().catch(onError)
 
-const store = /** @type {State} */ {
-	brokersByMethod: {},
-	staticBrokers: {},
-	cookies: [],
-	comments: [],
-	delay: 0,
-
-	collectProxied: false,
-	proxyFallback: '',
-	get canProxy() {
-		return Boolean(store.proxyFallback)
-	},
-
-	leftSideWidth: window.innerWidth / 2,
-
-	groupByMethod: initPreference('groupByMethod'),
-	toggleGroupByMethod() {
-		store.groupByMethod = !store.groupByMethod
-		togglePreference('groupByMethod', store.groupByMethod)
-		render()
-	},
-
-	chosenLink: {
-		method: '',
-		urlMask: ''
-	},
-	get hasChosenLink() {
-		return store.chosenLink.method
-			&& store.chosenLink.urlMask
-	},
-	setChosenLink(method, urlMask) {
-		store.chosenLink = { method, urlMask }
-	},
-
-	reset() {
-		store.setChosenLink('', '')
-		mockaton.reset()
-			.then(fetchState)
-	},
-
-	bulkSelectByComment(value) {
-		mockaton.bulkSelectByComment(value)
-			.then(fetchState)
-	},
-
-
-	setGlobalDelay(value) {
-		store.delay = value
-		mockaton.setGlobalDelay(value)
-	},
-
-	selectCookie(name) {
-		store.cookies = store.cookies.map(([n]) => [n, n === name])
-		mockaton.selectCookie(name)
-	},
-
-	setProxyFallback(value) {
-		store.proxyFallback = value
-		mockaton.setProxyFallback(value)
-			.then(render)
-	},
-
-	setCollectProxied(checked) {
-		store.collectProxied = checked
-		mockaton.setCollectProxied(checked)
-	},
-
-
-	brokerFor(method, urlMask) { return store.brokersByMethod[method]?.[urlMask] },
-
-	previewLink(method, urlMask) {
-		store.setChosenLink(method, urlMask)
-		renderRow(method, urlMask)
-	},
-
-	selectFile(file) {
-		mockaton.select(file).then(async response => {
-			const { method, urlMask } = parseFilename(file)
-			store.brokerFor(method, urlMask).currentMock = await response.json()
-			store.setChosenLink(method, urlMask)
-			renderRow(method, urlMask)
-		})
-	},
-
-	toggle500(method, urlMask) {
-		mockaton.toggle500(method, urlMask).then(async response => {
-			store.brokerFor(method, urlMask).currentMock = await response.json()
-			store.setChosenLink(method, urlMask)
-			renderRow(method, urlMask)
-		})
-	},
-
-	setProxied(method, urlMask, checked) {
-		mockaton.setRouteIsProxied(method, urlMask, checked).then(() => {
-			store.brokerFor(method, urlMask).currentMock.proxied = checked
-			store.setChosenLink(method, urlMask)
-			renderRow(method, urlMask)
-		})
-	},
-
-	setDelayed(method, urlMask, checked) {
-		mockaton.setRouteIsDelayed(method, urlMask, checked).then(() => {
-			store.brokerFor(method, urlMask).currentMock.delayed = checked
-		})
-	},
-
-
-	staticBrokerFor(route) { return store.staticBrokers[route] },
-
-	setDelayedStatic(route, checked) {
-		store.staticBrokerFor(route).delayed = checked
-		mockaton.setStaticRouteIsDelayed(route, checked)
-	},
-
-	setStaticRouteStatus(route, status) {
-		store.staticBrokerFor(route).status = status
-		mockaton.setStaticRouteStatus(route, status)
-	}
-}
-
-
-fetchState()
 initRealTimeUpdates()
 initKeyboardNavigation()
-
-async function fetchState() {
-	try {
-		const response = await mockaton.getState()
-		if (!response.ok)
-			throw response.status
-		Object.assign(store, await response.json())
-		render()
-	}
-	catch (error) {
-		onError(error)
-	}
-}
 
 function render() {
 	restoreFocus(() => document.body.replaceChildren(...App()))
@@ -424,13 +293,7 @@ function MockList() {
 }
 
 function rowsFor(targetMethod) {
-	const rows = []
-	for (const [method, brokers] of Object.entries(store.brokersByMethod))
-		if (targetMethod === '*' || targetMethod === method)
-			for (const [urlMask, broker] of Object.entries(brokers))
-				rows.push({ method, urlMask, broker })
-
-	const sorted = rows.sort((a, b) => a.urlMask.localeCompare(b.urlMask))
+	const sorted = store.brokersByMethodAsArray(targetMethod)
 	const urlMasksDittoed = dittoSplitPaths(sorted.map(r => r.urlMask))
 	return sorted.map((r, i) => ({
 		...r,
@@ -586,7 +449,7 @@ baseOptionsFor.test = function () {
 		console.assert(deepEqual(files.map(([, n]) => n), [
 			// Think about, in cases like this, the only option the user
 			// has for discerning empty and unknown is on the Previewer Title
-			'200', 
+			'200',
 			'200',
 			'200 json',
 			'200 json (another json)',
@@ -957,14 +820,14 @@ function initRealTimeUpdates() {
 
 	async function poll() {
 		try {
-			const response = await mockaton.getSyncVersion(oldSyncVersion, controller.signal)
+			const response = await store.getSyncVersion(oldSyncVersion, controller.signal)
 			if (response.ok) {
 				const syncVersion = await response.json()
 				const skipUpdate = oldSyncVersion === -1
 				if (oldSyncVersion !== syncVersion) { // because it could be < or >
 					oldSyncVersion = syncVersion
 					if (!skipUpdate)
-						await fetchState()
+						store.fetchState().catch(onError)
 				}
 				poll()
 			}
@@ -1021,123 +884,6 @@ function initKeyboardNavigation() {
 	function circularAdjacent(step = 1, arr, pivot) {
 		return arr[(arr.indexOf(pivot) + step + arr.length) % arr.length]
 	}
-}
-
-
-/** # Utils */
-
-function className(...args) {
-	return {
-		className: args.filter(Boolean).join(' ')
-	}
-}
-
-function createElement(tag, props, ...children) {
-	const node = document.createElement(tag)
-	for (const [k, v] of Object.entries(props || {}))
-		if (k === 'ref') v.current = node
-		else if (k === 'style') Object.assign(node.style, v)
-		else if (k.startsWith('on')) node.addEventListener(k.slice(2).toLowerCase(), ...[v].flat())
-		else if (k in node) node[k] = v
-		else node.setAttribute(k, v)
-	node.append(...children.flat().filter(Boolean))
-	return node
-}
-
-function createSvgElement(tagName, props, ...children) {
-	const elem = document.createElementNS('http://www.w3.org/2000/svg', tagName)
-	for (const [k, v] of Object.entries(props))
-		elem.setAttribute(k, v)
-	elem.append(...children.flat().filter(Boolean))
-	return elem
-}
-
-function useRef() {
-	return { current: null }
-}
-
-function Fragment(...args) {
-	const frag = new DocumentFragment()
-	for (const arg of args)
-		if (Array.isArray(arg))
-			frag.append(...arg)
-		else
-			frag.appendChild(arg)
-	return frag
-}
-
-function Defer(cb) {
-	const placeholder = document.createComment('')
-	deferred(() => placeholder.replaceWith(cb()))
-	return placeholder
-}
-
-function deferred(cb) {
-	return window.requestIdleCallback
-		? requestIdleCallback(cb)
-		: setTimeout(cb, 100) // Safari
-}
-
-
-function restoreFocus(cb) {
-	const focusQuery = selectorFor(document.activeElement)
-	cb()
-	if (focusQuery)
-		document.querySelector(focusQuery)?.focus()
-}
-
-function selectorFor(elem) {
-	if (!(elem instanceof Element))
-		return
-	const path = []
-	while (elem) {
-		let qualifier = ''
-		if (elem.hasAttribute('key'))
-			qualifier = `[key="${elem.getAttribute('key')}"]`
-		else {
-			let i = 0
-			let sib = elem
-			while ((sib = sib.previousElementSibling))
-				if (sib.tagName === elem.tagName)
-					i++
-			if (i)
-				qualifier = `:nth-of-type(${i + 1})`
-		}
-		path.push(elem.tagName + qualifier)
-		elem = elem.parentElement
-	}
-	return path.reverse().join('>')
-}
-
-
-// When false, the URL will be updated with param=false
-function initPreference(param) {
-	const qs = new URLSearchParams(location.search)
-	if (!qs.has(param)) {
-		const group = localStorage.getItem(param) !== 'false'
-		if (!group) {
-			const url = new URL(location.href)
-			url.searchParams.set(param, false)
-			history.replaceState(null, '', url)
-		}
-		return group
-	}
-	return qs.get(param) !== 'false'
-}
-
-// When false, the URL and localStorage will have param=false
-function togglePreference(param, nextVal) {
-	if (nextVal)
-		localStorage.removeItem(param)
-	else
-		localStorage.setItem(param, nextVal)
-
-	const url = new URL(location.href)
-	if (nextVal)
-		url.searchParams.delete(param)
-	else
-		url.searchParams.set(param, false)
-	history.replaceState(null, '', url)
 }
 
 

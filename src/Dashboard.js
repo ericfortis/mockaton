@@ -717,7 +717,7 @@ async function updatePayloadViewer(proxied, file, response) {
 				file,
 				statusText: response.statusText
 			}))
-
+	
 	if (mime.startsWith('image/'))  // Naively assumes GET.200
 		payloadViewerCodeRef.current.replaceChildren(
 			r('img', { src: URL.createObjectURL(await response.blob()) }))
@@ -725,7 +725,7 @@ async function updatePayloadViewer(proxied, file, response) {
 		const body = await response.text() || t`/* Empty Response Body */`
 		if (mime === 'application/json')
 			payloadViewerCodeRef.current.replaceChildren(r('span', className(CSS.json), SyntaxJSON(body)))
-		else if (isXML(mime))
+		else if (isXML(mime)) 
 			payloadViewerCodeRef.current.replaceChildren(SyntaxXML(body))
 		else
 			payloadViewerCodeRef.current.textContent = body
@@ -733,7 +733,7 @@ async function updatePayloadViewer(proxied, file, response) {
 }
 
 function isXML(mime) {
-	return ['text/html', 'text/xml', 'application/xml'].includes(mime)
+	return ['text/html', 'text/xml', 'application/xml'].some(m => mime.includes(m))
 		|| /application\/.*\+xml/.test(mime)
 }
 

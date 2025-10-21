@@ -563,6 +563,9 @@ table {
 			border-color: var(--colorRed);
 			color: var(--colorRed);
 		}
+		&:active {
+			cursor: grabbing;
+		}
 	}
 }
 

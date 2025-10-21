@@ -6,10 +6,7 @@ import { parseFilename } from './Filename.js'
 const mockaton = new Commander(location.origin)
 
 export const store = {
-	setupPatchCallbacks(_then, _catch) {
-		mockaton.setupPatchCallbacks(_then, _catch)
-	},
-
+	onError(err) {},
 	render() {},
 	renderRow(method, urlMask) {},
 
@@ -31,16 +28,14 @@ export const store = {
 
 	getSyncVersion: mockaton.getSyncVersion,
 
-	fetchState() {
-		return mockaton.getState().then(response => {
-			if (!response.ok)
-				throw response.status
-
-			response.json().then(state => {
-				Object.assign(store, state)
-				store.render()
-			})
-		})
+	async fetchState() {
+		try {
+			const response = await mockaton.getState()
+			if (!response.ok) throw response
+			Object.assign(store, await response.json())
+			store.render()
+		}
+		catch (error) { store.onError(error) }
 	},
 
 
@@ -52,7 +47,6 @@ export const store = {
 		togglePreference('groupByMethod', store.groupByMethod)
 		store.render()
 	},
-
 
 
 	chosenLink: {
@@ -67,37 +61,60 @@ export const store = {
 		store.chosenLink = { method, urlMask }
 	},
 
-	reset() {
-		store.setChosenLink('', '')
-		mockaton.reset()
-			.then(store.fetchState)
+	async reset() {
+		try {
+			const response = await mockaton.reset()
+			if (!response.ok) throw response
+			store.setChosenLink('', '')
+			await store.fetchState()
+		}
+		catch (error) { store.onError(error) }
 	},
 
-	bulkSelectByComment(value) {
-		mockaton.bulkSelectByComment(value)
-			.then(store.fetchState)
+	async bulkSelectByComment(value) {
+		try {
+			const response = await mockaton.bulkSelectByComment(value)
+			if (!response.ok) throw response
+			await store.fetchState()
+		}
+		catch (error) { store.onError(error) }
 	},
 
-
-	setGlobalDelay(value) {
-		store.delay = value
-		mockaton.setGlobalDelay(value)
+	async setGlobalDelay(value) {
+		try {
+			const response = await mockaton.setGlobalDelay(value)
+			if (!response.ok) throw response
+			store.delay = value
+		}
+		catch (error) { store.onError(error) }
 	},
 
-	selectCookie(name) {
-		store.cookies = store.cookies.map(([n]) => [n, n === name])
-		mockaton.selectCookie(name)
+	async selectCookie(name) {
+		try {
+			const response = await mockaton.selectCookie(name)
+			if (!response.ok) throw response
+			store.cookies = store.cookies.map(([n]) => [n, n === name])
+		}
+		catch (error) { store.onError(error) }
 	},
 
-	setProxyFallback(value) {
-		store.proxyFallback = value
-		mockaton.setProxyFallback(value)
-			.then(store.render)
+	async setProxyFallback(value) {
+		try {
+			const response = await mockaton.setProxyFallback(value)
+			if (!response.ok) throw response
+			store.proxyFallback = value
+			store.render()
+		}
+		catch (error) { store.onError(error) }
 	},
 
-	setCollectProxied(checked) {
-		store.collectProxied = checked
-		mockaton.setCollectProxied(checked)
+	async setCollectProxied(checked) {
+		try {
+			const response = await mockaton.setCollectProxied(checked)
+			if (!response.ok) throw response
+			store.collectProxied = checked
+		}
+		catch (error) { store.onError(error) }
 	},
 
 
@@ -119,48 +136,66 @@ export const store = {
 		store.renderRow(method, urlMask)
 	},
 
-	selectFile(file) {
-		mockaton.select(file).then(async response => {
+	async selectFile(file) {
+		try {
+			const response = await mockaton.select(file)
+			if (!response.ok) throw response
 			const { method, urlMask } = parseFilename(file)
 			store.brokerFor(method, urlMask).currentMock = await response.json()
 			store.setChosenLink(method, urlMask)
 			store.renderRow(method, urlMask)
-		})
+		}
+		catch (error) { store.onError(error) }
 	},
 
-	toggle500(method, urlMask) {
-		mockaton.toggle500(method, urlMask).then(async response => {
+	async toggle500(method, urlMask) {
+		try {
+			const response = await mockaton.toggle500(method, urlMask)
+			if (!response.ok) throw response
 			store.brokerFor(method, urlMask).currentMock = await response.json()
 			store.setChosenLink(method, urlMask)
 			store.renderRow(method, urlMask)
-		})
+		}
+		catch (error) { store.onError(error) }
 	},
 
-	setProxied(method, urlMask, checked) {
-		mockaton.setRouteIsProxied(method, urlMask, checked).then(() => {
+	async setProxied(method, urlMask, checked) {
+		try {
+			const response = await mockaton.setRouteIsProxied(method, urlMask, checked)
+			if (!response.ok) throw response
 			store.brokerFor(method, urlMask).currentMock.proxied = checked
 			store.setChosenLink(method, urlMask)
 			store.renderRow(method, urlMask)
-		})
+		}
+		catch (error) { store.onError(error) }
 	},
 
-	setDelayed(method, urlMask, checked) {
-		mockaton.setRouteIsDelayed(method, urlMask, checked).then(() => {
+	async setDelayed(method, urlMask, checked) {
+		try {
+			const response = await mockaton.setRouteIsDelayed(method, urlMask, checked)
+			if (!response.ok) throw response
 			store.brokerFor(method, urlMask).currentMock.delayed = checked
-		})
+		}
+		catch (error) { store.onError(error) }
 	},
 
 
-	staticBrokerFor(route) { return store.staticBrokers[route] },
-
-	setDelayedStatic(route, checked) {
-		store.staticBrokerFor(route).delayed = checked
-		mockaton.setStaticRouteIsDelayed(route, checked)
+	async setDelayedStatic(route, checked) {
+		try {
+			const response = await mockaton.setStaticRouteIsDelayed(route, checked)
+			if (!response.ok) throw response
+			store.staticBrokers[route].delayed = checked
+		}
+		catch (error) { store.onError(error) }
 	},
 
-	setStaticRouteStatus(route, status) {
-		store.staticBrokerFor(route).status = status
-		mockaton.setStaticRouteStatus(route, status)
+	async setStaticRouteStatus(route, status) {
+		try {
+			const response = await mockaton.setStaticRouteStatus(route, status)
+			if (!response.ok) throw response
+			store.staticBrokers[route].status = status
+		}
+		catch (error) { store.onError(error) }
 	}
 }
 

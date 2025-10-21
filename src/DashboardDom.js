@@ -1,7 +1,5 @@
 export function className(...args) {
-	return {
-		className: args.filter(Boolean).join(' ')
-	}
+	return { className: args.filter(Boolean).join(' ') }
 }
 
 export function createElement(tag, props, ...children) {

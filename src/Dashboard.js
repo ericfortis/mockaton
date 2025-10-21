@@ -55,10 +55,10 @@ const FocusGroup = {
 	PreviewLink: 3
 }
 
+store.onError = onError
 store.render = render
 store.renderRow = renderRow
-store.setupPatchCallbacks(parseError, onError)
-store.fetchState().catch(onError)
+store.fetchState()
 
 initRealTimeUpdates()
 initKeyboardNavigation()
@@ -498,6 +498,7 @@ function StaticFilesList() {
 	const { staticBrokers, canProxy, groupByMethod } = store
 	if (!Object.keys(staticBrokers).length)
 		return null
+
 	const dp = dittoSplitPaths(Object.keys(staticBrokers)).map(([ditto, tail]) => ditto
 		? [r('span', className(CSS.dittoDir), ditto), tail]
 		: tail)
@@ -670,6 +671,7 @@ function PayloadViewerTitleWhenProxied({ mime, status, statusText, gatewayIsBad 
 			' ' + mime))
 }
 
+// TODO indeterminate when there's store.delayJitter
 const SPINNER_DELAY = 80
 function PayloadViewerProgressBar() {
 	return (
@@ -696,8 +698,7 @@ async function previewMock(method, urlMask) {
 		if (proxied || file)
 			await updatePayloadViewer(proxied, file, response)
 	}
-	catch (err) {
-		onError(err)
+	catch {
 		payloadViewerCodeRef.current.replaceChildren()
 	}
 }
@@ -717,7 +718,7 @@ async function updatePayloadViewer(proxied, file, response) {
 				file,
 				statusText: response.statusText
 			}))
-	
+
 	if (mime.startsWith('image/'))  // Naively assumes GET.200
 		payloadViewerCodeRef.current.replaceChildren(
 			r('img', { src: URL.createObjectURL(await response.blob()) }))
@@ -725,7 +726,7 @@ async function updatePayloadViewer(proxied, file, response) {
 		const body = await response.text() || t`/* Empty Response Body */`
 		if (mime === 'application/json')
 			payloadViewerCodeRef.current.replaceChildren(r('span', className(CSS.json), SyntaxJSON(body)))
-		else if (isXML(mime)) 
+		else if (isXML(mime))
 			payloadViewerCodeRef.current.replaceChildren(SyntaxXML(body))
 		else
 			payloadViewerCodeRef.current.textContent = body
@@ -738,24 +739,24 @@ function isXML(mime) {
 }
 
 
-/** # Error */
+async function onError(_error) {
+	let error = _error
 
-async function parseError(response) {
-	if (response.ok)
-		return response
-	if (response.status === 422)
-		throw await response.text()
-	throw response.statusText
-}
-
-function onError(error) {
-	if (error?.name === 'AbortError')
-		return
-	if (error?.message === 'Failed to fetch')
-		showErrorToast(t`Looks like the Mockaton server is not running`)
-	else
-		showErrorToast(error || t`Unexpected Error`)
-	console.error(error)
+	if (_error instanceof Response) {
+		if (_error.status === 422)
+			error = await _error.text()
+		else if (_error.statusText)
+			error = _error.statusText
+	}
+	else {
+		if (error?.name === 'AbortError')
+			return
+		if (error?.message === 'Failed to fetch')
+			error = t`Looks like the Mockaton server is not running` // TODO clear Error if comes back in ui-sync
+		else
+			error = error || t`Unexpected Error`
+	}
+	showErrorToast(error)
 }
 
 function showErrorToast(msg) {
@@ -801,17 +802,17 @@ function initRealTimeUpdates() {
 	let oldSyncVersion = -1
 	let controller = new AbortController()
 
-	poll()
+	longPoll()
 	document.addEventListener('visibilitychange', () => {
 		if (document.hidden) {
 			controller.abort('_hidden_tab_')
 			controller = new AbortController()
 		}
 		else
-			poll()
+			longPoll()
 	})
 
-	async function poll() {
+	async function longPoll() {
 		try {
 			const response = await store.getSyncVersion(oldSyncVersion, controller.signal)
 			if (response.ok) {
@@ -820,16 +821,16 @@ function initRealTimeUpdates() {
 				if (oldSyncVersion !== syncVersion) { // because it could be < or >
 					oldSyncVersion = syncVersion
 					if (!skipUpdate)
-						store.fetchState().catch(onError)
+						store.fetchState()
 				}
-				poll()
+				longPoll()
 			}
 			else
 				throw response.status
 		}
 		catch (error) {
 			if (error !== '_hidden_tab_')
-				setTimeout(poll, 3000)
+				setTimeout(longPoll, 3000)
 		}
 	}
 }

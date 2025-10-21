@@ -4,16 +4,9 @@ import { API, DF, LONG_POLL_SERVER_TIMEOUT } from './ApiConstants.js'
 /** Client for controlling Mockaton via its HTTP API */
 export class Commander {
 	#addr = ''
-	#then = a => a
-	#catch = e => { throw e }
 
 	constructor(addr) {
 		this.#addr = addr
-	}
-
-	setupPatchCallbacks(_then = undefined, _catch = undefined) {
-		if (_then) this.#then = _then
-		if (_catch) this.#catch = _catch
 	}
 
 	#patch = (api, body) => {
@@ -21,8 +14,6 @@ export class Commander {
 			method: 'PATCH',
 			body: JSON.stringify(body)
 		})
-			.then(this.#then)
-			.catch(this.#catch)
 	}
 
 	/** @returns {JsonPromise<State>} */

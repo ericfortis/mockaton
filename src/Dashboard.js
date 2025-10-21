@@ -30,10 +30,8 @@ const CSS = {
 
 	chosen: null,
 	dittoDir: null,
-	empty: null,
 	leftSide: null,
 	nonDefault: null,
-	red: null,
 	rightSide: null,
 	status4xx: null,
 
@@ -276,9 +274,7 @@ function SettingsMenu(id) {
 
 function MockList() {
 	if (!Object.keys(store.brokersByMethod).length)
-		return (
-			r('div', className(CSS.empty),
-				t`No mocks found`))
+		return r('div', null, t`No mocks found`)
 
 	if (store.groupByMethod)
 		return Object.keys(store.brokersByMethod).map(method => Fragment(
@@ -668,7 +664,7 @@ function PayloadViewerTitleWhenProxied({ mime, status, statusText, gatewayIsBad 
 	return (
 		r('span', null,
 			gatewayIsBad
-				? r('span', className(CSS.red), t`⛔ Fallback Backend Error` + ' ')
+				? r('span', null, t`⛔ Fallback Backend Error` + ' ')
 				: r('span', null, t`Got` + ' '),
 			r('abbr', { title: statusText }, status),
 			' ' + mime))

@@ -20,18 +20,9 @@
 		--colorLightRed: #ffe4ee;
 		--colorRed: #da0f00;
 		--colorText: #000;
-	}
-	.syntaxPunc {
-		color: var(--colorSecondaryAction);
-	}
-	.syntaxKey, .syntaxTag {
-		color: #ed206a
-	}
-	.syntaxVal, .syntaxAttr {
-		color: #9b71e8
-	}
-	.syntaxStr, .syntaxAttrVal {
-		color: #388E3C
+		--colorPink: #ed206a;
+		--colorPurple: #9b71e8;
+		--colorGreen: #388e3c;
 	}
 }
 @media (prefers-color-scheme: dark) {
@@ -51,18 +42,9 @@
 		--colorLightRed: #ffe4ee;
 		--colorRed: #f41606;
 		--colorText: #fff;
-	}
-	.syntaxPunc {
-		color: var(--colorSecondaryAction);
-	}
-	.syntaxKey, .syntaxTag {
-		color: #f92672
-	}
-	.syntaxVal, .syntaxAttr {
-		color: #ae81ff
-	}
-	.syntaxStr, .syntaxAttrVal {
-		color: #a6e22e
+		--colorPink: #f92672;
+		--colorPurple: #ae81ff;
+		--colorGreen: #a6e22e;
 	}
 }
 
@@ -95,6 +77,8 @@ body {
 }
 
 select, a, input, button {
+	cursor: pointer;
+	
 	&:focus-visible {
 		outline: 2px solid var(--colorAccent);
 	}
@@ -104,15 +88,10 @@ a {
 	text-decoration: none;
 }
 
-a,
-button,
-input[type=checkbox],
-input[type=checkbox] + svg {
-	cursor: pointer;
-
-	&:active {
-		cursor: grabbing;
-	}
+a:active,
+button:active,
+input[type=checkbox]:active {
+	cursor: grabbing;
 }
 
 select {
@@ -270,8 +249,11 @@ header {
 		margin-left: 4px;
 		outline-offset: 1px;
 		background: transparent;
-		color: var(--colorRed);
 		border-radius: 50px;
+		color: var(--colorRed);
+		@media (prefers-color-scheme: dark) {
+			color: var(--colorLightRed);
+		}
 
 		&:hover {
 			background: var(--colorRed);
@@ -389,10 +371,6 @@ table {
 	}
 }
 
-.empty {
-	margin-top: 80px;
-}
-
 .Method {
 	padding-right: 8px;
 	color: var(--colorSecondaryAction);
@@ -418,6 +396,10 @@ table {
 	&.chosen {
 		color: white;
 		background: var(--colorAccent);
+	}
+	.dittoDir {
+		opacity: 0.9;
+		filter: saturate(0.1);
 	}
 }
 
@@ -467,7 +449,6 @@ table {
 	}
 
 	> svg {
-		vertical-align: bottom;
 		fill: none;
 		stroke: var(--colorSecondaryAction);
 	}
@@ -592,24 +573,37 @@ table {
 	flex-direction: column;
 	padding-top: 16px;
 
-	h2 {
+	> h2 {
 		padding-bottom: 4px;
 		padding-left: 16px;
 	}
 
-	pre {
+	> pre {
 		overflow: auto;
 		height: 100%;
 		padding: 16px;
 		padding-top: 12px;
 		font-family: monospace;
 
-		code {
+		> code {
 			white-space: pre;
 			tab-size: 2;
 
-			.json {
+			> .json {
 				color: var(--colorSecondaryAction);
+			}
+
+			.syntaxPunc {
+				color: var(--colorSecondaryAction);
+			}
+			.syntaxKey, .syntaxTag {
+				color: var(--colorPink);
+			}
+			.syntaxVal, .syntaxAttr {
+				color: var(--colorPurple);
+			}
+			.syntaxStr, .syntaxAttrVal {
+				color: var(--colorGreen);
 			}
 		}
 	}
@@ -640,13 +634,6 @@ table {
 	}
 }
 
-.red {
-	color: var(--colorRed);
-}
-
-.dittoDir {
-	opacity: 0.6;
-}
 
 .ErrorToast {
 	position: fixed;

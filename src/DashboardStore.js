@@ -95,7 +95,7 @@ export const store = {
 		try {
 			const response = await mockaton.selectCookie(name)
 			if (!response.ok) throw response
-			store.cookies = store.cookies.map(([n]) => [n, n === name])
+			store.cookies = await response.json()
 		}
 		catch (error) { store.onError(error) }
 	},

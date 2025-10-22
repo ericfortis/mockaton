@@ -107,7 +107,7 @@ async function selectCookie(req, response) {
 	if (error)
 		sendUnprocessableContent(response, error?.message || error)
 	else
-		sendOK(response)
+		sendJSON(response, cookie.list())
 }
 
 async function selectMock(req, response) {

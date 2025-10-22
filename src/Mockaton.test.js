@@ -448,8 +448,8 @@ describe('Cookie', () => {
 	})
 
 	it('Updates selected cookie', async () => {
-		await commander.selectCookie('userB')
-		deepEqual((await fetchState()).cookies, [
+		const response = await commander.selectCookie('userB')
+		deepEqual(await response.json(), [
 			['userA', false],
 			['userB', true]
 		])

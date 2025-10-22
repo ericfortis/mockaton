@@ -1,7 +1,7 @@
-import { createElement as r, createSvgElement as s, className, restoreFocus, deferred, Defer, Fragment, useRef } from './DashboardDom.js'
+import { createElement as r, createSvgElement as s, className, restoreFocus, Defer, Fragment, useRef } from './DashboardDom.js'
 import { AUTO_500_COMMENT, HEADER_FOR_502 } from './ApiConstants.js'
-import { parseFilename, extractComments } from './Filename.js'
-import { store, dittoSplitPaths } from './DashboardStore.js'
+import { store, dittoSplitPaths, mockSelectorOptions } from './DashboardStore.js'
+import { parseFilename} from './Filename.js'
 
 
 const CSS = {
@@ -59,7 +59,6 @@ store.onError = onError
 store.render = render
 store.renderRow = renderRow
 store.fetchState()
-
 initRealTimeUpdates()
 initKeyboardNavigation()
 
@@ -281,26 +280,15 @@ function MockList() {
 			r('tr', null,
 				r('th', { colspan: 2 + Number(store.canProxy) }),
 				r('th', null, method)),
-			rowsFor(method).map(Row)))
+			store.brokersAsRowsByMethod(method).map(Row)))
 
-	return rowsFor('*').map(Row)
-}
-
-function rowsFor(targetMethod) {
-	const sorted = store.brokersByMethodAsArray(targetMethod)
-	const urlMasksDittoed = dittoSplitPaths(sorted.map(r => r.urlMask))
-	return sorted.map((r, i) => ({
-		...r,
-		urlMaskDittoed: urlMasksDittoed[i]
-	}))
+	return store.brokersAsRowsByMethod('*').map(Row)
 }
 
 function Row({ method, urlMask, urlMaskDittoed, broker }, i) {
-	const key = Row.key(method, urlMask)
-	Row.ditto.set(key, urlMaskDittoed)
 	const { proxied, delayed, file } = broker.currentMock
 	return (
-		r('tr', { key },
+		r('tr', { key: Row.key(method, urlMask) },
 			store.canProxy && r('td', null,
 				ProxyToggler(method, urlMask, proxied)),
 
@@ -320,18 +308,17 @@ function Row({ method, urlMask, urlMaskDittoed, broker }, i) {
 				MockSelector(broker))))
 }
 Row.key = (method, urlMask) => method + '::' + urlMask
-Row.ditto = new Map()
 
 function renderRow(method, urlMask) {
 	restoreFocus(() => {
 		unChooseOld()
-		const key = Row.key(method, urlMask)
-		trFor(key).replaceWith(Row({
-			method,
-			urlMask,
-			urlMaskDittoed: Row.ditto.get(key),
-			broker: store.brokerFor(method, urlMask)
-		}))
+		trFor(Row.key(method, urlMask)).replaceWith(
+			Row({
+				method,
+				urlMask,
+				urlMaskDittoed: store.dittoedUrlFor(method, urlMask),
+				broker: store.brokerFor(method, urlMask)
+			}))
 		previewMock(method, urlMask)
 	})
 
@@ -367,89 +354,26 @@ function PreviewLink(method, urlMask, urlMaskDittoed, autofocus) {
 
 /** @param {ClientMockBroker} broker */
 function MockSelector(broker) {
-	let selected = broker.currentMock.file
-	const selectedStatus = parseFilename(selected).status
-
-	const files = baseOptionsFor(broker.mocks, selectedStatus === 500)
-	if (store.canProxy && broker.currentMock.proxied) {
-		selected = t`Proxied`
-		files.push([selected, selected])
-	}
-
+	const opts = mockSelectorOptions(broker)
+	const selectedIdx = opts.findIndex(opt => opt[2])
+	const selectedFile = opts[selectedIdx][0]
+	const selectedStatus = parseFilename(selectedFile).status
 	return (
 		r('select', {
 			onChange() { store.selectFile(this.value) },
 			autocomplete: 'off',
 			'aria-label': t`Mock Selector`,
-			disabled: files.length <= 1,
+			disabled: opts.length < 2,
 			...className(
 				CSS.MockSelector,
-				selected !== files[0][0] && CSS.nonDefault,
+				selectedIdx > 0 && CSS.nonDefault,
 				selectedStatus >= 400 && selectedStatus < 500 && CSS.status4xx)
-		}, files.map(([file, name]) => (
+		}, opts.map(([file, label, isSelected]) => (
 			r('option', {
 				value: file,
-				selected: file === selected
-			}, name)))))
+				selected: isSelected
+			}, label)))))
 }
-function baseOptionsFor(mocks, selectedIs500) {
-	return mocks
-		.filter(f => selectedIs500 || !f.includes(AUTO_500_COMMENT))
-		.map(f => [f, nameFor(f)])
-
-	function nameFor(file) {
-		const { status, ext } = parseFilename(file)
-		const comments = extractComments(file)
-		const isAutogen500 = comments.includes(AUTO_500_COMMENT)
-		return [
-			isAutogen500 ? '' : status,
-			ext === 'empty' || ext === 'unknown' ? '' : ext,
-			isAutogen500 ? t`Auto500` : comments.join(' ')
-		].filter(Boolean).join(' ')
-	}
-}
-baseOptionsFor.test = function () {
-	(function ignoresAutoGen500WhenUnselected() {
-		const files = baseOptionsFor([
-			`api/user${AUTO_500_COMMENT}.GET.500.empty`
-		], false)
-		console.assert(files.length === 0)
-	}());
-
-	(function keepsNonAutoGen500WhenUnselected() {
-		const files = baseOptionsFor([
-			`api/user.GET.500.txt`
-		], false)
-		console.assert(files.length === 1)
-		console.assert(files[0][1] === t`500 txt`)
-	}());
-
-	(function renamesAutoGenFileToAuto500() {
-		const files = baseOptionsFor([
-			`api/user${AUTO_500_COMMENT}.GET.500.empty`
-		], true)
-		console.assert(files.length === 1)
-		console.assert(files[0][1] === t`Auto500`)
-	}());
-
-	(function filenameHasExtensionExceptWhenEmptyOrUnknown() {
-		const files = baseOptionsFor([
-			`api/user0.GET.200.empty`,
-			`api/user1.GET.200.unknown`,
-			`api/user2.GET.200.json`,
-			`api/user3(another json).GET.200.json`,
-		], true)
-		console.assert(deepEqual(files.map(([, n]) => n), [
-			// Think about, in cases like this, the only option the user
-			// has for discerning empty and unknown is on the Previewer Title
-			'200',
-			'200',
-			'200 json',
-			'200 json (another json)',
-		]))
-	}())
-}
-deferred(baseOptionsFor.test)
 
 
 function DelayRouteToggler(method, urlMask, checked) {
@@ -969,9 +893,4 @@ function SyntaxXML(xml) {
 }
 SyntaxXML.regex = /(<\/?|\/?>|\?>)|(?<=<\??\/?)([A-Za-z_:][\w:.-]*)|([A-Za-z_:][\w:.-]*)(?==)|("(?:[^"\\]|\\.)*")/g
 // Capture groups order:  [tagPunc, tagName, attrName, attrVal]
-
-
-function deepEqual(a, b) {
-	return JSON.stringify(a) === JSON.stringify(b)
-}
 

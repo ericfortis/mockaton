@@ -1,8 +1,10 @@
 import { deferred } from './DashboardDom.js'
 import { Commander } from './ApiCommander.js'
-import { parseFilename } from './Filename.js'
+import { parseFilename, extractComments } from './Filename.js'
+import { AUTO_500_COMMENT } from './ApiConstants.js'
 
 
+const t = translation => translation[0]
 const mockaton = new Commander(location.origin)
 
 export const store = {
@@ -122,12 +124,34 @@ export const store = {
 		return store.brokersByMethod[method]?.[urlMask]
 	},
 
-	brokersByMethodAsArray(targetMethod = '*') {
+	_dittoCache: new Map(),
+
+	dittoedUrlFor(method, urlMask) {
+		return store._dittoCache.get(method + '::' + urlMask)
+	},
+
+	brokersAsRowsByMethod(method) {
+		const brokers = store._brokersAsArray(method)
+		const urlMasksDittoed = dittoSplitPaths(brokers.map(r => r.urlMask))
+		for (let i = 0; i < brokers.length; i++) {
+			const r = brokers[i]
+			r.urlMaskDittoed = urlMasksDittoed[i]
+			store._dittoCache.set(r.method + '::' + r.urlMask, r.urlMaskDittoed)
+		}
+		return brokers
+	},
+
+	_brokersAsArray(byMethod = '*') {
 		const rows = []
 		for (const [method, brokers] of Object.entries(store.brokersByMethod))
-			if (targetMethod === '*' || targetMethod === method)
+			if (byMethod === '*' || byMethod === method)
 				for (const [urlMask, broker] of Object.entries(brokers))
-					rows.push({ method, urlMask, broker })
+					rows.push({ // TODO RowModel
+						method,
+						urlMask,
+						urlMaskDittoed: null,
+						broker
+					})
 		return rows.sort((a, b) => a.urlMask.localeCompare(b.urlMask))
 	},
 
@@ -285,6 +309,112 @@ dittoSplitPaths.test = function () {
 	console.assert(deepEqual(dittoSplitPaths(input), expected))
 }
 deferred(dittoSplitPaths.test)
+
+
+
+export function mockSelectorOptions(broker) {
+	const mocks = broker.mocks
+	const proxied = store.canProxy && broker.currentMock.proxied
+	const selected = broker.currentMock.file
+	const selectedIs500 = parseFilename(selected).status === 500
+
+	const opts = mocks
+		.filter(f => selectedIs500 || !f.includes(AUTO_500_COMMENT))
+		.map(f => [
+			f,
+			nameFor(f),
+			!proxied && f === selected
+		])
+
+	if (proxied) // TESTME
+		opts.push([
+			'__PROXIED__',
+			t`Proxied`,
+			true
+		])
+
+	return opts
+
+	function nameFor(file) {
+		const { status, ext } = parseFilename(file)
+		const comments = extractComments(file)
+		const isAutogen500 = comments.includes(AUTO_500_COMMENT)
+		return [
+			isAutogen500 ? '' : status,
+			ext === 'empty' || ext === 'unknown' ? '' : ext,
+			isAutogen500 ? t`Auto500` : comments.join(' ')
+		].filter(Boolean).join(' ')
+	}
+}
+
+mockSelectorOptions.test = function () {
+	(function ignoresAutoGen500WhenUnselected() {
+		const broker = {
+			currentMock: {
+				file: 'api/other'
+			},
+			mocks: [
+				`api/user${AUTO_500_COMMENT}.GET.500.empty`
+			]
+		}
+		const files = mockSelectorOptions(broker)
+		console.assert(files.length === 0)
+	}());
+
+	(function keepsNonAutoGen500WhenUnselected() {
+		const broker = {
+			currentMock: {
+				file: 'api/other'
+			},
+			mocks: [
+				`api/user.GET.500.txt`
+			]
+		}
+		const files = mockSelectorOptions(broker)
+		console.assert(files.length === 1)
+		console.assert(files[0][1] === t`500 txt`)
+	}());
+
+	(function renamesAutoGenFileToAuto500() {
+		const broker = {
+			currentMock: {
+				file: `api/user${AUTO_500_COMMENT}.GET.500.empty`
+			},
+			mocks: [
+				`api/user${AUTO_500_COMMENT}.GET.500.empty`
+			]
+		}
+		const files = mockSelectorOptions(broker)
+		console.assert(files.length === 1)
+		console.assert(files[0][1] === t`Auto500`)
+	}());
+
+	(function filenameHasExtensionExceptWhenEmptyOrUnknown() {
+		const broker = {
+			currentMock: {
+				file: `api/other`
+			},
+			mocks: [
+				`api/user0.GET.200.empty`,
+				`api/user1.GET.200.unknown`,
+				`api/user2.GET.200.json`,
+				`api/user3(another json).GET.200.json`,
+			]
+		}
+
+		const files = mockSelectorOptions(broker)
+		console.assert(deepEqual(files.map(([, n]) => n), [
+			// Think about, in cases like this, the only option the user
+			// has for discerning empty and unknown is on the Previewer Title
+			'200',
+			'200',
+			'200 json',
+			'200 json (another json)',
+		]))
+	}())
+}
+deferred(mockSelectorOptions.test)
+
 
 function deepEqual(a, b) {
 	return JSON.stringify(a) === JSON.stringify(b)

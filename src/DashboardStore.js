@@ -41,7 +41,7 @@ export const store = {
 	},
 
 
-	leftSideWidth: window.innerWidth / 2,
+	leftSideWidth: undefined,
 
 	groupByMethod: initPreference('groupByMethod'),
 	toggleGroupByMethod() {
@@ -312,30 +312,62 @@ deferred(dittoSplitPaths.test)
 
 
 
-export function mockSelectorOptions(broker) {
-	const mocks = broker.mocks
-	const proxied = store.canProxy && broker.currentMock.proxied
-	const selected = broker.currentMock.file
-	const selectedIs500 = parseFilename(selected).status === 500
+export class BrokerRowModel {
+	opts = /** @type {[key:string, label:string, selected:boolean][]} */ []
+	#broker = /** @type {ClientMockBroker} */ {}
+	#canProxy = false
 
-	const opts = mocks
-		.filter(f => selectedIs500 || !f.includes(AUTO_500_COMMENT))
-		.map(f => [
-			f,
-			nameFor(f),
-			!proxied && f === selected
-		])
+	/**
+	 * @param {ClientMockBroker} broker
+	 * @param {boolean} canProxy
+	 */
+	constructor(broker, canProxy) {
+		this.#broker = broker
+		this.#canProxy = canProxy
+		this.opts = this.#makeOptions()
+	}
 
-	if (proxied) // TESTME
-		opts.push([
-			'__PROXIED__',
-			t`Proxied`,
-			true
-		])
+	get selectedIdx() {
+		return this.opts.findIndex(([, , selected]) => selected)
+	}
+	get selectedFile() {
+		return this.#broker.currentMock.file
+	}
+	get selectedFileIsProxied() {
+		return this.#canProxy && this.#broker.currentMock.proxied
+	}
+	get selectedFileIs4xx() {
+		const { status } = parseFilename(this.selectedFile)
+		return status >= 400 && status < 500
+	}
+	get selectedFileIs500() {
+		const { status } = parseFilename(this.selectedFile)
+		return status === 500
+	}
 
-	return opts
+	#makeOptions() {
+		const proxied = this.selectedFileIsProxied
+		const selectedIs500 = this.selectedFileIs500
 
-	function nameFor(file) {
+		const opts = this.#broker.mocks
+			.filter(f => selectedIs500 || !f.includes(AUTO_500_COMMENT))
+			.map(f => [
+				f,
+				this.#optionLabelFor(f),
+				!proxied && f === this.selectedFile
+			])
+
+		if (proxied)
+			opts.push([
+				'__PROXIED__',
+				t`Proxied`,
+				true
+			])
+
+		return opts
+	}
+
+	#optionLabelFor(file) {
 		const { status, ext } = parseFilename(file)
 		const comments = extractComments(file)
 		const isAutogen500 = comments.includes(AUTO_500_COMMENT)
@@ -347,53 +379,39 @@ export function mockSelectorOptions(broker) {
 	}
 }
 
-mockSelectorOptions.test = function () {
-	(function ignoresAutoGen500WhenUnselected() {
+const TestBrokerRowModelOptions = {
+	'ignores autogen500 when unselected'() {
 		const broker = {
-			currentMock: {
-				file: 'api/other'
-			},
-			mocks: [
-				`api/user${AUTO_500_COMMENT}.GET.500.empty`
-			]
+			currentMock: { file: 'api/other' },
+			mocks: [`api/user${AUTO_500_COMMENT}.GET.500.empty`]
 		}
-		const files = mockSelectorOptions(broker)
-		console.assert(files.length === 0)
-	}());
+		const row = new BrokerRowModel(broker, false)
+		console.assert(row.opts.length === 0)
+	},
 
-	(function keepsNonAutoGen500WhenUnselected() {
+	'keeps non-autogen500 when unselected'() {
 		const broker = {
-			currentMock: {
-				file: 'api/other'
-			},
-			mocks: [
-				`api/user.GET.500.txt`
-			]
+			currentMock: { file: 'api/other' },
+			mocks: [`api/user.GET.500.txt`]
 		}
-		const files = mockSelectorOptions(broker)
-		console.assert(files.length === 1)
-		console.assert(files[0][1] === t`500 txt`)
-	}());
+		const row = new BrokerRowModel(broker, false)
+		console.assert(row.opts.length === 1)
+		console.assert(row.opts[0][1] === t`500 txt`)
+	},
 
-	(function renamesAutoGenFileToAuto500() {
+	'renames autogen file to Auto500'() {
 		const broker = {
-			currentMock: {
-				file: `api/user${AUTO_500_COMMENT}.GET.500.empty`
-			},
-			mocks: [
-				`api/user${AUTO_500_COMMENT}.GET.500.empty`
-			]
+			currentMock: { file: `api/user${AUTO_500_COMMENT}.GET.500.empty` },
+			mocks: [`api/user${AUTO_500_COMMENT}.GET.500.empty`]
 		}
-		const files = mockSelectorOptions(broker)
-		console.assert(files.length === 1)
-		console.assert(files[0][1] === t`Auto500`)
-	}());
+		const row = new BrokerRowModel(broker, false)
+		console.assert(row.opts.length === 1)
+		console.assert(row.opts[0][1] === t`Auto500`)
+	},
 
-	(function filenameHasExtensionExceptWhenEmptyOrUnknown() {
+	'filename has extension except when empty or unknown'() {
 		const broker = {
-			currentMock: {
-				file: `api/other`
-			},
+			currentMock: { file: `api/other` },
 			mocks: [
 				`api/user0.GET.200.empty`,
 				`api/user1.GET.200.unknown`,
@@ -401,20 +419,33 @@ mockSelectorOptions.test = function () {
 				`api/user3(another json).GET.200.json`,
 			]
 		}
-
-		const files = mockSelectorOptions(broker)
-		console.assert(deepEqual(files.map(([, n]) => n), [
-			// Think about, in cases like this, the only option the user
-			// has for discerning empty and unknown is on the Previewer Title
+		const row = new BrokerRowModel(broker, false)
+		// Think about, in cases like this, the only option the user has
+		// for discerning empty and unknown is on the Previewer Title
+		console.assert(deepEqual(row.opts.map(([, n]) => n), [
 			'200',
 			'200',
 			'200 json',
 			'200 json (another json)',
 		]))
-	}())
-}
-deferred(mockSelectorOptions.test)
+	},
 
+	'appends "Proxied" label iff current is proxied'() {
+		const broker = {
+			currentMock: {
+				file: 'api/foo',
+				proxied: true
+			},
+			mocks: [`api/foo.GET.200.json`]
+		}
+		const row = new BrokerRowModel(broker, true)
+		console.assert(deepEqual(row.opts.map(([, n, selected]) => [n, selected]), [
+			['200 json', false],
+			[t`Proxied`, true]
+		]))
+	}
+}
+deferred(() => Object.values(TestBrokerRowModelOptions).forEach(t => t()))
 
 function deepEqual(a, b) {
 	return JSON.stringify(a) === JSON.stringify(b)

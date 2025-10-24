@@ -1,7 +1,7 @@
 import { createElement as r, createSvgElement as s, className, restoreFocus, Defer, Fragment, useRef } from './DashboardDom.js'
 import { AUTO_500_COMMENT, HEADER_FOR_502 } from './ApiConstants.js'
-import { store, dittoSplitPaths, mockSelectorOptions } from './DashboardStore.js'
-import { parseFilename} from './Filename.js'
+import { store, dittoSplitPaths, BrokerRowModel } from './DashboardStore.js'
+import { parseFilename } from './Filename.js'
 
 
 const CSS = {
@@ -135,13 +135,12 @@ function GlobalDelayField() {
 }
 
 function BulkSelector() {
+  // TODO For a11y, this should be a `menu` instead of this `select`
 	const { comments } = store
-	// UX wise this should be a menu instead of this `select`.
-	// But this way is easier to implement, with a few hacks.
 	const firstOption = t`Pick Comment…`
 	function onChange() {
 		const value = this.value
-		this.value = firstOption // Hack 
+		this.value = firstOption // Hack
 		store.bulkSelectByComment(value)
 	}
 	const disabled = !comments.length
@@ -354,21 +353,18 @@ function PreviewLink(method, urlMask, urlMaskDittoed, autofocus) {
 
 /** @param {ClientMockBroker} broker */
 function MockSelector(broker) {
-	const opts = mockSelectorOptions(broker)
-	const selectedIdx = opts.findIndex(opt => opt[2])
-	const selectedFile = opts[selectedIdx][0]
-	const selectedStatus = parseFilename(selectedFile).status
+	const row = new BrokerRowModel(broker, store.canProxy)
 	return (
 		r('select', {
 			onChange() { store.selectFile(this.value) },
 			autocomplete: 'off',
 			'aria-label': t`Mock Selector`,
-			disabled: opts.length < 2,
+			disabled: row.opts.length < 2,
 			...className(
 				CSS.MockSelector,
-				selectedIdx > 0 && CSS.nonDefault,
-				selectedStatus >= 400 && selectedStatus < 500 && CSS.status4xx)
-		}, opts.map(([file, label, isSelected]) => (
+				row.selectedIdx > 0 && CSS.nonDefault,
+				row.selectedFileIs4xx && CSS.status4xx)
+		}, row.opts.map(([file, label, isSelected]) => (
 			r('option', {
 				value: file,
 				selected: isSelected
@@ -681,6 +677,7 @@ async function onError(_error) {
 			error = error || t`Unexpected Error`
 	}
 	showErrorToast(error)
+	console.error(_error)
 }
 
 function showErrorToast(msg) {

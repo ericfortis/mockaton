@@ -126,34 +126,31 @@ export const store = {
 
 	_dittoCache: new Map(),
 
-	dittoedUrlFor(method, urlMask) {
-		return store._dittoCache.get(method + '::' + urlMask)
-	},
-
 	brokersAsRowsByMethod(method) {
 		const rows = store._brokersAsArray(method)
+			.map(b => new BrokerRowModel(b, store.canProxy))
+			.sort((a, b) => a.urlMask.localeCompare(b.urlMask))
 		const urlMasksDittoed = dittoSplitPaths(rows.map(r => r.urlMask))
-		for (let i = 0; i < rows.length; i++) {
-			const r = rows[i]
+		rows.forEach((r, i) => {
+			store._dittoCache.set(r.method + '::' + r.urlMask, urlMasksDittoed[i])
 			r.setUrlMaskDittoed(urlMasksDittoed[i])
-			store._dittoCache.set(r.method + '::' + r.urlMask, r.urlMaskDittoed)
-		}
+		})
 		return rows
 	},
 
+	brokerAsRow(method, urlMask) {
+		const r = new BrokerRowModel(store.brokerFor(method, urlMask), store.canProxy)
+		r.setUrlMaskDittoed(store._dittoCache.get(r.method + '::' + r.urlMask))
+		return r
+	},
+
 	_brokersAsArray(byMethod = '*') {
-		const rows = []
+		const arr = []
 		for (const [method, brokers] of Object.entries(store.brokersByMethod))
 			if (byMethod === '*' || byMethod === method)
 				for (const broker of Object.values(brokers))
-					rows.push(new BrokerRowModel(broker, store.canProxy))
-		return rows.sort((a, b) => a.urlMask.localeCompare(b.urlMask))
-	},
-
-	brokerAsRow(method, urlMask) {
-		const row = new BrokerRowModel(store.brokerFor(method, urlMask), store.canProxy)
-		row.setUrlMaskDittoed(store.dittoedUrlFor(method, urlMask))
-		return row
+					arr.push(broker)
+		return arr
 	},
 
 	previewLink(method, urlMask) {
@@ -333,7 +330,7 @@ export class BrokerRowModel {
 		this.urlMask = urlMask
 		this.opts = this.#makeOptions()
 	}
-	
+
 	setUrlMaskDittoed(urlMaskDittoed) {
 		this.urlMaskDittoed = urlMaskDittoed
 	}

@@ -586,7 +586,6 @@ function PayloadViewerTitleWhenProxied({ mime, status, statusText, gatewayIsBad 
 			' ' + mime))
 }
 
-// TODO indeterminate when there's store.delayJitter
 const SPINNER_DELAY = 80
 function PayloadViewerProgressBar() {
 	return (

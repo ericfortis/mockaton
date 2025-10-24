@@ -78,7 +78,7 @@ body {
 
 select, a, input, button {
 	cursor: pointer;
-	
+
 	&:focus-visible {
 		outline: 2px solid var(--colorAccent);
 	}
@@ -628,6 +628,8 @@ table {
 		background: var(--colorAccent);
 		animation-name: _kfProgress;
 		animation-timing-function: linear;
+		animation-iteration-count: infinite;
+		animation-direction: alternate;
 		/* duration in JavaScript */
 	}
 }

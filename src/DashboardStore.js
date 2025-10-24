@@ -12,11 +12,8 @@ export const store = {
 	render() {},
 	renderRow(method, urlMask) {},
 
-	/** @type {State.brokersByMethod} */
-	brokersByMethod: {},
-
-	/** @type {State.staticBrokers} */
-	staticBrokers: {},
+	brokersByMethod: /** @type {State.brokersByMethod} */ {},
+	staticBrokers: /** @type {State.staticBrokers} */ {},
 
 	cookies: [],
 	comments: [],
@@ -62,6 +59,7 @@ export const store = {
 	setChosenLink(method, urlMask) {
 		store.chosenLink = { method, urlMask }
 	},
+	
 
 	async reset() {
 		try {
@@ -82,6 +80,7 @@ export const store = {
 		catch (error) { store.onError(error) }
 	},
 
+	
 	async setGlobalDelay(value) {
 		try {
 			const response = await mockaton.setGlobalDelay(value)
@@ -152,6 +151,7 @@ export const store = {
 					arr.push(broker)
 		return arr
 	},
+	
 
 	previewLink(method, urlMask) {
 		store.setChosenLink(method, urlMask)

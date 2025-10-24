@@ -65,7 +65,7 @@ initKeyboardNavigation()
 function render() {
 	restoreFocus(() => document.body.replaceChildren(...App()))
 	if (store.hasChosenLink)
-		previewMock(store.chosenLink.method, store.chosenLink.urlMask)
+		previewMock()
 }
 
 const t = translation => translation[0]
@@ -317,7 +317,7 @@ function renderRow(method, urlMask) {
 		unChooseOld()
 		trFor(Row.key(method, urlMask))
 			.replaceWith(Row(store.brokerAsRow(method, urlMask)))
-		previewMock(method, urlMask)
+		previewMock()
 	})
 
 	function trFor(key) {
@@ -362,7 +362,7 @@ function MockSelector(row) {
 				CSS.MockSelector,
 				row.selectedIdx > 0 && CSS.nonDefault,
 				row.selectedFileIs4xx && CSS.status4xx)
-		}, row.opts.map(([value, label, selected]) => 
+		}, row.opts.map(([value, label, selected]) =>
 			r('option', { value, selected }, label))))
 }
 
@@ -594,7 +594,9 @@ function PayloadViewerProgressBar() {
 			r('div', { style: { animationDuration: store.delay - SPINNER_DELAY + 'ms' } })))
 }
 
-async function previewMock(method, urlMask) {
+async function previewMock() {
+	const { method, urlMask } = store.chosenLink
+
 	previewMock.controller?.abort()
 	previewMock.controller = new AbortController
 

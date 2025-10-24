@@ -610,7 +610,7 @@ async function previewMock() {
 			signal: previewMock.controller.signal
 		})
 		clearTimeout(spinnerTimer)
-		const { proxied, file } = store.brokerFor(method, urlMask).currentMock
+		const { proxied, file } = store.brokerFor(method, urlMask)
 		if (proxied || file)
 			await updatePayloadViewer(proxied, file, response)
 	}

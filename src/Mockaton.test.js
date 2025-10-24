@@ -251,7 +251,7 @@ describe('Dashboard', () => {
 		const res = await request(API.dashboard)
 		match(await res.text(), new RegExp('<!DOCTYPE html>'))
 	})
-	
+
 	it('query string is accepted', async () => {
 		const res = await request(API.dashboard + '?foo=bar')
 		match(await res.text(), new RegExp('<!DOCTYPE html>'))
@@ -346,11 +346,11 @@ describe('500', () => {
 	it('toggles 500', async () => {
 		const [route, file] = fixtureGetSimple
 		equal((await request(route)).status, 200)
-		
+
 		const r0 = await commander.toggle500('GET', route)
 		equal((await r0.json()).file, `api/basic${AUTO_500_COMMENT}.GET.500.empty`)
 		equal((await request(route)).status, 500)
-		
+
 		const r1 = await commander.toggle500('GET', route)
 		equal((await r1.json()).file, file)
 		equal((await request(route)).status, 200)
@@ -367,7 +367,12 @@ it('updates current selected mock and resets proxied flag', async () => {
 	deepEqual(await r0.json(), {
 		file,
 		delayed: false,
-		proxied: false
+		proxied: false,
+		mocks: [
+			'api/alternative(comment-1).GET.200.json',
+			'api/alternative(comment-2).GET.200.json',
+			'api/alternative(Mockaton 500).GET.500.empty'
+		]
 	})
 	const res = await request(url)
 	equal(res.status, 200)
@@ -628,16 +633,16 @@ describe('Registering', () => {
 		write(fixtureForRegisteringPutA500[1], '')
 		await sleep()
 		const { brokersByMethod } = await fetchState()
-		const { mocks, currentMock } = brokersByMethod.PUT[fixtureForRegisteringPutA[0]]
-		deepEqual(mocks, [
-			fixtureForRegisteringPutA[1],
-			fixtureForRegisteringPutB[1],
-			fixtureForRegisteringPutA500[1]
-		])
-		deepEqual(currentMock, {
+		const b = brokersByMethod.PUT[fixtureForRegisteringPutA[0]]
+		deepEqual(b, {
 			file: fixtureForRegisteringPutA[1],
 			delayed: false,
 			proxied: false,
+			mocks: [
+				fixtureForRegisteringPutA[1],
+				fixtureForRegisteringPutB[1],
+				fixtureForRegisteringPutA500[1]
+			]
 		})
 	})
 
@@ -646,15 +651,15 @@ describe('Registering', () => {
 		remove(fixtureForRegisteringPutA[1])
 		await sleep()
 		const { brokersByMethod } = await fetchState()
-		const { mocks, currentMock } = brokersByMethod.PUT[fixtureForRegisteringPutA[0]]
-		deepEqual(mocks, [
-			fixtureForRegisteringPutB[1],
-			fixtureForRegisteringPutA500[1]
-		])
-		deepEqual(currentMock, {
+		const b = brokersByMethod.PUT[fixtureForRegisteringPutA[0]]
+		deepEqual(b, {
 			file: fixtureForRegisteringPutB[1],
 			delayed: false,
 			proxied: false,
+			mocks: [
+				fixtureForRegisteringPutB[1],
+				fixtureForRegisteringPutA500[1]
+			]
 		})
 	})
 
@@ -690,9 +695,8 @@ describe('Set Route is Delayed', () => {
 	})
 
 	it('200', async () => {
-		await commander.setRouteIsDelayed('GET', route, true)
-		const { brokersByMethod } = await fetchState()
-		equal(brokersByMethod.GET[route].currentMock.delayed, true)
+		const res = await commander.setRouteIsDelayed('GET', route, true)
+		equal((await res.json()).delayed, true)
 	})
 })
 
@@ -723,20 +727,17 @@ describe('Set Route is Proxied', () => {
 		await commander.setProxyFallback('https://example.com')
 		const res = await commander.setRouteIsProxied('GET', route, true)
 		equal(res.status, 200)
-		const { brokersByMethod } = await fetchState()
-		equal(brokersByMethod.GET[route].currentMock.proxied, true)
+		equal((await res.json()).proxied, true)
 
 		const res2 = await commander.setRouteIsProxied('GET', route, false)
 		equal(res2.status, 200)
-		const { brokersByMethod: b2 } = await fetchState()
-		equal(b2.GET[route].currentMock.proxied, false) 
+		equal((await res2.json()).proxied, false)
 	})
 
 	it('200 when unsetting', async () => {
 		const res = await commander.setRouteIsProxied('GET', route, false)
 		equal(res.status, 200)
-		const { brokersByMethod } = await fetchState()
-		equal(brokersByMethod.GET[route].currentMock.proxied, false) 
+		equal((await res.json()).proxied, false)
 	})
 })
 

@@ -6,19 +6,13 @@ import { AUTO_500_COMMENT, DEFAULT_MOCK_COMMENT } from './ApiConstants.js'
  * that can be served for the route, the currently selected file, and if it’s delayed. */
 export class MockBroker {
 	constructor(file) {
+		this.delayed = false
+		this.proxied = false
+		this.mocks = [] // filenames
+		this.file = '' // selected mock filename
 		this.urlMaskMatches = new UrlMatcher(file).urlMaskMatches
-		this.mocks = []
-		this.currentMock = {
-			file: '',
-			delayed: false,
-			proxied: false
-		}
 		this.register(file)
 	}
-
-	get file() { return this.currentMock.file }
-	get delayed() { return this.currentMock.delayed }
-	get proxied() { return this.currentMock.proxied }
 
 	get status() { return parseFilename(this.file).status }
 	get temp500IsSelected() { return this.#isTemp500(this.file) }
@@ -82,18 +76,18 @@ export class MockBroker {
 	}
 
 	selectFile(filename) {
-		this.currentMock.proxied = false
-		this.currentMock.file = filename
+		this.file = filename
+		this.proxied = false
 	}
 
 	toggle500() {
-		this.#is500(this.currentMock.file)
+		this.#is500(this.file)
 			? this.selectDefaultFile()
 			: this.selectFile(this.mocks.find(this.#is500))
 	}
 
-	setDelayed(delayed) { this.currentMock.delayed = delayed }
-	setProxied(proxied) { this.currentMock.proxied = proxied }
+	setDelayed(delayed) { this.delayed = delayed }
+	setProxied(proxied) { this.proxied = proxied }
 
 	setByMatchingComment(comment) {
 		for (const file of this.mocks)

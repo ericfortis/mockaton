@@ -117,7 +117,7 @@ async function selectMock(req, response) {
 		sendUnprocessableContent(response, `Missing Mock: ${file}`)
 	else {
 		broker.selectFile(file)
-		sendJSON(response, broker.currentMock)
+		sendJSON(response, broker)
 	}
 }
 
@@ -130,7 +130,7 @@ async function toggle500(req, response) {
 		sendUnprocessableContent(response, `Route does not exist: ${body[DF.routeMethod]} ${body[DF.routeUrlMask]}`)
 	else {
 		broker.toggle500()
-		sendJSON(response, broker.currentMock)
+		sendJSON(response, broker)
 	}
 }
 
@@ -147,7 +147,7 @@ async function setRouteIsDelayed(req, response) {
 		sendUnprocessableContent(response, `Expected boolean for "delayed"`)
 	else {
 		broker.setDelayed(delayed)
-		sendOK(response)
+		sendJSON(response, broker)
 	}
 }
 
@@ -166,7 +166,7 @@ async function setRouteIsProxied(req, response) {
 		sendUnprocessableContent(response, `There’s no proxy fallback`)
 	else {
 		broker.setProxied(proxied)
-		sendOK(response)
+		sendJSON(response, broker)
 	}
 }
 

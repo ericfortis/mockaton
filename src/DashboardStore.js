@@ -59,7 +59,7 @@ export const store = {
 	setChosenLink(method, urlMask) {
 		store.chosenLink = { method, urlMask }
 	},
-	
+
 
 	async reset() {
 		try {
@@ -80,7 +80,7 @@ export const store = {
 		catch (error) { store.onError(error) }
 	},
 
-	
+
 	async setGlobalDelay(value) {
 		try {
 			const response = await api.setGlobalDelay(value)
@@ -123,6 +123,12 @@ export const store = {
 		return store.brokersByMethod[method]?.[urlMask]
 	},
 
+	setBroker(broker) {
+		const { method, urlMask } = parseFilename(broker.file)
+		store.brokersByMethod[method] ??= {}
+		store.brokersByMethod[method][urlMask] = broker
+	},
+
 	_dittoCache: new Map(),
 
 	brokersAsRowsByMethod(method) {
@@ -151,7 +157,7 @@ export const store = {
 					arr.push(broker)
 		return arr
 	},
-	
+
 
 	previewLink(method, urlMask) {
 		store.setChosenLink(method, urlMask)
@@ -162,8 +168,8 @@ export const store = {
 		try {
 			const response = await api.select(file)
 			if (!response.ok) throw response
+			store.setBroker(await response.json())
 			const { method, urlMask } = parseFilename(file)
-			store.brokerFor(method, urlMask).currentMock = await response.json()
 			store.setChosenLink(method, urlMask)
 			store.renderRow(method, urlMask)
 		}
@@ -174,7 +180,7 @@ export const store = {
 		try {
 			const response = await api.toggle500(method, urlMask)
 			if (!response.ok) throw response
-			store.brokerFor(method, urlMask).currentMock = await response.json()
+			store.setBroker(await response.json())
 			store.setChosenLink(method, urlMask)
 			store.renderRow(method, urlMask)
 		}
@@ -185,7 +191,7 @@ export const store = {
 		try {
 			const response = await api.setRouteIsProxied(method, urlMask, checked)
 			if (!response.ok) throw response
-			store.brokerFor(method, urlMask).currentMock.proxied = checked
+			store.setBroker(await response.json())
 			store.setChosenLink(method, urlMask)
 			store.renderRow(method, urlMask)
 		}
@@ -196,7 +202,7 @@ export const store = {
 		try {
 			const response = await api.setRouteIsDelayed(method, urlMask, checked)
 			if (!response.ok) throw response
-			store.brokerFor(method, urlMask).currentMock.delayed = checked
+			store.setBroker(await response.json())
 		}
 		catch (error) { store.onError(error) }
 	},
@@ -325,7 +331,7 @@ export class BrokerRowModel {
 	constructor(broker, canProxy) {
 		this.#broker = broker
 		this.#canProxy = canProxy
-		const { method, urlMask } = parseFilename(broker.currentMock.file)
+		const { method, urlMask } = parseFilename(broker.file)
 		this.method = method
 		this.urlMask = urlMask
 		this.opts = this.#makeOptions()
@@ -336,16 +342,16 @@ export class BrokerRowModel {
 	}
 
 	get delayed() {
-		return this.#broker.currentMock.delayed
+		return this.#broker.delayed
 	}
 	get proxied() {
-		return this.#canProxy && this.#broker.currentMock.proxied
+		return this.#canProxy && this.#broker.proxied
 	}
 	get selectedIdx() {
 		return this.opts.findIndex(([, , selected]) => selected)
 	}
 	get selectedFile() {
-		return this.#broker.currentMock.file
+		return this.#broker.file
 	}
 	get selectedFileIs4xx() {
 		const { status } = parseFilename(this.selectedFile)
@@ -393,7 +399,7 @@ export class BrokerRowModel {
 const TestBrokerRowModelOptions = {
 	'ignores autogen500 when unselected'() {
 		const broker = {
-			currentMock: { file: 'api/other' },
+			file: 'api/other',
 			mocks: [`api/user${AUTO_500_COMMENT}.GET.500.empty`]
 		}
 		const row = new BrokerRowModel(broker, false)
@@ -402,7 +408,7 @@ const TestBrokerRowModelOptions = {
 
 	'keeps non-autogen500 when unselected'() {
 		const broker = {
-			currentMock: { file: 'api/other' },
+			file: 'api/other',
 			mocks: [`api/user.GET.500.txt`]
 		}
 		const row = new BrokerRowModel(broker, false)
@@ -412,7 +418,7 @@ const TestBrokerRowModelOptions = {
 
 	'renames autogen file to Auto500'() {
 		const broker = {
-			currentMock: { file: `api/user${AUTO_500_COMMENT}.GET.500.empty` },
+			file: `api/user${AUTO_500_COMMENT}.GET.500.empty`,
 			mocks: [`api/user${AUTO_500_COMMENT}.GET.500.empty`]
 		}
 		const row = new BrokerRowModel(broker, false)
@@ -422,7 +428,7 @@ const TestBrokerRowModelOptions = {
 
 	'filename has extension except when empty or unknown'() {
 		const broker = {
-			currentMock: { file: `api/other` },
+			file: `api/other`,
 			mocks: [
 				`api/user0.GET.200.empty`,
 				`api/user1.GET.200.unknown`,
@@ -443,10 +449,8 @@ const TestBrokerRowModelOptions = {
 
 	'appends "Proxied" label iff current is proxied'() {
 		const broker = {
-			currentMock: {
-				file: 'api/foo',
-				proxied: true
-			},
+			file: 'api/foo',
+			proxied: true,
 			mocks: [`api/foo.GET.200.json`]
 		}
 		const row = new BrokerRowModel(broker, true)

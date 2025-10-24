@@ -1,4 +1,4 @@
-import { Server, IncomingMessage, OutgoingMessage } from 'node:http';
+import { Server, IncomingMessage, OutgoingMessage } from 'node:http'
 
 type Plugin = (
 	filePath: string,
@@ -16,7 +16,7 @@ interface Config {
 
 	host?: string,
 	port?: number
-	
+
 	logLevel?: 'normal' | 'verbose' | 'quiet'
 
 	delay?: number
@@ -37,8 +37,8 @@ interface Config {
 	corsExposedHeaders?: string[]
 	corsCredentials?: boolean
 	corsMaxAge?: number
-	
-	
+
+
 	plugins?: [filenameTester: RegExp, plugin: Plugin][]
 
 	onReady?: (address: string) => void
@@ -64,11 +64,9 @@ export type JsonPromise<T> = Promise<Response & { json(): Promise<T> }>
 
 export type ClientMockBroker = {
 	mocks: string[]
-	currentMock: {
-		file: string
-		delayed: boolean
-		proxied: boolean
-	}
+	file: string
+	delayed: boolean
+	proxied: boolean
 }
 export type ClientBrokersByMethod = {
 	[method: string]: {
@@ -89,14 +87,14 @@ export type ClientStaticBrokers = {
 export interface State {
 	brokersByMethod: ClientBrokersByMethod
 	staticBrokers: ClientStaticBrokers
-	
-	cookies: [label:string, selected:boolean][] 
+
+	cookies: [label: string, selected: boolean][]
 	comments: string[]
-	
+
 	delay: number
-	
+
 	collectProxied: boolean
 	proxyFallback: string
-	
+
 	corsAllowed?: boolean
 }

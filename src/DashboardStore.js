@@ -5,7 +5,7 @@ import { AUTO_500_COMMENT } from './ApiConstants.js'
 
 
 const t = translation => translation[0]
-const mockaton = new Commander(location.origin)
+const api = new Commander(location.origin)
 
 export const store = {
 	onError(err) {},
@@ -25,11 +25,11 @@ export const store = {
 		return Boolean(store.proxyFallback)
 	},
 
-	getSyncVersion: mockaton.getSyncVersion,
+	getSyncVersion: api.getSyncVersion,
 
 	async fetchState() {
 		try {
-			const response = await mockaton.getState()
+			const response = await api.getState()
 			if (!response.ok) throw response
 			Object.assign(store, await response.json())
 			store.render()
@@ -63,7 +63,7 @@ export const store = {
 
 	async reset() {
 		try {
-			const response = await mockaton.reset()
+			const response = await api.reset()
 			if (!response.ok) throw response
 			store.setChosenLink('', '')
 			await store.fetchState()
@@ -73,7 +73,7 @@ export const store = {
 
 	async bulkSelectByComment(value) {
 		try {
-			const response = await mockaton.bulkSelectByComment(value)
+			const response = await api.bulkSelectByComment(value)
 			if (!response.ok) throw response
 			await store.fetchState()
 		}
@@ -83,7 +83,7 @@ export const store = {
 	
 	async setGlobalDelay(value) {
 		try {
-			const response = await mockaton.setGlobalDelay(value)
+			const response = await api.setGlobalDelay(value)
 			if (!response.ok) throw response
 			store.delay = value
 		}
@@ -92,7 +92,7 @@ export const store = {
 
 	async selectCookie(name) {
 		try {
-			const response = await mockaton.selectCookie(name)
+			const response = await api.selectCookie(name)
 			if (!response.ok) throw response
 			store.cookies = await response.json()
 		}
@@ -101,7 +101,7 @@ export const store = {
 
 	async setProxyFallback(value) {
 		try {
-			const response = await mockaton.setProxyFallback(value)
+			const response = await api.setProxyFallback(value)
 			if (!response.ok) throw response
 			store.proxyFallback = value
 			store.render()
@@ -111,7 +111,7 @@ export const store = {
 
 	async setCollectProxied(checked) {
 		try {
-			const response = await mockaton.setCollectProxied(checked)
+			const response = await api.setCollectProxied(checked)
 			if (!response.ok) throw response
 			store.collectProxied = checked
 		}
@@ -160,7 +160,7 @@ export const store = {
 
 	async selectFile(file) {
 		try {
-			const response = await mockaton.select(file)
+			const response = await api.select(file)
 			if (!response.ok) throw response
 			const { method, urlMask } = parseFilename(file)
 			store.brokerFor(method, urlMask).currentMock = await response.json()
@@ -172,7 +172,7 @@ export const store = {
 
 	async toggle500(method, urlMask) {
 		try {
-			const response = await mockaton.toggle500(method, urlMask)
+			const response = await api.toggle500(method, urlMask)
 			if (!response.ok) throw response
 			store.brokerFor(method, urlMask).currentMock = await response.json()
 			store.setChosenLink(method, urlMask)
@@ -183,7 +183,7 @@ export const store = {
 
 	async setProxied(method, urlMask, checked) {
 		try {
-			const response = await mockaton.setRouteIsProxied(method, urlMask, checked)
+			const response = await api.setRouteIsProxied(method, urlMask, checked)
 			if (!response.ok) throw response
 			store.brokerFor(method, urlMask).currentMock.proxied = checked
 			store.setChosenLink(method, urlMask)
@@ -194,7 +194,7 @@ export const store = {
 
 	async setDelayed(method, urlMask, checked) {
 		try {
-			const response = await mockaton.setRouteIsDelayed(method, urlMask, checked)
+			const response = await api.setRouteIsDelayed(method, urlMask, checked)
 			if (!response.ok) throw response
 			store.brokerFor(method, urlMask).currentMock.delayed = checked
 		}
@@ -204,7 +204,7 @@ export const store = {
 
 	async setDelayedStatic(route, checked) {
 		try {
-			const response = await mockaton.setStaticRouteIsDelayed(route, checked)
+			const response = await api.setStaticRouteIsDelayed(route, checked)
 			if (!response.ok) throw response
 			store.staticBrokers[route].delayed = checked
 		}
@@ -213,7 +213,7 @@ export const store = {
 
 	async setStaticRouteStatus(route, status) {
 		try {
-			const response = await mockaton.setStaticRouteStatus(route, status)
+			const response = await api.setStaticRouteStatus(route, status)
 			if (!response.ok) throw response
 			store.staticBrokers[route].status = status
 		}

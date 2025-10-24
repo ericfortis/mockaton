@@ -299,7 +299,7 @@ function Row(row, i) {
 				DelayRouteToggler(method, urlMask, row.delayed)),
 
 			r('td', null,
-				InternalServerErrorToggler(method, urlMask, row.selectedFileIs500)),
+				InternalServerErrorToggler(method, urlMask, !row.proxied && row.selectedFileIs500)),
 
 			!store.groupByMethod && r('td', className(CSS.Method),
 				method),
@@ -362,11 +362,8 @@ function MockSelector(row) {
 				CSS.MockSelector,
 				row.selectedIdx > 0 && CSS.nonDefault,
 				row.selectedFileIs4xx && CSS.status4xx)
-		}, row.opts.map(([file, label, isSelected]) => (
-			r('option', {
-				value: file,
-				selected: isSelected
-			}, label)))))
+		}, row.opts.map(([value, label, selected]) => 
+			r('option', { value, selected }, label))))
 }
 
 

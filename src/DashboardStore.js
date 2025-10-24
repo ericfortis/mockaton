@@ -131,28 +131,29 @@ export const store = {
 	},
 
 	brokersAsRowsByMethod(method) {
-		const brokers = store._brokersAsArray(method)
-		const urlMasksDittoed = dittoSplitPaths(brokers.map(r => r.urlMask))
-		for (let i = 0; i < brokers.length; i++) {
-			const r = brokers[i]
-			r.urlMaskDittoed = urlMasksDittoed[i]
+		const rows = store._brokersAsArray(method)
+		const urlMasksDittoed = dittoSplitPaths(rows.map(r => r.urlMask))
+		for (let i = 0; i < rows.length; i++) {
+			const r = rows[i]
+			r.setUrlMaskDittoed(urlMasksDittoed[i])
 			store._dittoCache.set(r.method + '::' + r.urlMask, r.urlMaskDittoed)
 		}
-		return brokers
+		return rows
 	},
 
 	_brokersAsArray(byMethod = '*') {
 		const rows = []
 		for (const [method, brokers] of Object.entries(store.brokersByMethod))
 			if (byMethod === '*' || byMethod === method)
-				for (const [urlMask, broker] of Object.entries(brokers))
-					rows.push({ // TODO RowModel
-						method,
-						urlMask,
-						urlMaskDittoed: null,
-						broker
-					})
+				for (const broker of Object.values(brokers))
+					rows.push(new BrokerRowModel(broker, store.canProxy))
 		return rows.sort((a, b) => a.urlMask.localeCompare(b.urlMask))
+	},
+
+	brokerAsRow(method, urlMask) {
+		const row = new BrokerRowModel(store.brokerFor(method, urlMask), store.canProxy)
+		row.setUrlMaskDittoed(store.dittoedUrlFor(method, urlMask))
+		return row
 	},
 
 	previewLink(method, urlMask) {
@@ -314,6 +315,9 @@ deferred(dittoSplitPaths.test)
 
 export class BrokerRowModel {
 	opts = /** @type {[key:string, label:string, selected:boolean][]} */ []
+	method = ''
+	urlMask = ''
+	urlMaskDittoed = ['', '']
 	#broker = /** @type {ClientMockBroker} */ {}
 	#canProxy = false
 
@@ -324,17 +328,27 @@ export class BrokerRowModel {
 	constructor(broker, canProxy) {
 		this.#broker = broker
 		this.#canProxy = canProxy
+		const { method, urlMask } = parseFilename(broker.currentMock.file)
+		this.method = method
+		this.urlMask = urlMask
 		this.opts = this.#makeOptions()
 	}
+	
+	setUrlMaskDittoed(urlMaskDittoed) {
+		this.urlMaskDittoed = urlMaskDittoed
+	}
 
+	get delayed() {
+		return this.#broker.currentMock.delayed
+	}
+	get proxied() {
+		return this.#canProxy && this.#broker.currentMock.proxied
+	}
 	get selectedIdx() {
 		return this.opts.findIndex(([, , selected]) => selected)
 	}
 	get selectedFile() {
 		return this.#broker.currentMock.file
-	}
-	get selectedFileIsProxied() {
-		return this.#canProxy && this.#broker.currentMock.proxied
 	}
 	get selectedFileIs4xx() {
 		const { status } = parseFilename(this.selectedFile)
@@ -346,7 +360,7 @@ export class BrokerRowModel {
 	}
 
 	#makeOptions() {
-		const proxied = this.selectedFileIsProxied
+		const proxied = this.proxied
 		const selectedIs500 = this.selectedFileIs500
 
 		const opts = this.#broker.mocks

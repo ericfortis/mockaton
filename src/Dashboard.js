@@ -135,7 +135,7 @@ function GlobalDelayField() {
 }
 
 function BulkSelector() {
-  // TODO For a11y, this should be a `menu` instead of this `select`
+	// TODO For a11y, this should be a `menu` instead of this `select`
 	const { comments } = store
 	const firstOption = t`Pick Comment…`
 	function onChange() {
@@ -284,40 +284,39 @@ function MockList() {
 	return store.brokersAsRowsByMethod('*').map(Row)
 }
 
-function Row({ method, urlMask, urlMaskDittoed, broker }, i) {
-	const { proxied, delayed, file } = broker.currentMock
+/**
+ * @param {BrokerRowModel} row
+ * @param {number} i
+ */
+function Row(row, i) {
+	const { method, urlMask } = row
 	return (
 		r('tr', { key: Row.key(method, urlMask) },
 			store.canProxy && r('td', null,
-				ProxyToggler(method, urlMask, proxied)),
+				ProxyToggler(method, urlMask, row.proxied)),
 
 			r('td', null,
-				DelayRouteToggler(method, urlMask, delayed)),
+				DelayRouteToggler(method, urlMask, row.delayed)),
 
 			r('td', null,
-				InternalServerErrorToggler(method, urlMask, parseFilename(file).status === 500)),
+				InternalServerErrorToggler(method, urlMask, row.selectedFileIs500)),
 
 			!store.groupByMethod && r('td', className(CSS.Method),
 				method),
 
 			r('td', null,
-				PreviewLink(method, urlMask, urlMaskDittoed, i === 0)),
+				PreviewLink(method, urlMask, row.urlMaskDittoed, i === 0)),
 
 			r('td', null,
-				MockSelector(broker))))
+				MockSelector(row))))
 }
 Row.key = (method, urlMask) => method + '::' + urlMask
 
 function renderRow(method, urlMask) {
 	restoreFocus(() => {
 		unChooseOld()
-		trFor(Row.key(method, urlMask)).replaceWith(
-			Row({
-				method,
-				urlMask,
-				urlMaskDittoed: store.dittoedUrlFor(method, urlMask),
-				broker: store.brokerFor(method, urlMask)
-			}))
+		trFor(Row.key(method, urlMask))
+			.replaceWith(Row(store.brokerAsRow(method, urlMask)))
 		previewMock(method, urlMask)
 	})
 
@@ -351,9 +350,8 @@ function PreviewLink(method, urlMask, urlMaskDittoed, autofocus) {
 }
 
 
-/** @param {ClientMockBroker} broker */
-function MockSelector(broker) {
-	const row = new BrokerRowModel(broker, store.canProxy)
+/** @param {BrokerRowModel} row */
+function MockSelector(row) {
 	return (
 		r('select', {
 			onChange() { store.selectFile(this.value) },

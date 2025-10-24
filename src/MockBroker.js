@@ -1,4 +1,4 @@
-import { includesComment, extractComments, parseFilename } from './Filename.js'
+import { includesComment, extractComments, parseFilename, nameForAuto500 } from './Filename.js'
 import { AUTO_500_COMMENT, DEFAULT_MOCK_COMMENT } from './ApiConstants.js'
 
 
@@ -59,7 +59,7 @@ export class MockBroker {
 	#registerTemp500() {
 		const { urlMask, method } = parseFilename(this.mocks[0])
 		const file = urlMask.replace(/^\//, '') // Removes leading slash
-		this.mocks.push(`${file}${AUTO_500_COMMENT}.${method}.500.empty`)
+		this.mocks.push(nameForAuto500(file, method))
 	}
 
 	unregister(file) {

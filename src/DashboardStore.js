@@ -1,6 +1,6 @@
 import { deferred } from './DashboardDom.js'
 import { Commander } from './ApiCommander.js'
-import { parseFilename, extractComments } from './Filename.js'
+import { parseFilename, extractComments, nameForAuto500 } from './Filename.js'
 import { AUTO_500_COMMENT } from './ApiConstants.js'
 
 
@@ -400,7 +400,7 @@ const TestBrokerRowModelOptions = {
 	'ignores autogen500 when unselected'() {
 		const broker = {
 			file: 'api/other',
-			mocks: [`api/user${AUTO_500_COMMENT}.GET.500.empty`]
+			mocks: [nameForAuto500('api/user', 'GET')]
 		}
 		const row = new BrokerRowModel(broker, false)
 		console.assert(row.opts.length === 0)
@@ -418,8 +418,8 @@ const TestBrokerRowModelOptions = {
 
 	'renames autogen file to Auto500'() {
 		const broker = {
-			file: `api/user${AUTO_500_COMMENT}.GET.500.empty`,
-			mocks: [`api/user${AUTO_500_COMMENT}.GET.500.empty`]
+			file: nameForAuto500('api/user', 'GET'),
+			mocks: [nameForAuto500('api/user', 'GET')]
 		}
 		const row = new BrokerRowModel(broker, false)
 		console.assert(row.opts.length === 1)

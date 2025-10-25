@@ -340,6 +340,9 @@ export class BrokerRowModel {
 		this.urlMaskDittoed = urlMaskDittoed
 	}
 
+	get status() {
+		return this.#broker.status
+	}
 	get auto500() {
 		return this.#broker.auto500
 	}
@@ -356,12 +359,7 @@ export class BrokerRowModel {
 		return this.#broker.file
 	}
 	get selectedFileIs4xx() {
-		const { status } = parseFilename(this.selectedFile)
-		return status >= 400 && status < 500
-	}
-	get selectedFileIs500() {
-		const { status } = parseFilename(this.selectedFile)
-		return status === 500 || this.auto500
+		return this.status >= 400 && this.status < 500
 	}
 
 	#makeOptions() {

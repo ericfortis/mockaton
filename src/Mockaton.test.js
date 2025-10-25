@@ -358,6 +358,7 @@ it('updates current selected mock and resets proxied flag', async () => {
 	const r0 = await commander.select(file)
 	deepEqual(await r0.json(), {
 		file,
+		status: 200,
 		auto500: false,
 		delayed: false,
 		proxied: false,
@@ -627,6 +628,7 @@ describe('Registering', () => {
 		const b = brokersByMethod.PUT[fixtureForRegisteringPutA[0]]
 		deepEqual(b, {
 			file: fixtureForRegisteringPutA[1],
+			status: 200,
 			auto500: false,
 			delayed: false,
 			proxied: false,
@@ -646,6 +648,7 @@ describe('Registering', () => {
 		const b = brokersByMethod.PUT[fixtureForRegisteringPutA[0]]
 		deepEqual(b, {
 			file: fixtureForRegisteringPutB[1],
+			status: 200,
 			auto500: false,
 			delayed: false,
 			proxied: false,

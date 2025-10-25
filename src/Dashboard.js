@@ -1,6 +1,6 @@
 import { createElement as r, createSvgElement as s, className, restoreFocus, Defer, Fragment, useRef } from './DashboardDom.js'
-import { HEADER_FOR_502 } from './ApiConstants.js'
 import { store, dittoSplitPaths, BrokerRowModel } from './DashboardStore.js'
+import { HEADER_FOR_502 } from './ApiConstants.js'
 import { parseFilename } from './Filename.js'
 
 
@@ -297,7 +297,7 @@ function Row(row, i) {
 				DelayRouteToggler(method, urlMask, row.delayed)),
 
 			r('td', null,
-				InternalServerErrorToggler(method, urlMask, !row.proxied && row.selectedFileIs500)),
+				InternalServerErrorToggler(method, urlMask, !row.proxied && row.status === 500)),
 
 			!store.groupByMethod && r('td', className(CSS.Method),
 				method),

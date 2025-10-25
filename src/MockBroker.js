@@ -9,15 +9,16 @@ export class MockBroker {
 		this.delayed = false
 		this.proxied = false
 		this.auto500 = false
-		// this.status = -1 // TODO
+		this.status = -1
 		this.mocks = [] // filenames
 		this.file = '' // selected mock filename
 		this.urlMaskMatches = new UrlMatcher(file).urlMaskMatches
 		this.register(file)
 	}
 
-	get status() { return parseFilename(this.file).status }
-	hasMock(file) { return this.mocks.includes(file) }
+	hasMock(file) {
+		return this.mocks.includes(file)
+	}
 
 	register(file) {
 		if (this.#is500(file) && this.auto500)
@@ -55,24 +56,28 @@ export class MockBroker {
 		this.file = filename
 		this.proxied = false
 		this.auto500 = false
-		// this.status = parseFilename(filename).status // TODO
+		this.status = parseFilename(filename).status
 	}
 
 	toggle500() { // TODO disable ui when .length === 1 and is 500
 		this.proxied = false // TESTME
-		if (this.auto500 || this.#is500(this.file))
+		if (this.auto500 || this.status === 500)
 			this.selectDefaultFile()
 		else {
 			const f = this.mocks.find(this.#is500)
 			if (f)
 				this.selectFile(f)
-			else 
+			else {
 				this.auto500 = true
+				this.status = 500 // TESTME
+			}
 		}
 	}
 
-	setDelayed(delayed) { this.delayed = delayed }
-	
+	setDelayed(delayed) {
+		this.delayed = delayed
+	}
+
 	setProxied(proxied) {
 		this.auto500 = false // TESTME
 		this.proxied = proxied

@@ -65,6 +65,7 @@ export type JsonPromise<T> = Promise<Response & { json(): Promise<T> }>
 export type ClientMockBroker = {
 	mocks: string[]
 	file: string
+	status: number
 	auto500: boolean
 	delayed: boolean
 	proxied: boolean

@@ -10,7 +10,7 @@ import * as mockBrokerCollection from './mockBrokersCollection.js'
 import { setCorsHeaders, isPreflight } from './utils/http-cors.js'
 import { watchMocksDir, watchStaticDir } from './Watcher.js'
 import { apiPatchRequests, apiGetRequests } from './Api.js'
-import { BodyReaderError, isControlCharFree } from './utils/http-request.js'
+import { BodyReaderError, hasControlChars } from './utils/http-request.js'
 import { sendNoContent, sendInternalServerError, sendUnprocessableContent, sendTooLongURI, sendBadRequest } from './utils/http-response.js'
 
 
@@ -26,8 +26,7 @@ export function Mockaton(options) {
 		const server = createServer(onRequest)
 		server.on('error', reject)
 		server.listen(config.port, config.host, () => {
-			const { address, port } = server.address()
-			const url = `http://${address}:${port}`
+			const url = `http://${server.address().address}:${server.address().port}`
 			const dashboardUrl = url + API.dashboard
 			logger.info('Listening', url)
 			logger.info('Dashboard', dashboardUrl)
@@ -47,32 +46,30 @@ async function onRequest(req, response) {
 		sendTooLongURI(response)
 		return
 	}
-
-	if (!isControlCharFree(url)) {
-		sendBadRequest(response)               
+	if (hasControlChars(url)) {
+		sendBadRequest(response)
 		return
 	}
-	
-	try {
-		const route = new URL(url, 'http://_').pathname
-		const { method } = req
 
+	try {
 		if (config.corsAllowed)
 			setCorsHeaders(req, response, config)
 
-		
+		const { method } = req
+		const { pathname } = new URL(url, 'http://_')
+
 		if (isPreflight(req))
 			sendNoContent(response)
-			
-		else if (method === 'PATCH' && apiPatchRequests.has(route))
-			await apiPatchRequests.get(route)(req, response)
-			
-		else if (method === 'GET' && apiGetRequests.has(route))
-			apiGetRequests.get(route)(req, response)
-			
-		else if (method === 'GET' && staticCollection.brokerByRoute(route))
+
+		else if (method === 'PATCH' && apiPatchRequests.has(pathname))
+			await apiPatchRequests.get(pathname)(req, response)
+
+		else if (method === 'GET' && apiGetRequests.has(pathname))
+			apiGetRequests.get(pathname)(req, response)
+
+		else if (method === 'GET' && staticCollection.brokerByRoute(pathname))
 			await dispatchStatic(req, response)
-			
+
 		else
 			await dispatchMock(req, response)
 	}

@@ -2,8 +2,10 @@ import { includesComment, extractComments, parseFilename } from './Filename.js'
 import { DEFAULT_MOCK_COMMENT } from './ApiConstants.js'
 
 
-/** MockBroker is a state for a particular route. It knows the available mock files
- * that can be served for the route, the currently selected file, and if it’s delayed. */
+/** 
+ * MockBroker is a state for a particular route. It knows the available mock 
+ * files that can be served for the route, and the currently selected file, etc.
+ */
 export class MockBroker {
 	constructor(file) {
 		this.file = '' // selected mock filename
@@ -57,7 +59,7 @@ export class MockBroker {
 		if (this.auto500 || this.status === 500)
 			this.selectDefaultFile()
 		else {
-			const f = this.mocks.find(this.#is500)
+			const f = this.mocks.find(this.#is500) // TESTME
 			if (f)
 				this.selectFile(f)
 			else {

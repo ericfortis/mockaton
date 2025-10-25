@@ -22,7 +22,6 @@ export const includesComment = (filename, search) =>
 	extractComments(filename).some(comment => comment.includes(search))
 
 
-// TODO ThinkAbout 206 (reject, handle, or send in full?)
 export function validateFilename(file) {
 	const tokens = file.replace(reComments, '').split('.')
 	if (tokens.length < 4)
@@ -34,7 +33,8 @@ export function validateFilename(file) {
 
 	if (!httpMethods.includes(method))
 		return `Unrecognized HTTP Method: "${method}"`
-}
+} 
+// TODO ThinkAbout 206 (reject, handle, or send in full?)
 
 
 export function parseFilename(file) {
@@ -54,12 +54,12 @@ function removeTrailingSlash(url = '') {
 		.replace('/#', '#')
 }
 
-// TODO ThinkAbout allowing custom status codes
 function responseStatusIsValid(status) {
 	return Number.isInteger(status)
 		&& status >= 100
 		&& status <= 599
 }
+// TODO ThinkAbout allowing custom status codes
 
 
 export function makeMockFilename(url, method, status, ext) {

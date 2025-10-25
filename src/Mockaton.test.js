@@ -17,8 +17,8 @@ import { parseFilename } from './Filename.js'
 import { API, DEFAULT_MOCK_COMMENT } from './ApiConstants.js'
 
 
-const mocksDir = mkdtempSync(tmpdir()) + '/'
-const staticDir = mkdtempSync(tmpdir()) + '/'
+const mocksDir = mkdtempSync(tmpdir()) + 'mocks/'
+const staticDir = mkdtempSync(tmpdir()) + 'static/'
 
 
 /** # Utils */

@@ -53,7 +53,7 @@ export function registerMock(file, isFromWatcher = false) {
 	else
 		collection[method][urlMask].register(file)
 
-	if (isFromWatcher && !this.file)
+	if (isFromWatcher && !collection[method][urlMask].file) // TESTME
 		collection[method][urlMask].selectDefaultFile()
 
 	return true

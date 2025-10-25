@@ -15,7 +15,7 @@ export class MockBroker {
 		this.urlMaskMatches = new UrlMatcher(file).urlMaskMatches
 		this.register(file)
 	}
-	
+
 	#is500 = file => parseFilename(file).status === 500
 
 	#sortMocks() {
@@ -40,7 +40,7 @@ export class MockBroker {
 	}
 
 	hasMock = file => this.mocks.includes(file)
-	
+
 	selectFile(filename) {
 		this.file = filename
 		this.proxied = false

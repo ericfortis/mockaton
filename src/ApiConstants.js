@@ -28,9 +28,7 @@ export const DF = { // Dashboard Fields (XHR)
 	syncVersion: 'last_received_sync_version'
 }
 
+export const HEADER_FOR_502 = 'Mockaton502'
 export const DEFAULT_MOCK_COMMENT = '(default)'
-
 export const EXT_FOR_UNKNOWN_MIME = 'unknown'
 export const LONG_POLL_SERVER_TIMEOUT = 8_000
-
-export const HEADER_FOR_502 = 'Mockaton502'

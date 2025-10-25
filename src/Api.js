@@ -21,7 +21,7 @@ export const apiGetRequests = new Map([
 	...[
 		'Dashboard.css',
 		'Dashboard.js',
-		'ApiConstants.js', 'ApiCommander.js', 'Filename.js', 'DashboardStore.js', 'DashboardDom.js',
+		'ApiCommander.js', 'ApiConstants.js', 'DashboardDom.js', 'DashboardStore.js', 'Filename.js', 
 		'Logo.svg'
 	].map(f => [API.dashboard + '/' + f, serveStatic(f)]),
 
@@ -230,7 +230,6 @@ async function setStaticRouteStatusCode(req, response) {
 		sendOK(response)
 	}
 }
-
 
 async function setStaticRouteIsDelayed(req, response) {
 	const body = await parseJSON(req)

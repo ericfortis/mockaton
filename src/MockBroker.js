@@ -6,38 +6,29 @@ import { DEFAULT_MOCK_COMMENT } from './ApiConstants.js'
  * that can be served for the route, the currently selected file, and if it’s delayed. */
 export class MockBroker {
 	constructor(file) {
+		this.file = '' // selected mock filename
+		this.mocks = [] // filenames
+		this.status = -1
 		this.delayed = false
 		this.proxied = false
 		this.auto500 = false
-		this.status = -1
-		this.mocks = [] // filenames
-		this.file = '' // selected mock filename
 		this.urlMaskMatches = new UrlMatcher(file).urlMaskMatches
 		this.register(file)
 	}
-
-	hasMock(file) {
-		return this.mocks.includes(file)
-	}
-
-	register(file) {
-		if (this.#is500(file) && this.auto500)
-			this.selectFile(file)
-		this.mocks.push(file)
-		this.#sortMocks()
-	}
-
-	#is500(file) {
-		return parseFilename(file).status === 500
-	}
+	
+	#is500 = file => parseFilename(file).status === 500
 
 	#sortMocks() {
 		this.mocks.sort()
 		const defaults = this.mocks.filter(file => includesComment(file, DEFAULT_MOCK_COMMENT))
-		this.mocks = [
-			...defaults,
-			...this.mocks.filter(file => !defaults.includes(file)),
-		]
+		this.mocks = Array.from(new Set(defaults).union(new Set(this.mocks)))
+	}
+
+	register(file) {
+		if (this.auto500 && this.#is500(file)) // TESTME
+			this.selectFile(file)
+		this.mocks.push(file)
+		this.#sortMocks()
 	}
 
 	unregister(file) {
@@ -48,15 +39,17 @@ export class MockBroker {
 		return isEmpty
 	}
 
-	selectDefaultFile() {
-		this.selectFile(this.mocks[0])
-	}
-
+	hasMock = file => this.mocks.includes(file)
+	
 	selectFile(filename) {
 		this.file = filename
 		this.proxied = false
 		this.auto500 = false
 		this.status = parseFilename(filename).status
+	}
+
+	selectDefaultFile() {
+		this.selectFile(this.mocks[0])
 	}
 
 	toggle500() {

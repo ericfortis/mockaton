@@ -60,14 +60,19 @@ async function onRequest(req, response) {
 		if (config.corsAllowed)
 			setCorsHeaders(req, response, config)
 
+		
 		if (isPreflight(req))
 			sendNoContent(response)
+			
 		else if (method === 'PATCH' && apiPatchRequests.has(route))
 			await apiPatchRequests.get(route)(req, response)
+			
 		else if (method === 'GET' && apiGetRequests.has(route))
 			apiGetRequests.get(route)(req, response)
+			
 		else if (method === 'GET' && staticCollection.brokerByRoute(route))
 			await dispatchStatic(req, response)
+			
 		else
 			await dispatchMock(req, response)
 	}

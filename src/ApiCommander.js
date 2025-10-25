@@ -9,27 +9,27 @@ export class Commander {
 		this.#addr = addr
 	}
 
-	#patch = (api, body) => {
-		return fetch(this.#addr + api, {
+	#patch = (api, body) =>
+		fetch(this.#addr + api, {
 			method: 'PATCH',
 			body: JSON.stringify(body)
 		})
-	}
 
 	/** @returns {JsonPromise<State>} */
-	getState = () => {
-		return fetch(this.#addr + API.state)
-	}
+	getState = () =>
+		fetch(this.#addr + API.state)
 
 	/** @returns {JsonPromise<number>} */
-	getSyncVersion = (currentSyncVersion, abortSignal) => {
-		return fetch(this.#addr + API.syncVersion, {
-			signal: AbortSignal.any([abortSignal, AbortSignal.timeout(LONG_POLL_SERVER_TIMEOUT + 1000)]),
+	getSyncVersion = (currSyncVer, abortSignal) =>
+		fetch(this.#addr + API.syncVersion, {
+			signal: AbortSignal.any([
+				abortSignal,
+				AbortSignal.timeout(LONG_POLL_SERVER_TIMEOUT + 1000)
+			]),
 			headers: {
-				[DF.syncVersion]: currentSyncVersion
+				[DF.syncVersion]: currSyncVer
 			}
 		})
-	}
 
 
 	reset() {

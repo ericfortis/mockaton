@@ -7,7 +7,7 @@
 		"mockaton": "mockaton --port=2345",
 		"start": "BACKEND=http://localhost:2345 vite",
 		"pixaton": "node --test --import=./pixaton-tests/_setup.js --experimental-test-isolation=none \"./pixaton-tests/**/*.test.js\"",
-		"outdated": "npm outdated --parseable | awk -F: '{ printf \"npm i %s ;# %s\\n\", $4, $2 }'"
+		"outdated": "npm outdated --parseable | awk -F: '{ printf \"npm i %-30s ;# %s\\n\", $4, $2 }'"
 	},
 	"dependencies": {
 		"react": "19.2.0",

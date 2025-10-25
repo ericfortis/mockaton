@@ -278,16 +278,21 @@ it('returns 500 when a handler throws', async t => {
 	equal(spy.calls[0].arguments[2], 'Test500')
 })
 
-for (const [url, file, body] of fixtures)
-	testMockDispatching(url, file, body)
-
-describe('default mock', () => {
+describe('Default mock', () => {
 	testMockDispatching(...fixtureDefaultInName)
 	it('sorts mocks list with the user specified default first for dashboard display', async () => {
 		const { mocks } = (await fetchState()).brokersByMethod.GET[fixtureDefaultInName[0]]
 		equal(mocks[0], fixtureDefaultInName[1])
 		equal(mocks[1], fixtureNonDefaultInName[1])
 	})
+})
+
+describe('Dispatch', () => {
+	for (const [url, file, body] of fixtures)
+		testMockDispatching(url, file, body)
+
+	testMockDispatching('/api/object', 'api/object.GET.200.js', { JSON_FROM_JS: true }, mimeFor('.json'))
+	testMockDispatching(...fixtureCustomMime, 'my_custom_mime')
 })
 
 describe('Set Global Delay', () => {
@@ -324,7 +329,7 @@ it('422 when updating non-existing mock alternative. There are mocks for /api/th
 })
 
 
-describe('auto 500', () => {
+describe('Auto 500', () => {
 	it('preserves existing 500', async () => {
 		const url = '/api'
 		const file = 'api/.GET.500.txt'
@@ -372,7 +377,7 @@ it('updates current selected mock and resets proxied flag', async () => {
 	equal(await res.text(), expectedBody)
 })
 
-describe('comments', () => {
+describe('Comments', () => {
 	it('Extracts all comments without duplicates', async () => {
 		deepEqual((await fetchState()).comments, [
 			'(comment-1)',
@@ -416,13 +421,6 @@ describe('comments', () => {
 		}
 	})
 })
-
-
-for (const [url, file, body] of fixtures)
-	testMockDispatching(url, file, body)
-
-testMockDispatching('/api/object', 'api/object.GET.200.js', { JSON_FROM_JS: true }, mimeFor('.json'))
-testMockDispatching(...fixtureCustomMime, 'my_custom_mime')
 
 it('JS Function Mocks', async () => {
 	write('api/js-func.POST.200.js', `
@@ -817,7 +815,7 @@ describe('Resets Static Routes', () => {
 	})
 })
 
-describe('static partial content', () => {
+describe('Static partial content', () => {
 	const route = '/' + fixtureStaticIndex[0]
 	const expectedBody = fixtureStaticIndex[1]
 

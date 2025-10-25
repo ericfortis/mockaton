@@ -276,7 +276,7 @@ function MockList() {
 		return Object.keys(store.brokersByMethod).map(method => Fragment(
 			r('tr', null,
 				r('th', { colspan: 2 + Number(store.canProxy) }),
-				r('th', null, method)),
+				r('th', { colspan: 2 }, method)),
 			store.brokersAsRowsByMethod(method).map(Row)))
 
 	return store.brokersAsRowsByMethod('*').map(Row)
@@ -298,8 +298,8 @@ function Row(row, i) {
 
 			r('td', null,
 				InternalServerErrorToggler(
-					method, 
-					urlMask, 
+					method,
+					urlMask,
 					!row.proxied && row.status === 500, // checked
 					row.opts.length === 1 && row.status === 500 // disabled
 				)),
@@ -425,7 +425,7 @@ function StaticFilesList() {
 		Fragment(
 			r('tr', null,
 				r('th', { colspan: (2 + Number(!groupByMethod)) + Number(canProxy) }),
-				r('th', null, t`Static GET`)),
+				r('th', { colspan: 2 }, t`Static GET`)),
 			Object.values(staticBrokers).map(({ route, status, delayed }, i) =>
 				r('tr', null,
 					canProxy && r('td'),

@@ -16,9 +16,4 @@ jobs:
         env:
           TMPDIR: ${{ runner.temp }}
 
-      - run: npm run coverage
-
-      - uses: codecov/codecov-action@v5
-        with:
-          files: lcov.info
-          token: ${{ secrets.CODECOV_TOKEN }}
+      - run: npm run test

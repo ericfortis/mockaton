@@ -1,7 +1,6 @@
 import { deferred } from './DashboardDom.js'
 import { Commander } from './ApiCommander.js'
-import { parseFilename, extractComments, nameForAuto500 } from './Filename.js'
-import { AUTO_500_COMMENT } from './ApiConstants.js'
+import { parseFilename, extractComments } from './Filename.js'
 
 
 const t = translation => translation[0]
@@ -341,6 +340,9 @@ export class BrokerRowModel {
 		this.urlMaskDittoed = urlMaskDittoed
 	}
 
+	get auto500() {
+		return this.#broker.auto500
+	}
 	get delayed() {
 		return this.#broker.delayed
 	}
@@ -359,22 +361,23 @@ export class BrokerRowModel {
 	}
 	get selectedFileIs500() {
 		const { status } = parseFilename(this.selectedFile)
-		return status === 500
+		return status === 500 || this.auto500
 	}
 
 	#makeOptions() {
-		const proxied = this.proxied
-		const selectedIs500 = this.selectedFileIs500
+		const opts = this.#broker.mocks.map(f => [
+			f,
+			this.#optionLabelFor(f),
+			!this.auto500 && !this.proxied && f === this.selectedFile
+		])
 
-		const opts = this.#broker.mocks
-			.filter(f => selectedIs500 || !f.includes(AUTO_500_COMMENT))
-			.map(f => [
-				f,
-				this.#optionLabelFor(f),
-				!proxied && f === this.selectedFile
+		if (this.auto500)
+			opts.push([
+				'__AUTO_500__',
+				t`Auto500`,
+				true
 			])
-
-		if (proxied)
+		else if (this.proxied)
 			opts.push([
 				'__PROXIED__',
 				t`Proxied`,
@@ -386,49 +389,32 @@ export class BrokerRowModel {
 
 	#optionLabelFor(file) {
 		const { status, ext } = parseFilename(file)
-		const comments = extractComments(file)
-		const isAutogen500 = comments.includes(AUTO_500_COMMENT)
 		return [
-			isAutogen500 ? '' : status,
+			status,
 			ext === 'empty' || ext === 'unknown' ? '' : ext,
-			isAutogen500 ? t`Auto500` : comments.join(' ')
+			extractComments(file).join(' ')
 		].filter(Boolean).join(' ')
 	}
 }
 
 const TestBrokerRowModelOptions = {
-	'ignores autogen500 when unselected'() {
+	'has Auto500 when autogen 500'() {
 		const broker = {
-			file: 'api/other',
-			mocks: [nameForAuto500('api/user', 'GET')]
+			auto500: true,
+			file: 'api/user.GET.200.json',
+			mocks: ['api/user.GET.200.json']
 		}
 		const row = new BrokerRowModel(broker, false)
-		console.assert(row.opts.length === 0)
-	},
-
-	'keeps non-autogen500 when unselected'() {
-		const broker = {
-			file: 'api/other',
-			mocks: [`api/user.GET.500.txt`]
-		}
-		const row = new BrokerRowModel(broker, false)
-		console.assert(row.opts.length === 1)
-		console.assert(row.opts[0][1] === t`500 txt`)
-	},
-
-	'renames autogen file to Auto500'() {
-		const broker = {
-			file: nameForAuto500('api/user', 'GET'),
-			mocks: [nameForAuto500('api/user', 'GET')]
-		}
-		const row = new BrokerRowModel(broker, false)
-		console.assert(row.opts.length === 1)
-		console.assert(row.opts[0][1] === t`Auto500`)
+		const opts = row.opts.map(([, n, selected]) => [n, selected])
+		console.assert(deepEqual(opts, [
+			['200 json', false],
+			[t`Auto500`, true],
+		]))
 	},
 
 	'filename has extension except when empty or unknown'() {
 		const broker = {
-			file: `api/other`,
+			file: `api/user0.GET.200.empty`,
 			mocks: [
 				`api/user0.GET.200.empty`,
 				`api/user1.GET.200.unknown`,
@@ -439,11 +425,12 @@ const TestBrokerRowModelOptions = {
 		const row = new BrokerRowModel(broker, false)
 		// Think about, in cases like this, the only option the user has
 		// for discerning empty and unknown is on the Previewer Title
-		console.assert(deepEqual(row.opts.map(([, n]) => n), [
-			'200',
-			'200',
-			'200 json',
-			'200 json (another json)',
+		const opts = row.opts.map(([, n, selected]) => [n, selected])
+		console.assert(deepEqual(opts, [
+			['200', true],
+			['200', false],
+			['200 json', false],
+			['200 json (another json)', false]
 		]))
 	},
 

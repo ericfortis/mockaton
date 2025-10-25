@@ -1,6 +1,3 @@
-import { AUTO_500_COMMENT } from './ApiConstants.js'
-
-
 const httpMethods = [ // @KeepSync with node:http.METHODS
 	'ACL', 'BIND', 'CHECKOUT',
 	'CONNECT', 'COPY', 'DELETE',
@@ -76,6 +73,3 @@ function replaceIds(filename) {
 }
 
 
-export function nameForAuto500(basename, method) {
-	return `${basename}${AUTO_500_COMMENT}.${method}.500.empty`
-}

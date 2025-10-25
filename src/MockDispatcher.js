@@ -35,8 +35,8 @@ export async function dispatchMock(req, response) {
 		for (let i = 0; i < config.extraHeaders.length; i += 2)
 			response.setHeader(config.extraHeaders[i], config.extraHeaders[i + 1])
 
-		response.statusCode = broker.status // TESTME plugins can change it
-		const { mime, body } = broker.temp500IsSelected
+		response.statusCode = broker.auto500 ? 500 : broker.status // TESTME plugins can change it
+		const { mime, body } = broker.auto500
 			? { mime: '', body: '' }
 			: await applyPlugins(join(config.mocksDir, broker.file), req, response)
 

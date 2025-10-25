@@ -6,7 +6,6 @@ import { MockBroker } from './MockBroker.js'
 import { listFilesRecursively } from './utils/fs.js'
 import { config, isFileAllowed } from './config.js'
 import { parseFilename, validateFilename } from './Filename.js'
-import { AUTO_500_COMMENT } from './ApiConstants.js'
 
 
 /**
@@ -36,10 +35,7 @@ export function init() {
 		.sort()
 		.forEach(f => registerMock(f))
 
-	forEachBroker(broker => {
-		broker.ensureItHas500()
-		broker.selectDefaultFile()
-	})
+	forEachBroker(b => b.selectDefaultFile())
 }
 
 /** @returns {boolean} registered */
@@ -59,9 +55,6 @@ export function registerMock(file, isFromWatcher = false) {
 
 	if (isFromWatcher && !this.file)
 		collection[method][urlMask].selectDefaultFile()
-
-	if (isFromWatcher)
-		collection[method][urlMask].ensureItHas500()
 
 	return true
 }
@@ -117,7 +110,6 @@ export function extractAllComments() {
 			comments.add(c)
 	})
 	return Array.from(comments)
-		.filter(c => c !== AUTO_500_COMMENT)
 }
 
 export function setMocksMatchingComment(comment) {

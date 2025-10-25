@@ -28,9 +28,6 @@ export const DF = { // Dashboard Fields (XHR)
 	syncVersion: 'last_received_sync_version'
 }
 
-// TODO @ThinkAbout these affecting partial matches when bulk-selecting
-// e.g. 'ton' would match 
-export const AUTO_500_COMMENT = '(Mockaton 500)'
 export const DEFAULT_MOCK_COMMENT = '(default)'
 
 export const EXT_FOR_UNKNOWN_MIME = 'unknown'

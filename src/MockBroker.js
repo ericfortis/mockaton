@@ -1,5 +1,5 @@
-import { includesComment, extractComments, parseFilename, nameForAuto500 } from './Filename.js'
-import { AUTO_500_COMMENT, DEFAULT_MOCK_COMMENT } from './ApiConstants.js'
+import { includesComment, extractComments, parseFilename } from './Filename.js'
+import { DEFAULT_MOCK_COMMENT } from './ApiConstants.js'
 
 
 /** MockBroker is a state for a particular route. It knows the available mock files
@@ -8,6 +8,8 @@ export class MockBroker {
 	constructor(file) {
 		this.delayed = false
 		this.proxied = false
+		this.auto500 = false
+		// this.status = -1 // TODO
 		this.mocks = [] // filenames
 		this.file = '' // selected mock filename
 		this.urlMaskMatches = new UrlMatcher(file).urlMaskMatches
@@ -15,16 +17,11 @@ export class MockBroker {
 	}
 
 	get status() { return parseFilename(this.file).status }
-	get temp500IsSelected() { return this.#isTemp500(this.file) }
-
 	hasMock(file) { return this.mocks.includes(file) }
 
 	register(file) {
-		if (this.#is500(file)) {
-			if (this.temp500IsSelected)
-				this.selectFile(file)
-			this.#deleteTemp500()
-		}
+		if (this.#is500(file) && this.auto500)
+			this.selectFile(file)
 		this.mocks.push(file)
 		this.#sortMocks()
 	}
@@ -33,39 +30,18 @@ export class MockBroker {
 		return parseFilename(file).status === 500
 	}
 
-	#deleteTemp500() {
-		this.mocks = this.mocks.filter(file => !this.#isTemp500(file))
-	}
-
-	#isTemp500(file) {
-		return includesComment(file, AUTO_500_COMMENT)
-	}
-
 	#sortMocks() {
 		this.mocks.sort()
 		const defaults = this.mocks.filter(file => includesComment(file, DEFAULT_MOCK_COMMENT))
-		const temp500 = this.mocks.filter(this.#isTemp500)
 		this.mocks = [
 			...defaults,
-			...this.mocks.filter(file => !defaults.includes(file) && !temp500.includes(file)),
-			...temp500
+			...this.mocks.filter(file => !defaults.includes(file)),
 		]
-	}
-
-	ensureItHas500() {
-		if (!this.mocks.some(this.#is500))
-			this.#registerTemp500()
-	}
-	#registerTemp500() {
-		const { urlMask, method } = parseFilename(this.mocks[0])
-		const file = urlMask.replace(/^\//, '') // Removes leading slash
-		this.mocks.push(nameForAuto500(file, method))
 	}
 
 	unregister(file) {
 		this.mocks = this.mocks.filter(f => f !== file)
 		const isEmpty = !this.mocks.length
-			|| this.mocks.length === 1 && this.#isTemp500(this.mocks[0])
 		if (!isEmpty && this.file === file)
 			this.selectDefaultFile()
 		return isEmpty
@@ -78,16 +54,29 @@ export class MockBroker {
 	selectFile(filename) {
 		this.file = filename
 		this.proxied = false
+		this.auto500 = false
+		// this.status = parseFilename(filename).status // TODO
 	}
 
-	toggle500() {
-		this.#is500(this.file)
-			? this.selectDefaultFile()
-			: this.selectFile(this.mocks.find(this.#is500))
+	toggle500() { // TODO disable ui when .length === 1 and is 500
+		this.proxied = false // TESTME
+		if (this.auto500 || this.#is500(this.file))
+			this.selectDefaultFile()
+		else {
+			const f = this.mocks.find(this.#is500)
+			if (f)
+				this.selectFile(f)
+			else 
+				this.auto500 = true
+		}
 	}
 
 	setDelayed(delayed) { this.delayed = delayed }
-	setProxied(proxied) { this.proxied = proxied }
+	
+	setProxied(proxied) {
+		this.auto500 = false // TESTME
+		this.proxied = proxied
+	}
 
 	setByMatchingComment(comment) {
 		for (const file of this.mocks)

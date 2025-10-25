@@ -1,5 +1,5 @@
 import { createElement as r, createSvgElement as s, className, restoreFocus, Defer, Fragment, useRef } from './DashboardDom.js'
-import { AUTO_500_COMMENT, HEADER_FOR_502 } from './ApiConstants.js'
+import { HEADER_FOR_502 } from './ApiConstants.js'
 import { store, dittoSplitPaths, BrokerRowModel } from './DashboardStore.js'
 import { parseFilename } from './Filename.js'
 
@@ -156,9 +156,7 @@ function BulkSelector() {
 				},
 				r('option', { value: firstOption }, firstOption),
 				r('hr'),
-				comments.map(value => r('option', { value }, value)),
-				r('hr'),
-				r('option', { value: AUTO_500_COMMENT }, t`Auto500`)
+				comments.map(value => r('option', { value }, value))
 			)))
 }
 

@@ -59,7 +59,7 @@ export class MockBroker {
 		this.status = parseFilename(filename).status
 	}
 
-	toggle500() { // TODO disable ui when .length === 1 and is 500
+	toggle500() {
 		this.proxied = false // TESTME
 		if (this.auto500 || this.status === 500)
 			this.selectDefaultFile()

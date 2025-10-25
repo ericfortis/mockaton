@@ -544,10 +544,21 @@ table {
 			}
 		}
 
+		&:disabled + span {
+			cursor: not-allowed;
+			opacity: 0.7;
+		}
 		&:checked + span {
 			border-color: var(--colorRed);
 			color: white;
 			background: var(--colorRed);
+		}
+		&:not(:checked):enabled:hover + span {
+			border-color: var(--colorRed);
+			color: var(--colorRed);
+		}
+		&:enabled:active + span {
+			cursor: grabbing;
 		}
 	}
 
@@ -558,14 +569,6 @@ table {
 		font-weight: bold;
 		color: var(--colorSecondaryAction);
 		border-radius: var(--radius);
-
-		&:hover {
-			border-color: var(--colorRed);
-			color: var(--colorRed);
-		}
-		&:active {
-			cursor: grabbing;
-		}
 	}
 }
 

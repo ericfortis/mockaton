@@ -297,7 +297,12 @@ function Row(row, i) {
 				DelayRouteToggler(method, urlMask, row.delayed)),
 
 			r('td', null,
-				InternalServerErrorToggler(method, urlMask, !row.proxied && row.status === 500)),
+				InternalServerErrorToggler(
+					method, 
+					urlMask, 
+					!row.proxied && row.status === 500, // checked
+					row.opts.length === 1 && row.status === 500 // disabled
+				)),
 
 			!store.groupByMethod && r('td', className(CSS.Method),
 				method),
@@ -373,7 +378,7 @@ function DelayRouteToggler(method, urlMask, checked) {
 	})
 }
 
-function InternalServerErrorToggler(method, urlMask, checked) {
+function InternalServerErrorToggler(method, urlMask, checked, disabled) {
 	return (
 		r('label', {
 				className: CSS.InternalServerErrorToggler,
@@ -381,6 +386,7 @@ function InternalServerErrorToggler(method, urlMask, checked) {
 			},
 			r('input', {
 				type: 'checkbox',
+				disabled,
 				checked,
 				onChange() { store.toggle500(method, urlMask) },
 				'data-focus-group': FocusGroup.StatusToggler

@@ -1,4 +1,8 @@
 # Changelog
+- 10.7.0 dashboard: animate in newly added mocks
+
+![](docs/10.7.0-newly-added-anim.gif)
+
 - 10.6.0 dashboard: arrow navigation
  
 ![](docs/10.6.0-arrow-nav.gif)

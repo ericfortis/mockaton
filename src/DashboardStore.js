@@ -130,24 +130,6 @@ export const store = {
 
 	_dittoCache: new Map(),
 
-	brokersAsRowsByMethod(method) {
-		const rows = store._brokersAsArray(method)
-			.map(b => new BrokerRowModel(b, store.canProxy))
-			.sort((a, b) => a.urlMask.localeCompare(b.urlMask))
-		const urlMasksDittoed = dittoSplitPaths(rows.map(r => r.urlMask))
-		rows.forEach((r, i) => {
-			store._dittoCache.set(r.method + '::' + r.urlMask, urlMasksDittoed[i])
-			r.setUrlMaskDittoed(urlMasksDittoed[i])
-		})
-		return rows
-	},
-
-	brokerAsRow(method, urlMask) {
-		const r = new BrokerRowModel(store.brokerFor(method, urlMask), store.canProxy)
-		r.setUrlMaskDittoed(store._dittoCache.get(r.method + '::' + r.urlMask))
-		return r
-	},
-
 	_brokersAsArray(byMethod = '*') {
 		const arr = []
 		for (const [method, brokers] of Object.entries(store.brokersByMethod))
@@ -156,6 +138,38 @@ export const store = {
 		return arr
 	},
 
+	brokersAsRowsByMethod(method) {
+		const rows = store._brokersAsArray(method)
+			.map(b => new BrokerRowModel(b, store.canProxy))
+			.sort((a, b) => a.urlMask.localeCompare(b.urlMask))
+		const urlMasksDittoed = dittoSplitPaths(rows.map(r => r.urlMask))
+		rows.forEach((r, i) => {
+			r.setUrlMaskDittoed(urlMasksDittoed[i])
+			r.setIsNew(!store._dittoCache.has(r.key))
+			store._dittoCache.set(r.key, urlMasksDittoed[i])
+		})
+		return rows
+	},
+
+	brokerAsRow(method, urlMask) {
+		const b = store.brokerFor(method, urlMask)
+		const r = new BrokerRowModel(b, store.canProxy)
+		r.setUrlMaskDittoed(store._dittoCache.get(r.key))
+		return r
+	},
+	
+	staticBrokersAsRows() {
+		const rows = Object.values(store.staticBrokers)
+			.map(b => new StaticBrokerRowModel(b))
+			.sort((a, b) => a.urlMask.localeCompare(b.urlMask))
+		const urlMasksDittoed = dittoSplitPaths(rows.map(r => r.urlMask))
+		rows.forEach((r, i) => {
+			r.setUrlMaskDittoed(urlMasksDittoed[i])
+			r.setIsNew(!store._dittoCache.has(r.key))
+			store._dittoCache.set(r.key, urlMasksDittoed[i])
+		})
+		return rows
+	},
 
 	previewLink(method, urlMask) {
 		store.setChosenLink(method, urlMask)
@@ -313,9 +327,10 @@ dittoSplitPaths.test = function () {
 deferred(dittoSplitPaths.test)
 
 
-
 export class BrokerRowModel {
 	opts = /** @type {[key:string, label:string, selected:boolean][]} */ []
+	isNew = false
+	key = ''
 	method = ''
 	urlMask = ''
 	urlMaskDittoed = ['', '']
@@ -330,6 +345,7 @@ export class BrokerRowModel {
 		this.#broker = broker
 		this.#canProxy = canProxy
 		const { method, urlMask } = parseFilename(broker.file)
+		this.key = 'brm' + '::' + method + '::' + urlMask
 		this.method = method
 		this.urlMask = urlMask
 		this.opts = this.#makeOptions()
@@ -338,24 +354,17 @@ export class BrokerRowModel {
 	setUrlMaskDittoed(urlMaskDittoed) {
 		this.urlMaskDittoed = urlMaskDittoed
 	}
+	setIsNew(isNew) {
+		this.isNew = isNew
+	}
 
-	get status() {
-		return this.#broker.status
-	}
-	get auto500() {
-		return this.#broker.auto500
-	}
-	get delayed() {
-		return this.#broker.delayed
-	}
-	get proxied() {
-		return this.#canProxy && this.#broker.proxied
-	}
+	get status() { return this.#broker.status }
+	get auto500() { return this.#broker.auto500 }
+	get delayed() { return this.#broker.delayed }
+	get proxied() { return this.#canProxy && this.#broker.proxied }
+	get selectedFile() { return this.#broker.file }
 	get selectedIdx() {
 		return this.opts.findIndex(([, , selected]) => selected)
-	}
-	get selectedFile() {
-		return this.#broker.file
 	}
 	get selectedFileIs4xx() {
 		return this.status >= 400 && this.status < 500
@@ -445,6 +454,30 @@ const TestBrokerRowModel = {
 	}
 }
 deferred(() => Object.values(TestBrokerRowModel).forEach(t => t()))
+
+
+export class StaticBrokerRowModel {
+	isNew = false
+	key = ''
+	method = 'GET'
+	urlMaskDittoed = ['', '']
+	#broker = /** @type {ClientStaticBroker} */ {}
+
+	/** @param {ClientStaticBroker} broker */
+	constructor(broker) {
+		this.#broker = broker
+		this.key = 'sbrm' + '::' + this.method + '::' + broker.route
+	}
+	setUrlMaskDittoed(urlMaskDittoed) {
+		this.urlMaskDittoed = urlMaskDittoed
+	}
+	setIsNew(isNew) {
+		this.isNew = isNew
+	}
+	get urlMask() { return this.#broker.route }
+	get delayed() { return this.#broker.delayed }
+	get status() { return this.#broker.status }
+}
 
 function deepEqual(a, b) {
 	return JSON.stringify(a) === JSON.stringify(b)

@@ -8,19 +8,33 @@ import * as staticCollection from './staticCollection.js'
 import * as mockBrokerCollection from './mockBrokersCollection.js'
 
 
-/** # ARR = Add, Remove, or Rename Mock Event */
+/**
+ * ARR = Add, Remove, or Rename Mock Event
+ * 
+ * The emitter is debounced so it handles e.g. bulk deletes,
+ * and also renames, which are two events (delete + add).
+ */
 export const uiSyncVersion = new class extends EventEmitter {
 	version = 0
 
-	increment() {
+	increment = this.#debounce(() => {
 		this.version++
 		super.emit('ARR')
-	}
+	})
+
 	subscribe(listener) {
 		this.once('ARR', listener)
 	}
 	unsubscribe(listener) {
 		this.removeListener('ARR', listener)
+	}
+
+	#debounce(fn) {
+		let timer
+		return () => {
+			clearTimeout(timer)
+			timer = setTimeout(fn, 80)
+		}
 	}
 }
 
@@ -29,7 +43,7 @@ export function watchMocksDir() {
 	watch(dir, { recursive: true, persistent: false }, (_, file) => {
 		if (!file)
 			return
-		
+
 		const path = join(dir, file)
 
 		if (isDirectory(path)) {
@@ -56,7 +70,7 @@ export function watchStaticDir() {
 	watch(dir, { recursive: true, persistent: false }, (_, file) => {
 		if (!file)
 			return
-		
+
 		const path = join(dir, file)
 
 		if (isDirectory(path)) {
@@ -77,4 +91,3 @@ export function watchStaticDir() {
 }
 
 // TODO config changes
-// TODO think about throttling e.g. bulk deletes/remove files

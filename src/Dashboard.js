@@ -1,5 +1,5 @@
 import { createElement as r, createSvgElement as s, className, restoreFocus, Defer, Fragment, useRef } from './DashboardDom.js'
-import { store, dittoSplitPaths, BrokerRowModel } from './DashboardStore.js'
+import { store, BrokerRowModel } from './DashboardStore.js'
 import { HEADER_FOR_502 } from './ApiConstants.js'
 import { parseFilename } from './Filename.js'
 
@@ -28,6 +28,7 @@ const CSS = {
 	SaveProxiedCheckbox: null,
 	SettingsMenu: null,
 
+	animIn: null,
 	chosen: null,
 	dittoDir: null,
 	leftSide: null,
@@ -63,10 +64,12 @@ initRealTimeUpdates()
 initKeyboardNavigation()
 
 function render() {
+	render.count++
 	restoreFocus(() => document.body.replaceChildren(...App()))
 	if (store.hasChosenLink)
 		previewMock()
 }
+render.count = 0
 
 const t = translation => translation[0]
 
@@ -287,9 +290,12 @@ function MockList() {
  * @param {number} i
  */
 function Row(row, i) {
-	const { method, urlMask } = row
+	const { key, method, urlMask } = row
 	return (
-		r('tr', { key: Row.key(method, urlMask) },
+		r('tr', {
+				key,
+				...className(render.count > 1 && row.isNew && CSS.animIn)
+			},
 			store.canProxy && r('td', null,
 				ProxyToggler(method, urlMask, row.proxied)),
 
@@ -313,13 +319,12 @@ function Row(row, i) {
 			r('td', null,
 				MockSelector(row))))
 }
-Row.key = (method, urlMask) => method + '::' + urlMask
 
 function renderRow(method, urlMask) {
 	restoreFocus(() => {
 		unChooseOld()
-		trFor(Row.key(method, urlMask))
-			.replaceWith(Row(store.brokerAsRow(method, urlMask)))
+		const row = store.brokerAsRow(method, urlMask)
+		trFor(row.key).replaceWith(Row(row))
 		previewMock()
 	})
 
@@ -414,38 +419,45 @@ function ProxyToggler(method, urlMask, checked) {
 /** # StaticFilesList */
 
 function StaticFilesList() {
-	const { staticBrokers, canProxy, groupByMethod } = store
-	if (!Object.keys(staticBrokers).length)
-		return null
-
-	const dp = dittoSplitPaths(Object.keys(staticBrokers)).map(([ditto, tail]) => ditto
-		? [r('span', className(CSS.dittoDir), ditto), tail]
-		: tail)
-	return (
-		Fragment(
+	const { canProxy, groupByMethod } = store
+	const rows = store.staticBrokersAsRows()
+	return !rows.length
+		? null
+		: Fragment(
 			r('tr', null,
 				r('th', { colspan: (2 + Number(!groupByMethod)) + Number(canProxy) }),
 				r('th', { colspan: 2 }, t`Static GET`)),
-			Object.values(staticBrokers).map(({ route, status, delayed }, i) =>
-				r('tr', null,
-					canProxy && r('td'),
-					r('td', null,
-						DelayStaticRouteToggler(route, delayed)),
+			rows.map(StaticRow))
+}
 
-					r('td', null,
-						NotFoundToggler(route, status === 404)),
+/** @param {StaticBrokerRowModel} row */
+function StaticRow(row) {
+	const { canProxy, groupByMethod } = store
+	const [ditto, tail] = row.urlMaskDittoed
+	return (
+		r('tr', {
+				key: row.key,
+				...className(render.count > 1 && row.isNew && CSS.animIn)
+			},
+			canProxy && r('td'),
+			r('td', null,
+				DelayStaticRouteToggler(row.urlMask, row.delayed)),
 
-					!groupByMethod && r('td', className(CSS.Method),
-						'GET'),
+			r('td', null,
+				NotFoundToggler(row.urlMask, row.status === 404)),
 
-					r('td', null,
-						r('a', {
-							href: route,
-							target: '_blank',
-							className: CSS.PreviewLink,
-							'data-focus-group': FocusGroup.PreviewLink
-						}, dp[i]))
-				))))
+			!groupByMethod && r('td', className(CSS.Method),
+				'GET'),
+
+			r('td', null,
+				r('a', {
+					href: row.urlMask,
+					target: '_blank',
+					className: CSS.PreviewLink,
+					'data-focus-group': FocusGroup.PreviewLink
+				}, ditto
+					? [r('span', className(CSS.dittoDir), ditto), tail]
+					: tail))))
 }
 
 function DelayStaticRouteToggler(route, checked) {

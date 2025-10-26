@@ -369,6 +369,19 @@ table {
 	> tr:first-child > th {
 		border-top: 0;
 	}
+	
+	tr.animIn {
+		opacity: 0;
+		transform: scaleY(0);
+		animation: _kfAnimIn 180ms ease-in-out forwards;
+	}
+}
+
+@keyframes _kfAnimIn {
+	to {
+		opacity: 1;
+		transform: scaleY(1);
+	}
 }
 
 .Method {

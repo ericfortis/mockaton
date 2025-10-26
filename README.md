@@ -10,33 +10,6 @@
 An HTTP mock server for simulating APIs with minimal setup
 &mdash; ideal for testing difficult to reproduce states.
 
-<br/>
-
-## Motivation
-
-**No API state should be too hard to test.**
-With Mockaton, developers can achieve correctness and speed.
-
-### Correctness
-- Enables testing of complex scenarios that would otherwise be skipped. e.g.,
-  - Triggering errors on third-party APIs. 
-  - Triggering errors on your project’s backend (if you are a frontend developer).
-- Allows for deterministic, comprehensive, and consistent state.
-  - Spot inadvertent regressions during development.
-  - Use it to set up screenshot tests, e.g., with [pixaton](https://github.com/ericfortis/pixaton).
-
-### Speed
-- Works around unstable dev backends while developing UIs.
-  - Spinning up development infrastructure.
-  - Syncing database states.
-- Prevents progress from being blocked by waiting for APIs.
-- Time travel. If you commit the mocks to your repo, 
-  you don’t have to downgrade backends for:
-  - checking out long-lived branches 
-  - bisecting bugs
-
-<br/>
-
 ## Overview
 With Mockaton, you don’t need to write code for wiring up your
 mocks. Instead, a given directory is scanned for filenames
@@ -117,6 +90,31 @@ mocks for, or routes that have the ☁️ **Cloud Checkbox** checked. In additio
 checking ✅ **Save Mocks**, you can collect the responses that hit your backend.
 They will be saved in your `config.mocksDir` following the filename convention.
 </details>
+
+<br/>
+
+## Motivation
+
+**No API state should be too hard to test.**
+With Mockaton, developers can achieve correctness and speed.
+
+### Correctness
+- Enables testing of complex scenarios that would otherwise be skipped. e.g.,
+  - Triggering errors on third-party APIs.
+  - Triggering errors on your project’s backend (if you are a frontend developer).
+- Allows for deterministic, comprehensive, and consistent state.
+  - Spot inadvertent regressions during development.
+  - Use it to set up screenshot tests, e.g., with [pixaton](https://github.com/ericfortis/pixaton).
+
+### Speed
+- Works around unstable dev backends while developing UIs.
+  - Spinning up development infrastructure.
+  - Syncing database states.
+- Prevents progress from being blocked by waiting for APIs.
+- Time travel. If you commit the mocks to your repo,
+  you don’t have to downgrade backends for:
+  - checking out long-lived branches
+  - bisecting bugs
 
 
 <br/>

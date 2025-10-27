@@ -11,8 +11,8 @@ export const store = {
 	render() {},
 	renderRow(method, urlMask) {},
 
-	brokersByMethod: /** @type {State.brokersByMethod} */ {},
-	staticBrokers: /** @type {State.staticBrokers} */ {},
+	brokersByMethod: /** @type ClientBrokersByMethod */ {},
+	staticBrokers: /** @type ClientStaticBrokers */ {},
 
 	cookies: [],
 	comments: [],
@@ -332,7 +332,7 @@ class BrokerRowModel {
 	method = ''
 	urlMask = ''
 	urlMaskDittoed = ['', '']
-	#broker = /** @type {ClientMockBroker} */ {}
+	#broker = /** @type ClientMockBroker */ {}
 	#canProxy = false
 
 	/**
@@ -459,7 +459,7 @@ class StaticBrokerRowModel {
 	key = ''
 	method = 'GET'
 	urlMaskDittoed = ['', '']
-	#broker = /** @type {ClientStaticBroker} */ {}
+	#broker = /** @type ClientStaticBroker */ {}
 
 	/** @param {ClientStaticBroker} broker */
 	constructor(broker) {

@@ -56,6 +56,8 @@ const FocusGroup = {
 	PreviewLink: 3
 }
 
+const t = translation => translation[0]
+
 store.onError = onError
 store.render = render
 store.renderRow = renderRow
@@ -71,7 +73,6 @@ function render() {
 }
 render.count = 0
 
-const t = translation => translation[0]
 
 const leftSideRef = useRef()
 leftSideRef.width = undefined
@@ -333,7 +334,7 @@ function renderRow(method, urlMask) {
 		return leftSideRef.elem.querySelector(`tr[key="${key}"]`)
 	}
 	function unChooseOld() {
-		return leftSideRef.elem.querySelector(`td > .${CSS.chosen}`)
+		return leftSideRef.elem.querySelector(`td > a.${CSS.chosen}`)
 			?.classList.remove(CSS.chosen)
 	}
 }

@@ -369,7 +369,7 @@ table {
 	> tr:first-child > th {
 		border-top: 0;
 	}
-	
+
 	tr.animIn {
 		opacity: 0;
 		transform: scaleY(0);

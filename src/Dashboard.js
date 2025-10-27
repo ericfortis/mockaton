@@ -673,37 +673,48 @@ function isXML(mime) {
 }
 
 
-async function onError(_error) {
-	let error = _error
+async function onError(error) {
+	if (error?.name === 'AbortError')
+		return
 
-	if (_error instanceof Response) {
-		if (_error.status === 422)
-			error = await _error.text()
-		else if (_error.statusText)
-			error = _error.statusText
+	let msg = ''
+	let isOffline = false
+
+	if (error instanceof Response) {
+		if (error.status === 422)
+			msg = await error.text()
+		else if (error.statusText)
+			msg = error.statusText
 	}
 	else {
-		if (error?.name === 'AbortError')
-			return
-		if (error?.message === 'Failed to fetch')
-			error = t`Looks like the Mockaton server is not running` // TODO clear Error if comes back in ui-sync
+		if (error?.message === 'Failed to fetch') {
+			msg = t`Looks like the Mockaton server is not running`
+			isOffline = true
+		}
 		else
-			error = error || t`Unexpected Error`
+			msg = error?.message || t`Unexpected Error`
 	}
-	showErrorToast(error)
-	console.error(_error)
+	
+	ErrorToast(msg, isOffline)
+	console.error(error)
 }
 
-function showErrorToast(msg) {
-	document.getElementsByClassName(CSS.ErrorToast)[0]?.remove()
+function ErrorToast(msg, isOffline) {
+	ErrorToast.isOffline = isOffline
+	ErrorToast.ref.elem?.remove()
 	document.body.appendChild(
 		r('div', {
+			role: 'alert',
+			ref: ErrorToast.ref,
 			className: CSS.ErrorToast,
-			onClick() {
-				const toast = this
-				document.startViewTransition(() => toast.remove())
-			}
+			onClick: ErrorToast.close
 		}, msg))
+}
+ErrorToast.isOffline = false
+ErrorToast.ref = useRef()
+ErrorToast.close = () => {
+	document.startViewTransition(() => 
+		ErrorToast.ref.elem?.remove())
 }
 
 
@@ -751,6 +762,9 @@ function initRealTimeUpdates() {
 		try {
 			const response = await store.getSyncVersion(oldSyncVersion, controller.signal)
 			if (response.ok) {
+				if (ErrorToast.isOffline)
+					ErrorToast.close()
+
 				const syncVersion = await response.json()
 				const skipUpdate = oldSyncVersion === -1
 				if (oldSyncVersion !== syncVersion) { // because it could be < or >

@@ -105,16 +105,16 @@ export function brokerByRoute(method, url) {
 
 export function extractAllComments() {
 	const comments = new Set()
-	forEachBroker(broker => {
-		for (const c of broker.extractComments())
+	forEachBroker(b => {
+		for (const c of b.extractComments())
 			comments.add(c)
 	})
 	return Array.from(comments)
 }
 
 export function setMocksMatchingComment(comment) {
-	forEachBroker(broker =>
-		broker.setByMatchingComment(comment))
+	forEachBroker(b => 
+		b.setByMatchingComment(comment))
 }
 
 function forEachBroker(fn) {

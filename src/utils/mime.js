@@ -105,9 +105,9 @@ export function mimeFor(filename) {
 }
 function extname(filename) {
 	const i = filename.lastIndexOf('.')
-	return i >= 0
-		? filename.substring(i + 1)
-		: ''
+	return i === -1 
+		? '' 
+		: filename.slice(i + 1)
 }
 
 

@@ -3,15 +3,15 @@ export function className(...args) {
 }
 
 export function createElement(tag, props, ...children) {
-	const node = document.createElement(tag)
+	const elem = document.createElement(tag)
 	for (const [k, v] of Object.entries(props || {}))
-		if (k === 'ref') v.current = node
-		else if (k === 'style') Object.assign(node.style, v)
-		else if (k.startsWith('on')) node.addEventListener(k.slice(2).toLowerCase(), ...[v].flat())
-		else if (k in node) node[k] = v
-		else node.setAttribute(k, v)
-	node.append(...children.flat().filter(Boolean))
-	return node
+		if (k === 'ref') v.elem = elem
+		else if (k === 'style') Object.assign(elem.style, v)
+		else if (k.startsWith('on')) elem.addEventListener(k.slice(2).toLowerCase(), ...[v].flat())
+		else if (k in elem) elem[k] = v
+		else elem.setAttribute(k, v)
+	elem.append(...children.flat().filter(Boolean))
+	return elem
 }
 
 export function createSvgElement(tagName, props, ...children) {
@@ -23,7 +23,7 @@ export function createSvgElement(tagName, props, ...children) {
 }
 
 export function useRef() {
-	return { current: null }
+	return { elem: null }
 }
 
 export function Fragment(...args) {

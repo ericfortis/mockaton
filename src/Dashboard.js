@@ -1,7 +1,7 @@
 import { createElement as r, createSvgElement as s, className, restoreFocus, Defer, Fragment, useRef } from './DashboardDom.js'
-import { store, BrokerRowModel } from './DashboardStore.js'
 import { HEADER_FOR_502 } from './ApiConstants.js'
 import { parseFilename } from './Filename.js'
+import { store } from './DashboardStore.js'
 
 
 const CSS = {
@@ -74,6 +74,7 @@ render.count = 0
 const t = translation => translation[0]
 
 const leftSideRef = useRef()
+leftSideRef.width = undefined
 
 function App() {
 	return [
@@ -81,7 +82,7 @@ function App() {
 		r('main', null,
 			r('div', {
 					ref: leftSideRef,
-					style: { width: store.leftSideWidth + 'px' },
+					style: { width: leftSideRef.width + 'px' },
 					className: CSS.leftSide
 				},
 				r('table', null,
@@ -183,7 +184,7 @@ function CookieSelector() {
 function ProxyFallbackField() {
 	const checkboxRef = useRef()
 	function onChange() {
-		checkboxRef.current.disabled = !this.validity.valid || !this.value.trim()
+		checkboxRef.elem.disabled = !this.validity.valid || !this.value.trim()
 		if (!this.validity.valid)
 			this.reportValidity()
 		else
@@ -247,7 +248,7 @@ function SettingsMenu(id) {
 				className: CSS.SettingsMenu,
 				onToggle(event) {
 					if (event.newState === 'open')
-						firstInputRef.current.focus()
+						firstInputRef.elem.focus()
 				}
 			},
 
@@ -329,10 +330,10 @@ function renderRow(method, urlMask) {
 	})
 
 	function trFor(key) {
-		return leftSideRef.current.querySelector(`tr[key="${key}"]`)
+		return leftSideRef.elem.querySelector(`tr[key="${key}"]`)
 	}
 	function unChooseOld() {
-		return leftSideRef.current.querySelector(`td > .${CSS.chosen}`)
+		return leftSideRef.elem.querySelector(`td > .${CSS.chosen}`)
 			?.classList.remove(CSS.chosen)
 	}
 }
@@ -529,7 +530,7 @@ function Resizer() {
 
 	function onPointerDown(event) {
 		initialX = event.clientX
-		panelWidth = leftSideRef.current.clientWidth
+		panelWidth = leftSideRef.elem.clientWidth
 		addEventListener('pointerup', onUp, { once: true })
 		addEventListener('pointermove', onMove)
 		Object.assign(document.body.style, {
@@ -542,8 +543,8 @@ function Resizer() {
 	function onMove(event) {
 		const MIN_LEFT_WIDTH = 380
 		raf = raf || requestAnimationFrame(() => {
-			store.leftSideWidth = Math.max(panelWidth - (initialX - event.clientX), MIN_LEFT_WIDTH)
-			leftSideRef.current.style.width = store.leftSideWidth + 'px'
+			leftSideRef.width = Math.max(panelWidth - (initialX - event.clientX), MIN_LEFT_WIDTH)
+			leftSideRef.elem.style.width = leftSideRef.width + 'px'
 			raf = 0
 		})
 	}
@@ -616,8 +617,8 @@ async function previewMock() {
 	previewMock.controller = new AbortController
 
 	const spinnerTimer = setTimeout(() => {
-		payloadViewerTitleRef.current.replaceChildren(t`Fetching…`)
-		payloadViewerCodeRef.current.replaceChildren(PayloadViewerProgressBar())
+		payloadViewerTitleRef.elem.replaceChildren(t`Fetching…`)
+		payloadViewerCodeRef.elem.replaceChildren(PayloadViewerProgressBar())
 	}, SPINNER_DELAY)
 
 	try {
@@ -631,14 +632,14 @@ async function previewMock() {
 			await updatePayloadViewer(proxied, file, response)
 	}
 	catch {
-		payloadViewerCodeRef.current.replaceChildren()
+		payloadViewerCodeRef.elem.replaceChildren()
 	}
 }
 
 async function updatePayloadViewer(proxied, file, response) {
 	const mime = response.headers.get('content-type') || ''
 
-	payloadViewerTitleRef.current.replaceChildren(
+	payloadViewerTitleRef.elem.replaceChildren(
 		proxied
 			? PayloadViewerTitleWhenProxied({
 				mime,
@@ -652,16 +653,16 @@ async function updatePayloadViewer(proxied, file, response) {
 			}))
 
 	if (mime.startsWith('image/'))  // Naively assumes GET.200
-		payloadViewerCodeRef.current.replaceChildren(
+		payloadViewerCodeRef.elem.replaceChildren(
 			r('img', { src: URL.createObjectURL(await response.blob()) }))
 	else {
 		const body = await response.text() || t`/* Empty Response Body */`
 		if (mime === 'application/json')
-			payloadViewerCodeRef.current.replaceChildren(r('span', className(CSS.json), SyntaxJSON(body)))
+			payloadViewerCodeRef.elem.replaceChildren(r('span', className(CSS.json), SyntaxJSON(body)))
 		else if (isXML(mime))
-			payloadViewerCodeRef.current.replaceChildren(SyntaxXML(body))
+			payloadViewerCodeRef.elem.replaceChildren(SyntaxXML(body))
 		else
-			payloadViewerCodeRef.current.textContent = body
+			payloadViewerCodeRef.elem.textContent = body
 	}
 }
 
@@ -804,7 +805,7 @@ function initKeyboardNavigation() {
 	}
 
 	function allInFocusGroup(focusGroup) {
-		return Array.from(leftSideRef.current.querySelectorAll(
+		return Array.from(leftSideRef.elem.querySelectorAll(
 			`tr > td [data-focus-group="${focusGroup}"]:is(input, a)`))
 	}
 

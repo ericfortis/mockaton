@@ -37,8 +37,6 @@ export const store = {
 	},
 
 
-	leftSideWidth: undefined,
-
 	groupByMethod: initPreference('groupByMethod'),
 	toggleGroupByMethod() {
 		store.groupByMethod = !store.groupByMethod
@@ -277,7 +275,7 @@ function togglePreference(param, nextVal) {
  * the repeated folder paths are kept but styled differently.
  * @param {string[]} paths - sorted
  */
-export function dittoSplitPaths(paths) {
+function dittoSplitPaths(paths) {
 	const result = [['', paths[0]]]
 	const pathsInParts = paths.map(p => p.split('/').filter(Boolean))
 
@@ -327,7 +325,7 @@ dittoSplitPaths.test = function () {
 deferred(dittoSplitPaths.test)
 
 
-export class BrokerRowModel {
+class BrokerRowModel {
 	opts = /** @type {[key:string, label:string, selected:boolean][]} */ []
 	isNew = false
 	key = ''
@@ -456,7 +454,7 @@ const TestBrokerRowModel = {
 deferred(() => Object.values(TestBrokerRowModel).forEach(t => t()))
 
 
-export class StaticBrokerRowModel {
+class StaticBrokerRowModel {
 	isNew = false
 	key = ''
 	method = 'GET'

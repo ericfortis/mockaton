@@ -1,4 +1,4 @@
-import { createElement as r, createSvgElement as s, className, restoreFocus, Defer, Fragment, useRef } from './DashboardDom.js'
+import { createElement as r, createSvgElement as s, className, restoreFocus, Defer, Fragment, elemRef } from './DashboardDom.js'
 import { HEADER_FOR_502 } from './ApiConstants.js'
 import { parseFilename } from './Filename.js'
 import { store } from './DashboardStore.js'
@@ -74,8 +74,7 @@ function render() {
 render.count = 0
 
 
-const leftSideRef = useRef()
-leftSideRef.width = undefined
+const leftSideRef = elemRef({ width: '50%' }) // resizable
 
 function App() {
 	return [
@@ -83,14 +82,14 @@ function App() {
 		r('main', null,
 			r('div', {
 					ref: leftSideRef,
-					style: { width: leftSideRef.width + 'px' },
+					style: { width: leftSideRef.width },
 					className: CSS.leftSide
 				},
 				r('table', null,
 					MockList(),
 					StaticFilesList())),
 			r('div', { className: CSS.rightSide },
-				Resizer(),
+				Resizer(leftSideRef),
 				PayloadViewer()))
 	]
 }
@@ -161,8 +160,7 @@ function BulkSelector() {
 				},
 				r('option', { value: firstOption }, firstOption),
 				r('hr'),
-				comments.map(value => r('option', { value }, value))
-			)))
+				comments.map(value => r('option', { value }, value)))))
 }
 
 function CookieSelector() {
@@ -183,7 +181,7 @@ function CookieSelector() {
 
 
 function ProxyFallbackField() {
-	const checkboxRef = useRef()
+	const checkboxRef = elemRef()
 	function onChange() {
 		checkboxRef.elem.disabled = !this.validity.valid || !this.value.trim()
 		if (!this.validity.valid)
@@ -241,7 +239,7 @@ function SettingsMenuTrigger() {
 }
 
 function SettingsMenu(id) {
-	const firstInputRef = useRef()
+	const firstInputRef = elemRef()
 	return (
 		r('menu', {
 				id,
@@ -309,8 +307,7 @@ function Row(row, i) {
 					method,
 					urlMask,
 					!row.proxied && row.status === 500, // checked
-					row.opts.length === 1 && row.status === 500 // disabled
-				)),
+					row.opts.length === 1 && row.status === 500)), // disabled
 
 			!store.groupByMethod && r('td', className(CSS.Method),
 				method),
@@ -524,14 +521,14 @@ function ClickDragToggler({ checked, commit, focusGroup }) {
 			TimerIcon()))
 }
 
-function Resizer() {
+function Resizer(ref) {
 	let raf = 0
 	let initialX = 0
-	let panelWidth = 0
+	let initialWidth = 0
 
 	function onPointerDown(event) {
 		initialX = event.clientX
-		panelWidth = leftSideRef.elem.clientWidth
+		initialWidth = ref.elem.clientWidth
 		addEventListener('pointerup', onUp, { once: true })
 		addEventListener('pointermove', onMove)
 		Object.assign(document.body.style, {
@@ -544,8 +541,8 @@ function Resizer() {
 	function onMove(event) {
 		const MIN_LEFT_WIDTH = 380
 		raf = raf || requestAnimationFrame(() => {
-			leftSideRef.width = Math.max(panelWidth - (initialX - event.clientX), MIN_LEFT_WIDTH)
-			leftSideRef.elem.style.width = leftSideRef.width + 'px'
+			ref.width = Math.max(initialWidth - (initialX - event.clientX), MIN_LEFT_WIDTH) + 'px'
+			ref.elem.style.width = ref.width
 			raf = 0
 		})
 	}
@@ -571,8 +568,8 @@ function Resizer() {
 
 /** # Payload Preview */
 
-const payloadViewerTitleRef = useRef()
-const payloadViewerCodeRef = useRef()
+const payloadViewerTitleRef = elemRef()
+const payloadViewerCodeRef = elemRef()
 
 function PayloadViewer() {
 	return (
@@ -686,15 +683,13 @@ async function onError(error) {
 		else if (error.statusText)
 			msg = error.statusText
 	}
-	else {
-		if (error?.message === 'Failed to fetch') {
-			msg = t`Looks like the Mockaton server is not running`
-			isOffline = true
-		}
-		else
-			msg = error?.message || t`Unexpected Error`
+	else if (error?.message === 'Failed to fetch') {
+		msg = t`Looks like the Mockaton server is not running`
+		isOffline = true
 	}
-	
+	else
+		msg = error?.message || t`Unexpected Error`
+
 	ErrorToast(msg, isOffline)
 	console.error(error)
 }
@@ -711,9 +706,9 @@ function ErrorToast(msg, isOffline) {
 		}, msg))
 }
 ErrorToast.isOffline = false
-ErrorToast.ref = useRef()
+ErrorToast.ref = elemRef()
 ErrorToast.close = () => {
-	document.startViewTransition(() => 
+	document.startViewTransition(() =>
 		ErrorToast.ref.elem?.remove())
 }
 

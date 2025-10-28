@@ -182,10 +182,6 @@ const staticFiles = [
 	['static/assets/app.js', 'const app = 1'],
 	['static/another-entry/index.html', '<h1>Another</h1>']
 ]
-const fxsAddAtRuntime = [
-	'static/runtime.html',
-	'<h1>Runtime</h1>'
-]
 const fxsIgnored = [
 	'static/ignored.js~',
 	'ignored_file_body'
@@ -331,24 +327,31 @@ describe('Dashboard', () => {
 		const res = await request(API.dashboard)
 		match(await res.text(), new RegExp('<!DOCTYPE html>'))
 	})
+	
 	it('query string is accepted', async () => {
 		const res = await request(API.dashboard + '?foo=bar')
 		match(await res.text(), new RegExp('<!DOCTYPE html>'))
 	})
+	
 	it('getSyncVersion responds immediately when version mismatches', async () => {
 		const controller = new AbortController()
 		const res1 = await commander.getSyncVersion(-1, controller.signal)
 		equal(res1.status, 200)
 		const version = await res1.json()
 
+		const fileAddAtRuntime = 'static/runtime.html'
 		const res2Prom = commander.getSyncVersion(version, controller.signal)
-		writeStatic(...fxsAddAtRuntime)
+		writeStatic(fileAddAtRuntime, '')
 		await sleep()
 		const res2 = await res2Prom
 		equal(res2.status, 200)
 		equal(await res2.json(), version + 1)
-		removeStatic(fxsAddAtRuntime[0])
+
+		const res3Prom = commander.getSyncVersion(version, controller.signal)
+		removeStatic(fileAddAtRuntime)
 		await sleep()
+		const res3 = await res3Prom
+		equal(await res3.json(), version + 1)
 	})
 })
 

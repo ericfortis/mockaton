@@ -1,4 +1,4 @@
-import { createElement as r, createSvgElement as s, className, restoreFocus, Defer, Fragment, elemRef } from './DashboardDom.js'
+import { createElement as r, createSvgElement as s, className, restoreFocus, Defer, Fragment } from './DashboardDom.js'
 import { HEADER_FOR_502 } from './ApiConstants.js'
 import { parseFilename } from './Filename.js'
 import { store } from './DashboardStore.js'
@@ -74,7 +74,7 @@ function render() {
 render.count = 0
 
 
-const leftSideRef = elemRef({ width: '50%' }) // resizable
+const leftSideRef = {}
 
 function App() {
 	return [
@@ -181,7 +181,7 @@ function CookieSelector() {
 
 
 function ProxyFallbackField() {
-	const checkboxRef = elemRef()
+	const checkboxRef = {}
 	function onChange() {
 		checkboxRef.elem.disabled = !this.validity.valid || !this.value.trim()
 		if (!this.validity.valid)
@@ -239,7 +239,7 @@ function SettingsMenuTrigger() {
 }
 
 function SettingsMenu(id) {
-	const firstInputRef = elemRef()
+	const firstInputRef = {}
 	return (
 		r('menu', {
 				id,
@@ -568,8 +568,8 @@ function Resizer(ref) {
 
 /** # Payload Preview */
 
-const payloadViewerTitleRef = elemRef()
-const payloadViewerCodeRef = elemRef()
+const payloadViewerTitleRef = {}
+const payloadViewerCodeRef = {}
 
 function PayloadViewer() {
 	return (
@@ -581,7 +581,7 @@ function PayloadViewer() {
 					!store.hasChosenLink && t`Click a link to preview it`))))
 }
 
-function PayloadViewerTitle({ file, statusText }) {
+function PayloadViewerTitle(file, statusText) {
 	const { method, status, ext } = parseFilename(file)
 	const fileNameWithComments = file.split('.').slice(0, -3).join('.')
 	return (
@@ -591,13 +591,15 @@ function PayloadViewerTitle({ file, statusText }) {
 			'.' + ext))
 }
 
-function PayloadViewerTitleWhenProxied({ mime, status, statusText, gatewayIsBad }) {
+function PayloadViewerTitleWhenProxied(response) {
+	const mime = response.headers.get('content-type') || ''
+	const badGateway = response.headers.get(HEADER_FOR_502)
 	return (
 		r('span', null,
-			gatewayIsBad
+			badGateway
 				? r('span', null, t`⛔ Fallback Backend Error` + ' ')
 				: r('span', null, t`Got` + ' '),
-			r('abbr', { title: statusText }, status),
+			r('abbr', { title: response.statusText }, response.status),
 			' ' + mime))
 }
 
@@ -637,22 +639,14 @@ async function previewMock() {
 async function updatePayloadViewer(proxied, file, response) {
 	const mime = response.headers.get('content-type') || ''
 
-	payloadViewerTitleRef.elem.replaceChildren(
-		proxied
-			? PayloadViewerTitleWhenProxied({
-				mime,
-				status: response.status,
-				statusText: response.statusText,
-				gatewayIsBad: response.headers.get(HEADER_FOR_502)
-			})
-			: PayloadViewerTitle({
-				file,
-				statusText: response.statusText
-			}))
+	payloadViewerTitleRef.elem.replaceChildren(proxied
+		? PayloadViewerTitleWhenProxied(response)
+		: PayloadViewerTitle(file, response.statusText))
 
-	if (mime.startsWith('image/'))  // Naively assumes GET.200
-		payloadViewerCodeRef.elem.replaceChildren(
-			r('img', { src: URL.createObjectURL(await response.blob()) }))
+	if (mime.startsWith('image/')) // Naively assumes GET 200
+		payloadViewerCodeRef.elem.replaceChildren(r('img', {
+			src: URL.createObjectURL(await response.blob())
+		}))
 	else {
 		const body = await response.text() || t`/* Empty Response Body */`
 		if (mime === 'application/json')
@@ -706,7 +700,7 @@ function ErrorToast(msg, isOffline) {
 		}, msg))
 }
 ErrorToast.isOffline = false
-ErrorToast.ref = elemRef()
+ErrorToast.ref = {}
 ErrorToast.close = () => {
 	document.startViewTransition(() =>
 		ErrorToast.ref.elem?.remove())
@@ -740,7 +734,7 @@ function SettingsIcon() {
  * The version increments when a mock file is added, removed, or renamed.
  */
 function initRealTimeUpdates() {
-	let oldSyncVersion = -1
+	let oldVersion = -1
 	let controller = new AbortController()
 
 	longPoll()
@@ -755,15 +749,15 @@ function initRealTimeUpdates() {
 
 	async function longPoll() {
 		try {
-			const response = await store.getSyncVersion(oldSyncVersion, controller.signal)
+			const response = await store.getSyncVersion(oldVersion, controller.signal)
 			if (response.ok) {
 				if (ErrorToast.isOffline)
 					ErrorToast.close()
 
-				const syncVersion = await response.json()
-				const skipUpdate = oldSyncVersion === -1
-				if (oldSyncVersion !== syncVersion) { // because it could be < or >
-					oldSyncVersion = syncVersion
+				const version = await response.json()
+				const skipUpdate = oldVersion === -1
+				if (oldVersion !== version) { // because it could be < or >
+					oldVersion = version
 					if (!skipUpdate)
 						store.fetchState()
 				}

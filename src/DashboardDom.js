@@ -2,10 +2,6 @@ export function className(...args) {
 	return { className: args.filter(Boolean).join(' ') }
 }
 
-export function elemRef(obj = undefined) {
-	return Object.assign({ elem: null }, obj)
-}
-
 export function createElement(tag, props, ...children) {
 	const elem = document.createElement(tag)
 	for (const [k, v] of Object.entries(props || {}))

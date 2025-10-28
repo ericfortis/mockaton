@@ -71,35 +71,6 @@ const fxAlphaDefault = [
 	'alpha default variant'
 ]
 
-const fixtureDelayed = [
-	'/api/delayed',
-	'api/delayed.GET.200.json',
-	'Route_To_Be_Delayed'
-]
-
-/* Only fixtures with PUT */
-const fixtureForRegisteringPutA = [
-	'/api/register',
-	'api/register(a).PUT.200.json',
-	'fixture_for_registering_a'
-]
-const fixtureForRegisteringPutB = [
-	'/api/register',
-	'api/register(b).PUT.200.json',
-	'fixture_for_registering_b'
-]
-const fixtureForRegisteringPutA500 = [
-	'/api/register',
-	'api/register.PUT.500.json',
-	'fixture_for_registering_500'
-]
-const fixtureForUnregisteringPutC = [
-	'/api/unregister',
-	'api/unregister.PUT.200.json',
-	'fixture_for_unregistering'
-]
-
-
 const fixtures = [
 	[
 		'/api',
@@ -110,7 +81,6 @@ const fixtures = [
 	// Exact route paths
 	fxBasicGet,
 	fxAlphaDefault,
-	fixtureDelayed,
 	[
 		'/api/the-mime',
 		'api/the-mime.GET.200.txt',
@@ -225,15 +195,16 @@ writeStatic(...fxsIgnored)
 for (const [file, body] of staticFiles)
 	writeStatic(file, body)
 
+const cookies = {
+	userA: 'CookieA',
+	userB: 'CookieB'
+}
 
 const server = await Mockaton({
 	mocksDir,
 	staticDir,
 	onReady: () => {},
-	cookies: {
-		userA: 'CookieA',
-		userB: 'CookieB'
-	},
+	cookies,
 	extraHeaders: ['Server', 'MockatonTester'],
 	extraMimes: {
 		my_custom_extension: 'my_custom_mime'
@@ -259,13 +230,7 @@ async function fetchState() {
 beforeEach(async () => await commander.reset())
 
 
-describe('Error handling', () => {
-	it('on Windows, path separators are normalized to forward slashes', async () => {
-		const { brokersByMethod } = await fetchState()
-		const [route, file] = fxBasicGet
-		equal(brokersByMethod.GET[route].file, file)
-	})
-
+describe('Error Handling', () => {
 	it('ignores invalid filenames and warns', async t => {
 		const spy = spyLogger(t, 'warn')
 		const files = [
@@ -318,6 +283,23 @@ describe('Error handling', () => {
 })
 
 describe('CORS', () => {
+	describe('Set CORS allowed', () => {
+		it('422 for non boolean', async () => {
+			const res = await commander.setCorsAllowed('not-a-boolean')
+			equal(res.status, 422)
+			equal(await res.text(), 'Expected boolean for "corsAllowed"')
+		})
+
+		it('200', async () => {
+			const res = await commander.setCorsAllowed(true)
+			equal(res.status, 200)
+			equal((await fetchState()).corsAllowed, true)
+
+			await commander.setCorsAllowed(false)
+			equal((await fetchState()).corsAllowed, false)
+		})
+	})
+
 	it('preflights', async () => {
 		await commander.setCorsAllowed(true)
 		const res = await request('/does-not-matter', {
@@ -370,74 +352,31 @@ describe('Dashboard', () => {
 	})
 })
 
+
 describe('Cookie', () => {
-	it('Defaults to the first key:value', async () =>
+	it('422 when trying to select non-existing cookie', async () =>
+		equal((await commander.selectCookie('non-existing-cookie-key')).status, 422))
+
+	it('defaults to the first key:value', async () =>
 		deepEqual((await fetchState()).cookies, [
 			['userA', true],
 			['userB', false]
 		]))
-	
-	it('Updates selected cookie', async () => {
+
+	it('updates selected cookie', async () => {
+		const resA = await request(fxBasicGet[0])
+		equal(resA.headers.get('set-cookie'), cookies.userA)
+		
 		const response = await commander.selectCookie('userB')
 		deepEqual(await response.json(), [
 			['userA', false],
 			['userB', true]
 		])
-	})
-	
-	it('422 when trying to select non-existing cookie', async () => 
-		equal((await commander.selectCookie('non-existing-cookie-key')).status, 422))
-})
-
-
-describe('404', () => {
-	it('when there’s no mock', async () =>
-		equal((await request('/non-existing')).status, 404))
-
-	it('when there’s no mock at all for a method', async () =>
-		equal((await request('/non-existing-too', { method: 'DELETE' })).status, 404))
-
-	it('ignores files ending in ~ by default, e.g. JetBrains temp files', async () =>
-		equal((await request(fxIgnored[0])).status, 404))
-
-	it('ignores static files ending in ~', async () =>
-		equal((await request('/' + fxsIgnored[0])).status, 404))
-})
-
-
-function testMockDispatching(url, file, expectedBody, forcedMime = undefined) {
-	it('URL Mask: ' + file, async () => {
-		const { method, status } = parseFilename(file)
-		const mime = forcedMime || mimeFor(file)
-		const res = await request(url, { method })
-		const body = mime === 'application/json'
-			? await res.json()
-			: await res.text()
-		equal(res.status, status)
-		equal(res.headers.get('content-type'), mime)
-		equal(res.headers.get('set-cookie'), 'CookieA')
-		equal(res.headers.get('server'), 'MockatonTester')
-		deepEqual(body, expectedBody)
-	})
-}
-
-describe('Default mock', () => {
-	testMockDispatching(...fxAlphaDefault)
-	it('sorts mocks list with the user specified default first for dashboard display', async () => {
-		const { mocks } = (await fetchState()).brokersByMethod.GET[fxAlphaDefault[0]]
-		equal(mocks[0], fxAlphaDefault[1])
-		equal(mocks[1], fxAlpha[1])
+		
+		const resB = await request(fxBasicGet[0])
+		equal(resB.headers.get('set-cookie'), cookies.userB)
 	})
 })
-
-describe('Dispatch', () => {
-	for (const [url, file, body] of fixtures)
-		testMockDispatching(url, file, body)
-
-	testMockDispatching('/api/object', 'api/object.GET.200.js', { JSON_FROM_JS: true }, mimeFor('.json'))
-	testMockDispatching(...fxCustomMime)
-})
-
 
 describe('Delay', () => {
 	describe('Set Global Delay', () => {
@@ -455,7 +394,7 @@ describe('Delay', () => {
 
 	it('updates route delay', async () => {
 		const delay = 120
-		const [url, file, expectedBody] = fixtureDelayed
+		const [url, file, expectedBody] = fxBasicGet
 		const { method } = parseFilename(file)
 		await commander.setGlobalDelay(delay)
 		await commander.setRouteIsDelayed(method, url, true)
@@ -471,7 +410,7 @@ describe('Delay', () => {
 		equal(res.status, 422)
 		equal(await res.text(), `Missing Mock: ${missingFile}`)
 	})
-	
+
 	describe('Set Route is Delayed', () => {
 		const [route] = fxBasicGet
 		it('422 for non-existing route', async () => {
@@ -510,53 +449,143 @@ describe('Delay', () => {
 	})
 })
 
+describe('Proxy Fallback', () => {
+	describe('Fallback', () => {
+		let fallbackServer
+		before(async () => {
+			fallbackServer = createServer(async (req, response) => {
+				response.writeHead(423, {
+					'custom_header': 'my_custom_header',
+					'content-type': mimeFor('.txt'),
+					'set-cookie': [
+						'cookieA=A',
+						'cookieB=B'
+					]
+				})
+				response.end(await readBody(req)) // echoes they req body payload
+			})
+			await promisify(fallbackServer.listen).bind(fallbackServer, 0, '127.0.0.1')()
+			await commander.setProxyFallback(`http://localhost:${fallbackServer.address().port}`)
+			await commander.setCollectProxied(true)
+		})
 
-describe('Auto 500', () => {
-	it('preserves existing 500', async () => {
-		const url = '/api'
-		const file = 'api/.GET.500.txt'
-		const expectedBody = 'keeps non-autogenerated 500'
-		await commander.select(file)
+		after(() => fallbackServer.close())
+
+		it('Relays to fallback server and saves the mock', async () => {
+			const reqBodyPayload = 'text_req_body'
+
+			const res = await request(`/api/non-existing-mock/${randomUUID()}`, {
+				method: 'POST',
+				body: reqBodyPayload
+			})
+			equal(res.status, 423)
+			equal(res.headers.get('custom_header'), 'my_custom_header')
+			equal(res.headers.get('set-cookie'), ['cookieA=A', 'cookieB=B'].join(', '))
+			equal(await res.text(), reqBodyPayload)
+
+			const savedBody = readFileSync(join(mocksDir, 'api/non-existing-mock/[id].POST.423.txt'), 'utf8')
+			equal(savedBody, reqBodyPayload)
+		})
+	})
+
+	describe('Set Proxy Fallback', () => {
+		it('422 when value is not a valid URL', async () => {
+			const res = await commander.setProxyFallback('bad url')
+			equal(res.status, 422)
+			equal(await res.text(), 'Invalid Proxy Fallback URL')
+		})
+
+		it('sets fallback', async () => {
+			const res = await commander.setProxyFallback('http://example.com')
+			equal(res.status, 200)
+			equal((await fetchState()).proxyFallback, 'http://example.com')
+		})
+
+		it('unsets fallback', async () => {
+			const res = await commander.setProxyFallback('')
+			equal(res.status, 200)
+			equal((await fetchState()).proxyFallback, '')
+		})
+	})
+
+	describe('Set Collect Proxied', () => {
+		it('422 for invalid collectProxied value', async () => {
+			const res = await commander.setCollectProxied('not-a-boolean')
+			equal(res.status, 422)
+			equal(await res.text(), 'Expected a boolean for "collectProxied"')
+		})
+
+		it('200 set and unset', async () => {
+			await commander.setCollectProxied(true)
+			equal((await fetchState()).collectProxied, true)
+
+			await commander.setCollectProxied(false)
+			equal((await fetchState()).collectProxied, false)
+		})
+	})
+
+	describe('Set Route is Proxied', () => {
+		beforeEach(async () => await commander.setProxyFallback(''))
+		after(async () => await commander.setProxyFallback(''))
+
+		const [route] = fxBasicGet
+		it('422 for non-existing route', async () => {
+			const res = await commander.setRouteIsProxied('GET', route + '/non-existing', true)
+			equal(res.status, 422)
+			equal(await res.text(), `Route does not exist: GET ${route}/non-existing`)
+		})
+
+		it('422 for invalid proxied value', async () => {
+			const res = await commander.setRouteIsProxied('GET', route, 'not-a-boolean')
+			equal(res.status, 422)
+			equal(await res.text(), 'Expected boolean for "proxied"')
+		})
+
+		it('422 for missing proxy fallback', async () => {
+			const res = await commander.setRouteIsProxied('GET', route, true)
+			equal(res.status, 422)
+			equal(await res.text(), `There’s no proxy fallback`)
+		})
+
+		it('200 when setting', async () => {
+			await commander.setProxyFallback('https://example.com')
+			const res = await commander.setRouteIsProxied('GET', route, true)
+			equal(res.status, 200)
+			equal((await res.json()).proxied, true)
+
+			const res2 = await commander.setRouteIsProxied('GET', route, false)
+			equal(res2.status, 200)
+			equal((await res2.json()).proxied, false)
+		})
+
+		it('200 when unsetting', async () => {
+			const res = await commander.setRouteIsProxied('GET', route, false)
+			equal(res.status, 200)
+			equal((await res.json()).proxied, false)
+		})
+	})
+
+	it('updates current selected mock and resets proxied flag', async () => {
+		const url = '/api/alternative'
+		const file = 'api/alternative(comment-2).GET.200.json'
+		const expectedBody = JSON.stringify({ comment: 2 })
+		await commander.setRouteIsProxied('GET', url, true)
+		const r0 = await commander.select(file)
+		deepEqual(await r0.json(), {
+			file,
+			status: 200,
+			auto500: false,
+			delayed: false,
+			proxied: false,
+			mocks: [
+				'api/alternative(comment-1).GET.200.json',
+				'api/alternative(comment-2).GET.200.json',
+			]
+		})
 		const res = await request(url)
-		equal(res.status, 500)
+		equal(res.status, 200)
 		equal(await res.text(), expectedBody)
 	})
-
-	it('toggles 500', async () => {
-		const [route] = fxBasicGet
-		equal((await request(route)).status, 200)
-
-		const r0 = await commander.toggle500('GET', route)
-		equal((await r0.json()).auto500, true)
-		equal((await request(route)).status, 500)
-
-		const r1 = await commander.toggle500('GET', route)
-		equal((await r1.json()).auto500, false)
-		equal((await request(route)).status, 200)
-	})
-})
-
-
-it('updates current selected mock and resets proxied flag', async () => {
-	const url = '/api/alternative'
-	const file = 'api/alternative(comment-2).GET.200.json'
-	const expectedBody = JSON.stringify({ comment: 2 })
-	await commander.setRouteIsProxied('GET', url, true)
-	const r0 = await commander.select(file)
-	deepEqual(await r0.json(), {
-		file,
-		status: 200,
-		auto500: false,
-		delayed: false,
-		proxied: false,
-		mocks: [
-			'api/alternative(comment-1).GET.200.json',
-			'api/alternative(comment-2).GET.200.json',
-		]
-	})
-	const res = await request(url)
-	equal(res.status, 200)
-	equal(await res.text(), expectedBody)
 })
 
 describe('Comments', () => {
@@ -604,326 +633,313 @@ describe('Comments', () => {
 	})
 })
 
-it('JS Function Mocks', async () => {
-	write('api/js-func.POST.200.js', `
+describe('Auto 500', () => {
+	it('preserves existing 500', async () => {
+		const url = '/api'
+		const file = 'api/.GET.500.txt'
+		const expectedBody = 'keeps non-autogenerated 500'
+		await commander.select(file)
+		const res = await request(url)
+		equal(res.status, 500)
+		equal(await res.text(), expectedBody)
+	})
+
+	it('toggles 500', async () => {
+		const [route] = fxBasicGet
+		equal((await request(route)).status, 200)
+
+		const r0 = await commander.toggle500('GET', route)
+		equal((await r0.json()).auto500, true)
+		equal((await request(route)).status, 500)
+
+		const r1 = await commander.toggle500('GET', route)
+		equal((await r1.json()).auto500, false)
+		equal((await request(route)).status, 200)
+	})
+})
+
+describe('404', () => {
+	it('when there’s no mock', async () =>
+		equal((await request('/non-existing')).status, 404))
+
+	it('when there’s no mock at all for a method', async () =>
+		equal((await request('/non-existing-too', { method: 'DELETE' })).status, 404))
+
+	it('ignores files ending in ~ by default, e.g. JetBrains temp files', async () =>
+		equal((await request(fxIgnored[0])).status, 404))
+
+	it('ignores static files ending in ~', async () =>
+		equal((await request('/' + fxsIgnored[0])).status, 404))
+})
+
+describe('Default mock', () => {
+	it('sorts mocks list with the user specified default first for dashboard display', async () => {
+		const { mocks } = (await fetchState()).brokersByMethod.GET[fxAlphaDefault[0]]
+		equal(mocks[0], fxAlphaDefault[1])
+		equal(mocks[1], fxAlpha[1])
+	})
+	it('Dispatches default mock', async () => {
+		const res = await request(fxAlpha[0])
+		deepEqual(await res.json(), fxAlphaDefault[2])
+	})
+})
+
+describe('JS Function Mocks', () => {
+	it('honors filename convention', async () => {
+		write('api/js-func.GET.200.js', `
 export default function (req, response) {
-  response.setHeader('content-type', 'custom-mime')
-  return 'SOME_STRING'
+  return 'SOME_STRING_0'
 }`)
-	await sleep()
-	testMockDispatching('/api/js-func',
-		'api/js-func.POST.200.js',
-		'SOME_STRING',
-		'custom-mime')
-})
-
-
-describe('Static File Serving', () => {
-	it('404 path traversal', async () =>
-		equal((await request('/../../../../../../../../../../../%2E%2E/etc/passwd')).status, 404))
-
-	it('Defaults to index.html', async () => {
-		const res = await request('/static')
+		await sleep()
+		const res = await request('/api/js-func')
 		equal(res.status, 200)
-		equal(await res.text(), '<h1>Static</h1>')
+		equal(res.headers.get('content-type'), mimeFor('.json'))
+		equal(res.headers.get('content-type'), mimeFor('.json'))
+		equal(res.headers.get('set-cookie'), 'CookieA')
+		equal(await res.text(), 'SOME_STRING_0')
 	})
 
-	it('Defaults to in subdirs index.html', async () => {
-		const res = await request('/static/another-entry')
-		equal(res.status, 200)
-		equal(await res.text(), '<h1>Another</h1>')
-	})
-
-	it('Serves exacts paths', async () => {
-		const res = await request('/static/assets/app.js')
-		equal(res.status, 200)
-		equal(await res.text(), 'const app = 1')
+	it('can override filename convention', async () => {
+		write('api/js-func.POST.200.js', `
+export default function (req, response) {
+  response.statusCode = 201
+  response.setHeader('content-type', 'custom-mime')
+  response.setHeader('set-cookie', 'custom-cookie')
+  return 'SOME_STRING_1'
+}`)
+		await sleep()
+		const res = await request('/api/js-func', { method: 'POST' })
+		equal(res.status, 201)
+		equal(res.headers.get('content-type'), 'custom-mime')
+		equal(res.headers.get('set-cookie'), 'custom-cookie')
+		equal(await res.text(), 'SOME_STRING_1')
 	})
 })
 
-it('Static File List', async () => {
-	const { staticBrokers } = await fetchState()
-	deepEqual(Object.keys(staticBrokers).sort(), staticFiles.map(([file]) => '/' + file).sort())
-})
-
-
-describe('Fallback', () => {
-	let fallbackServer
-	before(async () => {
-		fallbackServer = createServer(async (req, response) => {
-			response.writeHead(423, {
-				'custom_header': 'my_custom_header',
-				'content-type': mimeFor('.txt'),
-				'set-cookie': [
-					'cookieA=A',
-					'cookieB=B'
-				]
-			})
-			response.end(await readBody(req)) // echoes they req body payload
+describe('Dispatch', () => {
+	function testMockDispatching(url, file, expectedBody, forcedMime = undefined) {
+		it('URL Mask: ' + file, async () => {
+			const { method, status } = parseFilename(file)
+			const mime = forcedMime || mimeFor(file)
+			const res = await request(url, { method })
+			const body = mime === 'application/json'
+				? await res.json()
+				: await res.text()
+			equal(res.status, status)
+			equal(res.headers.get('content-type'), mime)
+			equal(res.headers.get('set-cookie'), 'CookieA')
+			equal(res.headers.get('server'), 'MockatonTester')
+			deepEqual(body, expectedBody)
 		})
-		await promisify(fallbackServer.listen).bind(fallbackServer, 0, '127.0.0.1')()
-		await commander.setProxyFallback(`http://localhost:${fallbackServer.address().port}`)
-		await commander.setCollectProxied(true)
-	})
+	}
 
-	after(() => fallbackServer.close())
+	for (const [url, file, body] of fixtures)
+		testMockDispatching(url, file, body)
 
-	it('Relays to fallback server and saves the mock', async () => {
-		const reqBodyPayload = 'text_req_body'
+	testMockDispatching('/api/object', 'api/object.GET.200.js', { JSON_FROM_JS: true }, mimeFor('.json'))
+	testMockDispatching(...fxCustomMime)
+})
 
-		const res = await request(`/api/non-existing-mock/${randomUUID()}`, {
-			method: 'POST',
-			body: reqBodyPayload
+
+describe('Static Files', () => {
+	describe('Static File Serving', () => {
+		it('404 path traversal', async () =>
+			equal((await request('/../../../../../../../../../../../%2E%2E/etc/passwd')).status, 404))
+
+		it('Defaults to index.html', async () => {
+			const res = await request('/static')
+			equal(res.status, 200)
+			equal(await res.text(), '<h1>Static</h1>')
 		})
-		equal(res.status, 423)
-		equal(res.headers.get('custom_header'), 'my_custom_header')
-		equal(res.headers.get('set-cookie'), ['cookieA=A', 'cookieB=B'].join(', '))
-		equal(await res.text(), reqBodyPayload)
 
-		const savedBody = readFileSync(join(mocksDir, 'api/non-existing-mock/[id].POST.423.txt'), 'utf8')
-		equal(savedBody, reqBodyPayload)
+		it('Defaults to in subdirs index.html', async () => {
+			const res = await request('/static/another-entry')
+			equal(res.status, 200)
+			equal(await res.text(), '<h1>Another</h1>')
+		})
+
+		it('Serves exacts paths', async () => {
+			const res = await request('/static/assets/app.js')
+			equal(res.status, 200)
+			equal(await res.text(), 'const app = 1')
+		})
 	})
+
+	it('Static File List', async () => {
+		const { staticBrokers } = await fetchState()
+		deepEqual(Object.keys(staticBrokers).sort(), staticFiles.map(([file]) => '/' + file).sort())
+	})
+
+	describe('Set Static Route Status Code', () => {
+		const route = '/' + fixtureStaticIndex[0]
+
+		it('422 for non-existing route', async () => {
+			const res = await commander.setStaticRouteStatus(route + '/non-existing', 200)
+			equal(res.status, 422)
+			equal(await res.text(), `Static route does not exist: ${route}/non-existing`)
+		})
+
+		it('422 for invalid delayed value', async () => {
+			const res = await commander.setStaticRouteStatus(route, 'not-200-or-404')
+			equal(res.status, 422)
+			equal(await res.text(), 'Expected 200 or 404 status code')
+		})
+
+		it('200', async () => {
+			const res = await commander.setStaticRouteStatus(route, 404)
+			equal(res.status, 200)
+			const { staticBrokers } = await fetchState()
+			equal(staticBrokers[route].status, 404)
+		})
+	})
+
+	describe('Resets Static Routes', () => {
+		const route = '/' + fixtureStaticIndex[0]
+
+		beforeEach(async () => {
+			await commander.setStaticRouteIsDelayed(route, true)
+			await commander.setStaticRouteStatus(route, 404)
+			await commander.reset()
+		})
+
+		it('resets delayed', async () => {
+			const { staticBrokers } = await fetchState()
+			equal(staticBrokers[route].delayed, false)
+		})
+
+		it('resets status', async () => {
+			const { staticBrokers } = await fetchState()
+			equal(staticBrokers[route].status, 200)
+		})
+	})
+
+	describe('Static partial content', () => {
+		const route = '/' + fixtureStaticIndex[0]
+		const expectedBody = fixtureStaticIndex[1]
+
+		it('206 serves partial content', async () => {
+			const res1 = await request(route, { headers: { range: 'bytes=0-3' } })
+			const res2 = await request(route, { headers: { range: 'bytes=4-' } })
+			equal(res1.status, 206)
+			equal(res2.status, 206)
+			const body = await res1.text() + await res2.text()
+			equal(body, expectedBody)
+		})
+
+		it('416 on invalid range (end > start)', async () => {
+			const res = await request(route, { headers: { range: 'bytes=3-0' } })
+			equal(res.status, 416)
+		})
+	})
+
+	it('unregisters static route', async () => {
+		const route = fixtureStaticIndex[0]
+		removeStatic(route)
+		await sleep()
+		const { staticBrokers } = await fetchState()
+		equal(staticBrokers['/' + route], undefined)
+	})
+
 })
-
-describe('Set Proxy Fallback', () => {
-	it('422 when value is not a valid URL', async () => {
-		const res = await commander.setProxyFallback('bad url')
-		equal(res.status, 422)
-		equal(await res.text(), 'Invalid Proxy Fallback URL')
-	})
-
-	it('sets fallback', async () => {
-		const res = await commander.setProxyFallback('http://example.com')
-		equal(res.status, 200)
-		equal((await fetchState()).proxyFallback, 'http://example.com')
-	})
-
-	it('unsets fallback', async () => {
-		const res = await commander.setProxyFallback('')
-		equal(res.status, 200)
-		equal((await fetchState()).proxyFallback, '')
-	})
-})
-
-describe('Set Collect Proxied', () => {
-	it('422 for invalid collectProxied value', async () => {
-		const res = await commander.setCollectProxied('not-a-boolean')
-		equal(res.status, 422)
-		equal(await res.text(), 'Expected a boolean for "collectProxied"')
-	})
-
-	it('200 set and unset', async () => {
-		await commander.setCollectProxied(true)
-		equal((await fetchState()).collectProxied, true)
-
-		await commander.setCollectProxied(false)
-		equal((await fetchState()).collectProxied, false)
-	})
-})
-
 
 describe('Registering', () => {
+	const fxPutA = [
+		'/api/register',
+		'api/register(a).PUT.200.json',
+		'fixture_for_registering_a'
+	]
+	const fxPutB = [
+		'/api/register',
+		'api/register(b).PUT.200.json',
+		'fixture_for_registering_b'
+	]
+	const fxPutA500 = [
+		'/api/register',
+		'api/register.PUT.500.json',
+		'fixture_for_registering_500'
+	]
+	const fxPutC = [
+		'/api/unregister',
+		'api/unregister.PUT.200.json',
+		'fixture_for_unregistering'
+	]
+
+	it('on Windows, path separators are normalized to forward slashes', async () => {
+		const { brokersByMethod } = await fetchState()
+		const [route, file] = fxBasicGet
+		equal(brokersByMethod.GET[route].file, file)
+	})
+
 	it('registering new route creates temp 500 as well and re-registering is a noop', async () => {
-		write(fixtureForRegisteringPutA[1], '')
-		write(fixtureForRegisteringPutB[1], '')
+		write(fxPutA[1], '')
+		write(fxPutB[1], '')
 		await sleep()
-		write(fixtureForRegisteringPutA[1], '')
+		write(fxPutA[1], '')
 		await sleep()
 		const { brokersByMethod } = await fetchState()
-		deepEqual(brokersByMethod.PUT[fixtureForRegisteringPutA[0]].mocks, [
-			fixtureForRegisteringPutA[1],
-			fixtureForRegisteringPutB[1],
+		deepEqual(brokersByMethod.PUT[fxPutA[0]].mocks, [
+			fxPutA[1],
+			fxPutB[1],
 		])
 	})
 
 	it('registering a 500 unsets auto500', async () => {
 		const new500 = `api/register.PUT.500.empty`
 		await commander.select(new500)
-		write(fixtureForRegisteringPutA500[1], '')
+		write(fxPutA500[1], '')
 		await sleep()
 		const { brokersByMethod } = await fetchState()
-		const b = brokersByMethod.PUT[fixtureForRegisteringPutA[0]]
+		const b = brokersByMethod.PUT[fxPutA[0]]
 		deepEqual(b, {
-			file: fixtureForRegisteringPutA[1],
+			file: fxPutA[1],
 			status: 200,
 			auto500: false,
 			delayed: false,
 			proxied: false,
 			mocks: [
-				fixtureForRegisteringPutA[1],
-				fixtureForRegisteringPutB[1],
-				fixtureForRegisteringPutA500[1]
+				fxPutA[1],
+				fxPutB[1],
+				fxPutA500[1]
 			]
 		})
 	})
 
 	it('unregisters selected', async () => {
-		await commander.select(fixtureForRegisteringPutA[1])
-		remove(fixtureForRegisteringPutA[1])
+		await commander.select(fxPutA[1])
+		remove(fxPutA[1])
 		await sleep()
 		const { brokersByMethod } = await fetchState()
-		const b = brokersByMethod.PUT[fixtureForRegisteringPutA[0]]
+		const b = brokersByMethod.PUT[fxPutA[0]]
 		deepEqual(b, {
-			file: fixtureForRegisteringPutB[1],
+			file: fxPutB[1],
 			status: 200,
 			auto500: false,
 			delayed: false,
 			proxied: false,
 			mocks: [
-				fixtureForRegisteringPutB[1],
-				fixtureForRegisteringPutA500[1]
+				fxPutB[1],
+				fxPutA500[1]
 			]
 		})
 	})
 
 	it('unregistering the last mock removes broker', async () => {
-		write(fixtureForUnregisteringPutC[1], '') // Register another PUT so it doesn't delete PUT from collection
+		write(fxPutC[1], '') // Register another PUT so it doesn't delete PUT from collection
 		await sleep()
-		remove(fixtureForUnregisteringPutC[1])
+		remove(fxPutC[1])
 		await sleep()
 		const { brokersByMethod } = await fetchState()
-		equal(brokersByMethod.PUT[fixtureForUnregisteringPutC[0]], undefined)
+		equal(brokersByMethod.PUT[fxPutC[0]], undefined)
 	})
 
 	it('unregistering the last PUT mock removes PUT from collection', async () => {
-		remove(fixtureForRegisteringPutB[1])
-		remove(fixtureForRegisteringPutA500[1])
+		remove(fxPutB[1])
+		remove(fxPutA500[1])
 		await sleep()
 		const { brokersByMethod } = await fetchState()
 		equal(brokersByMethod.PUT, undefined)
 	})
 })
-
-describe('Set Route is Proxied', () => {
-	beforeEach(async () => await commander.setProxyFallback(''))
-	after(async () => await commander.setProxyFallback(''))
-
-	const [route] = fxBasicGet
-	it('422 for non-existing route', async () => {
-		const res = await commander.setRouteIsProxied('GET', route + '/non-existing', true)
-		equal(res.status, 422)
-		equal(await res.text(), `Route does not exist: GET ${route}/non-existing`)
-	})
-
-	it('422 for invalid proxied value', async () => {
-		const res = await commander.setRouteIsProxied('GET', route, 'not-a-boolean')
-		equal(res.status, 422)
-		equal(await res.text(), 'Expected boolean for "proxied"')
-	})
-
-	it('422 for missing proxy fallback', async () => {
-		const res = await commander.setRouteIsProxied('GET', route, true)
-		equal(res.status, 422)
-		equal(await res.text(), `There’s no proxy fallback`)
-	})
-
-	it('200 when setting', async () => {
-		await commander.setProxyFallback('https://example.com')
-		const res = await commander.setRouteIsProxied('GET', route, true)
-		equal(res.status, 200)
-		equal((await res.json()).proxied, true)
-
-		const res2 = await commander.setRouteIsProxied('GET', route, false)
-		equal(res2.status, 200)
-		equal((await res2.json()).proxied, false)
-	})
-
-	it('200 when unsetting', async () => {
-		const res = await commander.setRouteIsProxied('GET', route, false)
-		equal(res.status, 200)
-		equal((await res.json()).proxied, false)
-	})
-})
-
-describe('Set CORS allowed', () => {
-	it('422 for non boolean', async () => {
-		const res = await commander.setCorsAllowed('not-a-boolean')
-		equal(res.status, 422)
-		equal(await res.text(), 'Expected boolean for "corsAllowed"')
-	})
-
-	it('200', async () => {
-		const res = await commander.setCorsAllowed(true)
-		equal(res.status, 200)
-		equal((await fetchState()).corsAllowed, true)
-
-		await commander.setCorsAllowed(false)
-		equal((await fetchState()).corsAllowed, false)
-	})
-})
-
-
-describe('Set Static Route Status Code', () => {
-	const route = '/' + fixtureStaticIndex[0]
-
-	it('422 for non-existing route', async () => {
-		const res = await commander.setStaticRouteStatus(route + '/non-existing', 200)
-		equal(res.status, 422)
-		equal(await res.text(), `Static route does not exist: ${route}/non-existing`)
-	})
-
-	it('422 for invalid delayed value', async () => {
-		const res = await commander.setStaticRouteStatus(route, 'not-200-or-404')
-		equal(res.status, 422)
-		equal(await res.text(), 'Expected 200 or 404 status code')
-	})
-
-	it('200', async () => {
-		const res = await commander.setStaticRouteStatus(route, 404)
-		equal(res.status, 200)
-		const { staticBrokers } = await fetchState()
-		equal(staticBrokers[route].status, 404)
-	})
-})
-
-describe('Resets Static Routes', () => {
-	const route = '/' + fixtureStaticIndex[0]
-
-	beforeEach(async () => {
-		await commander.setStaticRouteIsDelayed(route, true)
-		await commander.setStaticRouteStatus(route, 404)
-		await commander.reset()
-	})
-
-	it('resets delayed', async () => {
-		const { staticBrokers } = await fetchState()
-		equal(staticBrokers[route].delayed, false)
-	})
-
-	it('resets status', async () => {
-		const { staticBrokers } = await fetchState()
-		equal(staticBrokers[route].status, 200)
-	})
-})
-
-describe('Static partial content', () => {
-	const route = '/' + fixtureStaticIndex[0]
-	const expectedBody = fixtureStaticIndex[1]
-
-	it('206 serves partial content', async () => {
-		const res1 = await request(route, { headers: { range: 'bytes=0-3' } })
-		const res2 = await request(route, { headers: { range: 'bytes=4-' } })
-		equal(res1.status, 206)
-		equal(res2.status, 206)
-		const body = await res1.text() + await res2.text()
-		equal(body, expectedBody)
-	})
-
-	it('416 on invalid range (end > start)', async () => {
-		const res = await request(route, { headers: { range: 'bytes=3-0' } })
-		equal(res.status, 416)
-	})
-})
-
-it('unregisters static route', async () => {
-	const route = fixtureStaticIndex[0]
-	removeStatic(route)
-	await sleep()
-	const { staticBrokers } = await fetchState()
-	equal(staticBrokers['/' + route], undefined)
-})
-
-
 
 
 await it('head for get. returns the headers without body only for GETs requested as HEAD', async () => {
@@ -935,3 +951,4 @@ await it('head for get. returns the headers without body only for GETs requested
 })
 
 server?.close()
+

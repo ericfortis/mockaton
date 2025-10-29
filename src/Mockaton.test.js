@@ -233,9 +233,10 @@ describe('Error Handling', () => {
 			'foo._INVALID_METHOD_.200.json',
 			'bar.GET._INVALID_STATUS_.json'
 		]
-		for (const f of files)
+		for (const f of files) {
 			write(f, '')
-		await sleep()
+			await sleep()
+		}
 		equal(spy.calls[0].arguments[0], 'Invalid Filename Convention')
 		equal(spy.calls[1].arguments[0], 'Unrecognized HTTP Method: "_INVALID_METHOD_"')
 		equal(spy.calls[2].arguments[0], 'Invalid HTTP Response Status: "NaN"')

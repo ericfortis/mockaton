@@ -10,7 +10,7 @@ import * as mockBrokerCollection from './mockBrokersCollection.js'
 
 /**
  * ARR = Add, Remove, or Rename Mock Event
- * 
+ *
  * The emitter is debounced so it handles e.g. bulk deletes,
  * and also renames, which are two events (delete + add).
  */
@@ -44,21 +44,18 @@ export function watchMocksDir() {
 		if (!file)
 			return
 
-		const path = join(dir, file)
-
-		if (isDirectory(path)) {
+		if (isDirectory(join(dir, file))) {
 			mockBrokerCollection.init()
 			uiSyncVersion.increment()
-			return
 		}
-
-		if (isFile(path)) {
-			if (mockBrokerCollection.registerMock(file, Boolean('isFromWatcher')))
-				uiSyncVersion.increment()
-		}
-		else {
+		else if (!isFile(join(dir, file))) { // file deleted
 			mockBrokerCollection.unregisterMock(file)
 			uiSyncVersion.increment()
+		}
+		else if (mockBrokerCollection.registerMock(file, Boolean('isFromWatcher')))
+			uiSyncVersion.increment()
+		else {
+			// ignore file edits
 		}
 	})
 }
@@ -67,27 +64,25 @@ export function watchStaticDir() {
 	const dir = config.staticDir
 	if (!dir)
 		return
+	
 	watch(dir, { recursive: true, persistent: false }, (_, file) => {
 		if (!file)
 			return
 
-		const path = join(dir, file)
-
-		if (isDirectory(path)) {
+		if (isDirectory(join(dir, file))) {
 			staticCollection.init()
 			uiSyncVersion.increment()
-			return
 		}
-
-		if (isFile(path)) {
-			if (staticCollection.registerMock(file))
-				uiSyncVersion.increment()
-		}
-		else {
+		else if (!isFile(join(dir, file))) { // file deleted
 			staticCollection.unregisterMock(file)
 			uiSyncVersion.increment()
+		}
+		else if (staticCollection.registerMock(file))
+			uiSyncVersion.increment()
+		else {
+			// ignore file edits
 		}
 	})
 }
 
-// TODO config changes
+// TODO ThinkAbout watching for config changes

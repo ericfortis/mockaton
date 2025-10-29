@@ -23,7 +23,6 @@ export async function dispatchMock(req, response) {
 			await proxy(req, response, broker?.delayed ? calcDelay() : 0)
 			return
 		}
-		
 		if (!broker) {
 			sendMockNotFound(response)
 			return

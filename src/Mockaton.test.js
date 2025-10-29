@@ -22,11 +22,6 @@ const mocksDir = mkdtempSync(tmpdir() + '/mocks') + '/'
 const staticDir = mkdtempSync(tmpdir() + '/static') + '/'
 
 
-/** # Utils */
-
-function remove(filename) { unlinkSync(mocksDir + filename) }
-function removeStatic(filename) { unlinkSync(staticDir + filename) }
-
 function write(filename, data) { _write(mocksDir + filename, data) }
 function writeStatic(filename, data) { _write(staticDir + filename, data) }
 
@@ -34,6 +29,25 @@ function _write(absPath, data) {
 	mkdirSync(dirname(absPath), { recursive: true })
 	writeFileSync(absPath, data, 'utf8')
 }
+
+async function register(file, data) {
+	write(file, data)
+	await sleep()
+}
+async function registerStatic(file, data) {
+	writeStatic(file, data)
+	await sleep()
+}
+
+async function unregister(file) {
+	unlinkSync(mocksDir + file)
+	await sleep()
+}
+async function unregisterStatic(file) {
+	unlinkSync(staticDir + file)
+	await sleep()
+}
+
 
 async function sleep(ms = 50) {
 	return new Promise(resolve => setTimeout(resolve, ms))
@@ -233,16 +247,13 @@ describe('Error Handling', () => {
 			'foo._INVALID_METHOD_.200.json',
 			'bar.GET._INVALID_STATUS_.json'
 		]
-		for (const f of files) {
-			write(f, '')
-			await sleep()
-		}
+		for (const f of files) 
+			await register(f, '')
 		equal(spy.calls[0].arguments[0], 'Invalid Filename Convention')
 		equal(spy.calls[1].arguments[0], 'Unrecognized HTTP Method: "_INVALID_METHOD_"')
 		equal(spy.calls[2].arguments[0], 'Invalid HTTP Response Status: "NaN"')
 		for (const f of files)
-			remove(f)
-		await sleep()
+			await unregister(f)
 	})
 
 	describe('Rejects malicious URLs', () => [
@@ -341,15 +352,13 @@ describe('Dashboard', () => {
 
 		const fileAddAtRuntime = 'static/runtime.html'
 		const res2Prom = commander.getSyncVersion(version, controller.signal)
-		writeStatic(fileAddAtRuntime, '')
-		await sleep()
+		await registerStatic(fileAddAtRuntime, '')
 		const res2 = await res2Prom
 		equal(res2.status, 200)
 		equal(await res2.json(), version + 1)
 
 		const res3Prom = commander.getSyncVersion(version, controller.signal)
-		removeStatic(fileAddAtRuntime)
-		await sleep()
+		await unregisterStatic(fileAddAtRuntime)
 		const res3 = await res3Prom
 		equal(await res3.json(), version + 1)
 	})
@@ -689,11 +698,10 @@ describe('Default mock', () => {
 
 describe('JS Function Mocks', () => {
 	it('honors filename convention', async () => {
-		write('api/js-func.GET.200.js', `
+		await register('api/js-func.GET.200.js', `
 export default function (req, response) {
   return 'SOME_STRING_0'
 }`)
-		await sleep()
 		const res = await request('/api/js-func')
 		equal(res.status, 200)
 		equal(res.headers.get('content-type'), mimeFor('.json'))
@@ -703,14 +711,13 @@ export default function (req, response) {
 	})
 
 	it('can override filename convention', async () => {
-		write('api/js-func.POST.200.js', `
+		await register('api/js-func.POST.200.js', `
 export default function (req, response) {
   response.statusCode = 201
   response.setHeader('content-type', 'custom-mime')
   response.setHeader('set-cookie', 'custom-cookie')
   return 'SOME_STRING_1'
 }`)
-		await sleep()
 		const res = await request('/api/js-func', { method: 'POST' })
 		equal(res.status, 201)
 		equal(res.headers.get('content-type'), 'custom-mime')
@@ -837,8 +844,7 @@ describe('Static Files', () => {
 
 	it('unregisters static route', async () => {
 		const route = fixtureStaticIndex[0]
-		removeStatic(route)
-		await sleep()
+		await unregisterStatic(route)
 		const { staticBrokers } = await fetchState()
 		equal(staticBrokers['/' + route], undefined)
 	})
@@ -874,11 +880,9 @@ describe('Registering', () => {
 	})
 
 	it('registering new route creates temp 500 as well and re-registering is a noop', async () => {
-		write(fxPutA[1], '')
-		write(fxPutB[1], '')
-		await sleep()
-		write(fxPutA[1], '')
-		await sleep()
+		await register(fxPutA[1], '')
+		await register(fxPutA[1], '')
+		await register(fxPutB[1], '')
 		const { brokersByMethod } = await fetchState()
 		deepEqual(brokersByMethod.PUT[fxPutA[0]].mocks, [
 			fxPutA[1],
@@ -889,8 +893,7 @@ describe('Registering', () => {
 	it('registering a 500 unsets auto500', async () => {
 		const new500 = `api/register.PUT.500.empty`
 		await commander.select(new500)
-		write(fxPutA500[1], '')
-		await sleep()
+		await register(fxPutA500[1], '')
 		const { brokersByMethod } = await fetchState()
 		const b = brokersByMethod.PUT[fxPutA[0]]
 		deepEqual(b, {
@@ -909,8 +912,7 @@ describe('Registering', () => {
 
 	it('unregisters selected', async () => {
 		await commander.select(fxPutA[1])
-		remove(fxPutA[1])
-		await sleep()
+		await unregister(fxPutA[1])
 		const { brokersByMethod } = await fetchState()
 		const b = brokersByMethod.PUT[fxPutA[0]]
 		deepEqual(b, {
@@ -927,18 +929,15 @@ describe('Registering', () => {
 	})
 
 	it('unregistering the last mock removes broker', async () => {
-		write(fxPutC[1], '') // Register another PUT so it doesn't delete PUT from collection
-		await sleep()
-		remove(fxPutC[1])
-		await sleep()
+		await register(fxPutC[1], '') // Register another PUT so it doesn't delete PUT from collection
+		await unregister(fxPutC[1])
 		const { brokersByMethod } = await fetchState()
 		equal(brokersByMethod.PUT[fxPutC[0]], undefined)
 	})
 
 	it('unregistering the last PUT mock removes PUT from collection', async () => {
-		remove(fxPutB[1])
-		remove(fxPutA500[1])
-		await sleep()
+		await unregister(fxPutB[1])
+		await unregister(fxPutA500[1])
 		const { brokersByMethod } = await fetchState()
 		equal(brokersByMethod.PUT, undefined)
 	})

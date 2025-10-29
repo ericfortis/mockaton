@@ -164,6 +164,11 @@ const fxIgnored = [
 	'api/ignored.GET.200.json~',
 	''
 ]
+const fxsIgnored = [
+	'static/ignored.js~',
+	'ignored_file_body'
+]
+
 
 for (const [, file, body] of [fxAlpha, ...fixtures])
 	write(file, file.endsWith('.json') ? JSON.stringify(body) : body)
@@ -182,25 +187,19 @@ const staticFiles = [
 	['static/assets/app.js', 'const app = 1'],
 	['static/another-entry/index.html', '<h1>Another</h1>']
 ]
-const fxsIgnored = [
-	'static/ignored.js~',
-	'ignored_file_body'
-]
-
 writeStatic(...fxsIgnored)
 for (const [file, body] of staticFiles)
 	writeStatic(file, body)
 
-const cookies = {
-	userA: 'CookieA',
-	userB: 'CookieB'
-}
 
-const server = await Mockaton({
+const config = {
 	mocksDir,
 	staticDir,
-	onReady: () => {},
-	cookies,
+	onReady() {},
+	cookies: {
+		userA: 'CookieA',
+		userB: 'CookieB'
+	},
 	extraHeaders: ['Server', 'MockatonTester'],
 	extraMimes: {
 		my_custom_extension: 'my_custom_mime'
@@ -208,8 +207,8 @@ const server = await Mockaton({
 	logLevel: 'quiet',
 	corsOrigins: ['http://example.com'],
 	corsExposedHeaders: ['Content-Encoding']
-})
-
+}
+const server = await Mockaton(config)
 const mockatonAddr = `http://${server.address().address}:${server.address().port}`
 const commander = new Commander(mockatonAddr)
 
@@ -217,7 +216,7 @@ function request(path, options = {}) {
 	return fetch(mockatonAddr + path, options)
 }
 
-/** @returns {State} */
+/** @returns {Promise<State>} */
 async function fetchState() {
 	return await (await commander.getState()).json()
 }
@@ -230,9 +229,9 @@ describe('Error Handling', () => {
 	it('ignores invalid filenames and warns', async t => {
 		const spy = spyLogger(t, 'warn')
 		const files = [
-			'_INVALID_FILENAME_CONVENTION_.json',
-			'bad-filename-method._INVALID_METHOD_.200.json',
-			'bad-filename-status.GET._INVALID_STATUS_.json'
+			'missing-method-and-status.json',
+			'foo._INVALID_METHOD_.200.json',
+			'bar.GET._INVALID_STATUS_.json'
 		]
 		for (const f of files)
 			write(f, '')
@@ -327,12 +326,12 @@ describe('Dashboard', () => {
 		const res = await request(API.dashboard)
 		match(await res.text(), new RegExp('<!DOCTYPE html>'))
 	})
-	
+
 	it('query string is accepted', async () => {
 		const res = await request(API.dashboard + '?foo=bar')
 		match(await res.text(), new RegExp('<!DOCTYPE html>'))
 	})
-	
+
 	it('getSyncVersion responds immediately when version mismatches', async () => {
 		const controller = new AbortController()
 		const res1 = await commander.getSyncVersion(-1, controller.signal)
@@ -368,16 +367,16 @@ describe('Cookie', () => {
 
 	it('updates selected cookie', async () => {
 		const resA = await request(fxBasicGet[0])
-		equal(resA.headers.get('set-cookie'), cookies.userA)
-		
+		equal(resA.headers.get('set-cookie'), config.cookies.userA)
+
 		const response = await commander.selectCookie('userB')
 		deepEqual(await response.json(), [
 			['userA', false],
 			['userB', true]
 		])
-		
+
 		const resB = await request(fxBasicGet[0])
-		equal(resB.headers.get('set-cookie'), cookies.userB)
+		equal(resB.headers.get('set-cookie'), config.cookies.userB)
 	})
 })
 

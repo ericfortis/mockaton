@@ -21,7 +21,7 @@ export const apiGetRequests = new Map([
 	...[
 		'Dashboard.css',
 		'Dashboard.js',
-		'ApiCommander.js', 'ApiConstants.js', 'DashboardDom.js', 'DashboardStore.js', 'Filename.js', 
+		'ApiCommander.js', 'ApiConstants.js', 'DashboardDom.js', 'DashboardStore.js', 'Filename.js',
 		'Logo.svg'
 	].map(f => [API.dashboard + '/' + f, serveStatic(f)]),
 
@@ -102,6 +102,7 @@ function reinitialize(_, response) {
 	sendOK(response)
 }
 
+
 async function selectCookie(req, response) {
 	const error = cookie.setCurrent(await parseJSON(req))
 	if (error)
@@ -110,8 +111,10 @@ async function selectCookie(req, response) {
 		sendJSON(response, cookie.list())
 }
 
+
 async function selectMock(req, response) {
 	const file = await parseJSON(req)
+
 	const broker = mockBrokersCollection.brokerByFilename(file)
 	if (!broker || !broker.hasMock(file))
 		sendUnprocessableContent(response, `Missing Mock: ${file}`)
@@ -121,28 +124,33 @@ async function selectMock(req, response) {
 	}
 }
 
+
 async function toggle500(req, response) {
-	const body = await parseJSON(req)
-	const broker = mockBrokersCollection.brokerByRoute(
-		body[DF.routeMethod],
-		body[DF.routeUrlMask])
+	const {
+		[DF.routeMethod]: method,
+		[DF.routeUrlMask]: urlMask
+	} = await parseJSON(req)
+
+	const broker = mockBrokersCollection.brokerByRoute(method, urlMask)
 	if (!broker)
-		sendUnprocessableContent(response, `Route does not exist: ${body[DF.routeMethod]} ${body[DF.routeUrlMask]}`)
+		sendUnprocessableContent(response, `Route does not exist: ${method} ${urlMask}`)
 	else {
 		broker.toggle500()
 		sendJSON(response, broker)
 	}
 }
 
-async function setRouteIsDelayed(req, response) {
-	const body = await parseJSON(req)
-	const delayed = body[DF.delayed]
-	const broker = mockBrokersCollection.brokerByRoute(
-		body[DF.routeMethod],
-		body[DF.routeUrlMask])
 
+async function setRouteIsDelayed(req, response) {
+	const {
+		[DF.routeMethod]: method,
+		[DF.routeUrlMask]: urlMask,
+		[DF.delayed]: delayed
+	} = await parseJSON(req)
+
+	const broker = mockBrokersCollection.brokerByRoute(method, urlMask)
 	if (!broker)
-		sendUnprocessableContent(response, `Route does not exist: ${body[DF.routeMethod]} ${body[DF.routeUrlMask]}`)
+		sendUnprocessableContent(response, `Route does not exist: ${method} ${urlMask}`)
 	else if (typeof delayed !== 'boolean')
 		sendUnprocessableContent(response, `Expected boolean for "delayed"`)
 	else {
@@ -151,15 +159,17 @@ async function setRouteIsDelayed(req, response) {
 	}
 }
 
-async function setRouteIsProxied(req, response) {
-	const body = await parseJSON(req)
-	const proxied = body[DF.proxied]
-	const broker = mockBrokersCollection.brokerByRoute(
-		body[DF.routeMethod],
-		body[DF.routeUrlMask])
 
+async function setRouteIsProxied(req, response) {
+	const {
+		[DF.routeMethod]: method,
+		[DF.routeUrlMask]: urlMask,
+		[DF.proxied]: proxied
+	} = await parseJSON(req)
+
+	const broker = mockBrokersCollection.brokerByRoute(method, urlMask)
 	if (!broker)
-		sendUnprocessableContent(response, `Route does not exist: ${body[DF.routeMethod]} ${body[DF.routeUrlMask]}`)
+		sendUnprocessableContent(response, `Route does not exist: ${method} ${urlMask}`)
 	else if (typeof proxied !== 'boolean')
 		sendUnprocessableContent(response, `Expected boolean for "proxied"`)
 	else if (proxied && !config.proxyFallback)
@@ -170,59 +180,71 @@ async function setRouteIsProxied(req, response) {
 	}
 }
 
+
 async function updateProxyFallback(req, response) {
 	const fallback = await parseJSON(req)
-	if (!ConfigValidator.proxyFallback(fallback)) {
+
+	if (!ConfigValidator.proxyFallback(fallback))
 		sendUnprocessableContent(response, `Invalid Proxy Fallback URL`)
-		return
+	else {
+		config.proxyFallback = fallback
+		sendOK(response)
 	}
-	config.proxyFallback = fallback
-	sendOK(response)
 }
+
 
 async function setCollectProxied(req, response) {
 	const collectProxied = await parseJSON(req)
-	if (!ConfigValidator.collectProxied(collectProxied)) {
+
+	if (!ConfigValidator.collectProxied(collectProxied))
 		sendUnprocessableContent(response, `Expected a boolean for "collectProxied"`)
-		return
+	else {
+		config.collectProxied = collectProxied
+		sendOK(response)
 	}
-	config.collectProxied = collectProxied
-	sendOK(response)
 }
+
 
 async function bulkUpdateBrokersByCommentTag(req, response) {
 	mockBrokersCollection.setMocksMatchingComment(await parseJSON(req))
 	sendOK(response)
 }
 
+
 async function setCorsAllowed(req, response) {
 	const corsAllowed = await parseJSON(req)
-	if (!ConfigValidator.corsAllowed(corsAllowed)) {
+
+	if (!ConfigValidator.corsAllowed(corsAllowed))
 		sendUnprocessableContent(response, `Expected boolean for "corsAllowed"`)
-		return
+	else {
+		config.corsAllowed = corsAllowed
+		sendOK(response)
 	}
-	config.corsAllowed = corsAllowed
-	sendOK(response)
 }
+
 
 async function setGlobalDelay(req, response) {
 	const delay = await parseJSON(req)
-	if (!ConfigValidator.delay(delay)) {
+
+	if (!ConfigValidator.delay(delay))
 		sendUnprocessableContent(response, `Expected non-negative integer for "delay"`)
-		return
+	else {
+		config.delay = delay
+		sendOK(response)
 	}
-	config.delay = delay
-	sendOK(response)
 }
 
 
-async function setStaticRouteStatusCode(req, response) {
-	const body = await parseJSON(req)
-	const status = Number(body[DF.statusCode])
-	const broker = staticCollection.brokerByRoute(body[DF.routeUrlMask])
 
+async function setStaticRouteStatusCode(req, response) {
+	const {
+		[DF.routeUrlMask]: urlMask,
+		[DF.statusCode]: status
+	} = await parseJSON(req)
+
+	const broker = staticCollection.brokerByRoute(urlMask)
 	if (!broker)
-		sendUnprocessableContent(response, `Static route does not exist: ${body[DF.routeUrlMask]}`)
+		sendUnprocessableContent(response, `Static route does not exist: ${urlMask}`)
 	else if (!(status === 200 || status === 404))
 		sendUnprocessableContent(response, `Expected 200 or 404 status code`)
 	else {
@@ -231,13 +253,16 @@ async function setStaticRouteStatusCode(req, response) {
 	}
 }
 
-async function setStaticRouteIsDelayed(req, response) {
-	const body = await parseJSON(req)
-	const delayed = body[DF.delayed]
-	const broker = staticCollection.brokerByRoute(body[DF.routeUrlMask])
 
+async function setStaticRouteIsDelayed(req, response) {
+	const {
+		[DF.routeUrlMask]: urlMask,
+		[DF.delayed]: delayed
+	} = await parseJSON(req)
+
+	const broker = staticCollection.brokerByRoute(urlMask)
 	if (!broker)
-		sendUnprocessableContent(response, `Static route does not exist: ${body[DF.routeUrlMask]}`)
+		sendUnprocessableContent(response, `Static route does not exist: ${urlMask}`)
 	else if (typeof delayed !== 'boolean')
 		sendUnprocessableContent(response, `Expected boolean for "delayed"`)
 	else {

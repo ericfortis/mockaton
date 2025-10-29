@@ -19,10 +19,14 @@ import { sendOK, sendJSON, sendUnprocessableContent, sendFile, sendHTML } from '
 export const apiGetRequests = new Map([
 	[API.dashboard, serveDashboard],
 	...[
+		'Logo.svg',
 		'Dashboard.css',
+		'ApiCommander.js',
+		'ApiConstants.js',
 		'Dashboard.js',
-		'ApiCommander.js', 'ApiConstants.js', 'DashboardDom.js', 'DashboardStore.js', 'Filename.js',
-		'Logo.svg'
+		'DashboardDom.js',
+		'DashboardStore.js',
+		'Filename.js'
 	].map(f => [API.dashboard + '/' + f, serveStatic(f)]),
 
 	[API.state, getState],
@@ -57,6 +61,7 @@ function serveStatic(f) {
 	return (_, response) => sendFile(response, join(import.meta.dirname, f))
 }
 
+
 function getState(_, response) {
 	sendJSON(response, {
 		cookies: cookie.list(),
@@ -74,12 +79,14 @@ function getState(_, response) {
 	})
 }
 
+
 function longPollClientSyncVersion(req, response) {
 	if (uiSyncVersion.version !== Number(req.headers[DF.syncVersion])) {
 		// e.g., tab was hidden while new mocks were added or removed
 		sendJSON(response, uiSyncVersion.version)
 		return
 	}
+	
 	function onAddOrRemoveMock() {
 		uiSyncVersion.unsubscribe(onAddOrRemoveMock)
 		sendJSON(response, uiSyncVersion.version)
@@ -104,7 +111,9 @@ function reinitialize(_, response) {
 
 
 async function selectCookie(req, response) {
-	const error = cookie.setCurrent(await parseJSON(req))
+	const label = await parseJSON(req)
+	
+	const error = cookie.setCurrent(label)
 	if (error)
 		sendUnprocessableContent(response, error?.message || error)
 	else
@@ -143,9 +152,9 @@ async function toggle500(req, response) {
 
 async function setRouteIsDelayed(req, response) {
 	const {
+		[DF.delayed]: delayed,
 		[DF.routeMethod]: method,
-		[DF.routeUrlMask]: urlMask,
-		[DF.delayed]: delayed
+		[DF.routeUrlMask]: urlMask
 	} = await parseJSON(req)
 
 	const broker = mockBrokersCollection.brokerByRoute(method, urlMask)
@@ -162,9 +171,9 @@ async function setRouteIsDelayed(req, response) {
 
 async function setRouteIsProxied(req, response) {
 	const {
+		[DF.proxied]: proxied,
 		[DF.routeMethod]: method,
-		[DF.routeUrlMask]: urlMask,
-		[DF.proxied]: proxied
+		[DF.routeUrlMask]: urlMask
 	} = await parseJSON(req)
 
 	const broker = mockBrokersCollection.brokerByRoute(method, urlMask)
@@ -206,7 +215,9 @@ async function setCollectProxied(req, response) {
 
 
 async function bulkUpdateBrokersByCommentTag(req, response) {
-	mockBrokersCollection.setMocksMatchingComment(await parseJSON(req))
+	const comment = await parseJSON(req)
+	
+	mockBrokersCollection.setMocksMatchingComment(comment)
 	sendOK(response)
 }
 
@@ -238,8 +249,8 @@ async function setGlobalDelay(req, response) {
 
 async function setStaticRouteStatusCode(req, response) {
 	const {
-		[DF.routeUrlMask]: urlMask,
-		[DF.statusCode]: status
+		[DF.statusCode]: status,
+		[DF.routeUrlMask]: urlMask
 	} = await parseJSON(req)
 
 	const broker = staticCollection.brokerByRoute(urlMask)
@@ -256,8 +267,8 @@ async function setStaticRouteStatusCode(req, response) {
 
 async function setStaticRouteIsDelayed(req, response) {
 	const {
-		[DF.routeUrlMask]: urlMask,
-		[DF.delayed]: delayed
+		[DF.delayed]: delayed,
+		[DF.routeUrlMask]: urlMask
 	} = await parseJSON(req)
 
 	const broker = staticCollection.brokerByRoute(urlMask)

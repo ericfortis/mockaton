@@ -45,16 +45,12 @@ export const store = {
 	},
 
 
-	chosenLink: {
-		method: '',
-		urlMask: ''
-	},
-	get hasChosenLink() {
-		return store.chosenLink.method
-			&& store.chosenLink.urlMask
-	},
+	chosenLink: { method: '', urlMask: '' },
 	setChosenLink(method, urlMask) {
 		store.chosenLink = { method, urlMask }
+	},
+	get hasChosenLink() {
+		return store.chosenLink.method && store.chosenLink.urlMask
 	},
 
 

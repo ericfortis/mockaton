@@ -247,7 +247,7 @@ describe('Error Handling', () => {
 			'foo._INVALID_METHOD_.200.json',
 			'bar.GET._INVALID_STATUS_.json'
 		]
-		for (const f of files) 
+		for (const f of files)
 			await register(f, '')
 		equal(spy.calls[0].arguments[0], 'Invalid Filename Convention')
 		equal(spy.calls[1].arguments[0], 'Unrecognized HTTP Method: "_INVALID_METHOD_"')
@@ -344,22 +344,30 @@ describe('Dashboard', () => {
 		match(await res.text(), new RegExp('<!DOCTYPE html>'))
 	})
 
-	it('getSyncVersion responds immediately when version mismatches', async () => {
-		const controller = new AbortController()
-		const res1 = await commander.getSyncVersion(-1, controller.signal)
-		const version = await res1.json()
+	describe('getSyncVersion', () => {
+		let version
 
-		const fileAddAtRuntime = 'static/runtime.html'
-		const fileAddAtRuntime2 = 'static/runtime2.html'
-		const res2Prom = commander.getSyncVersion(version, controller.signal)
-		await registerStatic(fileAddAtRuntime, '')
-		await registerStatic(fileAddAtRuntime2, '')
-		equal(await (await res2Prom).json(), version + 1)
+		it('getSyncVersion responds immediately when version mismatches', async () => {
+			const res1 = await commander.getSyncVersion(-1, new AbortController().signal)
+			version = await res1.json()
+		})
 
-		const res3Prom = commander.getSyncVersion(version + 1, controller.signal)
-		await unregisterStatic(fileAddAtRuntime)
-		await unregisterStatic(fileAddAtRuntime2)
-		equal(await (await res3Prom).json(), version + 2)
+		const fileAddedAtRuntime1 = 'runtime1.GET.200.txt'
+		const fileAddedAtRuntime2 = 'runtime2.GET.200.txt'
+		
+		it('responds debounced when files are added (bulk additions count as 1 increment)', async () => {
+			const res2Prom = commander.getSyncVersion(version, new AbortController().signal)
+			await register(fileAddedAtRuntime1, '')
+			await register(fileAddedAtRuntime2, '')
+			equal(await (await res2Prom).json(), version + 1)
+		})
+
+		it('responds debounced when files are deleted', async () => {
+			const res3Prom = commander.getSyncVersion(version + 1, new AbortController().signal)
+			await unregister(fileAddedAtRuntime1)
+			await unregister(fileAddedAtRuntime2)
+			equal(await (await res3Prom).json(), version + 2)
+		})
 	})
 })
 

@@ -375,7 +375,6 @@ describe('Dashboard', () => {
 	})
 })
 
-
 describe('Cookie', () => {
 	it('422 when trying to select non-existing cookie', async () =>
 		equal((await commander.selectCookie('non-existing-cookie-key')).status, 422))
@@ -427,26 +426,18 @@ describe('Delay', () => {
 		equal((new Date()).getTime() - now.getTime() > delay, true)
 	})
 
-	it('422 when updating non-existing mock alternative. There are mocks for /alpha but not for this one', async () => {
-		const missingFile = 'alpha(non-existing-variant).GET.200.json'
-		const res = await commander.select(missingFile)
-		equal(res.status, 422)
-		equal(await res.text(), `Missing Mock: ${missingFile}`)
-	})
-
 	describe('Set Route is Delayed', () => {
-		const [route] = fxBasicGet
 		it('422 for non-existing route', async () => {
-			const res = await commander.setRouteIsDelayed('GET', route + '/non-existing', true)
+			const res = await commander.setRouteIsDelayed('GET', '/non-existing-route', true)
 			equal(res.status, 422)
-			equal(await res.text(), `Route does not exist: GET ${route}/non-existing`)
+			equal(await res.text(), `Route does not exist: GET /non-existing-route`)
 		})
 		it('422 for invalid delayed value', async () => {
-			const res = await commander.setRouteIsDelayed('GET', route, 'not-a-boolean')
+			const res = await commander.setRouteIsDelayed('GET', fxBasicGet[0], 'not-a-boolean')
 			equal(await res.text(), 'Expected boolean for "delayed"')
 		})
 		it('200', async () => {
-			const res = await commander.setRouteIsDelayed('GET', route, true)
+			const res = await commander.setRouteIsDelayed('GET', fxBasicGet[0], true)
 			equal((await res.json()).delayed, true)
 		})
 	})
@@ -693,6 +684,15 @@ describe('404', () => {
 
 	it('ignores static files ending in ~', async () =>
 		equal((await request('/' + fxsIgnored[0])).status, 404))
+})
+
+describe('Select Mock', () => {
+	it('422 when updating non-existing mock alternative. There are mocks for /alpha but not for this one', async () => {
+		const missingFile = 'alpha(non-existing-variant).GET.200.json'
+		const res = await commander.select(missingFile)
+		equal(res.status, 422)
+		equal(await res.text(), `Missing Mock: ${missingFile}`)
+	})
 })
 
 describe('Default mock', () => {

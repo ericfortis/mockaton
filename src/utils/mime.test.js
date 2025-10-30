@@ -3,19 +3,22 @@ import { equal } from 'node:assert/strict'
 import { parseMime, extFor, mimeFor } from './mime.js'
 
 
-describe('parseMime', () => {
-	equal(parseMime('text/html'), 'text/html')
-	equal(parseMime('TEXT/html'), 'text/html')
-	equal(parseMime('text/html; charset=utf-8'), 'text/html')
-})
+describe('parseMime', () => [
+	'text/html',
+	'TEXT/html',
+	'text/html; charset=utf-8'
+].map(input =>
+	equal(parseMime(input), 'text/html')))
 
-describe('extFor', () => {
-	equal(extFor('text/html'), 'html')
-	equal(extFor('Text/html'), 'html')
-	equal(extFor('text/Html; charset=UTF-16'), 'html')
-})
+describe('extFor', () => [
+	'text/html',
+	'Text/html',
+	'text/Html; charset=UTF-16'
+].map(input =>
+	equal(extFor(input), 'html')))
 
-describe('mimeFor', () => {
-	equal(mimeFor('file.html'), 'text/html')
-	equal(mimeFor('file.HTmL'), 'text/html')
-})
+describe('mimeFor', () => [
+	'file.html',
+	'file.HTmL'
+].map(input =>
+	equal(mimeFor(input), 'text/html')))

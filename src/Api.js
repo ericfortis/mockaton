@@ -13,7 +13,7 @@ import * as mockBrokersCollection from './mockBrokersCollection.js'
 import { config, ConfigValidator } from './config.js'
 import { DashboardHtml, CSP } from './DashboardHtml.js'
 import { sendOK, sendJSON, sendUnprocessableContent, sendFile, sendHTML } from './utils/http-response.js'
-import { API, LONG_POLL_SERVER_TIMEOUT, HEADER_FOR_SYNC_VERSION } from './ApiConstants.js'
+import { API, LONG_POLL_SERVER_TIMEOUT, HEADER_SYNC_VERSION } from './ApiConstants.js'
 
 
 export const apiGetRequests = new Map([
@@ -81,7 +81,7 @@ function getState(_, response) {
 
 
 function longPollClientSyncVersion(req, response) {
-	if (uiSyncVersion.version !== Number(req.headers[HEADER_FOR_SYNC_VERSION])) {
+	if (uiSyncVersion.version !== Number(req.headers[HEADER_SYNC_VERSION])) {
 		// e.g., tab was hidden while new mocks were added or removed
 		sendJSON(response, uiSyncVersion.version)
 		return
@@ -111,9 +111,9 @@ function reinitialize(_, response) {
 
 
 async function selectCookie(req, response) {
-	const label = await parseJSON(req)
+	const cookieKey = await parseJSON(req)
 
-	const error = cookie.setCurrent(label)
+	const error = cookie.setCurrent(cookieKey)
 	if (error)
 		sendUnprocessableContent(response, error?.message || error)
 	else

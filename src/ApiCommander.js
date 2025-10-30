@@ -1,4 +1,4 @@
-import { API, LONG_POLL_SERVER_TIMEOUT, HEADER_FOR_SYNC_VERSION } from './ApiConstants.js'
+import { API, LONG_POLL_SERVER_TIMEOUT, HEADER_SYNC_VERSION } from './ApiConstants.js'
 
 
 /** Client for controlling Mockaton via its HTTP API */
@@ -27,7 +27,7 @@ export class Commander {
 				AbortSignal.timeout(LONG_POLL_SERVER_TIMEOUT + 1000)
 			]),
 			headers: {
-				[HEADER_FOR_SYNC_VERSION]: currSyncVer
+				[HEADER_SYNC_VERSION]: currSyncVer
 			}
 		})
 
@@ -36,32 +36,12 @@ export class Commander {
 		return this.#patch(API.reset)
 	}
 
-	select(file) {
-		return this.#patch(API.select, file)
-	}
-
-	toggle500(method, urlMask) {
-		return this.#patch(API.toggle500, [method, urlMask])
+	setGlobalDelay(delay) {
+		return this.#patch(API.globalDelay, delay)
 	}
 
 	bulkSelectByComment(comment) {
 		return this.#patch(API.bulkSelect, comment)
-	}
-
-	setRouteIsDelayed(method, urlMask, delayed) {
-		return this.#patch(API.delay, [method, urlMask, delayed])
-	}
-
-	setStaticRouteIsDelayed(urlMask, delayed) {
-		return this.#patch(API.delayStatic, [urlMask, delayed])
-	}
-
-	setStaticRouteStatus(urlMask, status) {
-		return this.#patch(API.staticStatus, [urlMask, status])
-	}
-
-	setRouteIsProxied(method, urlMask, proxied) {
-		return this.#patch(API.proxied, [method, urlMask, proxied])
 	}
 
 	selectCookie(cookieKey) {
@@ -80,7 +60,29 @@ export class Commander {
 		return this.#patch(API.cors, value)
 	}
 
-	setGlobalDelay(delay) {
-		return this.#patch(API.globalDelay, delay)
+	
+	select(file) {
+		return this.#patch(API.select, file)
+	}
+
+	toggle500(method, urlMask) {
+		return this.#patch(API.toggle500, [method, urlMask])
+	}
+
+	setRouteIsDelayed(method, urlMask, delayed) {
+		return this.#patch(API.delay, [method, urlMask, delayed])
+	}
+
+	setRouteIsProxied(method, urlMask, proxied) {
+		return this.#patch(API.proxied, [method, urlMask, proxied])
+	}
+	
+
+	setStaticRouteIsDelayed(urlMask, delayed) {
+		return this.#patch(API.delayStatic, [urlMask, delayed])
+	}
+
+	setStaticRouteStatus(urlMask, status) {
+		return this.#patch(API.staticStatus, [urlMask, status])
 	}
 }

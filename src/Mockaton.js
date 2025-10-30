@@ -1,7 +1,7 @@
 import { createServer } from 'node:http'
 
-import { logger } from './utils/logger.js'
 import { API } from './ApiConstants.js'
+import { logger } from './utils/logger.js'
 import { config, setup } from './config.js'
 import { dispatchMock } from './MockDispatcher.js'
 import { dispatchStatic } from './StaticDispatcher.js'

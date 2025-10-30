@@ -1,6 +1,7 @@
 const MOUNT = '/mockaton'
 export const API = {
 	dashboard: MOUNT,
+	
 	bulkSelect: MOUNT + '/bulk-select-by-comment',
 	collectProxied: MOUNT + '/collect-proxied',
 	cookies: MOUNT + '/cookies',
@@ -19,9 +20,9 @@ export const API = {
 	toggle500: MOUNT + '/toggle500'
 }
 
-export const HEADER_FOR_502 = 'Mockaton502'
-export const HEADER_FOR_SYNC_VERSION = 'sync_version'
+export const HEADER_502 = 'Mockaton502'
+export const HEADER_SYNC_VERSION = 'sync_version'
 
 export const DEFAULT_MOCK_COMMENT = '(default)'
-export const EXT_FOR_UNKNOWN_MIME = 'unknown'
+export const UNKNOWN_MIME_EXT = 'unknown'
 export const LONG_POLL_SERVER_TIMEOUT = 8_000

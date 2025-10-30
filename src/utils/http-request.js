@@ -50,6 +50,7 @@ export function readBody(req, parser = a => a) {
 }
 
 export const reControlAndDelChars = /[\x00-\x1f\x7f]/
+
 export function hasControlChars(url) {
 	try {
 		const decoded = decode(url)

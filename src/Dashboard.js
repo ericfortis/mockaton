@@ -1,5 +1,5 @@
 import { createElement as r, createSvgElement as s, className, restoreFocus, Defer, Fragment } from './DashboardDom.js'
-import { HEADER_FOR_502 } from './ApiConstants.js'
+import { HEADER_502 } from './ApiConstants.js'
 import { parseFilename } from './Filename.js'
 import { store } from './DashboardStore.js'
 
@@ -593,7 +593,7 @@ function PayloadViewerTitle(file, statusText) {
 
 function PayloadViewerTitleWhenProxied(response) {
 	const mime = response.headers.get('content-type') || ''
-	const badGateway = response.headers.get(HEADER_FOR_502)
+	const badGateway = response.headers.get(HEADER_502)
 	return (
 		r('span', null,
 			badGateway

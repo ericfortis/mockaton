@@ -1,5 +1,5 @@
 import { config } from '../config.js'
-import { EXT_FOR_UNKNOWN_MIME } from '../ApiConstants.js'
+import { UNKNOWN_MIME_EXT } from '../ApiConstants.js'
 
 
 // Generated with:
@@ -119,7 +119,7 @@ export function extFor(mime) {
 function findExt(rawMime) {
 	const m = parseMime(rawMime)
 	const extraMimeToExt = mapMimeToExt(config.extraMimes)
-	return extraMimeToExt[m] || mimeToExt[m] || EXT_FOR_UNKNOWN_MIME
+	return extraMimeToExt[m] || mimeToExt[m] || UNKNOWN_MIME_EXT
 }
 
 export function parseMime(mime) {

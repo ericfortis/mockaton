@@ -339,36 +339,38 @@ describe('Dashboard', () => {
 		match(await res.text(), new RegExp('<!DOCTYPE html>'))
 	})
 
-	describe('getSyncVersion', () => {
+	it('getSyncVersion', async () => {
 		let res
 		let oldVer = -1
 
-		beforeEach(async () => {
-			res = await commander.getSyncVersion(oldVer, new AbortController().signal)
-		})
+		// beforeEach(async () => {
+		// })
 
-		it('responds immediately when version mismatches', async () => {
-			oldVer = await res.json()
-		})
+		// it('responds immediately when version mismatches', async () => {
+		res = await commander.getSyncVersion(oldVer, new AbortController().signal)
+		oldVer = await res.json()
+		// })
 
 		const file0 = 'static/added-at-runtime0.txt'
 		const file1 = 'static/added-at-runtime1.txt'
 
-		it('responds debounced when files are added (bulk additions count as 1 increment)', async () => {
-			writeStatic(file0, '')
-			// writeStatic(file1, '')
-			await sleep()
-			const newVer = await res.json()
-			equal(newVer, oldVer + 1)
-			oldVer = newVer
-		})
+		// it('responds debounced when files are added (bulk additions count as 1 increment)', async () => {
+		res = await commander.getSyncVersion(oldVer, new AbortController().signal)
+		writeStatic(file0, '')
+		// writeStatic(file1, '')
+		await sleep()
+		const newVer = await res.json()
+		equal(newVer, oldVer + 1)
+		oldVer = newVer
+		// })
 
-		it('responds debounced when files are deleted', async () => {
-			removeStatic(file0)
-			// removeStatic(file1)
-			await sleep()
-			equal(await res.json(), oldVer + 1)
-		})
+		// it('responds debounced when files are deleted', async () => {
+		res = await commander.getSyncVersion(oldVer, new AbortController().signal)
+		removeStatic(file0)
+		// removeStatic(file1)
+		await sleep()
+		equal(await res.json(), oldVer + 1)
+		// })
 	})
 })
 

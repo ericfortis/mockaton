@@ -1,4 +1,14 @@
 # Changelog
+- 11.0.0 **Breaking change**, but of undocumented APIs.
+  - If you use the Mockaton’s API directly (if you use the [Commander](./src/ApiCommander.js)
+  client there’s no breaking change) update the request payloads from 
+  JSON objects, to positional JSON arrays, see mentioned client for 
+  the updated contracts.
+  - If you use the `GET /mockaton/state` API, broker objects are 
+  now flat. IOW, there's no `currentMock` object wrapper in them.
+
+---
+
 - 10.7.0 dashboard: animate in newly added mocks
 
 ![](docs/10.7.0-newly-added-anim.gif)

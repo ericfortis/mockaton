@@ -23,7 +23,7 @@ export const logger = new class {
 			console.log(this.#msg(
 				'ACCESS',
 				response.req.method,
-				response.status,
+				response.statusCode,
 				response.req.url,
 				error))
 	}

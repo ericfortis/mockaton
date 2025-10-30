@@ -34,18 +34,13 @@ async function register(file, data) {
 	write(file, data)
 	await sleep()
 }
-async function registerStatic(file, data) {
-	writeStatic(file, data)
-	await sleep()
-}
 
 async function unregister(file) {
 	unlinkSync(mocksDir + file)
 	await sleep()
 }
-async function unregisterStatic(file) {
+function removeStatic(file) {
 	unlinkSync(staticDir + file)
-	await sleep()
 }
 
 
@@ -347,7 +342,7 @@ describe('Dashboard', () => {
 	describe('getSyncVersion', () => {
 		let res
 		let oldVer = -1
-		
+
 		beforeEach(async () => {
 			res = await commander.getSyncVersion(oldVer, new AbortController().signal)
 		})
@@ -358,18 +353,20 @@ describe('Dashboard', () => {
 
 		const file0 = 'static/added-at-runtime0.txt'
 		const file1 = 'static/added-at-runtime1.txt'
-		
+
 		it('responds debounced when files are added (bulk additions count as 1 increment)', async () => {
-			await registerStatic(file0, '')
-			await registerStatic(file1, '')
+			writeStatic(file0, '')
+			writeStatic(file1, '')
+			await sleep()
 			const newVer = await res.json()
 			equal(newVer, oldVer + 1)
 			oldVer = newVer
 		})
-		
+
 		it('responds debounced when files are deleted', async () => {
-			await unregisterStatic(file0)
-			await unregisterStatic(file1)
+			removeStatic(file0)
+			removeStatic(file1)
+			await sleep()
 			equal(await res.json(), oldVer + 1)
 		})
 	})
@@ -855,7 +852,8 @@ describe('Static Files', () => {
 
 	it('unregisters static route', async () => {
 		const route = fixtureStaticIndex[0]
-		await unregisterStatic(route)
+		removeStatic(route)
+		await sleep()
 		const { staticBrokers } = await fetchState()
 		equal(staticBrokers['/' + route], undefined)
 	})

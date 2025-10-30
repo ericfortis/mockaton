@@ -247,7 +247,7 @@ describe('Error Handling', () => {
 			'foo._INVALID_METHOD_.200.json',
 			'bar.GET._INVALID_STATUS_.json'
 		]
-		for (const f of files) 
+		for (const f of files)
 			await register(f, '')
 		equal(spy.calls[0].arguments[0], 'Invalid Filename Convention')
 		equal(spy.calls[1].arguments[0], 'Unrecognized HTTP Method: "_INVALID_METHOD_"')
@@ -322,7 +322,7 @@ describe('CORS', () => {
 	})
 
 	it('responds', async () => {
-		const res = await request(fxAlphaDefault[0], {
+		const res = await request(fxBasicGet[0], {
 			headers: {
 				[CorsHeader.Origin]: 'http://example.com'
 			}
@@ -344,23 +344,34 @@ describe('Dashboard', () => {
 		match(await res.text(), new RegExp('<!DOCTYPE html>'))
 	})
 
-	it('getSyncVersion responds immediately when version mismatches', async () => {
-		const controller = new AbortController()
-		const res1 = await commander.getSyncVersion(-1, controller.signal)
-		equal(res1.status, 200)
-		const version = await res1.json()
+	describe('getSyncVersion', () => {
+		let res
+		let oldVer = -1
+		
+		beforeEach(async () => {
+			res = await commander.getSyncVersion(oldVer, new AbortController().signal)
+		})
 
-		const fileAddAtRuntime = 'static/runtime.html'
-		const res2Prom = commander.getSyncVersion(version, controller.signal)
-		await registerStatic(fileAddAtRuntime, '')
-		const res2 = await res2Prom
-		equal(res2.status, 200)
-		equal(await res2.json(), version + 1)
+		it('responds immediately when version mismatches', async () => {
+			oldVer = await res.json()
+		})
 
-		const res3Prom = commander.getSyncVersion(version, controller.signal)
-		await unregisterStatic(fileAddAtRuntime)
-		const res3 = await res3Prom
-		equal(await res3.json(), version + 1)
+		const file0 = 'static/added-at-runtime0.txt'
+		const file1 = 'static/added-at-runtime1.txt'
+		
+		it('responds debounced when files are added (bulk additions count as 1 increment)', async () => {
+			await registerStatic(file0, '')
+			await registerStatic(file1, '')
+			const newVer = await res.json()
+			equal(newVer, oldVer + 1)
+			oldVer = newVer
+		})
+		
+		it('responds debounced when files are deleted', async () => {
+			await unregisterStatic(file0)
+			await unregisterStatic(file1)
+			equal(await res.json(), oldVer + 1)
+		})
 	})
 })
 

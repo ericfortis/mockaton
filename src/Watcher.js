@@ -41,6 +41,7 @@ export const uiSyncVersion = new class extends EventEmitter {
 export function watchMocksDir() {
 	const dir = config.mocksDir
 	watch(dir, { recursive: true, persistent: false }, (_, file) => {
+		console.log('watchMocksDir', file, _);
 		if (!file)
 			return
 

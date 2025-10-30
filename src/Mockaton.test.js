@@ -351,12 +351,12 @@ describe('Dashboard', () => {
 		oldVer = await res.json()
 		// })
 
-		const file0 = 'static/added-at-runtime0.txt'
-		const file1 = 'static/added-at-runtime1.txt'
+		const file0 = 'added-at-runtime0.GET.200.txt'
+		const file1 = 'added-at-runtime1.GET.200.txt'
 
 		// it('responds debounced when files are added (bulk additions count as 1 increment)', async () => {
 		res = await commander.getSyncVersion(oldVer, new AbortController().signal)
-		writeStatic(file0, '')
+		await register(file0, '')
 		// writeStatic(file1, '')
 		await sleep()
 		const newVer = await res.json()
@@ -366,9 +366,8 @@ describe('Dashboard', () => {
 
 		// it('responds debounced when files are deleted', async () => {
 		res = await commander.getSyncVersion(oldVer, new AbortController().signal)
-		removeStatic(file0)
+		await unregister(file0)
 		// removeStatic(file1)
-		await sleep()
 		equal(await res.json(), oldVer + 1)
 		// })
 	})

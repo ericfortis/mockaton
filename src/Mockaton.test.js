@@ -357,7 +357,7 @@ describe('Dashboard', () => {
 		it('responds debounced when files are added (bulk additions count as 1 increment)', async () => {
 			writeStatic(file0, '')
 			writeStatic(file1, '')
-			await sleep()
+			await sleep(150)
 			const newVer = await res.json()
 			equal(newVer, oldVer + 1)
 			oldVer = newVer
@@ -366,7 +366,7 @@ describe('Dashboard', () => {
 		it('responds debounced when files are deleted', async () => {
 			removeStatic(file0)
 			removeStatic(file1)
-			await sleep()
+			await sleep(150)
 			equal(await res.json(), oldVer + 1)
 		})
 	})

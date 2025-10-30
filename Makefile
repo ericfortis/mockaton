@@ -1,0 +1,33 @@
+start:
+	@node src/cli.js
+
+watch:
+	@node --watch src/cli.js
+
+
+test:
+	node --test 'src/**/*.test.js'
+
+test-docker:
+	docker run --rm -it \
+		-v "$$PWD":/app \
+		-w /app \
+		node:24 \
+		make test
+
+coverage:
+	node --test --experimental-test-coverage \
+		--test-reporter=spec --test-reporter-destination=stdout \
+		--test-reporter=lcov --test-reporter-destination=lcov.info \
+		'src/**/*.test.js'
+
+pixaton:
+	node --test --experimental-test-isolation=none \
+		--import=./pixaton-tests/_setup.js \
+		'pixaton-tests/**/*.test.js'
+
+outdated:
+	@npm outdated --parseable |\
+		awk -F: '{ printf "npm i %-30s ;# %s\n", $$4, $$2 }'
+
+.PHONY: *

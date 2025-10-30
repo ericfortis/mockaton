@@ -16,7 +16,7 @@ jobs:
         env:
           TMPDIR: ${{ runner.temp }}
 
-      - run: npm run coverage
+      - run: make coverage
 
       - uses: codecov/codecov-action@v5
         with:

@@ -12,8 +12,8 @@ import * as staticCollection from './staticCollection.js'
 import * as mockBrokersCollection from './mockBrokersCollection.js'
 import { config, ConfigValidator } from './config.js'
 import { DashboardHtml, CSP } from './DashboardHtml.js'
-import { DF, API, LONG_POLL_SERVER_TIMEOUT } from './ApiConstants.js'
 import { sendOK, sendJSON, sendUnprocessableContent, sendFile, sendHTML } from './utils/http-response.js'
+import { API, LONG_POLL_SERVER_TIMEOUT, HEADER_FOR_SYNC_VERSION } from './ApiConstants.js'
 
 
 export const apiGetRequests = new Map([
@@ -81,12 +81,12 @@ function getState(_, response) {
 
 
 function longPollClientSyncVersion(req, response) {
-	if (uiSyncVersion.version !== Number(req.headers[DF.syncVersion])) {
+	if (uiSyncVersion.version !== Number(req.headers[HEADER_FOR_SYNC_VERSION])) {
 		// e.g., tab was hidden while new mocks were added or removed
 		sendJSON(response, uiSyncVersion.version)
 		return
 	}
-	
+
 	function onAddOrRemoveMock() {
 		uiSyncVersion.unsubscribe(onAddOrRemoveMock)
 		sendJSON(response, uiSyncVersion.version)
@@ -112,7 +112,7 @@ function reinitialize(_, response) {
 
 async function selectCookie(req, response) {
 	const label = await parseJSON(req)
-	
+
 	const error = cookie.setCurrent(label)
 	if (error)
 		sendUnprocessableContent(response, error?.message || error)
@@ -135,10 +135,7 @@ async function selectMock(req, response) {
 
 
 async function toggle500(req, response) {
-	const {
-		[DF.routeMethod]: method,
-		[DF.routeUrlMask]: urlMask
-	} = await parseJSON(req)
+	const [method, urlMask] = await parseJSON(req)
 
 	const broker = mockBrokersCollection.brokerByRoute(method, urlMask)
 	if (!broker)
@@ -151,11 +148,7 @@ async function toggle500(req, response) {
 
 
 async function setRouteIsDelayed(req, response) {
-	const {
-		[DF.delayed]: delayed,
-		[DF.routeMethod]: method,
-		[DF.routeUrlMask]: urlMask
-	} = await parseJSON(req)
+	const [method, urlMask, delayed] = await parseJSON(req)
 
 	const broker = mockBrokersCollection.brokerByRoute(method, urlMask)
 	if (!broker)
@@ -170,11 +163,7 @@ async function setRouteIsDelayed(req, response) {
 
 
 async function setRouteIsProxied(req, response) {
-	const {
-		[DF.proxied]: proxied,
-		[DF.routeMethod]: method,
-		[DF.routeUrlMask]: urlMask
-	} = await parseJSON(req)
+	const [method, urlMask, proxied] = await parseJSON(req)
 
 	const broker = mockBrokersCollection.brokerByRoute(method, urlMask)
 	if (!broker)
@@ -216,7 +205,7 @@ async function setCollectProxied(req, response) {
 
 async function bulkUpdateBrokersByCommentTag(req, response) {
 	const comment = await parseJSON(req)
-	
+
 	mockBrokersCollection.setMocksMatchingComment(comment)
 	sendOK(response)
 }
@@ -248,10 +237,7 @@ async function setGlobalDelay(req, response) {
 
 
 async function setStaticRouteStatusCode(req, response) {
-	const {
-		[DF.statusCode]: status,
-		[DF.routeUrlMask]: urlMask
-	} = await parseJSON(req)
+	const [urlMask, status] = await parseJSON(req)
 
 	const broker = staticCollection.brokerByRoute(urlMask)
 	if (!broker)
@@ -266,10 +252,7 @@ async function setStaticRouteStatusCode(req, response) {
 
 
 async function setStaticRouteIsDelayed(req, response) {
-	const {
-		[DF.delayed]: delayed,
-		[DF.routeUrlMask]: urlMask
-	} = await parseJSON(req)
+	const [urlMask, delayed] = await parseJSON(req)
 
 	const broker = staticCollection.brokerByRoute(urlMask)
 	if (!broker)

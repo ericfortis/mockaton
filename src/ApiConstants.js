@@ -19,16 +19,9 @@ export const API = {
 	toggle500: MOUNT + '/toggle500'
 }
 
-export const DF = { // Dashboard Fields (XHR)
-	routeMethod: 'route_method',
-	routeUrlMask: 'route_url_mask',
-	delayed: 'delayed',
-	proxied: 'proxied',
-	statusCode: 'status_code',
-	syncVersion: 'last_received_sync_version'
-}
-
 export const HEADER_FOR_502 = 'Mockaton502'
+export const HEADER_FOR_SYNC_VERSION = 'sync_version'
+
 export const DEFAULT_MOCK_COMMENT = '(default)'
 export const EXT_FOR_UNKNOWN_MIME = 'unknown'
 export const LONG_POLL_SERVER_TIMEOUT = 8_000

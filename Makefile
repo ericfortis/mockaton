@@ -6,23 +6,23 @@ watch:
 
 
 test:
-	node --test 'src/**/*.test.js'
+	@node --test 'src/**/*.test.js'
 
 test-docker:
-	docker run --rm -it \
-		-v .:/app \
-		-w /app \
+	@docker run --rm --interactive --tty \
+		--volume .:/app \
+		--workdir /app \
 		node:24 \
 		make test
 
 coverage:
-	node --test --experimental-test-coverage \
+	@node --test --experimental-test-coverage \
 		--test-reporter=spec --test-reporter-destination=stdout \
 		--test-reporter=lcov --test-reporter-destination=lcov.info \
 		'src/**/*.test.js'
 
 pixaton:
-	node --test --experimental-test-isolation=none \
+	@node --test --experimental-test-isolation=none \
 		--import=./pixaton-tests/_setup.js \
 		'pixaton-tests/**/*.test.js'
 

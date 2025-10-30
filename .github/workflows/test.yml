@@ -8,11 +8,15 @@ permissions:
 jobs:
   build:
     runs-on: ubuntu-latest
-    container:
-      image: node:24
     steps:
       - uses: actions/checkout@v5
-      - run: npm run coverage
+      - uses: actions/setup-node@v5
+        with:
+          node-version: 24
+        env:
+          TMPDIR: ${{ runner.temp }}
+
+      - run: make coverage
 
       - uses: codecov/codecov-action@v5
         with:

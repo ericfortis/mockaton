@@ -34,13 +34,18 @@ async function register(file, data) {
 	write(file, data)
 	await sleep()
 }
+async function registerStatic(file, data) {
+	writeStatic(file, data)
+	await sleep()
+}
 
 async function unregister(file) {
 	unlinkSync(mocksDir + file)
 	await sleep()
 }
-function removeStatic(file) {
+async function unregisterStatic(file) {
 	unlinkSync(staticDir + file)
+	await sleep()
 }
 
 
@@ -242,7 +247,7 @@ describe('Error Handling', () => {
 			'foo._INVALID_METHOD_.200.json',
 			'bar.GET._INVALID_STATUS_.json'
 		]
-		for (const f of files)
+		for (const f of files) 
 			await register(f, '')
 		equal(spy.calls[0].arguments[0], 'Invalid Filename Convention')
 		equal(spy.calls[1].arguments[0], 'Unrecognized HTTP Method: "_INVALID_METHOD_"')
@@ -317,7 +322,7 @@ describe('CORS', () => {
 	})
 
 	it('responds', async () => {
-		const res = await request(fxBasicGet[0], {
+		const res = await request(fxAlphaDefault[0], {
 			headers: {
 				[CorsHeader.Origin]: 'http://example.com'
 			}
@@ -339,39 +344,25 @@ describe('Dashboard', () => {
 		match(await res.text(), new RegExp('<!DOCTYPE html>'))
 	})
 
-	it('getSyncVersion', async () => {
-		let res
-		let oldVer = -1
+	it('getSyncVersion responds immediately when version mismatches', async () => {
+		const controller = new AbortController()
+		const res1 = await commander.getSyncVersion(-1, controller.signal)
+		const version = await res1.json()
 
-		// beforeEach(async () => {
-		// })
+		const fileAddAtRuntime = 'static/runtime.html'
+		const fileAddAtRuntime2 = 'static/runtime2.html'
+		const res2Prom = commander.getSyncVersion(version, controller.signal)
+		await registerStatic(fileAddAtRuntime, '')
+		await registerStatic(fileAddAtRuntime2, '')
+		equal(await (await res2Prom).json(), version + 1)
 
-		// it('responds immediately when version mismatches', async () => {
-		res = await commander.getSyncVersion(oldVer, new AbortController().signal)
-		oldVer = await res.json()
-		// })
-
-		const file0 = 'added-at-runtime0.GET.200.txt'
-		const file1 = 'added-at-runtime1.GET.200.txt'
-
-		// it('responds debounced when files are added (bulk additions count as 1 increment)', async () => {
-		res = await commander.getSyncVersion(oldVer, new AbortController().signal)
-		await register(file0, '')
-		// writeStatic(file1, '')
-		await sleep()
-		const newVer = await res.json()
-		equal(newVer, oldVer + 1)
-		oldVer = newVer
-		// })
-
-		// it('responds debounced when files are deleted', async () => {
-		res = await commander.getSyncVersion(oldVer, new AbortController().signal)
-		await unregister(file0)
-		// removeStatic(file1)
-		equal(await res.json(), oldVer + 1)
-		// })
+		const res3Prom = commander.getSyncVersion(version + 1, controller.signal)
+		await unregisterStatic(fileAddAtRuntime)
+		await unregisterStatic(fileAddAtRuntime2)
+		equal(await (await res3Prom).json(), version + 2)
 	})
 })
+
 
 describe('Cookie', () => {
 	it('422 when trying to select non-existing cookie', async () =>
@@ -424,18 +415,26 @@ describe('Delay', () => {
 		equal((new Date()).getTime() - now.getTime() > delay, true)
 	})
 
+	it('422 when updating non-existing mock alternative. There are mocks for /alpha but not for this one', async () => {
+		const missingFile = 'alpha(non-existing-variant).GET.200.json'
+		const res = await commander.select(missingFile)
+		equal(res.status, 422)
+		equal(await res.text(), `Missing Mock: ${missingFile}`)
+	})
+
 	describe('Set Route is Delayed', () => {
+		const [route] = fxBasicGet
 		it('422 for non-existing route', async () => {
-			const res = await commander.setRouteIsDelayed('GET', '/non-existing-route', true)
+			const res = await commander.setRouteIsDelayed('GET', route + '/non-existing', true)
 			equal(res.status, 422)
-			equal(await res.text(), `Route does not exist: GET /non-existing-route`)
+			equal(await res.text(), `Route does not exist: GET ${route}/non-existing`)
 		})
 		it('422 for invalid delayed value', async () => {
-			const res = await commander.setRouteIsDelayed('GET', fxBasicGet[0], 'not-a-boolean')
+			const res = await commander.setRouteIsDelayed('GET', route, 'not-a-boolean')
 			equal(await res.text(), 'Expected boolean for "delayed"')
 		})
 		it('200', async () => {
-			const res = await commander.setRouteIsDelayed('GET', fxBasicGet[0], true)
+			const res = await commander.setRouteIsDelayed('GET', route, true)
 			equal((await res.json()).delayed, true)
 		})
 	})
@@ -684,15 +683,6 @@ describe('404', () => {
 		equal((await request('/' + fxsIgnored[0])).status, 404))
 })
 
-describe('Select Mock', () => {
-	it('422 when updating non-existing mock alternative. There are mocks for /alpha but not for this one', async () => {
-		const missingFile = 'alpha(non-existing-variant).GET.200.json'
-		const res = await commander.select(missingFile)
-		equal(res.status, 422)
-		equal(await res.text(), `Missing Mock: ${missingFile}`)
-	})
-})
-
 describe('Default mock', () => {
 	it('sorts mocks list with the user specified default first for dashboard display', async () => {
 		const { mocks } = (await fetchState()).brokersByMethod.GET[fxAlphaDefault[0]]
@@ -853,8 +843,7 @@ describe('Static Files', () => {
 
 	it('unregisters static route', async () => {
 		const route = fixtureStaticIndex[0]
-		removeStatic(route)
-		await sleep()
+		await unregisterStatic(route)
 		const { staticBrokers } = await fetchState()
 		equal(staticBrokers['/' + route], undefined)
 	})

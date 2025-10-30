@@ -18,7 +18,14 @@
 		"mockaton": "src/cli.js"
 	},
 	"scripts": {
-		"start": "make start"
+		"test": "node --test 'src/**/*.test.js'",
+		"test-docker": "docker run --rm -it -v .:/repo -w /repo node:24-slim npm test",
+		"coverage": "node --test --test-reporter=spec --test-reporter-destination=stdout  --test-reporter=lcov --test-reporter-destination=lcov.info  --experimental-test-coverage 'src/**/*.test.js'",
+
+		"start": "node src/cli.js",
+		"watch": "node --watch src/cli.js",
+		"pixaton": "node --test --import=./pixaton-tests/_setup.js --experimental-test-isolation=none 'pixaton-tests/**/*.test.js'",
+		"outdated": "npm outdated --parseable | awk -F: '{ printf \"npm i %-30s ;# %s\\n\", $4, $2 }'"
 	},
 	"devDependencies": {
 		"pixaton": "1.1.3",

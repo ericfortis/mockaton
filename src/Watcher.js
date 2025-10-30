@@ -66,6 +66,7 @@ export function watchStaticDir() {
 		return
 	
 	watch(dir, { recursive: true, persistent: false }, (_, file) => {
+		console.log('watchStaticDir', file);
 		if (!file)
 			return
 

@@ -58,7 +58,7 @@ class Fixture {
 		this.ext = ext
 		this.body = body || `Body for ${file}`
 	}
-	
+
 	static async create(file, body) {
 		const fx = new Fixture(file, body)
 		await fx.register()
@@ -83,7 +83,7 @@ class FixtureStatic {
 		this.status = 200
 		this.body = body || `Body for static ${file}`
 	}
-	
+
 	static async create(file, body) {
 		const fxs = new FixtureStatic(file, body)
 		await fxs.register()
@@ -106,9 +106,9 @@ class FixtureStatic {
 }
 
 
-/** # Fixtures */
+const fixtureA = await Fixture.create('basic.GET.200.json')
 
-// TODO Refactor
+
 const fixtures = [
 	[
 		'/api',
@@ -193,9 +193,6 @@ const fixtures = [
 		'with pretty-param and query-params'
 	],
 ]
-
-const fixtureA = await Fixture.create('basic.GET.200.json')
-
 
 for (const [, file, body] of fixtures)
 	write(file, file.endsWith('.json') ? JSON.stringify(body) : body)
@@ -288,7 +285,7 @@ describe('Error Handling', () => {
 		equal((await request(API.throws)).status, 500)
 		equal(spy.calls[0].arguments[2], 'Test500')
 	})
-	
+
 	it('on Windows, path separators are normalized to forward slashes', async () => {
 		const { brokersByMethod } = await fetchState()
 		equal(brokersByMethod[fixtureA.method][fixtureA.urlMask].file, fixtureA.file)
@@ -552,7 +549,6 @@ describe('Proxy Fallback', () => {
 
 	describe('Set Route is Proxied', () => {
 		beforeEach(async () => await commander.setProxyFallback(''))
-		after(async () => await commander.setProxyFallback(''))
 
 		it('422 for non-existing route', async () => {
 			const res = await commander.setRouteIsProxied('GET', '/non-existing', true)
@@ -590,26 +586,16 @@ describe('Proxy Fallback', () => {
 		})
 	})
 
-	it('updates current selected mock and resets proxied flag', async () => {
-		const url = '/api/alternative'
-		const file = 'api/alternative(comment-2).GET.200.json'
-		const expectedBody = JSON.stringify({ comment: 2 })
-		await commander.setRouteIsProxied('GET', url, true)
-		const r0 = await commander.select(file)
-		deepEqual(await r0.json(), {
-			file,
-			status: 200,
-			auto500: false,
-			delayed: false,
-			proxied: false,
-			mocks: [
-				'api/alternative(comment-1).GET.200.json',
-				'api/alternative(comment-2).GET.200.json',
-			]
-		})
-		const res = await request(url)
-		equal(res.status, 200)
-		equal(await res.text(), expectedBody)
+	it('updating selected mock resets proxied flag', async () => {
+		const fx = await Fixture.create('select-resets-proxied.GET.200.txt')
+		await commander.setProxyFallback('http://example.com')
+		const r0 = await commander.setRouteIsProxied(fx.method, fx.urlMask, true)
+		equal((await r0.json()).proxied, true)
+
+		const r1 = await commander.select(fx.file)
+		equal((await r1.json()).proxied, false)
+		
+		await commander.setProxyFallback('')
 	})
 })
 

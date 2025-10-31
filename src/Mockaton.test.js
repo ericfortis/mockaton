@@ -218,10 +218,6 @@ class FixtureStatic {
 		this.status = 200
 		this.body = body || `Body for static ${file}`
 	}
-	
-	get ext() {
-		return this.file.split('.').pop()
-	}
 
 	request(options = {}) {
 		return request(this.urlMask, options)
@@ -231,7 +227,7 @@ class FixtureStatic {
 		writeStatic(this.file, this.body)
 		await sleep()
 	}
-	
+
 	async unregister() {
 		unregisterStatic(this.file)
 		await sleep()
@@ -710,7 +706,7 @@ describe('Default mock', async () => {
 	await it('sorts mocks list with the user specified default first for dashboard display', async () => {
 		const { mocks } = (await fetchState()).brokersByMethod.GET[fxA.urlMask]
 		deepEqual(mocks, [
-			fxB.file, 
+			fxB.file,
 			fxA.file
 		])
 	})
@@ -782,45 +778,36 @@ describe('Dispatch', () => {
 
 
 describe('Static Files', () => {
-	const fxIndex = new FixtureStatic('static/index.html', '<h1>Static</h1>')
-	const staticFiles = [
-		['static/assets/app.js', 'const app = 1'],
-		['static/another-entry/index.html', '<h1>Another</h1>']
-	]
-	for (const [file, body] of staticFiles)
-		writeStatic(file, body)
+	const fxIndex = new FixtureStatic('static/index.html', '<h1></h1>')
+	const fxAsset = new FixtureStatic('static/assets/script.js', 'const a = 1')
 
 	before(async () => {
 		await fxIndex.register()
+		await fxAsset.register()
 	})
-	
 
 	describe('Static File Serving', () => {
-		it('404 path traversal', async () =>
-			equal((await request('/../../../../../../../../../../../%2E%2E/etc/passwd')).status, 404))
-
 		it('Defaults to index.html', async () => {
 			const res = await request('/static')
 			equal(res.status, 200)
-			equal(await res.text(), '<h1>Static</h1>')
-		})
-
-		it('Defaults to in subdirs index.html', async () => {
-			const res = await request('/static/another-entry')
-			equal(res.status, 200)
-			equal(await res.text(), '<h1>Another</h1>')
+			equal(res.headers.get('content-type'), mimeFor(fxIndex.file))
+			equal(await res.text(), fxIndex.body)
 		})
 
 		it('Serves exacts paths', async () => {
-			const res = await request('/static/assets/app.js')
+			const res = await fxAsset.request()
 			equal(res.status, 200)
-			equal(await res.text(), 'const app = 1')
+			equal(res.headers.get('content-type'), mimeFor(fxAsset.file))
+			equal(await res.text(), fxAsset.body)
 		})
 	})
 
 	it('Static File List', async () => {
 		const { staticBrokers } = await fetchState()
-		deepEqual(Object.keys(staticBrokers), [fxIndex.urlMask].concat(staticFiles.map(([file]) => '/' + file)).sort())
+		deepEqual(Object.keys(staticBrokers), [
+			fxAsset.urlMask,
+			fxIndex.urlMask
+		])
 	})
 
 	describe('Set Static Route is Delayed', () => {

@@ -39,9 +39,8 @@ async function unregister(file) {
 	unlinkSync(mocksDir + file)
 	await sleep()
 }
-async function unregisterStatic(file) {
+function unregisterStatic(file) {
 	unlinkSync(staticDir + file)
-	await sleep()
 }
 
 
@@ -230,6 +229,11 @@ class FixtureStatic {
 
 	async register() {
 		writeStatic(this.file, this.body)
+		await sleep()
+	}
+	
+	async unregister() {
+		unregisterStatic(this.file)
 		await sleep()
 	}
 }
@@ -779,7 +783,6 @@ describe('Dispatch', () => {
 
 describe('Static Files', () => {
 	const fxIndex = new FixtureStatic('static/index.html', '<h1>Static</h1>')
-	const fixtureStaticIndex = ['static/index.html', '<h1>Static</h1>']
 	const staticFiles = [
 		['static/assets/app.js', 'const app = 1'],
 		['static/another-entry/index.html', '<h1>Another</h1>']
@@ -861,7 +864,7 @@ describe('Static Files', () => {
 	})
 
 	describe('Resets Static Routes', () => {
-		const route = '/' + fixtureStaticIndex[0]
+		const route = fxIndex.urlMask
 
 		beforeEach(async () => {
 			await commander.setStaticRouteIsDelayed(route, true)
@@ -881,29 +884,25 @@ describe('Static Files', () => {
 	})
 
 	describe('Static partial content', () => {
-		const route = '/' + fixtureStaticIndex[0]
-		const expectedBody = fixtureStaticIndex[1]
-
 		it('206 serves partial content', async () => {
-			const res1 = await request(route, { headers: { range: 'bytes=0-3' } })
-			const res2 = await request(route, { headers: { range: 'bytes=4-' } })
+			const res1 = await fxIndex.request({ headers: { range: 'bytes=0-3' } })
+			const res2 = await fxIndex.request({ headers: { range: 'bytes=4-' } })
 			equal(res1.status, 206)
 			equal(res2.status, 206)
 			const body = await res1.text() + await res2.text()
-			equal(body, expectedBody)
+			equal(body, fxIndex.body)
 		})
 
 		it('416 on invalid range (end > start)', async () => {
-			const res = await request(route, { headers: { range: 'bytes=3-0' } })
+			const res = await fxIndex.request({ headers: { range: 'bytes=3-0' } })
 			equal(res.status, 416)
 		})
 	})
 
 	it('unregisters static route', async () => {
-		const route = fixtureStaticIndex[0]
-		await unregisterStatic(route)
+		await fxIndex.unregister()
 		const { staticBrokers } = await fetchState()
-		equal(staticBrokers['/' + route], undefined)
+		equal(staticBrokers[fxIndex.urlMask], undefined)
 	})
 
 })

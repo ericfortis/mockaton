@@ -85,9 +85,9 @@ class FixtureStatic {
 	}
 	
 	static async create(file, body) {
-		const fx = new FixtureStatic(file, body)
-		await fx.register()
-		return fx
+		const fxs = new FixtureStatic(file, body)
+		await fxs.register()
+		return fxs
 	}
 
 	request(options = {}) {
@@ -695,8 +695,8 @@ describe('404', () => {
 	})
 
 	it('ignores static files ending in ~', async () => {
-		const fx = await FixtureStatic.create('static/ignored.js~')
-		return equal((await fx.request()).status, 404)
+		const fxs = await FixtureStatic.create('static/ignored.js~')
+		return equal((await fxs.request()).status, 404)
 	})
 })
 
@@ -748,33 +748,33 @@ export default function (req, response) {
 })
 
 describe('Static Files', () => {
-	let fxIndex, fxAsset
+	let fxsIndex, fxsAsset
 	before(async () => {
-		fxIndex = await FixtureStatic.create('static/index.html', '<h1>Index</h1>')
-		fxAsset = await FixtureStatic.create('static/assets/script.js', 'const a = 1')
+		fxsIndex = await FixtureStatic.create('static/index.html', '<h1>Index</h1>')
+		fxsAsset = await FixtureStatic.create('static/assets/script.js', 'const a = 1')
 	})
 
 	describe('Static File Serving', () => {
 		it('Defaults to index.html', async () => {
 			const res = await request('/static')
 			equal(res.status, 200)
-			equal(res.headers.get('content-type'), mimeFor(fxIndex.file))
-			equal(await res.text(), fxIndex.body)
+			equal(res.headers.get('content-type'), mimeFor(fxsIndex.file))
+			equal(await res.text(), fxsIndex.body)
 		})
 
 		it('Serves exacts paths', async () => {
-			const res = await fxAsset.request()
+			const res = await fxsAsset.request()
 			equal(res.status, 200)
-			equal(res.headers.get('content-type'), mimeFor(fxAsset.file))
-			equal(await res.text(), fxAsset.body)
+			equal(res.headers.get('content-type'), mimeFor(fxsAsset.file))
+			equal(await res.text(), fxsAsset.body)
 		})
 	})
 
 	it('Static File List', async () => {
 		const { staticBrokers } = await fetchState()
 		deepEqual(Object.keys(staticBrokers), [
-			fxAsset.urlMask,
-			fxIndex.urlMask
+			fxsAsset.urlMask,
+			fxsIndex.urlMask
 		])
 	})
 
@@ -786,14 +786,14 @@ describe('Static Files', () => {
 		})
 
 		it('422 for invalid delayed value', async () => {
-			const res = await commander.setStaticRouteIsDelayed(fxIndex.urlMask, 'not-a-boolean')
+			const res = await commander.setStaticRouteIsDelayed(fxsIndex.urlMask, 'not-a-boolean')
 			equal(await res.text(), 'Expected boolean for "delayed"')
 		})
 
 		it('200', async () => {
-			await commander.setStaticRouteIsDelayed(fxIndex.urlMask, true)
+			await commander.setStaticRouteIsDelayed(fxsIndex.urlMask, true)
 			const { staticBrokers } = await fetchState()
-			equal(staticBrokers[fxIndex.urlMask].delayed, true)
+			equal(staticBrokers[fxsIndex.urlMask].delayed, true)
 		})
 	})
 
@@ -805,57 +805,57 @@ describe('Static Files', () => {
 		})
 
 		it('422 for invalid delayed value', async () => {
-			const res = await commander.setStaticRouteStatus(fxIndex.urlMask, 'not-200-or-404')
+			const res = await commander.setStaticRouteStatus(fxsIndex.urlMask, 'not-200-or-404')
 			equal(res.status, 422)
 			equal(await res.text(), 'Expected 200 or 404 status code')
 		})
 
 		it('200', async () => {
-			const res = await commander.setStaticRouteStatus(fxIndex.urlMask, 404)
+			const res = await commander.setStaticRouteStatus(fxsIndex.urlMask, 404)
 			equal(res.status, 200)
 			const { staticBrokers } = await fetchState()
-			equal(staticBrokers[fxIndex.urlMask].status, 404)
+			equal(staticBrokers[fxsIndex.urlMask].status, 404)
 		})
 	})
 
 	describe('Resets Static Routes', () => {
 		beforeEach(async () => {
-			await commander.setStaticRouteIsDelayed(fxIndex.urlMask, true)
-			await commander.setStaticRouteStatus(fxIndex.urlMask, 404)
+			await commander.setStaticRouteIsDelayed(fxsIndex.urlMask, true)
+			await commander.setStaticRouteStatus(fxsIndex.urlMask, 404)
 			await commander.reset()
 		})
 
 		it('resets delayed', async () => {
 			const { staticBrokers } = await fetchState()
-			equal(staticBrokers[fxIndex.urlMask].delayed, false)
+			equal(staticBrokers[fxsIndex.urlMask].delayed, false)
 		})
 
 		it('resets status', async () => {
 			const { staticBrokers } = await fetchState()
-			equal(staticBrokers[fxIndex.urlMask].status, 200)
+			equal(staticBrokers[fxsIndex.urlMask].status, 200)
 		})
 	})
 
 	describe('Static Partial Content', () => {
 		it('206 serves partial content', async () => {
-			const res1 = await fxIndex.request({ headers: { range: 'bytes=0-3' } })
-			const res2 = await fxIndex.request({ headers: { range: 'bytes=4-' } })
+			const res1 = await fxsIndex.request({ headers: { range: 'bytes=0-3' } })
+			const res2 = await fxsIndex.request({ headers: { range: 'bytes=4-' } })
 			equal(res1.status, 206)
 			equal(res2.status, 206)
 			const body = await res1.text() + await res2.text()
-			equal(body, fxIndex.body)
+			equal(body, fxsIndex.body)
 		})
 
 		it('416 on invalid range (end > start)', async () => {
-			const res = await fxIndex.request({ headers: { range: 'bytes=3-0' } })
+			const res = await fxsIndex.request({ headers: { range: 'bytes=3-0' } })
 			equal(res.status, 416)
 		})
 	})
 
 	it('unregisters static route', async () => {
-		await fxIndex.unregister()
+		await fxsIndex.unregister()
 		const { staticBrokers } = await fetchState()
-		equal(staticBrokers[fxIndex.urlMask], undefined)
+		equal(staticBrokers[fxsIndex.urlMask], undefined)
 	})
 
 })

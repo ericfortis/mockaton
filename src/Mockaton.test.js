@@ -161,15 +161,6 @@ write('api/my-route(comment-2).GET.200.json', JSON.stringify({ comment: 2 }))
 // JavaScript to JSON (params for testing URL decoding)
 write('/api/object?param=[param].GET.200.js', 'export default { JSON_FROM_JS: true }')
 
-const fixtureStaticIndex = ['static/index.html', '<h1>Static</h1>']
-const staticFiles = [
-	fixtureStaticIndex,
-	['static/assets/app.js', 'const app = 1'],
-	['static/another-entry/index.html', '<h1>Another</h1>']
-]
-for (const [file, body] of staticFiles)
-	writeStatic(file, body)
-
 
 const COOKIES = { userA: 'CookieA', userB: 'CookieB' }
 const CUSTOM_EXT = 'custom_extension'
@@ -477,25 +468,6 @@ describe('Delay', () => {
 		})
 	})
 
-	describe('Set Static Route is Delayed', () => {
-		const route = '/' + fixtureStaticIndex[0]
-		it('422 for non-existing route', async () => {
-			const res = await commander.setStaticRouteIsDelayed(route + '/non-existing', true)
-			equal(res.status, 422)
-			equal(await res.text(), `Static route does not exist: ${route}/non-existing`)
-		})
-
-		it('422 for invalid delayed value', async () => {
-			const res = await commander.setStaticRouteIsDelayed(route, 'not-a-boolean')
-			equal(await res.text(), 'Expected boolean for "delayed"')
-		})
-
-		it('200', async () => {
-			await commander.setStaticRouteIsDelayed(route, true)
-			const { staticBrokers } = await fetchState()
-			equal(staticBrokers[route].delayed, true)
-		})
-	})
 })
 
 describe('Proxy Fallback', () => {
@@ -806,6 +778,20 @@ describe('Dispatch', () => {
 
 
 describe('Static Files', () => {
+	const fxIndex = new FixtureStatic('static/index.html', '<h1>Static</h1>')
+	const fixtureStaticIndex = ['static/index.html', '<h1>Static</h1>']
+	const staticFiles = [
+		['static/assets/app.js', 'const app = 1'],
+		['static/another-entry/index.html', '<h1>Another</h1>']
+	]
+	for (const [file, body] of staticFiles)
+		writeStatic(file, body)
+
+	before(async () => {
+		await fxIndex.register()
+	})
+	
+
 	describe('Static File Serving', () => {
 		it('404 path traversal', async () =>
 			equal((await request('/../../../../../../../../../../../%2E%2E/etc/passwd')).status, 404))
@@ -831,29 +817,46 @@ describe('Static Files', () => {
 
 	it('Static File List', async () => {
 		const { staticBrokers } = await fetchState()
-		deepEqual(Object.keys(staticBrokers).sort(), staticFiles.map(([file]) => '/' + file).sort())
+		deepEqual(Object.keys(staticBrokers), [fxIndex.urlMask].concat(staticFiles.map(([file]) => '/' + file)).sort())
 	})
 
-	describe('Set Static Route Status Code', () => {
-		const route = '/' + fixtureStaticIndex[0]
-
+	describe('Set Static Route is Delayed', () => {
 		it('422 for non-existing route', async () => {
-			const res = await commander.setStaticRouteStatus(route + '/non-existing', 200)
+			const res = await commander.setStaticRouteIsDelayed('/non-existing', true)
 			equal(res.status, 422)
-			equal(await res.text(), `Static route does not exist: ${route}/non-existing`)
+			equal(await res.text(), `Static route does not exist: /non-existing`)
 		})
 
 		it('422 for invalid delayed value', async () => {
-			const res = await commander.setStaticRouteStatus(route, 'not-200-or-404')
+			const res = await commander.setStaticRouteIsDelayed(fxIndex.urlMask, 'not-a-boolean')
+			equal(await res.text(), 'Expected boolean for "delayed"')
+		})
+
+		it('200', async () => {
+			await commander.setStaticRouteIsDelayed(fxIndex.urlMask, true)
+			const { staticBrokers } = await fetchState()
+			equal(staticBrokers[fxIndex.urlMask].delayed, true)
+		})
+	})
+
+	describe('Set Static Route Status Code', () => {
+		it('422 for non-existing route', async () => {
+			const res = await commander.setStaticRouteStatus('/non-existing', 200)
+			equal(res.status, 422)
+			equal(await res.text(), `Static route does not exist: /non-existing`)
+		})
+
+		it('422 for invalid delayed value', async () => {
+			const res = await commander.setStaticRouteStatus(fxIndex.urlMask, 'not-200-or-404')
 			equal(res.status, 422)
 			equal(await res.text(), 'Expected 200 or 404 status code')
 		})
 
 		it('200', async () => {
-			const res = await commander.setStaticRouteStatus(route, 404)
+			const res = await commander.setStaticRouteStatus(fxIndex.urlMask, 404)
 			equal(res.status, 200)
 			const { staticBrokers } = await fetchState()
-			equal(staticBrokers[route].status, 404)
+			equal(staticBrokers[fxIndex.urlMask].status, 404)
 		})
 	})
 

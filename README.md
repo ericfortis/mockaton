@@ -130,14 +130,14 @@ With Mockaton, developers can achieve correctness and speed.
 
 ## Basic Usage
 
-1. Install Node.js (v24.3+). Node comes with `npm` and `npx`
+1. Install Node.js (v22.18+ support writing mocks in TypeScript)
 
 2. Create a sample mock in the default mocks directory (`./mockaton-mocks`)
 ```sh
 mkdir -p         mockaton-mocks/api
 echo "[1,2,3]" > mockaton-mocks/api/foo.GET.200.json
 ```
-3. Run Mockaton (`npx` installs it if needed)
+3. Run Mockaton (`npx` comes with Node, and installs Mockaton if needed)
 ```shell
 npx mockaton --port 2345
 ```

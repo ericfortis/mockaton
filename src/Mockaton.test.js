@@ -58,6 +58,12 @@ class Fixture {
 		this.ext = ext
 		this.body = body || `Body for ${file}`
 	}
+	
+	static async create(file, body) {
+		const fx = new Fixture(file, body)
+		await fx.register()
+		return fx
+	}
 
 	request(options = {}) {
 		return request(this.urlMask, options)
@@ -188,8 +194,7 @@ const fixtures = [
 	],
 ]
 
-const fixtureA = new Fixture('basic.GET.200.json')
-await fixtureA.register()
+const fixtureA = await Fixture.create('basic.GET.200.json')
 
 
 for (const [, file, body] of fixtures)
@@ -680,8 +685,7 @@ describe('404', () => {
 		equal((await request('/non-existing-too', { method: 'DELETE' })).status, 404))
 
 	it('ignores files ending in ~ by default, e.g. JetBrains temp files', async () => {
-		const fx = new Fixture('ignored.GET.200.json~')
-		await fx.register()
+		const fx = await Fixture.create('ignored.GET.200.json~')
 		return equal((await fx.request()).status, 404)
 	})
 
@@ -692,10 +696,8 @@ describe('404', () => {
 })
 
 describe('Default mock', async () => {
-	const fxA = new Fixture('alpha.GET.200.txt', 'A')
-	const fxB = new Fixture('alpha(default).GET.200.txt', 'B')
-	await fxA.register()
-	await fxB.register()
+	const fxA = await Fixture.create('alpha.GET.200.txt', 'A')
+	const fxB = await Fixture.create('alpha(default).GET.200.txt', 'B')
 
 	await it('sorts mocks list with the user specified default first for dashboard display', async () => {
 		const { mocks } = (await fetchState()).brokersByMethod.GET[fxA.urlMask]
@@ -763,8 +765,7 @@ describe('Dispatch', () => {
 	testMockDispatching('/api/object', 'api/object.GET.200.js', { JSON_FROM_JS: true }, mimeFor('.json'))
 
 	it('assigns custom mimes derived from extension', async () => {
-		const fx = new Fixture(`custom-extension.GET.200.${CUSTOM_EXT}`)
-		await fx.register()
+		const fx = await Fixture.create(`custom-extension.GET.200.${CUSTOM_EXT}`)
 		const res = await fx.request()
 		equal(res.headers.get('content-type'), CUSTOM_MIME)
 	})

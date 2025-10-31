@@ -307,28 +307,30 @@ describe('CORS', () => {
 		})
 	})
 
+	const [ALLOWED_ORIGIN] = config.corsOrigins
+	
 	it('preflights', async () => {
 		await commander.setCorsAllowed(true)
 		const res = await request('/does-not-matter', {
 			method: 'OPTIONS',
 			headers: {
-				[CorsHeader.Origin]: 'http://example.com',
+				[CorsHeader.Origin]: ALLOWED_ORIGIN,
 				[CorsHeader.AcRequestMethod]: 'GET'
 			}
 		})
 		equal(res.status, 204)
-		equal(res.headers.get(CorsHeader.AcAllowOrigin), 'http://example.com')
+		equal(res.headers.get(CorsHeader.AcAllowOrigin), ALLOWED_ORIGIN)
 		equal(res.headers.get(CorsHeader.AcAllowMethods), 'GET')
 	})
 
 	it('responds', async () => {
 		const res = await request(fxAlphaDefault[0], {
 			headers: {
-				[CorsHeader.Origin]: 'http://example.com'
+				[CorsHeader.Origin]: ALLOWED_ORIGIN
 			}
 		})
 		equal(res.status, 200)
-		equal(res.headers.get(CorsHeader.AcAllowOrigin), 'http://example.com')
+		equal(res.headers.get(CorsHeader.AcAllowOrigin), ALLOWED_ORIGIN)
 		equal(res.headers.get(CorsHeader.AcExposeHeaders), 'Content-Encoding')
 	})
 })

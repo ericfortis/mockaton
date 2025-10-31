@@ -20,12 +20,12 @@ export class Commander {
 		fetch(this.#addr + API.state)
 
 	/** @returns {JsonPromise<number>} */
-	getSyncVersion = (currSyncVer, abortSignal) =>
+	getSyncVersion = (currSyncVer, abortSignal = undefined) =>
 		fetch(this.#addr + API.syncVersion, {
 			signal: AbortSignal.any([
 				abortSignal,
 				AbortSignal.timeout(LONG_POLL_SERVER_TIMEOUT + 1000)
-			]),
+			].filter(Boolean)),
 			headers: {
 				[HEADER_SYNC_VERSION]: currSyncVer
 			}

@@ -348,25 +348,24 @@ describe('Dashboard', () => {
 		let version
 
 		it('getSyncVersion responds immediately when version mismatches', async () => {
-			const res1 = await commander.getSyncVersion(-1, new AbortController().signal)
-			version = await res1.json()
+			const res = await commander.getSyncVersion(-1)
+			version = await res.json()
 		})
 
-		const fileAddedAtRuntime1 = 'runtime1.GET.200.txt'
-		const fileAddedAtRuntime2 = 'runtime2.GET.200.txt'
-		
+		const file1 = 'runtime1.GET.200.txt'
+		const file2 = 'runtime2.GET.200.txt'
 		it('responds debounced when files are added (bulk additions count as 1 increment)', async () => {
-			const res2Prom = commander.getSyncVersion(version, new AbortController().signal)
-			await register(fileAddedAtRuntime1, '')
-			await register(fileAddedAtRuntime2, '')
-			equal(await (await res2Prom).json(), version + 1)
+			const prom = commander.getSyncVersion(version)
+			await register(file1, '')
+			await register(file2, '')
+			equal(await (await prom).json(), version + 1)
 		})
 
 		it('responds debounced when files are deleted', async () => {
-			const res3Prom = commander.getSyncVersion(version + 1, new AbortController().signal)
-			await unregister(fileAddedAtRuntime1)
-			await unregister(fileAddedAtRuntime2)
-			equal(await (await res3Prom).json(), version + 2)
+			const prom = commander.getSyncVersion(version + 1)
+			await unregister(file1)
+			await unregister(file2)
+			equal(await (await prom).json(), version + 2)
 		})
 	})
 })

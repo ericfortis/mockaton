@@ -37,6 +37,7 @@ async function unregister(file) {
 	unlinkSync(mocksDir + file)
 	await sleep()
 }
+
 async function sleep(ms = 50) {
 	return new Promise(resolve => setTimeout(resolve, ms))
 }
@@ -94,12 +95,6 @@ class FixtureStatic {
 
 
 /** # Fixtures */
-
-const fxBasicGet = [
-	'/basic',
-	'basic.GET.200.json',
-	'Simple JSON'
-]
 
 // TODO Refactor
 const fixtures = [
@@ -187,7 +182,7 @@ const fixtures = [
 	],
 ]
 
-const fixtureA = new Fixture(fxBasicGet[1], fxBasicGet[2])
+const fixtureA = new Fixture('basic.GET.200.json')
 await fixtureA.register()
 
 

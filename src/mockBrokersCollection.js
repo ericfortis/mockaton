@@ -109,7 +109,7 @@ export function extractAllComments() {
 		for (const c of b.extractComments())
 			comments.add(c)
 	})
-	return Array.from(comments)
+	return Array.from(comments).sort()
 }
 
 export function setMocksMatchingComment(comment) {

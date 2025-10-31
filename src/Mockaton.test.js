@@ -73,6 +73,11 @@ class Fixture {
 		write(this.file, this.body)
 		await sleep()
 	}
+	
+	async unregister() {
+		unlinkSync(mocksDir + this.file)
+		await sleep()
+	}
 }
 
 class FixtureStatic {
@@ -143,18 +148,15 @@ beforeEach(async () => await commander.reset())
 describe('Error Handling', () => {
 	it('ignores invalid filenames and warns', async t => {
 		const spy = spyLogger(t, 'warn')
-		const files = [
-			'missing-method-and-status.json',
-			'foo._INVALID_METHOD_.200.json',
-			'bar.GET._INVALID_STATUS_.json'
-		]
-		for (const f of files)
-			await register(f, '')
+		const fx0 = await Fixture.create('missing-method-and-status.json')
+		const fx1 = await Fixture.create('foo._INVALID_METHOD_.200.json')
+		const fx2 = await Fixture.create('bar.GET._INVALID_STATUS_.json')
 		equal(spy.calls[0].arguments[0], 'Invalid Filename Convention')
 		equal(spy.calls[1].arguments[0], 'Unrecognized HTTP Method: "_INVALID_METHOD_"')
 		equal(spy.calls[2].arguments[0], 'Invalid HTTP Response Status: "NaN"')
-		for (const f of files)
-			await unregister(f)
+		await fx0.unregister()
+		await fx1.unregister()
+		await fx2.unregister()
 	})
 
 	describe('Rejects malicious URLs', () => [
@@ -258,19 +260,19 @@ describe('Dashboard', () => {
 			version = await res.json()
 		})
 
-		const file1 = 'runtime1.GET.200.txt'
-		const file2 = 'runtime2.GET.200.txt'
+		const fx0 = new Fixture('runtime1.GET.200.txt')
+		const fx1 = new Fixture('runtime2.GET.200.txt')
 		it('responds debounced when files are added (bulk additions count as 1 increment)', async () => {
 			const prom = commander.getSyncVersion(version)
-			await register(file1, '')
-			await register(file2, '')
+			await fx0.register()
+			await fx1.register()
 			equal(await (await prom).json(), version + 1)
 		})
 
 		it('responds debounced when files are deleted', async () => {
 			const prom = commander.getSyncVersion(version + 1)
-			await unregister(file1)
-			await unregister(file2)
+			await fx0.unregister()
+			await fx1.unregister()
 			equal(await (await prom).json(), version + 2)
 		})
 	})

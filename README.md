@@ -129,7 +129,8 @@ With Mockaton, developers can achieve correctness and speed.
 <br/>
 
 ## Basic Usage
-1. Install Node.js, which comes with `npm` and `npx`
+
+1. Install Node.js (v24.3+). Node comes with `npm` and `npx`
 
 2. Create a sample mock in the default mocks directory (`./mockaton-mocks`)
 ```sh

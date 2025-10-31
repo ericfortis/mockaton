@@ -23,5 +23,8 @@
 	"devDependencies": {
 		"pixaton": "1.1.3",
 		"puppeteer": "24.24.1"
+	},
+	"engines": {
+		"node": "^22.18 || ^23.6 || ^24.3"
 	}
 }

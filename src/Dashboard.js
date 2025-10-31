@@ -448,7 +448,7 @@ function StaticRow(row) {
 			!groupByMethod && r('td', className(CSS.Method),
 				'GET'),
 
-			r('td', null,
+			r('td', { colspan: 2 },
 				r('a', {
 					href: row.urlMask,
 					target: '_blank',

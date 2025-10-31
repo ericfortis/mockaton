@@ -23,8 +23,6 @@ const staticDir = mkdtempSync(tmpdir() + '/static') + '/'
 
 
 function write(filename, data) { _write(mocksDir + filename, data) }
-function writeStatic(filename, data) { _write(staticDir + filename, data) }
-
 function _write(absPath, data) {
 	mkdirSync(dirname(absPath), { recursive: true })
 	writeFileSync(absPath, data, 'utf8')
@@ -84,7 +82,7 @@ class FixtureStatic {
 	}
 
 	async register() {
-		writeStatic(this.file, this.body)
+		_write(staticDir + this.file, this.body)
 		await sleep()
 	}
 

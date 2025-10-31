@@ -288,6 +288,11 @@ describe('Error Handling', () => {
 		equal((await request(API.throws)).status, 500)
 		equal(spy.calls[0].arguments[2], 'Test500')
 	})
+	
+	it('on Windows, path separators are normalized to forward slashes', async () => {
+		const { brokersByMethod } = await fetchState()
+		equal(brokersByMethod[fixtureA.method][fixtureA.urlMask].file, fixtureA.file)
+	})
 })
 
 describe('CORS', () => {
@@ -742,36 +747,6 @@ export default function (req, response) {
 	})
 })
 
-describe('Dispatch', () => {
-	function testMockDispatching(url, file, expectedBody, forcedMime = undefined) {
-		it('URL Mask: ' + file, async () => {
-			const { method, status } = parseFilename(file)
-			const mime = forcedMime || mimeFor(file)
-			const res = await request(url, { method })
-			const body = mime === 'application/json'
-				? await res.json()
-				: await res.text()
-			equal(res.status, status)
-			equal(res.headers.get('content-type'), mime)
-			equal(res.headers.get('set-cookie'), 'CookieA')
-			equal(res.headers.get('server'), 'MockatonTester')
-			deepEqual(body, expectedBody)
-		})
-	}
-
-	for (const [url, file, body] of fixtures)
-		testMockDispatching(url, file, body)
-
-	testMockDispatching('/api/object', 'api/object.GET.200.js', { JSON_FROM_JS: true }, mimeFor('.json'))
-
-	it('assigns custom mimes derived from extension', async () => {
-		const fx = await Fixture.create(`custom-extension.GET.200.${CUSTOM_EXT}`)
-		const res = await fx.request()
-		equal(res.headers.get('content-type'), CUSTOM_MIME)
-	})
-})
-
-
 describe('Static Files', () => {
 	let fxIndex, fxAsset
 	before(async () => {
@@ -885,6 +860,7 @@ describe('Static Files', () => {
 
 })
 
+
 describe('Registering', () => {
 	const fxPutA = [
 		'/api/register',
@@ -906,11 +882,6 @@ describe('Registering', () => {
 		'api/unregister.PUT.200.json',
 		'fixture_for_unregistering'
 	]
-
-	it('on Windows, path separators are normalized to forward slashes', async () => {
-		const { brokersByMethod } = await fetchState()
-		equal(brokersByMethod[fixtureA.method][fixtureA.urlMask].file, fixtureA.file)
-	})
 
 	it('registering new route creates temp 500 as well and re-registering is a noop', async () => {
 		await register(fxPutA[1], '')
@@ -976,6 +947,34 @@ describe('Registering', () => {
 	})
 })
 
+describe('Dispatch', () => {
+	function testMockDispatching(url, file, expectedBody, forcedMime = undefined) {
+		it('URL Mask: ' + file, async () => {
+			const { method, status } = parseFilename(file)
+			const mime = forcedMime || mimeFor(file)
+			const res = await request(url, { method })
+			const body = mime === 'application/json'
+				? await res.json()
+				: await res.text()
+			equal(res.status, status)
+			equal(res.headers.get('content-type'), mime)
+			equal(res.headers.get('set-cookie'), 'CookieA')
+			equal(res.headers.get('server'), 'MockatonTester')
+			deepEqual(body, expectedBody)
+		})
+	}
+
+	for (const [url, file, body] of fixtures)
+		testMockDispatching(url, file, body)
+
+	testMockDispatching('/api/object', 'api/object.GET.200.js', { JSON_FROM_JS: true }, mimeFor('.json'))
+
+	it('assigns custom mimes derived from extension', async () => {
+		const fx = await Fixture.create(`custom-extension.GET.200.${CUSTOM_EXT}`)
+		const res = await fx.request()
+		equal(res.headers.get('content-type'), CUSTOM_MIME)
+	})
+})
 
 await it('head for get. returns the headers without body only for GETs requested as HEAD', async () => {
 	const res = await fixtureA.request({ method: 'HEAD' })

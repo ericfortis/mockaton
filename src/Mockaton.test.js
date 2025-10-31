@@ -767,10 +767,11 @@ describe('Dispatch', () => {
 
 
 describe('Static Files', () => {
-	const fxIndex = new FixtureStatic('static/index.html', '<h1></h1>')
-	const fxAsset = new FixtureStatic('static/assets/script.js', 'const a = 1')
+	let fxIndex, fxAsset
 
 	before(async () => {
+		fxIndex = new FixtureStatic('static/index.html', '<h1></h1>')
+		fxAsset = new FixtureStatic('static/assets/script.js', 'const a = 1')
 		await fxIndex.register()
 		await fxAsset.register()
 	})
@@ -840,26 +841,24 @@ describe('Static Files', () => {
 	})
 
 	describe('Resets Static Routes', () => {
-		const route = fxIndex.urlMask
-
 		beforeEach(async () => {
-			await commander.setStaticRouteIsDelayed(route, true)
-			await commander.setStaticRouteStatus(route, 404)
+			await commander.setStaticRouteIsDelayed(fxIndex.urlMask, true)
+			await commander.setStaticRouteStatus(fxIndex.urlMask, 404)
 			await commander.reset()
 		})
 
 		it('resets delayed', async () => {
 			const { staticBrokers } = await fetchState()
-			equal(staticBrokers[route].delayed, false)
+			equal(staticBrokers[fxIndex.urlMask].delayed, false)
 		})
 
 		it('resets status', async () => {
 			const { staticBrokers } = await fetchState()
-			equal(staticBrokers[route].status, 200)
+			equal(staticBrokers[fxIndex.urlMask].status, 200)
 		})
 	})
 
-	describe('Static partial content', () => {
+	describe('Static Partial Content', () => {
 		it('206 serves partial content', async () => {
 			const res1 = await fxIndex.request({ headers: { range: 'bytes=0-3' } })
 			const res2 = await fxIndex.request({ headers: { range: 'bytes=4-' } })

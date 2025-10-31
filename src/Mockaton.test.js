@@ -34,10 +34,6 @@ async function register(file, data) {
 	write(file, data)
 	await sleep()
 }
-async function registerStatic(file, data) {
-	writeStatic(file, data)
-	await sleep()
-}
 
 async function unregister(file) {
 	unlinkSync(mocksDir + file)
@@ -67,11 +63,6 @@ const fxBasicGet = [
 	'/basic',
 	'basic.GET.200.json',
 	'Simple JSON'
-]
-const fxCustomMime = [
-	'/custom-mime',
-	'custom-mime.GET.200.my_custom_extension',
-	'Custom Extension and MIME'
 ]
 
 const fxAlpha = [ // not in fixtures [] because we are currently running all testMockDispatch on them (so that loop can't have variants)
@@ -170,7 +161,6 @@ const fixtures = [
 		'api/company-e/[id]?limit=[limit].GET.200.json',
 		'with pretty-param and query-params'
 	],
-	fxCustomMime
 ]
 
 const fxIgnored = [
@@ -206,23 +196,22 @@ for (const [file, body] of staticFiles)
 	writeStatic(file, body)
 
 
-const config = {
+const COOKIES = { userA: 'CookieA', userB: 'CookieB' }
+const CUSTOM_EXT = 'custom_extension'
+const CUSTOM_MIME = 'custom_mime'
+const ALLOWED_ORIGIN = 'http://example.com'
+
+const server = await Mockaton({
 	mocksDir,
 	staticDir,
 	onReady() {},
-	cookies: {
-		userA: 'CookieA',
-		userB: 'CookieB'
-	},
+	cookies: COOKIES,
 	extraHeaders: ['Server', 'MockatonTester'],
-	extraMimes: {
-		my_custom_extension: 'my_custom_mime'
-	},
+	extraMimes: { [CUSTOM_EXT]: CUSTOM_MIME },
 	logLevel: 'quiet',
-	corsOrigins: ['http://example.com'],
+	corsOrigins: [ALLOWED_ORIGIN],
 	corsExposedHeaders: ['Content-Encoding']
-}
-const server = await Mockaton(config)
+})
 const mockatonAddr = `http://${server.address().address}:${server.address().port}`
 const commander = new Commander(mockatonAddr)
 
@@ -248,6 +237,11 @@ class Fixture {
 
 	request(options = {}) {
 		return request(this.urlMask, options)
+	}
+	
+	async register() {
+		write(this.file, this.body)
+		await sleep()
 	}
 }
 
@@ -325,8 +319,6 @@ describe('CORS', () => {
 		})
 	})
 
-	const [ALLOWED_ORIGIN] = config.corsOrigins
-
 	it('preflights', async () => {
 		await commander.setCorsAllowed(true)
 		const res = await request('/does-not-matter', {
@@ -403,7 +395,19 @@ describe('Cookie', () => {
 
 	it('updates selected cookie', async () => {
 		const resA = await fixtureA.request()
-		equal(resA.headers.get('set-cookie'), config.cookies.userA)
+		equal(resA.headers.get('set-cookie'), {
+			mocksDir,
+			staticDir,
+			onReady() {},
+			cookies: COOKIES,
+			extraHeaders: ['Server', 'MockatonTester'],
+			extraMimes: {
+				[CUSTOM_EXT]: CUSTOM_MIME
+			},
+			logLevel: 'quiet',
+			corsOrigins: [ALLOWED_ORIGIN],
+			corsExposedHeaders: ['Content-Encoding']
+		}.cookies.userA)
 
 		const response = await commander.selectCookie('userB')
 		deepEqual(await response.json(), [
@@ -412,7 +416,19 @@ describe('Cookie', () => {
 		])
 
 		const resB = await fixtureA.request()
-		equal(resB.headers.get('set-cookie'), config.cookies.userB)
+		equal(resB.headers.get('set-cookie'), {
+			mocksDir,
+			staticDir,
+			onReady() {},
+			cookies: COOKIES,
+			extraHeaders: ['Server', 'MockatonTester'],
+			extraMimes: {
+				[CUSTOM_EXT]: CUSTOM_MIME
+			},
+			logLevel: 'quiet',
+			corsOrigins: [ALLOWED_ORIGIN],
+			corsExposedHeaders: ['Content-Encoding']
+		}.cookies.userB)
 	})
 })
 
@@ -768,7 +784,13 @@ describe('Dispatch', () => {
 		testMockDispatching(url, file, body)
 
 	testMockDispatching('/api/object', 'api/object.GET.200.js', { JSON_FROM_JS: true }, mimeFor('.json'))
-	testMockDispatching(...fxCustomMime)
+	
+	it('assigns custom mimes derived from extension', async () => {
+		const fx = new Fixture(`custom-extension.GET.200.${CUSTOM_EXT}`)
+		await fx.register()
+		const res = await fx.request()
+		equal(res.headers.get('content-type'), CUSTOM_MIME)
+	})
 })
 
 

@@ -546,27 +546,26 @@ describe('Default mock', async () => {
 
 describe('JS Function Mocks', () => {
 	it('honors filename convention', async () => {
-		await register('api/js-func.GET.200.js', `
-export default function (req, response) {
-  return 'SOME_STRING_0'
-}`)
-		const res = await request('/api/js-func')
+		const fx = await Fixture.create('func.GET.200.js', `
+			export default function (req, response) {
+  			return 'SOME_STRING_0'
+			}`)
+		const res = await fx.request()
 		equal(res.status, 200)
 		equal(res.headers.get('content-type'), mimeFor('.json'))
-		equal(res.headers.get('content-type'), mimeFor('.json'))
-		equal(res.headers.get('set-cookie'), 'CookieA')
+		equal(res.headers.get('set-cookie'), COOKIES.userA)
 		equal(await res.text(), 'SOME_STRING_0')
 	})
 
-	it('can override filename convention', async () => {
-		await register('api/js-func.POST.200.js', `
-export default function (req, response) {
-  response.statusCode = 201
-  response.setHeader('content-type', 'custom-mime')
-  response.setHeader('set-cookie', 'custom-cookie')
-  return 'SOME_STRING_1'
-}`)
-		const res = await request('/api/js-func', { method: 'POST' })
+	it('can override filename convention (also supports TS)', async () => {
+		const fx = await Fixture.create('func.POST.200.ts', `
+			export default function (req, response) {
+			  response.statusCode = 201
+			  response.setHeader('content-type', 'custom-mime')
+			  response.setHeader('set-cookie', 'custom-cookie')
+			  return 'SOME_STRING_1'
+			}`)
+		const res = await fx.request({ method: 'POST' })
 		equal(res.status, 201)
 		equal(res.headers.get('content-type'), 'custom-mime')
 		equal(res.headers.get('set-cookie'), 'custom-cookie')

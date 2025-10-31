@@ -235,6 +235,24 @@ async function fetchState() {
 	return await (await commander.getState()).json()
 }
 
+class Fixture {
+	constructor(file, body = '') {
+		const { urlMask, method, status, ext } = parseFilename(file)
+		this.file = file
+		this.urlMask = urlMask
+		this.method = method
+		this.status = status
+		this.ext = ext
+		this.body = body || `Body for ${file}`
+	}
+
+	request(options = {}) {
+		return request(this.urlMask, options)
+	}
+}
+
+const fixtureA = new Fixture(fxBasicGet[1], fxBasicGet[2])
+
 
 beforeEach(async () => await commander.reset())
 
@@ -308,7 +326,7 @@ describe('CORS', () => {
 	})
 
 	const [ALLOWED_ORIGIN] = config.corsOrigins
-	
+
 	it('preflights', async () => {
 		await commander.setCorsAllowed(true)
 		const res = await request('/does-not-matter', {
@@ -324,7 +342,7 @@ describe('CORS', () => {
 	})
 
 	it('responds', async () => {
-		const res = await request(fxAlphaDefault[0], {
+		const res = await fixtureA.request({
 			headers: {
 				[CorsHeader.Origin]: ALLOWED_ORIGIN
 			}
@@ -384,7 +402,7 @@ describe('Cookie', () => {
 		]))
 
 	it('updates selected cookie', async () => {
-		const resA = await request(fxBasicGet[0])
+		const resA = await fixtureA.request()
 		equal(resA.headers.get('set-cookie'), config.cookies.userA)
 
 		const response = await commander.selectCookie('userB')
@@ -393,7 +411,7 @@ describe('Cookie', () => {
 			['userB', true]
 		])
 
-		const resB = await request(fxBasicGet[0])
+		const resB = await fixtureA.request()
 		equal(resB.headers.get('set-cookie'), config.cookies.userB)
 	})
 })
@@ -414,13 +432,11 @@ describe('Delay', () => {
 
 	it('updates route delay', async () => {
 		const delay = 120
-		const [url, file, expectedBody] = fxBasicGet
-		const { method } = parseFilename(file)
 		await commander.setGlobalDelay(delay)
-		await commander.setRouteIsDelayed(method, url, true)
+		await commander.setRouteIsDelayed(fixtureA.method, fixtureA.urlMask, true)
 		const now = new Date()
-		const res = await request(url)
-		equal(await res.text(), JSON.stringify(expectedBody))
+		const res = await fixtureA.request()
+		equal(await res.text(), JSON.stringify(fixtureA.body))
 		equal((new Date()).getTime() - now.getTime() > delay, true)
 	})
 
@@ -432,18 +448,17 @@ describe('Delay', () => {
 	})
 
 	describe('Set Route is Delayed', () => {
-		const [route] = fxBasicGet
 		it('422 for non-existing route', async () => {
-			const res = await commander.setRouteIsDelayed('GET', route + '/non-existing', true)
+			const res = await commander.setRouteIsDelayed('GET', '/non-existing', true)
 			equal(res.status, 422)
-			equal(await res.text(), `Route does not exist: GET ${route}/non-existing`)
+			equal(await res.text(), `Route does not exist: GET /non-existing`)
 		})
 		it('422 for invalid delayed value', async () => {
-			const res = await commander.setRouteIsDelayed('GET', route, 'not-a-boolean')
+			const res = await commander.setRouteIsDelayed(fixtureA.method, fixtureA.urlMask, 'not-a-boolean')
 			equal(await res.text(), 'Expected boolean for "delayed"')
 		})
 		it('200', async () => {
-			const res = await commander.setRouteIsDelayed('GET', route, true)
+			const res = await commander.setRouteIsDelayed(fixtureA.method, fixtureA.urlMask, true)
 			equal((await res.json()).delayed, true)
 		})
 	})
@@ -548,38 +563,37 @@ describe('Proxy Fallback', () => {
 		beforeEach(async () => await commander.setProxyFallback(''))
 		after(async () => await commander.setProxyFallback(''))
 
-		const [route] = fxBasicGet
 		it('422 for non-existing route', async () => {
-			const res = await commander.setRouteIsProxied('GET', route + '/non-existing', true)
+			const res = await commander.setRouteIsProxied('GET', '/non-existing', true)
 			equal(res.status, 422)
-			equal(await res.text(), `Route does not exist: GET ${route}/non-existing`)
+			equal(await res.text(), `Route does not exist: GET /non-existing`)
 		})
 
 		it('422 for invalid proxied value', async () => {
-			const res = await commander.setRouteIsProxied('GET', route, 'not-a-boolean')
+			const res = await commander.setRouteIsProxied(fixtureA.method, fixtureA.urlMask, 'not-a-boolean')
 			equal(res.status, 422)
 			equal(await res.text(), 'Expected boolean for "proxied"')
 		})
 
 		it('422 for missing proxy fallback', async () => {
-			const res = await commander.setRouteIsProxied('GET', route, true)
+			const res = await commander.setRouteIsProxied(fixtureA.method, fixtureA.urlMask, true)
 			equal(res.status, 422)
 			equal(await res.text(), `There’s no proxy fallback`)
 		})
 
 		it('200 when setting', async () => {
 			await commander.setProxyFallback('https://example.com')
-			const res = await commander.setRouteIsProxied('GET', route, true)
+			const res = await commander.setRouteIsProxied(fixtureA.method, fixtureA.urlMask, true)
 			equal(res.status, 200)
 			equal((await res.json()).proxied, true)
 
-			const res2 = await commander.setRouteIsProxied('GET', route, false)
+			const res2 = await commander.setRouteIsProxied(fixtureA.method, fixtureA.urlMask, false)
 			equal(res2.status, 200)
 			equal((await res2.json()).proxied, false)
 		})
 
 		it('200 when unsetting', async () => {
-			const res = await commander.setRouteIsProxied('GET', route, false)
+			const res = await commander.setRouteIsProxied(fixtureA.method, fixtureA.urlMask, false)
 			equal(res.status, 200)
 			equal((await res.json()).proxied, false)
 		})
@@ -665,16 +679,15 @@ describe('Auto 500', () => {
 	})
 
 	it('toggles 500', async () => {
-		const [route] = fxBasicGet
-		equal((await request(route)).status, 200)
+		equal((await fixtureA.request()).status, fixtureA.status)
 
-		const r0 = await commander.toggle500('GET', route)
+		const r0 = await commander.toggle500(fixtureA.method, fixtureA.urlMask)
 		equal((await r0.json()).auto500, true)
-		equal((await request(route)).status, 500)
+		equal((await fixtureA.request()).status, 500)
 
-		const r1 = await commander.toggle500('GET', route)
+		const r1 = await commander.toggle500(fixtureA.method, fixtureA.urlMask)
 		equal((await r1.json()).auto500, false)
-		equal((await request(route)).status, 200)
+		equal((await fixtureA.request()).status, fixtureA.status)
 	})
 })
 
@@ -883,8 +896,7 @@ describe('Registering', () => {
 
 	it('on Windows, path separators are normalized to forward slashes', async () => {
 		const { brokersByMethod } = await fetchState()
-		const [route, file] = fxBasicGet
-		equal(brokersByMethod.GET[route].file, file)
+		equal(brokersByMethod[fixtureA.method][fixtureA.urlMask].file, fixtureA.file)
 	})
 
 	it('registering new route creates temp 500 as well and re-registering is a noop', async () => {
@@ -953,10 +965,9 @@ describe('Registering', () => {
 
 
 await it('head for get. returns the headers without body only for GETs requested as HEAD', async () => {
-	const [route, , body] = fxBasicGet
-	const res = await request(route, { method: 'HEAD' })
+	const res = await fixtureA.request({ method: 'HEAD' })
 	equal(res.status, 200)
-	equal(res.headers.get('content-length'), String(Buffer.byteLength(JSON.stringify(body))))
+	equal(res.headers.get('content-length'), String(Buffer.byteLength(JSON.stringify(fixtureA.body))))
 	equal(await res.text(), '')
 })
 

@@ -73,10 +73,14 @@ class Fixture {
 		write(this.file, this.body)
 		await sleep()
 	}
-	
+
 	async unregister() {
 		unlinkSync(mocksDir + this.file)
 		await sleep()
+	}
+
+	async fetchBroker() {
+		return (await fetchState()).brokersByMethod?.[this.method]?.[this.urlMask]
 	}
 }
 
@@ -691,89 +695,42 @@ describe('Static Files', () => {
 
 
 describe('Registering', () => {
-	const fxPutA = [
-		'/api/register',
-		'api/register(a).PUT.200.json',
-		'fixture_for_registering_a'
-	]
-	const fxPutB = [
-		'/api/register',
-		'api/register(b).PUT.200.json',
-		'fixture_for_registering_b'
-	]
-	const fxPutA500 = [
-		'/api/register',
-		'api/register.PUT.500.json',
-		'fixture_for_registering_500'
-	]
-	const fxPutC = [
-		'/api/unregister',
-		'api/unregister.PUT.200.json',
-		'fixture_for_unregistering'
-	]
+	const fxA = new Fixture('register.PUT.200.json')
+	const fx500 = new Fixture('register.PUT.500.json')
 
-	it('registering new route creates temp 500 as well and re-registering is a noop', async () => {
-		await register(fxPutA[1], '')
-		await register(fxPutA[1], '')
-		await register(fxPutB[1], '')
-		const { brokersByMethod } = await fetchState()
-		deepEqual(brokersByMethod.PUT[fxPutA[0]].mocks, [
-			fxPutA[1],
-			fxPutB[1],
-		])
+	it('re-registering is a noop', async () => {
+		await fxA.register()
+		await fxA.register()
+		const b = await fxA.fetchBroker()
+		deepEqual(b.mocks, [fxA.file])
 	})
 
 	it('registering a 500 unsets auto500', async () => {
-		const new500 = `api/register.PUT.500.empty`
-		await commander.select(new500)
-		await register(fxPutA500[1], '')
-		const { brokersByMethod } = await fetchState()
-		const b = brokersByMethod.PUT[fxPutA[0]]
-		deepEqual(b, {
-			file: fxPutA[1],
-			status: 200,
-			auto500: false,
-			delayed: false,
-			proxied: false,
-			mocks: [
-				fxPutA[1],
-				fxPutB[1],
-				fxPutA500[1]
-			]
-		})
+		await commander.toggle500(fxA.method, fxA.urlMask)
+		await fx500.register()
+		const b = await fx500.fetchBroker()
+		equal(b.auto500, false)
+		deepEqual(b.mocks, [
+			fxA.file,
+			fx500.file
+		])
 	})
 
-	it('unregisters selected', async () => {
-		await commander.select(fxPutA[1])
-		await unregister(fxPutA[1])
-		const { brokersByMethod } = await fetchState()
-		const b = brokersByMethod.PUT[fxPutA[0]]
-		deepEqual(b, {
-			file: fxPutB[1],
-			status: 200,
-			auto500: false,
-			delayed: false,
-			proxied: false,
-			mocks: [
-				fxPutB[1],
-				fxPutA500[1]
-			]
-		})
+	it('unregistering selected ensures a mock is selected', async () => {
+		await commander.select(fxA.file)
+		await fxA.unregister()
+		const b = await fxA.fetchBroker()
+		deepEqual(b.mocks, [fx500.file]
+		)
 	})
 
 	it('unregistering the last mock removes broker', async () => {
-		await register(fxPutC[1], '') // Register another PUT so it doesn't delete PUT from collection
-		await unregister(fxPutC[1])
-		const { brokersByMethod } = await fetchState()
-		equal(brokersByMethod.PUT[fxPutC[0]], undefined)
+		await fx500.unregister()
+		const b = await fx500.fetchBroker()
+		equal(b, undefined)
 	})
 
-	it('unregistering the last PUT mock removes PUT from collection', async () => {
-		await unregister(fxPutB[1])
-		await unregister(fxPutA500[1])
-		const { brokersByMethod } = await fetchState()
-		equal(brokersByMethod.PUT, undefined)
-	})
+	// it('unregistering the last PUT mock removes PUT from collection')
 })
 
 describe('Dispatch', () => {

@@ -39,11 +39,6 @@ async function unregister(file) {
 	unlinkSync(mocksDir + file)
 	await sleep()
 }
-function unregisterStatic(file) {
-	unlinkSync(staticDir + file)
-}
-
-
 async function sleep(ms = 50) {
 	return new Promise(resolve => setTimeout(resolve, ms))
 }
@@ -54,6 +49,50 @@ function spyLogger(t, method) {
 	return spy.mock
 }
 
+class Fixture {
+	constructor(file, body = '') {
+		const { urlMask, method, status, ext } = parseFilename(file)
+		this.file = file
+		this.urlMask = urlMask
+		this.method = method
+		this.status = status
+		this.ext = ext
+		this.body = body || `Body for ${file}`
+	}
+
+	request(options = {}) {
+		return request(this.urlMask, options)
+	}
+
+	async register() {
+		write(this.file, this.body)
+		await sleep()
+	}
+}
+
+class FixtureStatic {
+	constructor(file, body = '') {
+		this.file = file
+		this.urlMask = '/' + file
+		this.method = 'GET'
+		this.status = 200
+		this.body = body || `Body for static ${file}`
+	}
+
+	request(options = {}) {
+		return request(this.urlMask, options)
+	}
+
+	async register() {
+		writeStatic(this.file, this.body)
+		await sleep()
+	}
+
+	async unregister() {
+		unlinkSync(staticDir + this.file)
+		await sleep()
+	}
+}
 
 
 /** # Fixtures */
@@ -64,6 +103,7 @@ const fxBasicGet = [
 	'Simple JSON'
 ]
 
+// TODO Refactor
 const fixtures = [
 	[
 		'/api',
@@ -72,7 +112,6 @@ const fixtures = [
 	],
 
 	// Exact route paths
-	fxBasicGet,
 	[
 		'/api/the-mime',
 		'api/the-mime.GET.200.txt',
@@ -150,6 +189,10 @@ const fixtures = [
 	],
 ]
 
+const fixtureA = new Fixture(fxBasicGet[1], fxBasicGet[2])
+await fixtureA.register()
+
+
 for (const [, file, body] of fixtures)
 	write(file, file.endsWith('.json') ? JSON.stringify(body) : body)
 
@@ -188,53 +231,6 @@ function request(path, options = {}) {
 async function fetchState() {
 	return await (await commander.getState()).json()
 }
-
-class Fixture {
-	constructor(file, body = '') {
-		const { urlMask, method, status, ext } = parseFilename(file)
-		this.file = file
-		this.urlMask = urlMask
-		this.method = method
-		this.status = status
-		this.ext = ext
-		this.body = body || `Body for ${file}`
-	}
-
-	request(options = {}) {
-		return request(this.urlMask, options)
-	}
-
-	async register() {
-		write(this.file, this.body)
-		await sleep()
-	}
-}
-
-class FixtureStatic {
-	constructor(file, body = '') {
-		this.file = file
-		this.urlMask = '/' + file
-		this.method = 'GET'
-		this.status = 200
-		this.body = body || `Body for static ${file}`
-	}
-
-	request(options = {}) {
-		return request(this.urlMask, options)
-	}
-
-	async register() {
-		writeStatic(this.file, this.body)
-		await sleep()
-	}
-
-	async unregister() {
-		unregisterStatic(this.file)
-		await sleep()
-	}
-}
-
-const fixtureA = new Fixture(fxBasicGet[1], fxBasicGet[2])
 
 
 beforeEach(async () => await commander.reset())
@@ -441,7 +437,7 @@ describe('Delay', () => {
 		await commander.setRouteIsDelayed(fixtureA.method, fixtureA.urlMask, true)
 		const now = new Date()
 		const res = await fixtureA.request()
-		equal(await res.text(), JSON.stringify(fixtureA.body))
+		equal(await res.text(), fixtureA.body)
 		equal((new Date()).getTime() - now.getTime() > delay, true)
 	})
 
@@ -989,7 +985,7 @@ describe('Registering', () => {
 await it('head for get. returns the headers without body only for GETs requested as HEAD', async () => {
 	const res = await fixtureA.request({ method: 'HEAD' })
 	equal(res.status, 200)
-	equal(res.headers.get('content-length'), String(Buffer.byteLength(JSON.stringify(fixtureA.body))))
+	equal(res.headers.get('content-length'), String(Buffer.byteLength(fixtureA.body)))
 	equal(await res.text(), '')
 })
 

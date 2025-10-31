@@ -77,6 +77,12 @@ class FixtureStatic {
 		this.status = 200
 		this.body = body || `Body for static ${file}`
 	}
+	
+	static async create(file, body) {
+		const fx = new FixtureStatic(file, body)
+		await fx.register()
+		return fx
+	}
 
 	request(options = {}) {
 		return request(this.urlMask, options)
@@ -680,8 +686,7 @@ describe('404', () => {
 	})
 
 	it('ignores static files ending in ~', async () => {
-		const fx = new FixtureStatic('static/ignored.js~')
-		await fx.register()
+		const fx = await FixtureStatic.create('static/ignored.js~')
 		return equal((await fx.request()).status, 404)
 	})
 })
@@ -768,12 +773,9 @@ describe('Dispatch', () => {
 
 describe('Static Files', () => {
 	let fxIndex, fxAsset
-
 	before(async () => {
-		fxIndex = new FixtureStatic('static/index.html', '<h1></h1>')
-		fxAsset = new FixtureStatic('static/assets/script.js', 'const a = 1')
-		await fxIndex.register()
-		await fxAsset.register()
+		fxIndex = await FixtureStatic.create('static/index.html', '<h1>Index</h1>')
+		fxAsset = await FixtureStatic.create('static/assets/script.js', 'const a = 1')
 	})
 
 	describe('Static File Serving', () => {

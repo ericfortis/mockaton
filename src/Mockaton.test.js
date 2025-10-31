@@ -106,7 +106,7 @@ class FixtureStatic {
 }
 
 
-const fixtureA = await Fixture.create('basic.GET.200.json')
+const FXA = await Fixture.create('basic.GET.200.json')
 
 const COOKIES = { userA: 'CookieA', userB: 'CookieB' }
 const CUSTOM_EXT = 'custom_extension'
@@ -191,7 +191,7 @@ describe('Error Handling', () => {
 
 	it('on Windows, path separators are normalized to forward slashes', async () => {
 		const { brokersByMethod } = await fetchState()
-		equal(brokersByMethod[fixtureA.method][fixtureA.urlMask].file, fixtureA.file)
+		equal(brokersByMethod[FXA.method][FXA.urlMask].file, FXA.file)
 	})
 })
 
@@ -228,7 +228,7 @@ describe('CORS', () => {
 	})
 
 	it('responds', async () => {
-		const res = await fixtureA.request({
+		const res = await FXA.request({
 			headers: {
 				[CorsHeader.Origin]: ALLOWED_ORIGIN
 			}
@@ -288,20 +288,8 @@ describe('Cookie', () => {
 		]))
 
 	it('updates selected cookie', async () => {
-		const resA = await fixtureA.request()
-		equal(resA.headers.get('set-cookie'), {
-			mocksDir,
-			staticDir,
-			onReady() {},
-			cookies: COOKIES,
-			extraHeaders: ['Server', 'MockatonTester'],
-			extraMimes: {
-				[CUSTOM_EXT]: CUSTOM_MIME
-			},
-			logLevel: 'quiet',
-			corsOrigins: [ALLOWED_ORIGIN],
-			corsExposedHeaders: ['Content-Encoding']
-		}.cookies.userA)
+		const resA = await FXA.request()
+		equal(resA.headers.get('set-cookie'), COOKIES.userA)
 
 		const response = await commander.selectCookie('userB')
 		deepEqual(await response.json(), [
@@ -309,20 +297,8 @@ describe('Cookie', () => {
 			['userB', true]
 		])
 
-		const resB = await fixtureA.request()
-		equal(resB.headers.get('set-cookie'), {
-			mocksDir,
-			staticDir,
-			onReady() {},
-			cookies: COOKIES,
-			extraHeaders: ['Server', 'MockatonTester'],
-			extraMimes: {
-				[CUSTOM_EXT]: CUSTOM_MIME
-			},
-			logLevel: 'quiet',
-			corsOrigins: [ALLOWED_ORIGIN],
-			corsExposedHeaders: ['Content-Encoding']
-		}.cookies.userB)
+		const resB = await FXA.request()
+		equal(resB.headers.get('set-cookie'), COOKIES.userB)
 	})
 })
 
@@ -343,10 +319,10 @@ describe('Delay', () => {
 	it('updates route delay', async () => {
 		const delay = 120
 		await commander.setGlobalDelay(delay)
-		await commander.setRouteIsDelayed(fixtureA.method, fixtureA.urlMask, true)
+		await commander.setRouteIsDelayed(FXA.method, FXA.urlMask, true)
 		const now = new Date()
-		const res = await fixtureA.request()
-		equal(await res.text(), fixtureA.body)
+		const res = await FXA.request()
+		equal(await res.text(), FXA.body)
 		equal((new Date()).getTime() - now.getTime() > delay, true)
 	})
 
@@ -364,11 +340,11 @@ describe('Delay', () => {
 			equal(await res.text(), `Route does not exist: GET /non-existing`)
 		})
 		it('422 for invalid delayed value', async () => {
-			const res = await commander.setRouteIsDelayed(fixtureA.method, fixtureA.urlMask, 'not-a-boolean')
+			const res = await commander.setRouteIsDelayed(FXA.method, FXA.urlMask, 'not-a-boolean')
 			equal(await res.text(), 'Expected boolean for "delayed"')
 		})
 		it('200', async () => {
-			const res = await commander.setRouteIsDelayed(fixtureA.method, fixtureA.urlMask, true)
+			const res = await commander.setRouteIsDelayed(FXA.method, FXA.urlMask, true)
 			equal((await res.json()).delayed, true)
 		})
 	})
@@ -378,15 +354,14 @@ describe('Delay', () => {
 describe('Proxy Fallback', () => {
 	describe('Fallback', () => {
 		let fallbackServer
+		const CUSTOM_COOKIES = ['cookieX=x', 'cookieY=y'
+		]
 		before(async () => {
 			fallbackServer = createServer(async (req, response) => {
 				response.writeHead(423, {
 					'custom_header': 'my_custom_header',
 					'content-type': mimeFor('.txt'),
-					'set-cookie': [
-						'cookieA=A',
-						'cookieB=B'
-					]
+					'set-cookie': CUSTOM_COOKIES
 				})
 				response.end(await readBody(req)) // echoes they req body payload
 			})
@@ -400,16 +375,16 @@ describe('Proxy Fallback', () => {
 		it('Relays to fallback server and saves the mock', async () => {
 			const reqBodyPayload = 'text_req_body'
 
-			const res = await request(`/api/non-existing-mock/${randomUUID()}`, {
+			const res = await request(`/non-existing-mock/${randomUUID()}`, {
 				method: 'POST',
 				body: reqBodyPayload
 			})
 			equal(res.status, 423)
 			equal(res.headers.get('custom_header'), 'my_custom_header')
-			equal(res.headers.get('set-cookie'), ['cookieA=A', 'cookieB=B'].join(', '))
+			equal(res.headers.get('set-cookie'), CUSTOM_COOKIES.join(', '))
 			equal(await res.text(), reqBodyPayload)
 
-			const savedBody = readFileSync(join(mocksDir, 'api/non-existing-mock/[id].POST.423.txt'), 'utf8')
+			const savedBody = readFileSync(join(mocksDir, 'non-existing-mock/[id].POST.423.txt'), 'utf8')
 			equal(savedBody, reqBodyPayload)
 		})
 	})
@@ -460,30 +435,30 @@ describe('Proxy Fallback', () => {
 		})
 
 		it('422 for invalid proxied value', async () => {
-			const res = await commander.setRouteIsProxied(fixtureA.method, fixtureA.urlMask, 'not-a-boolean')
+			const res = await commander.setRouteIsProxied(FXA.method, FXA.urlMask, 'not-a-boolean')
 			equal(res.status, 422)
 			equal(await res.text(), 'Expected boolean for "proxied"')
 		})
 
 		it('422 for missing proxy fallback', async () => {
-			const res = await commander.setRouteIsProxied(fixtureA.method, fixtureA.urlMask, true)
+			const res = await commander.setRouteIsProxied(FXA.method, FXA.urlMask, true)
 			equal(res.status, 422)
 			equal(await res.text(), `There’s no proxy fallback`)
 		})
 
 		it('200 when setting', async () => {
 			await commander.setProxyFallback('https://example.com')
-			const res = await commander.setRouteIsProxied(fixtureA.method, fixtureA.urlMask, true)
+			const res = await commander.setRouteIsProxied(FXA.method, FXA.urlMask, true)
 			equal(res.status, 200)
 			equal((await res.json()).proxied, true)
 
-			const res2 = await commander.setRouteIsProxied(fixtureA.method, fixtureA.urlMask, false)
+			const res2 = await commander.setRouteIsProxied(FXA.method, FXA.urlMask, false)
 			equal(res2.status, 200)
 			equal((await res2.json()).proxied, false)
 		})
 
 		it('200 when unsetting', async () => {
-			const res = await commander.setRouteIsProxied(fixtureA.method, fixtureA.urlMask, false)
+			const res = await commander.setRouteIsProxied(FXA.method, FXA.urlMask, false)
 			equal(res.status, 200)
 			equal((await res.json()).proxied, false)
 		})
@@ -943,23 +918,23 @@ describe('Auto 500', () => {
 	})
 
 	it('toggles 500', async () => {
-		equal((await fixtureA.request()).status, fixtureA.status)
+		equal((await FXA.request()).status, FXA.status)
 
-		const r0 = await commander.toggle500(fixtureA.method, fixtureA.urlMask)
+		const r0 = await commander.toggle500(FXA.method, FXA.urlMask)
 		equal((await r0.json()).auto500, true)
-		equal((await fixtureA.request()).status, 500)
+		equal((await FXA.request()).status, 500)
 
-		const r1 = await commander.toggle500(fixtureA.method, fixtureA.urlMask)
+		const r1 = await commander.toggle500(FXA.method, FXA.urlMask)
 		equal((await r1.json()).auto500, false)
-		equal((await fixtureA.request()).status, fixtureA.status)
+		equal((await FXA.request()).status, FXA.status)
 	})
 })
 
 
 await it('head for get. returns the headers without body only for GETs requested as HEAD', async () => {
-	const res = await fixtureA.request({ method: 'HEAD' })
+	const res = await FXA.request({ method: 'HEAD' })
 	equal(res.status, 200)
-	equal(res.headers.get('content-length'), String(Buffer.byteLength(fixtureA.body)))
+	equal(res.headers.get('content-length'), String(Buffer.byteLength(FXA.body)))
 	equal(await res.text(), '')
 })
 

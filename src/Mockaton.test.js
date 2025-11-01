@@ -581,11 +581,7 @@ describe('Static Files', () => {
 	before(async () => {
 		fxsIndex = await FixtureStatic.create('static/index.html', '<h1>Index</h1>')
 		fxsAsset = await FixtureStatic.create('static/assets/script.js', 'const a = 1')
-	})
-	after(async () => {
-		await fxsIndex.unregister()
-		await fxsAsset.unregister()
-	})
+	}) // the last test unregisters them
 
 	describe('Static File Serving', () => {
 		it('Defaults to index.html', async () => {
@@ -687,8 +683,10 @@ describe('Static Files', () => {
 
 	it('unregisters static route', async () => {
 		await fxsIndex.unregister()
+		await fxsAsset.unregister()
 		const { staticBrokers } = await fetchState()
 		equal(staticBrokers[fxsIndex.urlMask], undefined)
+		equal(staticBrokers[fxsAsset.urlMask], undefined)
 	})
 })
 

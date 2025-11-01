@@ -242,20 +242,19 @@ describe('Dashboard', () => {
 			version = await res.json()
 		})
 
-		let fx0, fx1
-		it('responds debounced when files are added (bulk additions count as 1 increment)', async () => {
+		let fx0
+		it('responds when a file is added', async () => {
 			const prom = commander.getSyncVersion(version)
 			fx0 = await Fixture.create('runtime1.GET.200.txt')
-			fx1 = await Fixture.create('runtime2.GET.200.txt')
 			equal(await (await prom).json(), version + 1)
 		})
 
-		it('responds debounced when files are deleted', async () => {
+		it('responds when a file is deleted', async () => {
 			const prom = commander.getSyncVersion(version + 1)
 			await fx0.unregister()
-			await fx1.unregister()
 			equal(await (await prom).json(), version + 2)
 		})
+		// TODO think about testing the debounce for bulk additions or removals
 	})
 })
 

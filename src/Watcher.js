@@ -15,6 +15,7 @@ import * as mockBrokerCollection from './mockBrokersCollection.js'
  * and also renames, which are two events (delete + add).
  */
 export const uiSyncVersion = new class extends EventEmitter {
+	delay = Number(process.env.MOCKATON_WATCHER_DEBOUNCE_MS) || 80
 	version = 0
 
 	increment = this.#debounce(() => {
@@ -33,7 +34,7 @@ export const uiSyncVersion = new class extends EventEmitter {
 		let timer
 		return () => {
 			clearTimeout(timer)
-			timer = setTimeout(fn, 80)
+			timer = setTimeout(fn, this.delay)
 		}
 	}
 }
@@ -64,7 +65,7 @@ export function watchStaticDir() {
 	const dir = config.staticDir
 	if (!dir)
 		return
-	
+
 	watch(dir, { recursive: true, persistent: false }, (_, file) => {
 		if (!file)
 			return

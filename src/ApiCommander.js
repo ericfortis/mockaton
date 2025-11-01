@@ -9,12 +9,6 @@ export class Commander {
 		this.#addr = addr
 	}
 
-	#patch = (api, body) =>
-		fetch(this.#addr + api, {
-			method: 'PATCH',
-			body: JSON.stringify(body)
-		})
-
 	/** @returns {JsonPromise<State>} */
 	getState = () =>
 		fetch(this.#addr + API.state)
@@ -32,57 +26,28 @@ export class Commander {
 		})
 
 
-	reset() {
-		return this.#patch(API.reset)
+	#patch(api, body) {
+		return fetch(this.#addr + api, {
+			method: 'PATCH',
+			body: JSON.stringify(body)
+		})
 	}
 
-	setGlobalDelay(delay) {
-		return this.#patch(API.globalDelay, delay)
-	}
+	reset = () => this.#patch(API.reset)
 
-	bulkSelectByComment(comment) {
-		return this.#patch(API.bulkSelect, comment)
-	}
+	selectCookie = label => this.#patch(API.cookies, label)
+	setGlobalDelay = delay => this.#patch(API.globalDelay, delay)
+	setCorsAllowed = value => this.#patch(API.cors, value)
+	setProxyFallback = proxyAddr => this.#patch(API.fallback, proxyAddr)
+	setCollectProxied = shouldCollect => this.#patch(API.collectProxied, shouldCollect)
 
-	selectCookie(cookieKey) {
-		return this.#patch(API.cookies, cookieKey)
-	}
+	select = file => this.#patch(API.select, file)
+	bulkSelectByComment = comment => this.#patch(API.bulkSelect, comment)
 
-	setProxyFallback(proxyAddr) {
-		return this.#patch(API.fallback, proxyAddr)
-	}
+	toggle500 = (method, urlMask) => this.#patch(API.toggle500, [method, urlMask])
+	setRouteIsProxied = (method, urlMask, proxied) => this.#patch(API.proxied, [method, urlMask, proxied])
+	setRouteIsDelayed = (method, urlMask, delayed) => this.#patch(API.delay, [method, urlMask, delayed])
 
-	setCollectProxied(shouldCollect) {
-		return this.#patch(API.collectProxied, shouldCollect)
-	}
-
-	setCorsAllowed(value) {
-		return this.#patch(API.cors, value)
-	}
-
-	
-	select(file) {
-		return this.#patch(API.select, file)
-	}
-
-	toggle500(method, urlMask) {
-		return this.#patch(API.toggle500, [method, urlMask])
-	}
-
-	setRouteIsDelayed(method, urlMask, delayed) {
-		return this.#patch(API.delay, [method, urlMask, delayed])
-	}
-
-	setRouteIsProxied(method, urlMask, proxied) {
-		return this.#patch(API.proxied, [method, urlMask, proxied])
-	}
-	
-
-	setStaticRouteIsDelayed(urlMask, delayed) {
-		return this.#patch(API.delayStatic, [urlMask, delayed])
-	}
-
-	setStaticRouteStatus(urlMask, status) {
-		return this.#patch(API.staticStatus, [urlMask, status])
-	}
+	setStaticRouteStatus = (urlMask, status) => this.#patch(API.staticStatus, [urlMask, status])
+	setStaticRouteIsDelayed = (urlMask, delayed) => this.#patch(API.delayStatic, [urlMask, delayed])
 }

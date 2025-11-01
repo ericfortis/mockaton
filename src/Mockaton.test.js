@@ -146,7 +146,7 @@ async function fetchState() {
 }
 
 
-beforeEach(async () => await commander.reset())
+beforeEach(commander.reset)
 
 
 describe('Error Handling', () => {

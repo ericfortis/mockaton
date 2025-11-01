@@ -767,53 +767,56 @@ describe('Registering', () => {
 })
 
 
+describe('Index-like routes', () => {
+	it('resolves dirs to the file without urlMask', async () => {
+		const fx = await Fixture.create('dir/.GET.200.json')
+		const res = await request('/dir')
+		equal(await res.text(), fx.body)
+		await fx.unregister()
+	})
+})
+
+
+describe('MIME', () => {
+	it('derives content-type from known mime', async () => {
+		const fx = await Fixture.create('tmp.GET.200.json')
+		const res = await fx.request()
+		equal(res.headers.get('content-type'), 'application/json')
+		await fx.unregister()
+	})
+
+	it('derives content-type from custom mime', async () => {
+		const fx = await Fixture.create(`tmp.GET.200.${CUSTOM_EXT}`)
+		const res = await fx.request()
+		equal(res.headers.get('content-type'), CUSTOM_MIME)
+		await fx.unregister()
+	})
+})
+
+
+describe('Method and Status', () => {
+	let fx
+	before(async () => {
+		fx = await Fixture.create('tmp.GET.201.txt')
+	})
+	after(async () => {
+		await fx.unregister()
+	})
+
+	it('dispatches the response status', async () => {
+		const res = await fx.request()
+		equal(res.status, 201)
+	})
+
+	it('404s when method mismatches', async () => {
+		const res = await fx.request({ method: 'POST' })
+		equal(res.status, 404)
+	})
+})
+
+
 describe('Dispatch', () => {
 	let fixtures
-
-	describe('index-like routes', () => {
-		it('resolves dirs to the file without urlMask', async () => {
-			const fx = await Fixture.create('dir/.GET.200.json')
-			const res = await request('/dir')
-			equal(await res.text(), fx.body)
-			await fx.unregister()
-		})
-	})
-
-	describe('mime', () => {
-		it('derives content-type from known mime', async () => {
-			const fx = await Fixture.create('tmp.GET.200.json')
-			const res = await fx.request()
-			equal(res.headers.get('content-type'), 'application/json')
-			await fx.unregister()
-		})
-
-		it('derives content-type from custom mime', async () => {
-			const fx = await Fixture.create(`tmp.GET.200.${CUSTOM_EXT}`)
-			const res = await fx.request()
-			equal(res.headers.get('content-type'), CUSTOM_MIME)
-			await fx.unregister()
-		})
-	})
-
-	describe('method and status', () => {
-		let fx
-		before(async () => {
-			fx = await Fixture.create('tmp.GET.201.txt')
-		})
-		after(async () => {
-			await fx.unregister()
-		})
-
-		it('dispatches the response status', async () => {
-			const res = await fx.request()
-			equal(res.status, 201)
-		})
-
-		it('404s when method mismatches', async () => {
-			const res = await fx.request({ method: 'POST' })
-			equal(res.status, 404)
-		})
-	})
 
 	before(async () => {
 		fixtures = [

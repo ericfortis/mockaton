@@ -556,6 +556,7 @@ describe('JS Function Mocks', () => {
 		equal(res.headers.get('content-type'), mimeFor('.json'))
 		equal(res.headers.get('set-cookie'), COOKIES.userA)
 		equal(await res.text(), 'SOME_STRING_0')
+		await fx.unregister()
 	})
 
 	it('can override filename convention (also supports TS)', async () => {
@@ -571,6 +572,7 @@ describe('JS Function Mocks', () => {
 		equal(res.headers.get('content-type'), 'custom-mime')
 		equal(res.headers.get('set-cookie'), 'custom-cookie')
 		equal(await res.text(), 'SOME_STRING_1')
+		await fx.unregister()
 	})
 })
 
@@ -579,6 +581,10 @@ describe('Static Files', () => {
 	before(async () => {
 		fxsIndex = await FixtureStatic.create('static/index.html', '<h1>Index</h1>')
 		fxsAsset = await FixtureStatic.create('static/assets/script.js', 'const a = 1')
+	})
+	after(async () => {
+		await fxsIndex.unregister()
+		await fxsAsset.unregister()
 	})
 
 	describe('Static File Serving', () => {
@@ -684,7 +690,6 @@ describe('Static Files', () => {
 		const { staticBrokers } = await fetchState()
 		equal(staticBrokers[fxsIndex.urlMask], undefined)
 	})
-
 })
 
 

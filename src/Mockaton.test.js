@@ -186,8 +186,8 @@ describe('Error Handling', () => {
 	})
 
 	it('on Windows, path separators are normalized to forward slashes', async () => {
-		const { brokersByMethod } = await fetchState()
-		equal(brokersByMethod[FXA.method][FXA.urlMask].file, FXA.file)
+		const b = await FXA.fetchBroker()
+		equal(b.file, FXA.file)
 	})
 })
 
@@ -322,13 +322,6 @@ describe('Delay', () => {
 		equal((new Date()).getTime() - now.getTime() > delay, true)
 	})
 
-	it('422 when updating non-existing mock alternative. There are mocks for /alpha but not for this one', async () => {
-		const missingFile = 'alpha(non-existing-variant).GET.200.json'
-		const res = await commander.select(missingFile)
-		equal(res.status, 422)
-		equal(await res.text(), `Missing Mock: ${missingFile}`)
-	})
-
 	describe('Set Route is Delayed', () => {
 		it('422 for non-existing route', async () => {
 			const res = await commander.setRouteIsDelayed('GET', '/non-existing', true)
@@ -344,7 +337,6 @@ describe('Delay', () => {
 			equal((await res.json()).delayed, true)
 		})
 	})
-
 })
 
 describe('Proxy Fallback', () => {
@@ -822,6 +814,13 @@ describe('Dispatch', () => {
 		// JavaScript to JSON (params for testing URL decoding)
 		write('/api/object?param=[param].GET.200.js', 'export default { JSON_FROM_JS: true }')
 		await sleep()
+	})
+
+	it('422 when updating non-existing mock alternative. There are mocks for /alpha but not for this one', async () => {
+		const missingFile = 'alpha(non-existing-variant).GET.200.json'
+		const res = await commander.select(missingFile)
+		equal(res.status, 422)
+		equal(await res.text(), `Missing Mock: ${missingFile}`)
 	})
 
 

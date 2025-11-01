@@ -17,16 +17,9 @@ import { CorsHeader } from './utils/http-cors.js'
 import { parseFilename } from './Filename.js'
 
 
-// On CI, we need those extra paths, otherwise it mkdtemp throws
 const mocksDir = mkdtempSync(tmpdir() + '/mocks') + '/'
 const staticDir = mkdtempSync(tmpdir() + '/static') + '/'
 
-
-function write(filename, data) { _write(mocksDir + filename, data) }
-function _write(absPath, data) {
-	mkdirSync(dirname(absPath), { recursive: true })
-	writeFileSync(absPath, data, 'utf8')
-}
 
 async function sleep(ms = 50) {
 	return new Promise(resolve => setTimeout(resolve, ms))
@@ -38,19 +31,20 @@ function spyLogger(t, method) {
 	return spy.mock
 }
 
-class Fixture {
+
+class BaseFixture {
+	dir = ''
+	urlMask = ''
+
 	constructor(file, body = '') {
-		const { urlMask, method, status, ext } = parseFilename(file)
 		this.file = file
-		this.urlMask = urlMask
-		this.method = method
-		this.status = status
-		this.ext = ext
 		this.body = body || `Body for ${file}`
 	}
+	
+	get path() { return join(this.dir, this.file) }
 
 	static async create(file, body) {
-		const fx = new Fixture(file, body)
+		const fx = new this(file, body)
 		await fx.register()
 		return fx
 	}
@@ -60,13 +54,26 @@ class Fixture {
 	}
 
 	async register() {
-		write(this.file, this.body)
+		mkdirSync(dirname(this.path), { recursive: true })
+		writeFileSync(this.path, this.body, 'utf8')
 		await sleep()
 	}
 
 	async unregister() {
-		unlinkSync(mocksDir + this.file)
+		unlinkSync(this.path)
 		await sleep()
+	}
+}
+
+class Fixture extends BaseFixture {
+	constructor(file, body = '') {
+		super(file, body)
+		this.dir = mocksDir
+		const t = parseFilename(file)
+		this.urlMask = t.urlMask
+		this.method = t.method
+		this.status = t.status
+		this.ext = t.ext
 	}
 
 	async fetchBroker() {
@@ -74,33 +81,11 @@ class Fixture {
 	}
 }
 
-class FixtureStatic {
+class FixtureStatic extends BaseFixture {
 	constructor(file, body = '') {
-		this.file = file
+		super(file, body)
+		this.dir = staticDir
 		this.urlMask = '/' + file
-		this.method = 'GET'
-		this.status = 200
-		this.body = body || `Body for static ${file}`
-	}
-
-	static async create(file, body) {
-		const fxs = new FixtureStatic(file, body)
-		await fxs.register()
-		return fxs
-	}
-
-	request(options = {}) {
-		return request(this.urlMask, options)
-	}
-
-	async register() {
-		_write(staticDir + this.file, this.body)
-		await sleep()
-	}
-
-	async unregister() {
-		unlinkSync(staticDir + this.file)
-		await sleep()
 	}
 }
 
@@ -254,12 +239,11 @@ describe('Dashboard', () => {
 			version = await res.json()
 		})
 
-		const fx0 = new Fixture('runtime1.GET.200.txt')
-		const fx1 = new Fixture('runtime2.GET.200.txt')
+		let fx0, fx1
 		it('responds debounced when files are added (bulk additions count as 1 increment)', async () => {
 			const prom = commander.getSyncVersion(version)
-			await fx0.register()
-			await fx1.register()
+			fx0 = await Fixture.create('runtime1.GET.200.txt')
+			fx1 = await Fixture.create('runtime2.GET.200.txt')
 			equal(await (await prom).json(), version + 1)
 		})
 
@@ -473,7 +457,7 @@ describe('Comments', () => {
 		fxKappaA = await Fixture.create('kappa(comment A).GET.200.txt')
 		fxKappaB = await Fixture.create('kappa(comment B).GET.200.txt')
 	})
-	
+
 	after(async () => {
 		await fxIota.unregister()
 		await fxIotaB.unregister()
@@ -481,7 +465,7 @@ describe('Comments', () => {
 		await fxKappaB.unregister()
 	})
 
-	it('extracts all comments without duplicates', async () => 
+	it('extracts all comments without duplicates', async () =>
 		deepEqual((await fetchState()).comments, [
 			'(comment A)',
 			'(comment B)',
@@ -519,13 +503,13 @@ describe('404', () => {
 	})
 })
 
-describe('Default mock', () => {
+describe('Default Mock', () => {
 	let fxA, fxB
 	before(async () => {
 		fxA = await Fixture.create('alpha.GET.200.txt', 'A')
 		fxB = await Fixture.create('alpha(default).GET.200.txt', 'B')
 	})
-	
+
 	after(async () => {
 		await fxA.unregister()
 		await fxB.unregister()
@@ -538,14 +522,38 @@ describe('Default mock', () => {
 			fxA.file
 		])
 	})
-	
+
 	it('Dispatches default mock', async () => {
 		const res = await fxA.request()
 		deepEqual(await res.text(), fxB.body)
 	})
 })
 
-describe('JS Function Mocks', () => {
+
+describe('Dynamic Mocks', () => {
+	it('JS object is sent as JSON', async () => {
+		const fx = await Fixture.create(
+			'js-object.GET.200.js',
+			'export default { FROM_JS: true }')
+		const res = await fx.request()
+		equal(res.headers.get('content-type'), mimeFor('.json'))
+		deepEqual(await res.json(), { FROM_JS: true })
+		await fx.unregister()
+	})
+
+	it('TS array is sent as JSON', async () => {
+		const fx = await Fixture.create(
+			'js-object.GET.200.ts',
+			'export default ["from ts"]')
+		const res = await fx.request()
+		equal(res.headers.get('content-type'), mimeFor('.json'))
+		deepEqual(await res.json(), ['from ts'])
+		await fx.unregister()
+	})
+})
+
+
+describe('Dynamic Function Mocks', () => {
 	it('honors filename convention', async () => {
 		const fx = await Fixture.create('func.GET.200.js', `
 			export default function (req, response) {
@@ -704,7 +712,6 @@ describe('Toggle 500', () => {
 	})
 })
 
-
 describe('Registering', () => {
 	const fxA = new Fixture('register.PUT.200.json')
 	const fx500 = new Fixture('register.PUT.500.json')
@@ -756,7 +763,7 @@ describe('Dispatch', () => {
 			// Exact route paths
 			[
 				'/api/the-mime',
-				'api/the-mime.GET.200.txt',
+				'api/the-mime.GET.200.json',
 				'determines the content type'
 			], [
 				'/api/the-method-and-status',
@@ -764,7 +771,7 @@ describe('Dispatch', () => {
 				'obeys the HTTP method and response status'
 			], [
 				'/api/the-comment',
-				'api/the-comment(this is the actual comment).GET.200(another comment).txt',
+				'api/the-comment(this is the actual comment).GET.200(another comment).json',
 				''
 			], [
 				'/api/alternative',
@@ -832,14 +839,8 @@ describe('Dispatch', () => {
 		]
 
 		for (const [, file, body] of fixtures)
-			write(file, file.endsWith('.json') ? JSON.stringify(body) : body)
+			await Fixture.create(file, JSON.stringify(body))
 
-		write('api/.GET.500.txt', 'keeps non-autogenerated 500')
-		write('api/alternative(comment-2).GET.200.json', JSON.stringify({ comment: 2 }))
-		write('api/my-route(comment-2).GET.200.json', JSON.stringify({ comment: 2 }))
-
-		// JavaScript to JSON (params for testing URL decoding)
-		write('/api/object?param=[param].GET.200.js', 'export default { JSON_FROM_JS: true }')
 		await sleep()
 	})
 
@@ -850,6 +851,11 @@ describe('Dispatch', () => {
 		equal(await res.text(), `Missing Mock: ${missingFile}`)
 	})
 
+	it('assigns custom mimes derived from extension', async () => {
+		const fx = await Fixture.create(`custom-extension-fx.GET.200.${CUSTOM_EXT}`)
+		const res = await fx.request()
+		equal(res.headers.get('content-type'), CUSTOM_MIME)
+	})
 
 	it('tests many', () => {
 		async function testMockDispatching(url, file, expectedBody, forcedMime = undefined) {
@@ -869,13 +875,6 @@ describe('Dispatch', () => {
 		for (const [url, file, body] of fixtures)
 			testMockDispatching(url, file, body)
 
-		testMockDispatching('/api/object', 'api/object.GET.200.js', { JSON_FROM_JS: true }, mimeFor('.json'))
-	})
-
-	it('assigns custom mimes derived from extension', async () => {
-		const fx = await Fixture.create(`custom-extension.GET.200.${CUSTOM_EXT}`)
-		const res = await fx.request()
-		equal(res.headers.get('content-type'), CUSTOM_MIME)
 	})
 })
 

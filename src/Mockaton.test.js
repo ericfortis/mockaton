@@ -43,6 +43,7 @@ class BaseFixture {
 	
 	get path() { return join(this.dir, this.file) }
 
+	/** @returns {Promise<InstanceType<typeof this>>} */
 	static async create(file, body) {
 		const fx = new this(file, body)
 		await fx.register()
@@ -90,7 +91,7 @@ class FixtureStatic extends BaseFixture {
 }
 
 
-const FXA = await Fixture.create('basic.GET.200.json')
+const FX = await Fixture.create('basic.GET.200.json')
 
 const COOKIES = { userA: 'CookieA', userB: 'CookieB' }
 const CUSTOM_EXT = 'custom_extension'
@@ -171,10 +172,11 @@ describe('Error Handling', () => {
 	})
 
 	it('on Windows, path separators are normalized to forward slashes', async () => {
-		const b = await FXA.fetchBroker()
-		equal(b.file, FXA.file)
+		const b = await FX.fetchBroker()
+		equal(b.file, FX.file)
 	})
 })
+
 
 describe('CORS', () => {
 	describe('Set CORS allowed', () => {
@@ -209,7 +211,7 @@ describe('CORS', () => {
 	})
 
 	it('responds', async () => {
-		const res = await FXA.request({
+		const res = await FX.request({
 			headers: {
 				[CorsHeader.Origin]: ALLOWED_ORIGIN
 			}
@@ -219,6 +221,7 @@ describe('CORS', () => {
 		equal(res.headers.get(CorsHeader.AcExposeHeaders), 'Content-Encoding')
 	})
 })
+
 
 describe('Dashboard', () => {
 	it('renders', async () => {
@@ -268,7 +271,7 @@ describe('Cookie', () => {
 		]))
 
 	it('updates selected cookie', async () => {
-		const resA = await FXA.request()
+		const resA = await FX.request()
 		equal(resA.headers.get('set-cookie'), COOKIES.userA)
 
 		const response = await commander.selectCookie('userB')
@@ -277,10 +280,11 @@ describe('Cookie', () => {
 			['userB', true]
 		])
 
-		const resB = await FXA.request()
+		const resB = await FX.request()
 		equal(resB.headers.get('set-cookie'), COOKIES.userB)
 	})
 })
+
 
 describe('Delay', () => {
 	describe('Set Global Delay', () => {
@@ -299,10 +303,10 @@ describe('Delay', () => {
 	it('updates route delay', async () => {
 		const delay = 120
 		await commander.setGlobalDelay(delay)
-		await commander.setRouteIsDelayed(FXA.method, FXA.urlMask, true)
+		await commander.setRouteIsDelayed(FX.method, FX.urlMask, true)
 		const now = new Date()
-		const res = await FXA.request()
-		equal(await res.text(), FXA.body)
+		const res = await FX.request()
+		equal(await res.text(), FX.body)
 		equal((new Date()).getTime() - now.getTime() > delay, true)
 	})
 
@@ -313,15 +317,16 @@ describe('Delay', () => {
 			equal(await res.text(), `Route does not exist: GET /non-existing`)
 		})
 		it('422 for invalid delayed value', async () => {
-			const res = await commander.setRouteIsDelayed(FXA.method, FXA.urlMask, 'not-a-boolean')
+			const res = await commander.setRouteIsDelayed(FX.method, FX.urlMask, 'not-a-boolean')
 			equal(await res.text(), 'Expected boolean for "delayed"')
 		})
 		it('200', async () => {
-			const res = await commander.setRouteIsDelayed(FXA.method, FXA.urlMask, true)
+			const res = await commander.setRouteIsDelayed(FX.method, FX.urlMask, true)
 			equal((await res.json()).delayed, true)
 		})
 	})
 })
+
 
 describe('Proxy Fallback', () => {
 	describe('Fallback', () => {
@@ -406,30 +411,30 @@ describe('Proxy Fallback', () => {
 		})
 
 		it('422 for invalid proxied value', async () => {
-			const res = await commander.setRouteIsProxied(FXA.method, FXA.urlMask, 'not-a-boolean')
+			const res = await commander.setRouteIsProxied(FX.method, FX.urlMask, 'not-a-boolean')
 			equal(res.status, 422)
 			equal(await res.text(), 'Expected boolean for "proxied"')
 		})
 
 		it('422 for missing proxy fallback', async () => {
-			const res = await commander.setRouteIsProxied(FXA.method, FXA.urlMask, true)
+			const res = await commander.setRouteIsProxied(FX.method, FX.urlMask, true)
 			equal(res.status, 422)
 			equal(await res.text(), `There’s no proxy fallback`)
 		})
 
 		it('200 when setting', async () => {
 			await commander.setProxyFallback('https://example.com')
-			const res = await commander.setRouteIsProxied(FXA.method, FXA.urlMask, true)
+			const res = await commander.setRouteIsProxied(FX.method, FX.urlMask, true)
 			equal(res.status, 200)
 			equal((await res.json()).proxied, true)
 
-			const res2 = await commander.setRouteIsProxied(FXA.method, FXA.urlMask, false)
+			const res2 = await commander.setRouteIsProxied(FX.method, FX.urlMask, false)
 			equal(res2.status, 200)
 			equal((await res2.json()).proxied, false)
 		})
 
 		it('200 when unsetting', async () => {
-			const res = await commander.setRouteIsProxied(FXA.method, FXA.urlMask, false)
+			const res = await commander.setRouteIsProxied(FX.method, FX.urlMask, false)
 			equal(res.status, 200)
 			equal((await res.json()).proxied, false)
 		})
@@ -447,6 +452,7 @@ describe('Proxy Fallback', () => {
 		await commander.setProxyFallback('')
 	})
 })
+
 
 describe('Comments', () => {
 	let fxIota, fxIotaB, fxKappaA, fxKappaB
@@ -483,6 +489,7 @@ describe('Comments', () => {
 	})
 })
 
+
 describe('404', () => {
 	it('when there’s no mock', async () =>
 		equal((await request('/non-existing')).status, 404))
@@ -502,6 +509,7 @@ describe('404', () => {
 		await fx.unregister()
 	})
 })
+
 
 describe('Default Mock', () => {
 	let fxA, fxB
@@ -583,6 +591,7 @@ describe('Dynamic Function Mocks', () => {
 		await fx.unregister()
 	})
 })
+
 
 describe('Static Files', () => {
 	let fxsIndex, fxsAsset
@@ -698,19 +707,21 @@ describe('Static Files', () => {
 	})
 })
 
+
 describe('Toggle 500', () => {
 	it('toggles 500', async () => {
-		equal((await FXA.request()).status, FXA.status)
+		equal((await FX.request()).status, FX.status)
 
-		const r0 = await commander.toggle500(FXA.method, FXA.urlMask)
+		const r0 = await commander.toggle500(FX.method, FX.urlMask)
 		equal((await r0.json()).auto500, true)
-		equal((await FXA.request()).status, 500)
+		equal((await FX.request()).status, 500)
 
-		const r1 = await commander.toggle500(FXA.method, FXA.urlMask)
+		const r1 = await commander.toggle500(FX.method, FX.urlMask)
 		equal((await r1.json()).auto500, false)
-		equal((await FXA.request()).status, FXA.status)
+		equal((await FX.request()).status, FX.status)
 	})
 })
+
 
 describe('Registering', () => {
 	const fxA = new Fixture('register.PUT.200.json')
@@ -880,9 +891,9 @@ describe('Dispatch', () => {
 
 
 await it('head for get. returns the headers without body only for GETs requested as HEAD', async () => {
-	const res = await FXA.request({ method: 'HEAD' })
+	const res = await FX.request({ method: 'HEAD' })
 	equal(res.status, 200)
-	equal(res.headers.get('content-length'), String(Buffer.byteLength(FXA.body)))
+	equal(res.headers.get('content-length'), String(Buffer.byteLength(FX.body)))
 	equal(await res.text(), '')
 })
 

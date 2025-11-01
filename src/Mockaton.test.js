@@ -51,7 +51,6 @@ class BaseFixture {
 	}
 
 	async register() {
-		mkdirSync(dirname(this.path), { recursive: true })
 		writeFileSync(this.path, this.body, 'utf8')
 		await sleep()
 	}
@@ -478,7 +477,7 @@ describe('404', () => {
 	})
 
 	it('ignores static files ending in ~', async () => {
-		const fx = await FixtureStatic.create('static/ignored.js~')
+		const fx = await FixtureStatic.create('static-ignored.js~')
 		equal((await fx.request()).status, 404)
 		await fx.unregister()
 	})
@@ -570,13 +569,13 @@ describe('Dynamic Function Mocks', () => {
 describe('Static Files', () => {
 	let fxsIndex, fxsAsset
 	before(async () => {
-		fxsIndex = await FixtureStatic.create('static/index.html', '<h1>Index</h1>')
-		fxsAsset = await FixtureStatic.create('static/assets/script.js', 'const a = 1')
+		fxsIndex = await FixtureStatic.create('index.html', '<h1>Index</h1>')
+		fxsAsset = await FixtureStatic.create('asset-script.js', 'const a = 1')
 	}) // the last test unregisters them
 
 	describe('Static File Serving', () => {
 		it('Defaults to index.html', async () => {
-			const res = await request('/static')
+			const res = await request('/')
 			equal(res.status, 200)
 			equal(res.headers.get('content-type'), mimeFor(fxsIndex.file))
 			equal(await res.text(), fxsIndex.body)
@@ -736,8 +735,8 @@ describe('Registering', () => {
 
 describe('Index-like routes', () => {
 	it('resolves dirs to the file without urlMask', async () => {
-		const fx = await Fixture.create('dir/.GET.200.json')
-		const res = await request('/dir')
+		const fx = await Fixture.create('.GET.200.json')
+		const res = await request('/')
 		equal(await res.text(), fx.body)
 		await fx.unregister()
 	})
@@ -909,10 +908,10 @@ describe('Dispatch', () => {
 			],
 		]
 
-		for (const [, file, body] of fixtures)
+		for (const [, file, body] of fixtures) {
+			mkdirSync(join(dirname(mocksDir + file)), { recursive: true })
 			await Fixture.create(file, JSON.stringify(body))
-
-		await sleep()
+		}
 	})
 
 	it('tests many', () => {

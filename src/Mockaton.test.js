@@ -342,8 +342,7 @@ describe('Delay', () => {
 describe('Proxy Fallback', () => {
 	describe('Fallback', () => {
 		let fallbackServer
-		const CUSTOM_COOKIES = ['cookieX=x', 'cookieY=y'
-		]
+		const CUSTOM_COOKIES = ['cookieX=x', 'cookieY=y']
 		before(async () => {
 			fallbackServer = createServer(async (req, response) => {
 				response.writeHead(423, {
@@ -474,13 +473,19 @@ describe('Comments', () => {
 		fxKappaA = await Fixture.create('kappa(comment A).GET.200.txt')
 		fxKappaB = await Fixture.create('kappa(comment B).GET.200.txt')
 	})
+	
+	after(async () => {
+		await fxIota.unregister()
+		await fxIotaB.unregister()
+		await fxKappaA.unregister()
+		await fxKappaB.unregister()
+	})
 
-	it('extracts all comments without duplicates', async () => {
+	it('extracts all comments without duplicates', async () => 
 		deepEqual((await fetchState()).comments, [
 			'(comment A)',
 			'(comment B)',
-		])
-	})
+		]))
 
 	it('selects exact', async () => {
 		await commander.bulkSelectByComment('(comment B)')
@@ -503,30 +508,38 @@ describe('404', () => {
 
 	it('ignores files ending in ~ by default, e.g. JetBrains temp files', async () => {
 		const fx = await Fixture.create('ignored.GET.200.json~')
-		return equal((await fx.request()).status, 404)
+		equal((await fx.request()).status, 404)
+		await fx.unregister()
 	})
 
 	it('ignores static files ending in ~', async () => {
-		const fxs = await FixtureStatic.create('static/ignored.js~')
-		return equal((await fxs.request()).status, 404)
+		const fx = await FixtureStatic.create('static/ignored.js~')
+		equal((await fx.request()).status, 404)
+		await fx.unregister()
 	})
 })
 
-describe('Default mock', async () => {
+describe('Default mock', () => {
 	let fxA, fxB
 	before(async () => {
 		fxA = await Fixture.create('alpha.GET.200.txt', 'A')
 		fxB = await Fixture.create('alpha(default).GET.200.txt', 'B')
 	})
+	
+	after(async () => {
+		await fxA.unregister()
+		await fxB.unregister()
+	})
 
-	await it('sorts mocks list with the user specified default first for dashboard display', async () => {
+	it('sorts mocks list with the user specified default first for dashboard display', async () => {
 		const { mocks } = (await fetchState()).brokersByMethod.GET[fxA.urlMask]
 		deepEqual(mocks, [
 			fxB.file,
 			fxA.file
 		])
 	})
-	await it('Dispatches default mock', async () => {
+	
+	it('Dispatches default mock', async () => {
 		const res = await fxA.request()
 		deepEqual(await res.text(), fxB.body)
 	})

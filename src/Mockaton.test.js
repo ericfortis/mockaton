@@ -34,6 +34,7 @@ function spyLogger(t, method) {
 class BaseFixture {
 	dir = ''
 	urlMask = ''
+	method = ''
 
 	constructor(file, body = '') {
 		this.file = file
@@ -45,6 +46,7 @@ class BaseFixture {
 	}
 
 	request(options = {}) {
+		options.method ??= this.method
 		return request(this.urlMask, options)
 	}
 
@@ -88,6 +90,7 @@ class FixtureStatic extends BaseFixture {
 		super(file, body)
 		this.dir = staticDir
 		this.urlMask = '/' + file
+		this.method = 'GET'
 	}
 
 	static async create(file, body) {
@@ -759,17 +762,18 @@ describe('MIME', () => {
 
 
 describe('Method and Status', () => {
-	let fx
-	before(async () => {
-		fx = await Fixture.create('tmp.GET.201.txt')
-	})
-	after(async () => {
-		await fx.unregister()
-	})
+	const fx = new Fixture('uncommon-method.ACL.201.txt')
+	before(async () => await fx.register())
+	after(async () => await fx.unregister())
 
 	it('dispatches the response status', async () => {
 		const res = await fx.request()
-		equal(res.status, 201)
+		equal(res.status, fx.status)
+	})
+
+	it('dispatches uncommon but supported methods', async () => {
+		const res = await fx.request()
+		equal(res.status, fx.status)
 	})
 
 	it('404s when method mismatches', async () => {
@@ -791,19 +795,19 @@ describe('Select', () => {
 		await fx.unregister()
 		await fxAlt.unregister()
 	})
-	
+
 	it('422 when updating non-existing mock alternative', async () => {
 		const res = await api.select(fxUnregistered.file)
 		equal(res.status, 422)
 		equal(await res.text(), `Missing Mock: ${fxUnregistered.file}`)
 	})
-	
+
 	it('selects variant', async () => {
 		const res0 = await request('/select')
 		equal(await res0.text(), fx.body)
-		
+
 		await api.select(fxAlt.file)
-		const res1 = await request('/select')	
+		const res1 = await request('/select')
 		equal(await res1.text(), fxAlt.body)
 	})
 })
@@ -858,12 +862,6 @@ describe('Dispatch', () => {
 				'/space & colon:',
 				'space & colon:.GET.200.json',
 				'Decodes URI'
-			],
-
-			[
-				'/uncommon-method',
-				'uncommon-method.ACL.200.json',
-				'node.js doesn’t support arbitrary HTTP methods, but it does support a few non-standard ones'
 			],
 
 

@@ -778,15 +778,26 @@ describe('Dispatch', () => {
 			await fx.unregister()
 		})
 	})
+	
+	describe('mime', () => {
+		it('derives content-type from known mime', async () => {
+			const fx = await Fixture.create('tmp.GET.200.json')
+			const res = await fx.request()
+			equal(res.headers.get('content-type'), 'application/json')
+			await fx.unregister()
+		})
+		
+		it('derives content-type from custom mime', async () => {
+			const fx = await Fixture.create(`tmp.GET.200.${CUSTOM_EXT}`)
+			const res = await fx.request()
+			equal(res.headers.get('content-type'), CUSTOM_MIME)
+			await fx.unregister()
+		})
+	})
 
 	before(async () => {
 		fixtures = [
-			// Exact route paths
 			[
-				'/the-mime',
-				'the-mime.GET.200.json',
-				'determines the content type'
-			], [
 				'/the-method-and-status',
 				'the-method-and-status.POST.201.json',
 				'obeys the HTTP method and response status'

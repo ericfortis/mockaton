@@ -15,7 +15,7 @@ import * as mockBrokerCollection from './mockBrokersCollection.js'
  * and also renames, which are two events (delete + add).
  */
 export const uiSyncVersion = new class extends EventEmitter {
-	delay = Number(process.env.MOCKATON_WATCHER_DEBOUNCE_MS) || 80
+	delay = Number(process.env.MOCKATON_WATCHER_DEBOUNCE_MS ?? 80)
 	version = 0
 
 	increment = this.#debounce(() => {

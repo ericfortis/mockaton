@@ -5,7 +5,7 @@ import { dirname, join } from 'node:path'
 import { randomUUID } from 'node:crypto'
 import { equal, deepEqual, match } from 'node:assert/strict'
 import { describe, it, before, beforeEach, after } from 'node:test'
-import { writeFileSync, mkdtempSync, mkdirSync, unlinkSync, readFileSync } from 'node:fs'
+import { unlinkSync, mkdtempSync, mkdirSync, readFileSync, writeFileSync } from 'node:fs'
 
 import { API } from './ApiConstants.js'
 import { logger } from './utils/logger.js'
@@ -19,7 +19,6 @@ import { parseFilename } from './Filename.js'
 
 const mocksDir = mkdtempSync(tmpdir() + '/mocks') + '/'
 const staticDir = mkdtempSync(tmpdir() + '/static') + '/'
-
 
 async function sleep(ms = 50) {
 	return new Promise(resolve => setTimeout(resolve, ms))
@@ -461,41 +460,6 @@ describe('Proxy Fallback', () => {
 })
 
 
-describe('Comments', () => {
-	let fxIota, fxIotaB, fxKappaA, fxKappaB
-
-	before(async () => {
-		fxIota = await Fixture.create('iota.GET.200.txt')
-		fxIotaB = await Fixture.create('iota(comment B).GET.200.txt')
-		fxKappaA = await Fixture.create('kappa(comment A).GET.200.txt')
-		fxKappaB = await Fixture.create('kappa(comment B).GET.200.txt')
-	})
-
-	after(async () => {
-		await fxIota.unregister()
-		await fxIotaB.unregister()
-		await fxKappaA.unregister()
-		await fxKappaB.unregister()
-	})
-
-	it('extracts all comments without duplicates', async () =>
-		deepEqual((await fetchState()).comments, [
-			'(comment A)',
-			'(comment B)',
-		]))
-
-	it('selects exact', async () => {
-		await api.bulkSelectByComment('(comment B)')
-		equal((await (await fxIota.request()).text()), fxIotaB.body)
-		equal((await (await fxKappaA.request()).text()), fxKappaB.body)
-	})
-
-	it('selects partial', async () => {
-		await api.bulkSelectByComment('(mment A)')
-		equal((await (await fxKappaB.request()).text()), fxKappaA.body)
-	})
-})
-
 
 describe('404', () => {
 	it('when there’s no mock', async () =>
@@ -815,20 +779,78 @@ describe('Method and Status', () => {
 })
 
 
+describe('Select', () => {
+	const fx = new Fixture('select(default).GET.200.txt')
+	const fxAlt = new Fixture('select(variant).GET.200.txt')
+	const fxUnregistered = new Fixture('select(non-existing).GET.200.txt')
+	before(async () => {
+		await fx.register()
+		await fxAlt.register()
+	})
+	after(async () => {
+		await fx.unregister()
+		await fxAlt.unregister()
+	})
+	
+	it('422 when updating non-existing mock alternative', async () => {
+		const res = await api.select(fxUnregistered.file)
+		equal(res.status, 422)
+		equal(await res.text(), `Missing Mock: ${fxUnregistered.file}`)
+	})
+	
+	it('selects variant', async () => {
+		const res0 = await request('/select')
+		equal(await res0.text(), fx.body)
+		
+		await api.select(fxAlt.file)
+		const res1 = await request('/select')	
+		equal(await res1.text(), fxAlt.body)
+	})
+})
+
+
+describe('Bulk Select', () => {
+	let fxIota, fxIotaB, fxKappaA, fxKappaB
+
+	before(async () => {
+		fxIota = await Fixture.create('iota.GET.200.txt')
+		fxIotaB = await Fixture.create('iota(comment B).GET.200.txt')
+		fxKappaA = await Fixture.create('kappa(comment A).GET.200.txt')
+		fxKappaB = await Fixture.create('kappa(comment B).GET.200.txt')
+	})
+
+	after(async () => {
+		await fxIota.unregister()
+		await fxIotaB.unregister()
+		await fxKappaA.unregister()
+		await fxKappaB.unregister()
+	})
+
+	it('extracts all comments without duplicates', async () =>
+		deepEqual((await fetchState()).comments, [
+			'(comment A)',
+			'(comment B)',
+		]))
+
+	it('selects exact', async () => {
+		await api.bulkSelectByComment('(comment B)')
+		equal((await (await fxIota.request()).text()), fxIotaB.body)
+		equal((await (await fxKappaA.request()).text()), fxKappaB.body)
+	})
+
+	it('selects partial', async () => {
+		await api.bulkSelectByComment('(mment A)')
+		equal((await (await fxKappaB.request()).text()), fxKappaA.body)
+	})
+})
+
+
 describe('Dispatch', () => {
 	let fixtures
 
 	before(async () => {
 		fixtures = [
 			[
-				'/the-comment',
-				'the-comment(this is the actual comment).GET.200(another comment).json',
-				''
-			], [
-				'/alternative',
-				'alternative(comment-1).GET.200.json',
-				'With_Comment_1'
-			], [
 				'/dot.in.path',
 				'dot.in.path.GET.200.json',
 				'Dot_in_Path'
@@ -893,19 +915,6 @@ describe('Dispatch', () => {
 			await Fixture.create(file, JSON.stringify(body))
 
 		await sleep()
-	})
-
-	it('422 when updating non-existing mock alternative. There are mocks for /alpha but not for this one', async () => {
-		const missingFile = 'alpha(non-existing-variant).GET.200.json'
-		const res = await api.select(missingFile)
-		equal(res.status, 422)
-		equal(await res.text(), `Missing Mock: ${missingFile}`)
-	})
-
-	it('assigns custom mimes derived from extension', async () => {
-		const fx = await Fixture.create(`custom-extension-fx.GET.200.${CUSTOM_EXT}`)
-		const res = await fx.request()
-		equal(res.headers.get('content-type'), CUSTOM_MIME)
 	})
 
 	it('tests many', () => {

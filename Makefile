@@ -6,7 +6,7 @@ watch:
 
 
 test:
-	@node --test 'src/**/*.test.js'
+	@MOCKATON_WATCHER_DEBOUNCE_MS=0 node --test 'src/**/*.test.js'
 
 test-docker:
 	@docker run --rm --interactive --tty \
@@ -16,7 +16,7 @@ test-docker:
 		make test
 
 coverage:
-	@node --test --experimental-test-coverage \
+	@MOCKATON_WATCHER_DEBOUNCE_MS=0 node --test --experimental-test-coverage \
 		--test-reporter=spec --test-reporter-destination=stdout \
 		--test-reporter=lcov --test-reporter-destination=lcov.info \
 		'src/**/*.test.js'

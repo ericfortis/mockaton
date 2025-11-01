@@ -28,16 +28,6 @@ function _write(absPath, data) {
 	writeFileSync(absPath, data, 'utf8')
 }
 
-async function register(file, data) {
-	write(file, data)
-	await sleep()
-}
-
-async function unregister(file) {
-	unlinkSync(mocksDir + file)
-	await sleep()
-}
-
 async function sleep(ms = 50) {
 	return new Promise(resolve => setTimeout(resolve, ms))
 }
@@ -133,16 +123,16 @@ const server = await Mockaton({
 	corsOrigins: [ALLOWED_ORIGIN],
 	corsExposedHeaders: ['Content-Encoding']
 })
-const mockatonAddr = `http://${server.address().address}:${server.address().port}`
-const commander = new Commander(mockatonAddr)
+const addr = `http://${server.address().address}:${server.address().port}`
+const commander = new Commander(addr)
 
 function request(path, options = {}) {
-	return fetch(mockatonAddr + path, options)
+	return fetch(addr + path, options)
 }
 
 /** @returns {Promise<State>} */
 async function fetchState() {
-	return await (await commander.getState()).json()
+	return (await commander.getState()).json()
 }
 
 

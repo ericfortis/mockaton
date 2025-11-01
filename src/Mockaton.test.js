@@ -731,8 +731,7 @@ describe('Registering', () => {
 		await commander.select(fxA.file)
 		await fxA.unregister()
 		const b = await fxA.fetchBroker()
-		deepEqual(b.mocks, [fx500.file]
-		)
+		deepEqual(b.mocks, [fx500.file])
 	})
 
 	it('unregistering the last mock removes broker', async () => {
@@ -740,8 +739,6 @@ describe('Registering', () => {
 		const b = await fx500.fetchBroker()
 		equal(b, undefined)
 	})
-
-	// it('unregistering the last PUT mock removes PUT from collection')
 })
 
 

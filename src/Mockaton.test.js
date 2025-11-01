@@ -20,9 +20,6 @@ import { parseFilename } from './Filename.js'
 const mocksDir = mkdtempSync(tmpdir() + '/mocks') + '/'
 const staticDir = mkdtempSync(tmpdir() + '/static') + '/'
 
-async function sleep(ms = 50) {
-	return new Promise(resolve => setTimeout(resolve, ms))
-}
 
 function spyLogger(t, method) {
 	const spy = t.mock.method(logger, method)
@@ -50,14 +47,23 @@ class BaseFixture {
 		return request(this.urlMask, options)
 	}
 
+	// TODO invalid file names do not trigger, so are sleeping for them
 	async register() {
+		const version = await (await api.getSyncVersion(-1)).json()
+		const p = api.getSyncVersion(version)
 		writeFileSync(this.path, this.body, 'utf8')
-		await sleep()
+		await Promise.race([p, this.#timeout()])
 	}
 
 	async unregister() {
+		const version = await (await api.getSyncVersion(-1)).json()
+		const p = api.getSyncVersion(version)
 		unlinkSync(this.path)
-		await sleep()
+		await Promise.race([p, this.#timeout()])
+	}
+	
+	async #timeout(ms = 50) {
+		return new Promise(resolve => setTimeout(resolve, ms))
 	}
 }
 
@@ -100,7 +106,6 @@ class FixtureStatic extends BaseFixture {
 }
 
 
-const FX = await Fixture.create('basic.GET.200.json')
 
 const COOKIES = { userA: 'CookieA', userB: 'CookieB' }
 const CUSTOM_EXT = 'custom_extension'
@@ -130,6 +135,7 @@ function request(path, options = {}) {
 	return fetch(addr + path, options)
 }
 
+const FX = await Fixture.create('basic.GET.200.json')
 
 beforeEach(api.reset)
 

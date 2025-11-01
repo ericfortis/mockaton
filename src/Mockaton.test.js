@@ -71,7 +71,7 @@ class Fixture extends BaseFixture {
 		this.status = t.status
 		this.ext = t.ext
 	}
-	
+
 	static async create(file, body) {
 		const fx = new this(file, body)
 		await fx.register()
@@ -90,7 +90,7 @@ class FixtureStatic extends BaseFixture {
 		this.dir = staticDir
 		this.urlMask = '/' + file
 	}
-	
+
 	static async create(file, body) {
 		const fx = new this(file, body)
 		await fx.register()
@@ -769,7 +769,7 @@ describe('Registering', () => {
 
 describe('Dispatch', () => {
 	let fixtures
-	
+
 	describe('index-like routes', () => {
 		it('resolves dirs to the file without urlMask', async () => {
 			const fx = await Fixture.create('dir/.GET.200.json')
@@ -778,7 +778,7 @@ describe('Dispatch', () => {
 			await fx.unregister()
 		})
 	})
-	
+
 	describe('mime', () => {
 		it('derives content-type from known mime', async () => {
 			const fx = await Fixture.create('tmp.GET.200.json')
@@ -786,7 +786,7 @@ describe('Dispatch', () => {
 			equal(res.headers.get('content-type'), 'application/json')
 			await fx.unregister()
 		})
-		
+
 		it('derives content-type from custom mime', async () => {
 			const fx = await Fixture.create(`tmp.GET.200.${CUSTOM_EXT}`)
 			const res = await fx.request()
@@ -795,13 +795,29 @@ describe('Dispatch', () => {
 		})
 	})
 
+	describe('method and status', () => {
+		let fx
+		before(async () => {
+			fx = await Fixture.create('tmp.GET.201.txt')
+		})
+		after(async () => {
+			await fx.unregister()
+		})
+
+		it('dispatches the response status', async () => {
+			const res = await fx.request()
+			equal(res.status, 201)
+		})
+
+		it('404s when method mismatches', async () => {
+			const res = await fx.request({ method: 'POST' })
+			equal(res.status, 404)
+		})
+	})
+
 	before(async () => {
 		fixtures = [
 			[
-				'/the-method-and-status',
-				'the-method-and-status.POST.201.json',
-				'obeys the HTTP method and response status'
-			], [
 				'/the-comment',
 				'the-comment(this is the actual comment).GET.200(another comment).json',
 				''

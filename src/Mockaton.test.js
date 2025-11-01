@@ -45,13 +45,6 @@ class BaseFixture {
 		return join(this.dir, this.file)
 	}
 
-	/** @returns {Promise<InstanceType<typeof this>>} */
-	static async create(file, body) {
-		const fx = new this(file, body)
-		await fx.register()
-		return fx
-	}
-
 	request(options = {}) {
 		return request(this.urlMask, options)
 	}
@@ -68,7 +61,6 @@ class BaseFixture {
 	}
 }
 
-
 class Fixture extends BaseFixture {
 	constructor(file, body = '') {
 		super(file, body)
@@ -78,6 +70,12 @@ class Fixture extends BaseFixture {
 		this.method = t.method
 		this.status = t.status
 		this.ext = t.ext
+	}
+	
+	static async create(file, body) {
+		const fx = new this(file, body)
+		await fx.register()
+		return fx
 	}
 
 	async fetchBroker() {
@@ -91,6 +89,12 @@ class FixtureStatic extends BaseFixture {
 		super(file, body)
 		this.dir = staticDir
 		this.urlMask = '/' + file
+	}
+	
+	static async create(file, body) {
+		const fx = new this(file, body)
+		await fx.register()
+		return fx
 	}
 }
 
@@ -116,13 +120,13 @@ const server = await Mockaton({
 const addr = `http://${server.address().address}:${server.address().port}`
 const api = new Commander(addr)
 
-function request(path, options = {}) {
-	return fetch(addr + path, options)
-}
-
 /** @returns {Promise<State>} */
 async function fetchState() {
 	return (await api.getState()).json()
+}
+
+function request(path, options = {}) {
+	return fetch(addr + path, options)
 }
 
 
@@ -765,15 +769,18 @@ describe('Registering', () => {
 
 describe('Dispatch', () => {
 	let fixtures
+	
+	describe('index-like routes', () => {
+		it('resolves dirs to the file without urlMask', async () => {
+			const fx = await Fixture.create('dir/.GET.200.json')
+			const res = await request('/dir')
+			equal(await res.text(), fx.body)
+			await fx.unregister()
+		})
+	})
 
 	before(async () => {
 		fixtures = [
-			[
-				'/dir',
-				'dir/.GET.200.json',
-				'index-like route for /dir, which could just be the extension convention'
-			],
-
 			// Exact route paths
 			[
 				'/the-mime',

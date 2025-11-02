@@ -114,7 +114,7 @@ class UrlMatcher {
 	}
 
 	#disregardVariables(str) { // Stars out all parts that are in square brackets
-		return str.replace(/\[.*?]/g, '[^/]*')
+		return str.replace(/\[.*?]/g, '[^/]+')
 	}
 
 	// Appending a '/' so URLs ending with variables don't match

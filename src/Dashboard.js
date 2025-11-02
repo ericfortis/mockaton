@@ -734,7 +734,7 @@ function SettingsIcon() {
  * The version increments when a mock file is added, removed, or renamed.
  */
 function initRealTimeUpdates() {
-	let oldVersion = -1
+	let oldVersion = undefined
 	let controller = new AbortController()
 
 	longPoll()
@@ -755,11 +755,9 @@ function initRealTimeUpdates() {
 					ErrorToast.close()
 
 				const version = await response.json()
-				const skipUpdate = oldVersion === -1
 				if (oldVersion !== version) { // because it could be < or >
 					oldVersion = version
-					if (!skipUpdate)
-						store.fetchState()
+					store.fetchState()
 				}
 				longPoll()
 			}

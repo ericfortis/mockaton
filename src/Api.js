@@ -81,7 +81,8 @@ function getState(_, response) {
 
 
 function longPollClientSyncVersion(req, response) {
-	if (uiSyncVersion.version !== Number(req.headers[HEADER_SYNC_VERSION])) {
+	const clientVersion = req.headers[HEADER_SYNC_VERSION]
+	if (clientVersion !== undefined && uiSyncVersion.version !== Number(clientVersion)) {
 		// e.g., tab was hidden while new mocks were added or removed
 		sendJSON(response, uiSyncVersion.version)
 		return

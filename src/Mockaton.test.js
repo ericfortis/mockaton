@@ -3,9 +3,10 @@ import { promisify } from 'node:util'
 import { createServer } from 'node:http'
 import { dirname, join } from 'node:path'
 import { randomUUID } from 'node:crypto'
+import { writeFile, unlink } from 'node:fs/promises'
 import { equal, deepEqual, match } from 'node:assert/strict'
 import { describe, it, before, beforeEach, after } from 'node:test'
-import { unlinkSync, mkdtempSync, mkdirSync, readFileSync, writeFileSync } from 'node:fs'
+import { mkdtempSync, mkdirSync, readFileSync } from 'node:fs'
 
 import { API } from './ApiConstants.js'
 import { logger } from './utils/logger.js'
@@ -15,6 +16,7 @@ import { readBody } from './utils/http-request.js'
 import { Commander } from './ApiCommander.js'
 import { CorsHeader } from './utils/http-cors.js'
 import { parseFilename } from './Filename.js'
+import { uiSyncVersion } from './Watcher.js'
 
 
 const mocksDir = mkdtempSync(tmpdir() + '/mocks') + '/'
@@ -47,23 +49,19 @@ class BaseFixture {
 		return request(this.urlMask, options)
 	}
 
-	// TODO invalid file names do not trigger, so are sleeping for them
+	async write() { await writeFile(this.path, this.body, 'utf8') }
+	async unlink() { await unlink(this.path) }
+
 	async register() {
-		const version = await (await api.getSyncVersion(-1)).json()
-		const p = api.getSyncVersion(version)
-		writeFileSync(this.path, this.body, 'utf8')
-		await Promise.race([p, this.#timeout()])
+		const nextVer = api.getSyncVersion(uiSyncVersion.version)
+		await this.write()
+		await nextVer 
 	}
 
 	async unregister() {
-		const version = await (await api.getSyncVersion(-1)).json()
-		const p = api.getSyncVersion(version)
-		unlinkSync(this.path)
-		await Promise.race([p, this.#timeout()])
-	}
-	
-	async #timeout(ms = 50) {
-		return new Promise(resolve => setTimeout(resolve, ms))
+		const nextVer = api.getSyncVersion(uiSyncVersion.version)
+		await this.unlink()
+		await nextVer
 	}
 }
 
@@ -78,7 +76,7 @@ class Fixture extends BaseFixture {
 		this.ext = t.ext
 	}
 
-	static async create(file, body) {
+	static async create(file, body) { // on subclass for IDE type inference
 		const fx = new this(file, body)
 		await fx.register()
 		return fx
@@ -139,19 +137,36 @@ const FX = await Fixture.create('basic.GET.200.json')
 
 beforeEach(api.reset)
 
+async function sleep(ms = 50) {
+	return new Promise(resolve => setTimeout(resolve, ms))
+}
 
 describe('Error Handling', () => {
-	it('ignores invalid filenames and warns', async t => {
+	it('rejects invalid mock filenames', async t => {
 		const spy = spyLogger(t, 'warn')
-		const fx0 = await Fixture.create('missing-method-and-status.json')
-		const fx1 = await Fixture.create('foo._INVALID_METHOD_.200.json')
-		const fx2 = await Fixture.create('bar.GET._INVALID_STATUS_.json')
+		const fx = new Fixture('missing-method-and-status.json')
+		await fx.write()
+		await sleep()
 		equal(spy.calls[0].arguments[0], 'Invalid Filename Convention')
-		equal(spy.calls[1].arguments[0], 'Unrecognized HTTP Method: "_INVALID_METHOD_"')
-		equal(spy.calls[2].arguments[0], 'Invalid HTTP Response Status: "NaN"')
-		await fx0.unregister()
-		await fx1.unregister()
-		await fx2.unregister()
+		await fx.unlink()
+	})
+
+	it('rejects invalid mock filenames (bad method)', async t => {
+		const spy = spyLogger(t, 'warn')
+		const fx = new Fixture('foo._INVALID_METHOD_.200.json')
+		await fx.write()
+		await sleep()
+		equal(spy.calls[0].arguments[0], 'Unrecognized HTTP Method: "_INVALID_METHOD_"')
+		await fx.unlink()
+	})
+
+	it('rejects invalid mock filenames (bad status)', async t => {
+		const spy = spyLogger(t, 'warn')
+		const fx = new Fixture('bar.GET._INVALID_STATUS_.json')
+		await fx.write()
+		await sleep()
+		equal(spy.calls[0].arguments[0], 'Invalid HTTP Response Status: "NaN"')
+		await fx.unlink()
 	})
 
 	describe('Rejects malicious URLs', () => [
@@ -476,16 +491,20 @@ describe('404', () => {
 	it('when there’s no mock at all for a method', async () =>
 		equal((await request('/non-existing-too', { method: 'DELETE' })).status, 404))
 
-	it('ignores files ending in ~ by default, e.g. JetBrains temp files', async () => {
-		const fx = await Fixture.create('ignored.GET.200.json~')
+	it('404s ignored files', async t => {
+		const fx = new Fixture('ignored.GET.200.json~')
+		await fx.write()
+		await sleep()
 		equal((await fx.request()).status, 404)
-		await fx.unregister()
+		await fx.unlink()
 	})
 
-	it('ignores static files ending in ~', async () => {
-		const fx = await FixtureStatic.create('static-ignored.js~')
+	it('404s ignored static files', async () => {
+		const fx = new FixtureStatic('static-ignored.js~')
+		await fx.write()
+		await sleep()
 		equal((await fx.request()).status, 404)
-		await fx.unregister()
+		await fx.unlink()
 	})
 })
 
@@ -706,8 +725,7 @@ describe('Registering', () => {
 	const fxA = new Fixture('register.PUT.200.json')
 	const fx500 = new Fixture('register.PUT.500.json')
 
-	it('re-registering is a noop', async () => {
-		await fxA.register()
+	it('register', async () => {
 		await fxA.register()
 		const b = await fxA.fetchBroker()
 		deepEqual(b.mocks, [fxA.file])

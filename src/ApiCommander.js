@@ -13,16 +13,20 @@ export class Commander {
 	getState = () =>
 		fetch(this.#addr + API.state)
 
-	/** @returns {JsonPromise<number>} */
-	getSyncVersion = (currSyncVer, abortSignal = undefined) =>
+	/** 
+	 * @param {number?} currSyncVer - On mismatch, it responds immediately. Otherwise, long polls.
+	 * @param {AbortSignal} abortSignal
+	 * @returns {JsonPromise<number>}
+	 */
+	getSyncVersion = (currSyncVer = undefined, abortSignal = undefined) =>
 		fetch(this.#addr + API.syncVersion, {
 			signal: AbortSignal.any([
 				abortSignal,
 				AbortSignal.timeout(LONG_POLL_SERVER_TIMEOUT + 1000)
 			].filter(Boolean)),
-			headers: {
-				[HEADER_SYNC_VERSION]: currSyncVer
-			}
+			headers: currSyncVer !== undefined 
+				? { [HEADER_SYNC_VERSION]: currSyncVer } 
+				: {}
 		})
 
 

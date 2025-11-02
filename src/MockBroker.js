@@ -27,7 +27,7 @@ export class MockBroker {
 	}
 
 	register(file) {
-		if (this.auto500 && this.#is500(file)) // TESTME
+		if (this.auto500 && this.#is500(file))
 			this.selectFile(file)
 		this.mocks.push(file)
 		this.#sortMocks()

@@ -23,17 +23,6 @@ const mocksDir = mkdtempSync(tmpdir() + '/mocks') + '/'
 const staticDir = mkdtempSync(tmpdir() + '/static') + '/'
 
 
-function spyLogger(t, method) {
-	const spy = t.mock.method(logger, method)
-	spy.mock.mockImplementation(() => null)
-	return spy.mock
-}
-
-async function sleep(ms = 50) {
-	return new Promise(resolve => setTimeout(resolve, ms))
-}
-
-
 class BaseFixture {
 	dir = ''
 	urlMask = ''
@@ -44,23 +33,10 @@ class BaseFixture {
 		this.body = body || `Body for ${file}`
 	}
 
-	get path() {
-		return join(this.dir, this.file)
-	}
-
-	request(options = {}) {
-		options.method ??= this.method
-		return request(this.urlMask, options)
-	}
-
-	async write() { await writeFile(this.path, this.body, 'utf8') }
-	async unlink() { await unlink(this.path) }
-
 	async register() {
 		const nextVer = api.getSyncVersion(uiSyncVersion.version)
 		await this.write()
 		await nextVer
-		return this
 	}
 
 	async unregister() {
@@ -68,7 +44,18 @@ class BaseFixture {
 		await this.unlink()
 		await nextVer
 	}
+
+	async write() { await writeFile(this.path, this.body, 'utf8') }
+	async unlink() { await unlink(this.path) }
+
+	get path() { return join(this.dir, this.file) }
+
+	request(options = {}) {
+		options.method ??= this.method
+		return request(this.urlMask, options)
+	}
 }
+
 
 class Fixture extends BaseFixture {
 	constructor(file, body = '') {
@@ -80,7 +67,6 @@ class Fixture extends BaseFixture {
 		this.status = t.status
 		this.ext = t.ext
 	}
-
 	async fetchBroker() {
 		return (await fetchState()).brokersByMethod?.[this.method]?.[this.urlMask]
 	}
@@ -124,11 +110,19 @@ function request(path, options = {}) {
 	return fetch(addr + path, options)
 }
 
-const FX = await new Fixture('basic.GET.200.json').register()
+const FX = new Fixture('basic.GET.200.json')
+await FX.register()
 
 beforeEach(api.reset)
+after(() => server?.close())
 
 describe('Error Handling', () => {
+	function spyLogger(t, method) {
+		const spy = t.mock.method(logger, method)
+		spy.mock.mockImplementation(() => null)
+		return spy.mock
+	}
+
 	it('rejects invalid mock filenames', async t => {
 		const spy = spyLogger(t, 'warn')
 		const fx = new Fixture('missing-method-and-status.json')
@@ -175,16 +169,18 @@ describe('Error Handling', () => {
 
 	it('body parser rejects invalid JSON in API requests', async t => {
 		const spy = spyLogger(t, 'access')
-		equal((await request(API.cookies, {
+		const res = await request(API.cookies, {
 			method: 'PATCH',
 			body: '[invalid_json]'
-		})).status, 422)
+		})
+		equal(res.status, 422)
 		equal(spy.calls[0].arguments[1], 'BodyReaderError: Could not parse')
 	})
 
 	it('returns 500 when a handler throws', async t => {
 		const spy = spyLogger(t, 'error')
-		equal((await request(API.throws)).status, 500)
+		const res = await request(API.throws)
+		equal(res.status, 500)
 		equal(spy.calls[0].arguments[2], 'Test500')
 	})
 
@@ -271,7 +267,6 @@ describe('Dashboard', () => {
 			await fx0.unregister()
 			equal(await (await prom).json(), version + 2)
 		})
-		// TODO think about testing the debounce for bulk additions or removals
 	})
 })
 
@@ -457,7 +452,8 @@ describe('Proxy Fallback', () => {
 	})
 
 	it('updating selected mock resets proxied flag', async () => {
-		const fx = await new Fixture('select-resets-proxied.GET.200.txt').register()
+		const fx = new Fixture('select-resets-proxied.GET.200.txt')
+		await fx.register()
 		await api.setProxyFallback('http://example.com')
 		const r0 = await api.setRouteIsProxied(fx.method, fx.urlMask, true)
 		equal((await r0.json()).proxied, true)
@@ -517,17 +513,17 @@ describe('Default Mock', () => {
 
 	it('Dispatches default mock', async () => {
 		const res = await fxA.request()
-		deepEqual(await res.text(), fxB.body)
+		equal(await res.text(), fxB.body)
 	})
 })
 
 
 describe('Dynamic Mocks', () => {
 	it('JS object is sent as JSON', async () => {
-		const fx = await new Fixture(
+		const fx = new Fixture(
 			'js-object.GET.200.js',
 			'export default { FROM_JS: true }')
-			.register()
+		await fx.register()
 		const res = await fx.request()
 		equal(res.headers.get('content-type'), mimeFor('.json'))
 		deepEqual(await res.json(), { FROM_JS: true })
@@ -535,10 +531,10 @@ describe('Dynamic Mocks', () => {
 	})
 
 	it('TS array is sent as JSON', async () => {
-		const fx = await new Fixture(
+		const fx = new Fixture(
 			'js-object.GET.200.ts',
 			'export default ["from ts"]')
-			.register()
+		await fx.register()
 		const res = await fx.request()
 		equal(res.headers.get('content-type'), mimeFor('.json'))
 		deepEqual(await res.json(), ['from ts'])
@@ -549,11 +545,11 @@ describe('Dynamic Mocks', () => {
 
 describe('Dynamic Function Mocks', () => {
 	it('honors filename convention', async () => {
-		const fx = await new Fixture('func.GET.200.js', `
+		const fx = new Fixture('func.GET.200.js', `
 			export default function (req, response) {
   			return 'SOME_STRING_0'
 			}`)
-			.register()
+		await fx.register()
 		const res = await fx.request()
 		equal(res.status, 200)
 		equal(res.headers.get('content-type'), mimeFor('.json'))
@@ -563,14 +559,14 @@ describe('Dynamic Function Mocks', () => {
 	})
 
 	it('can override filename convention (also supports TS)', async () => {
-		const fx = await new Fixture('func.POST.200.ts', `
+		const fx = new Fixture('func.POST.200.ts', `
 			export default function (req, response) {
 			  response.statusCode = 201
 			  response.setHeader('content-type', 'custom-mime')
 			  response.setHeader('set-cookie', 'custom-cookie')
 			  return 'SOME_STRING_1'
 			}`)
-			.register()
+		await fx.register()
 		const res = await fx.request({ method: 'POST' })
 		equal(res.status, 201)
 		equal(res.headers.get('content-type'), 'custom-mime')
@@ -750,7 +746,8 @@ describe('Registering', () => {
 
 describe('Index-like routes', () => {
 	it('resolves dirs to the file without urlMask', async () => {
-		const fx = await new Fixture('.GET.200.json').register()
+		const fx = new Fixture('.GET.200.json')
+		await fx.register()
 		const res = await request('/')
 		equal(await res.text(), fx.body)
 		await fx.unregister()
@@ -760,14 +757,16 @@ describe('Index-like routes', () => {
 
 describe('MIME', () => {
 	it('derives content-type from known mime', async () => {
-		const fx = await new Fixture('tmp.GET.200.json').register()
+		const fx = new Fixture('tmp.GET.200.json')
+		await fx.register()
 		const res = await fx.request()
 		equal(res.headers.get('content-type'), 'application/json')
 		await fx.unregister()
 	})
 
 	it('derives content-type from custom mime', async () => {
-		const fx = await new Fixture(`tmp.GET.200.${CUSTOM_EXT}`).register()
+		const fx = new Fixture(`tmp.GET.200.${CUSTOM_EXT}`)
+		await fx.register()
 		const res = await fx.request()
 		equal(res.headers.get('content-type'), CUSTOM_MIME)
 		await fx.unregister()
@@ -866,7 +865,8 @@ describe('Bulk Select', () => {
 
 describe('Decoding URLs', () => {
 	it('allows dots, spaces, amp, etc.', async () => {
-		const fx = await new Fixture('dot.in.path and amp & and colon:.GET.200.txt').register()
+		const fx = new Fixture('dot.in.path and amp & and colon:.GET.200.txt')
+		await fx.register()
 		const res = await fx.request()
 		equal(await res.text(), fx.body)
 		await fx.unregister()
@@ -947,13 +947,20 @@ describe('Query String', () => {
 })
 
 
-await it('head for get. returns the headers without body only for GETs requested as HEAD', async () => {
+it('head for get. returns the headers without body only for GETs requested as HEAD', async () => {
 	const res = await FX.request({ method: 'HEAD' })
 	equal(res.status, 200)
 	equal(res.headers.get('content-length'), String(Buffer.byteLength(FX.body)))
 	equal(await res.text(), '')
 })
 
-server?.close()
+
+// # Utils
+
+async function sleep(ms = 50) {
+	return new Promise(resolve => setTimeout(resolve, ms))
+}
 
 // TODO @ThinkAbout when running register() multiple times in a setup, each one will reinit the collection
+// TODO @ThinkAbout testing debounced bulk additions or removals
+

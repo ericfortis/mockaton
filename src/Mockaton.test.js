@@ -1,7 +1,7 @@
+import { join } from 'node:path'
 import { tmpdir } from 'node:os'
 import { promisify } from 'node:util'
 import { createServer } from 'node:http'
-import { dirname, join } from 'node:path'
 import { randomUUID } from 'node:crypto'
 import { writeFile, unlink } from 'node:fs/promises'
 import { equal, deepEqual, match } from 'node:assert/strict'
@@ -56,10 +56,11 @@ class BaseFixture {
 	async write() { await writeFile(this.path, this.body, 'utf8') }
 	async unlink() { await unlink(this.path) }
 
-	async register() { // TODO @ThinkAbout when running multiple times in a setup, each one will reinit the collection
+	async register() {
 		const nextVer = api.getSyncVersion(uiSyncVersion.version)
 		await this.write()
-		await nextVer 
+		await nextVer
+		return this
 	}
 
 	async unregister() {
@@ -80,12 +81,6 @@ class Fixture extends BaseFixture {
 		this.ext = t.ext
 	}
 
-	static async create(file, body) { // on subclass for IDE type inference
-		const fx = new this(file, body)
-		await fx.register()
-		return fx
-	}
-
 	async fetchBroker() {
 		return (await fetchState()).brokersByMethod?.[this.method]?.[this.urlMask]
 	}
@@ -97,12 +92,6 @@ class FixtureStatic extends BaseFixture {
 		this.dir = staticDir
 		this.urlMask = '/' + file
 		this.method = 'GET'
-	}
-
-	static async create(file, body) {
-		const fx = new this(file, body)
-		await fx.register()
-		return fx
 	}
 }
 
@@ -135,7 +124,7 @@ function request(path, options = {}) {
 	return fetch(addr + path, options)
 }
 
-const FX = await Fixture.create('basic.GET.200.json')
+const FX = await new Fixture('basic.GET.200.json').register()
 
 beforeEach(api.reset)
 
@@ -270,10 +259,10 @@ describe('Dashboard', () => {
 			version = await res.json()
 		})
 
-		let fx0
+		const fx0 = new Fixture('runtime1.GET.200.txt')
 		it('responds when a file is added', async () => {
 			const prom = api.getSyncVersion(version)
-			fx0 = await Fixture.create('runtime1.GET.200.txt')
+			await fx0.register()
 			equal(await (await prom).json(), version + 1)
 		})
 
@@ -468,7 +457,7 @@ describe('Proxy Fallback', () => {
 	})
 
 	it('updating selected mock resets proxied flag', async () => {
-		const fx = await Fixture.create('select-resets-proxied.GET.200.txt')
+		const fx = await new Fixture('select-resets-proxied.GET.200.txt').register()
 		await api.setProxyFallback('http://example.com')
 		const r0 = await api.setRouteIsProxied(fx.method, fx.urlMask, true)
 		equal((await r0.json()).proxied, true)
@@ -507,12 +496,12 @@ describe('404', () => {
 
 
 describe('Default Mock', () => {
-	let fxA, fxB
+	const fxA = new Fixture('alpha.GET.200.txt', 'A')
+	const fxB = new Fixture('alpha(default).GET.200.txt', 'B')
 	before(async () => {
-		fxA = await Fixture.create('alpha.GET.200.txt', 'A')
-		fxB = await Fixture.create('alpha(default).GET.200.txt', 'B')
+		await fxA.register()
+		await fxB.register()
 	})
-
 	after(async () => {
 		await fxA.unregister()
 		await fxB.unregister()
@@ -535,9 +524,10 @@ describe('Default Mock', () => {
 
 describe('Dynamic Mocks', () => {
 	it('JS object is sent as JSON', async () => {
-		const fx = await Fixture.create(
+		const fx = await new Fixture(
 			'js-object.GET.200.js',
 			'export default { FROM_JS: true }')
+			.register()
 		const res = await fx.request()
 		equal(res.headers.get('content-type'), mimeFor('.json'))
 		deepEqual(await res.json(), { FROM_JS: true })
@@ -545,9 +535,10 @@ describe('Dynamic Mocks', () => {
 	})
 
 	it('TS array is sent as JSON', async () => {
-		const fx = await Fixture.create(
+		const fx = await new Fixture(
 			'js-object.GET.200.ts',
 			'export default ["from ts"]')
+			.register()
 		const res = await fx.request()
 		equal(res.headers.get('content-type'), mimeFor('.json'))
 		deepEqual(await res.json(), ['from ts'])
@@ -558,10 +549,11 @@ describe('Dynamic Mocks', () => {
 
 describe('Dynamic Function Mocks', () => {
 	it('honors filename convention', async () => {
-		const fx = await Fixture.create('func.GET.200.js', `
+		const fx = await new Fixture('func.GET.200.js', `
 			export default function (req, response) {
   			return 'SOME_STRING_0'
 			}`)
+			.register()
 		const res = await fx.request()
 		equal(res.status, 200)
 		equal(res.headers.get('content-type'), mimeFor('.json'))
@@ -571,13 +563,14 @@ describe('Dynamic Function Mocks', () => {
 	})
 
 	it('can override filename convention (also supports TS)', async () => {
-		const fx = await Fixture.create('func.POST.200.ts', `
+		const fx = await new Fixture('func.POST.200.ts', `
 			export default function (req, response) {
 			  response.statusCode = 201
 			  response.setHeader('content-type', 'custom-mime')
 			  response.setHeader('set-cookie', 'custom-cookie')
 			  return 'SOME_STRING_1'
 			}`)
+			.register()
 		const res = await fx.request({ method: 'POST' })
 		equal(res.status, 201)
 		equal(res.headers.get('content-type'), 'custom-mime')
@@ -589,10 +582,11 @@ describe('Dynamic Function Mocks', () => {
 
 
 describe('Static Files', () => {
-	let fxsIndex, fxsAsset
+	const fxsIndex = new FixtureStatic('index.html', '<h1>Index</h1>')
+	const fxsAsset = new FixtureStatic('asset-script.js', 'const a = 1')
 	before(async () => {
-		fxsIndex = await FixtureStatic.create('index.html', '<h1>Index</h1>')
-		fxsAsset = await FixtureStatic.create('asset-script.js', 'const a = 1')
+		await fxsIndex.register()
+		await fxsAsset.register()
 	}) // the last test unregisters them
 
 	describe('Static File Serving', () => {
@@ -756,7 +750,7 @@ describe('Registering', () => {
 
 describe('Index-like routes', () => {
 	it('resolves dirs to the file without urlMask', async () => {
-		const fx = await Fixture.create('.GET.200.json')
+		const fx = await new Fixture('.GET.200.json').register()
 		const res = await request('/')
 		equal(await res.text(), fx.body)
 		await fx.unregister()
@@ -766,14 +760,14 @@ describe('Index-like routes', () => {
 
 describe('MIME', () => {
 	it('derives content-type from known mime', async () => {
-		const fx = await Fixture.create('tmp.GET.200.json')
+		const fx = await new Fixture('tmp.GET.200.json').register()
 		const res = await fx.request()
 		equal(res.headers.get('content-type'), 'application/json')
 		await fx.unregister()
 	})
 
 	it('derives content-type from custom mime', async () => {
-		const fx = await Fixture.create(`tmp.GET.200.${CUSTOM_EXT}`)
+		const fx = await new Fixture(`tmp.GET.200.${CUSTOM_EXT}`).register()
 		const res = await fx.request()
 		equal(res.headers.get('content-type'), CUSTOM_MIME)
 		await fx.unregister()
@@ -834,15 +828,16 @@ describe('Select', () => {
 
 
 describe('Bulk Select', () => {
-	let fxIota, fxIotaB, fxKappaA, fxKappaB
-
+	const fxIota = new Fixture('iota.GET.200.txt')
+	const fxIotaB = new Fixture('iota(comment B).GET.200.txt')
+	const fxKappaA = new Fixture('kappa(comment A).GET.200.txt')
+	const fxKappaB = new Fixture('kappa(comment B).GET.200.txt')
 	before(async () => {
-		fxIota = await Fixture.create('iota.GET.200.txt')
-		fxIotaB = await Fixture.create('iota(comment B).GET.200.txt')
-		fxKappaA = await Fixture.create('kappa(comment A).GET.200.txt')
-		fxKappaB = await Fixture.create('kappa(comment B).GET.200.txt')
+		await fxIota.register()
+		await fxIotaB.register()
+		await fxKappaA.register()
+		await fxKappaB.register()
 	})
-
 	after(async () => {
 		await fxIota.unregister()
 		await fxIotaB.unregister()
@@ -871,7 +866,7 @@ describe('Bulk Select', () => {
 
 describe('Decoding URLs', () => {
 	it('allows dots, spaces, amp, etc.', async () => {
-		const fx = await Fixture.create('dot.in.path and amp & and colon:.GET.200.txt')
+		const fx = await new Fixture('dot.in.path and amp & and colon:.GET.200.txt').register()
 		const res = await fx.request()
 		equal(await res.text(), fx.body)
 		await fx.unregister()
@@ -897,22 +892,22 @@ describe('Dynamic Params', () => {
 		await fx2.unregister()
 		await fx3.unregister()
 	})
-	
+
 	it('variable at end', async () => {
 		const res = await fx0.request()
 		equal(await res.text(), fx0.body)
 	})
-	
+
 	it('sandwich variable present in another route at its end', async () => {
 		const res = await fx1.request()
 		equal(await res.text(), fx1.body)
 	})
-	
+
 	it('sandwich fixed part in dynamic variables', async () => {
 		const res = await fx2.request()
 		equal(await res.text(), fx2.body)
 	})
-	
+
 	it('ensure dynamic params do not take precedence over exact routes', async () => {
 		const res = await fx3.request()
 		equal(await res.text(), fx3.body)
@@ -961,3 +956,4 @@ await it('head for get. returns the headers without body only for GETs requested
 
 server?.close()
 
+// TODO @ThinkAbout when running register() multiple times in a setup, each one will reinit the collection

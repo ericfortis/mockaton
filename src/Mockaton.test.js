@@ -920,63 +920,34 @@ describe('Dynamic Params', () => {
 })
 
 
-describe('Dispatch', () => {
-	let fixtures
-
+describe('Query String', () => {
+	const fx0 = new Fixture('query-string?foo=[foo]&bar=[bar].GET.200.json')
+	const fx1 = new Fixture('query-string/[id]?limit=[limit].GET.200.json')
 	before(async () => {
-		fixtures = [
-			// Query String
-			// TODO ignore on Windows (because of ?)
-			[
-				'/my-query-string?foo=[foo]&bar=[bar]',
-				'my-query-string?foo=[foo]&bar=[bar].GET.200.json',
-				'two query string params'
-			], [
-			// 	'/company-a',
-			// 	'/company-a/[id]?limit=[limit].GET.200.json',
-			// 	'without pretty-param nor query-params'
-			// ], [
-			// 	'/company-b/',
-			// 	'company-b/[id]?limit=[limit].GET.200.json',
-			// 	'without pretty-param nor query-params with trailing slash'
-			// ], [
-				'/company-c/1234',
-				'company-c/[id]?limit=[limit].GET.200.json',
-				'with pretty-param and without query-params'
-			], [
-				'/company-d/1234/?',
-				'company-d/[id]?limit=[limit].GET.200.json',
-				'with pretty-param and without query-params, but with trailing slash and "?"'
-			], [
-				'/company-e/1234/?limit=4',
-				'company-e/[id]?limit=[limit].GET.200.json',
-				'with pretty-param and query-params'
-			],
-		]
-
-		for (const [, file, body] of fixtures) {
-			mkdirSync(join(dirname(mocksDir + file)), { recursive: true })
-			await Fixture.create(file, JSON.stringify(body))
-		}
+		mkdirSync(mocksDir + 'query-string', { recursive: true })
+		await fx0.register()
+		await fx1.register()
+	})
+	after(async () => {
+		await fx0.unregister()
+		await fx1.unregister()
 	})
 
-	it('tests many', async () => {
-		async function testMockDispatching(url, file, expectedBody, forcedMime = undefined) {
-			const { method, status } = parseFilename(file)
-			const mime = forcedMime || mimeFor(file)
-			const res = await request(url, { method })
-			const body = mime === 'application/json'
-				? await res.json()
-				: await res.text()
-			equal(res.status, status)
-			equal(res.headers.get('content-type'), mime)
-			equal(res.headers.get('set-cookie'), 'CookieA')
-			equal(res.headers.get('server'), 'MockatonTester')
-			deepEqual(body, expectedBody)
-		}
-
-		for (const [url, file, body] of fixtures)
-			await testMockDispatching(url, file, body)
+	it('multiple params', async () => {
+		const res = await fx0.request()
+		equal(await res.text(), fx0.body)
+	})
+	it('with pretty-param and without query-params', async () => {
+		const res = await request('/query-string/1234')
+		equal(await res.text(), fx1.body)
+	})
+	it('with pretty-param and without query-params, but with trailing slash and "?"', async () => {
+		const res = await request('/query-string/1234/?')
+		equal(await res.text(), fx1.body)
+	})
+	it('with pretty-param and query-params', async () => {
+		const res = await request('/query-string/1234/?limit=4')
+		equal(await res.text(), fx1.body)
 	})
 })
 

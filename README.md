@@ -866,6 +866,7 @@ hijack the HTTP client in Node.js and browsers.
 
 - [Wire Mock](https://github.com/wiremock/wiremock)
 - [Mock](https://github.com/dhuan/mock)
+- [Swagger](https://swagger.io/)
 
 <br/>
 

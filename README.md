@@ -92,40 +92,6 @@ They will be saved in your `config.mocksDir` following the filename convention.
 </details>
 
 <br/>
-
-## Motivation
-
-**No API state should be too hard to test.**
-With Mockaton, developers can achieve correctness and speed.
-
-### Correctness
-- Enables testing of complex scenarios that would otherwise be skipped. e.g.,
-  - Triggering errors on third-party APIs.
-  - Triggering errors on your project’s backend (if you are a frontend developer).
-- Allows for deterministic, comprehensive, and consistent state.
-  - Spot inadvertent regressions during development.
-  - Use it to set up screenshot tests, e.g., with [pixaton](https://github.com/ericfortis/pixaton).
-
-### Speed
-- Works around unstable dev backends while developing UIs.
-  - Spinning up development infrastructure.
-  - Syncing database states.
-- Prevents progress from being blocked by waiting for APIs.
-- Time travel. If you commit the mocks to your repo,
-  you don’t have to downgrade backends for:
-  - checking out long-lived branches
-  - bisecting bugs
-
-
-<br/>
-
-## Privacy and Security
-- Zero dependencies (no runtime and no build packages).
-- Does not write to disk. Except when you select ✅ **Save Mocks** for scraping mocks from a backend.
-- Does not initiate network connections (no logs, no telemetry).
-- Does not hijack your HTTP client.
-- Auditable. Organized and small &mdash; under 4 KLoC (half is UI and tests).
-
 <br/>
 
 ## Basic Usage
@@ -146,6 +112,16 @@ npx mockaton --port 2345
 ```shell
 curl localhost:2345/api/foo 
 ```
+
+5. Alternatively, use a `mockaton.config.js`
+```js
+import { defineConfig } from 'mockaton'
+
+export default defineConfig({
+  port: 2345,
+})
+```
+
 
 ### Alternative Installations
 <details>
@@ -185,6 +161,9 @@ ln -s `realpath mockaton/src/cli.js` ~/bin/mockaton # some dir in your $PATH
 ## CLI Options
 The CLI options override their counterparts in `mockaton.config.js`
 
+<details>
+<summary>Options…</summary>
+
 ```txt
 -c, --config <file>    (default: ./mockaton.config.js)
 
@@ -200,10 +179,17 @@ The CLI options override their counterparts in `mockaton.config.js`
 -h, --help             Show this help
 -v, --version          Show version
 ```
+</details>
 
 
 ## mockaton.config.js (Optional)
+Mockaton looks for a file `mockaton.config.js` in its current working directory.
+
+<details>
+<summary>Defaults Overview… </summary>
+
 As an overview, these are the defaults:
+
 ```js
 import {
   defineConfig,
@@ -250,8 +236,10 @@ export default defineConfig({
 })
 ```
 
+</details>
+
 <details>
-<summary><b>Config Documentation</b></summary>
+<summary>Config Documentation…</summary>
 
 ### `mocksDir?: string`
 Defaults to `'mockaton-mocks'`. 
@@ -499,7 +487,7 @@ Defaults to `'normal'`.
 
 
 <details>
-<summary>Programmatic Launch (Optional)</summary>
+<summary>Programmatic Launch (Optional)…</summary>
 
 
 ```js
@@ -535,32 +523,6 @@ permutations for out-of-stock, new-arrival, and discontinued.
 <br/>
 <br/>
 
-
-## Use Cases
-### Testing Backend or Frontend
-- Empty responses
-- Errors such as _Bad Request_ and _Internal Server Error_
-- Mocking third-party APIs
-- Polled resources (for triggering their different states)
-  - alerts
-  - notifications
-  - slow to build resources
-
-### Testing Frontend
-- Spinners by delaying responses
-- Setting up UI tests
-
-### Demoing complex backend states
-Sometimes, the ideal flow you need is too difficult to reproduce from the actual backend.
-For this, you can **Bulk Select** mocks by comments to simulate the complete states
-you want. For example, by adding `(demo-part1)`, `(demo-part2)` to the filenames.
-
-Similarly, you can deploy a **Standalone Demo Server** by compiling the frontend app and
-putting its built assets in `config.staticDir`. And simulate the flow by Bulk Selecting mocks.
-The [aot-fetch-demo repo](https://github.com/ericfortis/aot-fetch-demo) has a working example.
-
-
-<br/>
 
 
 ## You can write JSON mocks in JavaScript or TypeScript
@@ -839,6 +801,71 @@ default, but the `proxyFallback`, `colledProxied`, and `corsAllowed` are not aff
 await mockaton.reset()
 ```
 </details>
+
+
+<br/>
+
+
+## Motivation
+
+**No API state should be too hard to test.**
+With Mockaton, developers can achieve correctness and speed.
+
+### Correctness
+- Enables testing of complex scenarios that would otherwise be skipped. e.g.,
+  - Triggering errors on third-party APIs.
+  - Triggering errors on your project’s backend (if you are a frontend developer).
+- Allows for deterministic, comprehensive, and consistent state.
+  - Spot inadvertent regressions during development.
+  - Use it to set up screenshot tests, e.g., with [pixaton](https://github.com/ericfortis/pixaton).
+
+### Speed
+- Works around unstable dev backends while developing UIs.
+  - Spinning up development infrastructure.
+  - Syncing database states.
+- Prevents progress from being blocked by waiting for APIs.
+- Time travel. If you commit the mocks to your repo,
+  you don’t have to downgrade backends for:
+  - checking out long-lived branches
+  - bisecting bugs
+
+<br>
+
+## Use Cases
+### Testing Backend or Frontend
+- Empty responses
+- Errors such as _Bad Request_ and _Internal Server Error_
+- Mocking third-party APIs
+- Polled resources (for triggering their different states)
+  - alerts
+  - notifications
+  - slow to build resources
+
+### Testing Frontend
+- Spinners by delaying responses
+- Setting up UI tests
+
+### Demoing complex backend states
+Sometimes, the ideal flow you need is too difficult to reproduce from the actual backend.
+For this, you can **Bulk Select** mocks by comments to simulate the complete states
+you want. For example, by adding `(demo-part1)`, `(demo-part2)` to the filenames.
+
+Similarly, you can deploy a **Standalone Demo Server** by compiling the frontend app and
+putting its built assets in `config.staticDir`. And simulate the flow by Bulk Selecting mocks.
+The [aot-fetch-demo repo](https://github.com/ericfortis/aot-fetch-demo) has a working example.
+
+
+<br/>
+
+
+<br/>
+
+## Privacy and Security
+- Zero dependencies (no runtime and no build packages).
+- Does not write to disk. Except when you select ✅ **Save Mocks** for scraping mocks from a backend.
+- Does not initiate network connections (no logs, no telemetry).
+- Does not hijack your HTTP client.
+- Auditable. Organized and small &mdash; under 4 KLoC (half is UI and tests).
 
 
 <br/>

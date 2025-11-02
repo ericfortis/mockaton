@@ -862,6 +862,11 @@ hijack the HTTP client in Node.js and browsers.
 - [Fetch Mock](https://github.com/wheresrhys/fetch-mock)
 - [Mentoss](https://github.com/humanwhocodes/mentoss) Has a server side too
 
+### Server Side
+
+- [Wire Mock](https://github.com/wiremock/wiremock)
+- [Mock](https://github.com/dhuan/mock)
+
 <br/>
 
 ---

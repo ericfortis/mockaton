@@ -29,6 +29,10 @@ function spyLogger(t, method) {
 	return spy.mock
 }
 
+async function sleep(ms = 50) {
+	return new Promise(resolve => setTimeout(resolve, ms))
+}
+
 
 class BaseFixture {
 	dir = ''
@@ -87,7 +91,6 @@ class Fixture extends BaseFixture {
 	}
 }
 
-
 class FixtureStatic extends BaseFixture {
 	constructor(file, body = '') {
 		super(file, body)
@@ -102,7 +105,6 @@ class FixtureStatic extends BaseFixture {
 		return fx
 	}
 }
-
 
 
 const COOKIES = { userA: 'CookieA', userB: 'CookieB' }
@@ -136,10 +138,6 @@ function request(path, options = {}) {
 const FX = await Fixture.create('basic.GET.200.json')
 
 beforeEach(api.reset)
-
-async function sleep(ms = 50) {
-	return new Promise(resolve => setTimeout(resolve, ms))
-}
 
 describe('Error Handling', () => {
 	it('rejects invalid mock filenames', async t => {
@@ -481,7 +479,6 @@ describe('Proxy Fallback', () => {
 		await api.setProxyFallback('')
 	})
 })
-
 
 
 describe('404', () => {
@@ -872,36 +869,56 @@ describe('Bulk Select', () => {
 })
 
 
+describe('Decoding URLs', () => {
+	it('allows dots, spaces, amp, etc.', async () => {
+		const fx = await Fixture.create('dot.in.path and amp & and colon:.GET.200.txt')
+		const res = await fx.request()
+		equal(await res.text(), fx.body)
+		await fx.unregister()
+	})
+})
+
+describe('Dynamic Params', () => {
+	const fx0 = new Fixture('dynamic-params/[id]/.GET.200.txt')
+	const fx1 = new Fixture('dynamic-params/[id]/suffix.GET.200.txt')
+	// const fx2 = new Fixture('dynamic-params/[id]/suffix/[id].GET.200.txt') // TODO
+	const fx3 = new Fixture('dynamic-params/exact-route.GET.200.txt')
+	before(async () => {
+		mkdirSync(mocksDir + 'dynamic-params/[id]/suffix/[id]', { recursive: true })
+		await fx0.register()
+		await fx1.register()
+		// await fx2.register()
+		await fx3.register()
+	})
+	after(async () => {
+		await fx0.unregister()
+		await fx1.unregister()
+		// await fx2.unregister()
+		await fx3.unregister()
+	})
+	
+	it('variable at end', async () => {
+		const res = await fx0.request()
+		equal(await res.text(), fx0.body)
+	})
+	
+	it('sandwich variable present in another route at its end', async () => {
+		const res = await fx1.request()
+		equal(await res.text(), fx1.body)
+	})
+	
+	it('ensure dynamic params do not take precedence over exact routes', async () => {
+		const res = await fx3.request()
+		equal(await res.text(), fx3.body)
+	})
+})
+
+
 describe('Dispatch', () => {
 	let fixtures
 
 	before(async () => {
 		fixtures = [
-			[
-				'/dot.in.path',
-				'dot.in.path.GET.200.json',
-				'Dot_in_Path'
-			], [
-				'/space & colon:',
-				'space & colon:.GET.200.json',
-				'Decodes URI'
-			],
-
-
-			// Dynamic Params
-			[
-				'/user/1234',
-				'user/[id]/.GET.200.json',
-				'variable at end'
-			], [
-				'/user/1234/suffix',
-				'user/[id]/suffix.GET.200.json',
-				'sandwich a variable that another route has at the end'
-			], [
-				'/user/exact-route',
-				'user/exact-route.GET.200.json',
-				'ensure dynamic params do not take precedence over exact routes'
-			],
 
 			// Query String
 			// TODO ignore on Windows (because of ?)

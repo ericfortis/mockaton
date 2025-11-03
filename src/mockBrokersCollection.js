@@ -41,7 +41,7 @@ export function init() {
 /** @returns {boolean} registered */
 export function registerMock(file, isFromWatcher = false) {
 	if (brokerByFilename(file)?.hasMock(file)
-		|| !isFileAllowed(basename(file)) // TESTME
+		|| !isFileAllowed(basename(file))
 		|| !filenameIsValid(file))
 		return false
 
@@ -53,7 +53,7 @@ export function registerMock(file, isFromWatcher = false) {
 	else
 		collection[method][urlMask].register(file)
 
-	if (isFromWatcher && !collection[method][urlMask].file) // TESTME e.g. auto500 is selected and adding a new one
+	if (isFromWatcher && !collection[method][urlMask].file)
 		collection[method][urlMask].selectDefaultFile()
 
 	return true

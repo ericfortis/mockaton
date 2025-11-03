@@ -693,8 +693,8 @@ describe('Static Files', () => {
 })
 
 
-describe('Toggle 500', () => {
-	it('toggles 500', async () => {
+describe('500', () => {
+	it('toggling on 500 on a route without 500 auto-generates one', async () => {
 		equal((await FX.request()).status, FX.status)
 
 		const r0 = await api.toggle500(FX.method, FX.urlMask)
@@ -705,40 +705,60 @@ describe('Toggle 500', () => {
 		equal((await r1.json()).auto500, false)
 		equal((await FX.request()).status, FX.status)
 	})
+	
+	it('toggling on 500 picks existing 500', async () => {
+		const fx200 = new Fixture('reg-error.GET.200.txt')
+		const fx500 = new Fixture('reg-error.GET.500.txt')
+		await fx200.register()
+		await fx500.register()
+		const r0 = await api.toggle500(fx200.method, fx200.urlMask)
+		equal((await r0.json()).auto500, false)
+		equal(await (await fx200.request()).text(), fx500.body)
+		await fx200.unregister()
+		await fx500.unregister()
+	})
+	
+	it('registering a 500 unsets auto500', async () => {
+		const fx200 = new Fixture('reg-error.GET.200.txt')
+		const fx500 = new Fixture('reg-error.GET.500.txt')
+		await fx200.register()
+		await api.toggle500(fx200.method, fx200.urlMask)
+		const b0 = await fx200.fetchBroker()
+		equal(b0.auto500, true)
+		await fx500.register()
+		const b1 = await fx200.fetchBroker()
+		equal(b1.auto500, false)
+		deepEqual(b1.mocks, [
+			fx200.file,
+			fx500.file
+		])
+		await fx200.unregister()
+		await fx500.unregister()
+	})
 })
 
 
 describe('Registering', () => {
-	const fxA = new Fixture('register.PUT.200.json')
-	const fx500 = new Fixture('register.PUT.500.json')
+	const fxA = new Fixture('register(default).GET.200.json')
+	const fxB = new Fixture('register(alt).GET.200.json')
 
 	it('register', async () => {
 		await fxA.register()
+		await fxB.register()
 		const b = await fxA.fetchBroker()
-		deepEqual(b.mocks, [fxA.file])
-	})
-
-	it('registering a 500 unsets auto500', async () => {
-		await api.toggle500(fxA.method, fxA.urlMask)
-		await fx500.register()
-		const b = await fx500.fetchBroker()
-		equal(b.auto500, false)
-		deepEqual(b.mocks, [
-			fxA.file,
-			fx500.file
-		])
+		deepEqual(b.mocks, [fxA.file, fxB.file])
 	})
 
 	it('unregistering selected ensures a mock is selected', async () => {
 		await api.select(fxA.file)
 		await fxA.unregister()
 		const b = await fxA.fetchBroker()
-		deepEqual(b.mocks, [fx500.file])
+		deepEqual(b.mocks, [fxB.file])
 	})
 
 	it('unregistering the last mock removes broker', async () => {
-		await fx500.unregister()
-		const b = await fx500.fetchBroker()
+		await fxB.unregister()
+		const b = await fxB.fetchBroker()
 		equal(b, undefined)
 	})
 })

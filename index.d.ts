@@ -5,7 +5,7 @@ type Plugin = (
 	request: IncomingMessage,
 	response: OutgoingMessage
 ) => Promise<{
-	mime: string,
+	mime: string
 	body: string | Uint8Array
 }>
 
@@ -30,7 +30,7 @@ interface Config {
 	extraHeaders?: string[]
 	extraMimes?: { [fileExt: string]: string }
 
-	corsAllowed?: boolean,
+	corsAllowed?: boolean
 	corsOrigins?: string[]
 	corsMethods?: string[]
 	corsHeaders?: string[]
@@ -42,10 +42,13 @@ interface Config {
 	plugins?: [filenameTester: RegExp, plugin: Plugin][]
 
 	onReady?: (address: string) => void
+
+	watcherEnabled?: boolean
 }
 
 
 export function Mockaton(options: Partial<Config>): Promise<Server | undefined>
+
 export function defineConfig(options: Partial<Config>): Partial<Config>
 
 export const jsToJsonPlugin: Plugin

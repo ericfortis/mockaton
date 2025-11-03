@@ -734,7 +734,7 @@ function SettingsIcon() {
  * The version increments when a mock file is added, removed, or renamed.
  */
 function initRealTimeUpdates() {
-	let oldVersion = undefined
+	let oldVersion = undefined // undefined waits until next event or timeout 
 	let controller = new AbortController()
 
 	longPoll()

@@ -298,13 +298,14 @@ export default defineConfig({
   ],
 
   onReady: await openInBrowser,
+  watcherEnabled: true
 })
 ```
 
 </details>
 
 <details>
-<summary>Config Documentation…</summary>
+<summary><b>Config Documentation…</b></summary>
 
 ### `mocksDir?: string`
 Defaults to `'mockaton-mocks'`. 
@@ -547,6 +548,13 @@ Defaults to `'normal'`.
 - `quiet`: only errors (stderr)
 - `normal`: info, mock access, warnings, and errors
 - `verbose`: normal + API access
+
+<br/>
+
+
+### `watcherEnabled?: boolean`
+Defaults to `true`. When `true`, newly added mocks get registered,
+or unregistered when deleting them.
 
 </details>
 

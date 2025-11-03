@@ -18,7 +18,7 @@ export const uiSyncVersion = new class extends EventEmitter {
 	delay = Number(process.env.MOCKATON_WATCHER_DEBOUNCE_MS ?? 80)
 	version = 0
 
-	increment = this.#debounce(() => {
+	increment = /** @type {function} */ this.#debounce(() => {
 		this.version++
 		super.emit('ARR')
 	})

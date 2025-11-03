@@ -20,8 +20,11 @@ export function Mockaton(options) {
 
 		mockBrokerCollection.init()
 		staticCollection.init()
-		watchMocksDir()
-		watchStaticDir()
+
+		if (config.watcherEnabled) {
+			watchMocksDir()
+			watchStaticDir()
+		}
 
 		const server = createServer(onRequest)
 		server.on('error', reject)

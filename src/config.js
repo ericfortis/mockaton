@@ -49,7 +49,9 @@ const schema = {
 			[/\.(js|ts)$/, jsToJsonPlugin]
 		], Array.isArray],
 
-	onReady: [await openInBrowser, is(Function)]
+	onReady: [await openInBrowser, is(Function)],
+	
+	watcherEnabled: [true, is(Boolean)],
 }
 
 

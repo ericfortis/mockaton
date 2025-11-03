@@ -16,7 +16,7 @@ import { readBody } from './utils/http-request.js'
 import { Commander } from './ApiCommander.js'
 import { CorsHeader } from './utils/http-cors.js'
 import { parseFilename } from './Filename.js'
-import { uiSyncVersion } from './Watcher.js'
+import { uiSyncVersion, watchMocksDir, watchStaticDir } from './Watcher.js'
 
 
 const mocksDir = mkdtempSync(tmpdir() + '/mocks') + '/'
@@ -96,7 +96,8 @@ const server = await Mockaton({
 	extraMimes: { [CUSTOM_EXT]: CUSTOM_MIME },
 	logLevel: 'quiet',
 	corsOrigins: [ALLOWED_ORIGIN],
-	corsExposedHeaders: ['Content-Encoding']
+	corsExposedHeaders: ['Content-Encoding'],
+	watcherEnabled: false,
 })
 const addr = `http://${server.address().address}:${server.address().port}`
 const api = new Commander(addr)
@@ -110,10 +111,14 @@ function request(path, options = {}) {
 	return fetch(addr + path, options)
 }
 
-const FX = new Fixture('basic.GET.200.json')
-await FX.register()
+async function init() {
+	await api.reset()
+}
 
-beforeEach(api.reset)
+const FX = new Fixture('basic.GET.200.json')
+await FX.write()
+await init()
+
 after(() => server?.close())
 
 describe('Error Handling', () => {
@@ -123,31 +128,23 @@ describe('Error Handling', () => {
 		return spy.mock
 	}
 
-	it('rejects invalid mock filenames', async t => {
+	it('Rejects invalid filenames', async t => {
 		const spy = spyLogger(t, 'warn')
-		const fx = new Fixture('missing-method-and-status.json')
-		await fx.write()
-		await sleep()
-		equal(spy.calls[0].arguments[0], 'Invalid Filename Convention')
-		await fx.unlink()
-	})
+		const fx0 = new Fixture('bar.GET._INVALID_STATUS_.json')
+		const fx1 = new Fixture('foo._INVALID_METHOD_.202.json')
+		const fx2 = new Fixture('missing-method-and-status.json')
+		await fx0.write()
+		await fx1.write()
+		await fx2.write()
+		await init()
 
-	it('rejects invalid mock filenames (bad method)', async t => {
-		const spy = spyLogger(t, 'warn')
-		const fx = new Fixture('foo._INVALID_METHOD_.200.json')
-		await fx.write()
-		await sleep()
-		equal(spy.calls[0].arguments[0], 'Unrecognized HTTP Method: "_INVALID_METHOD_"')
-		await fx.unlink()
-	})
-
-	it('rejects invalid mock filenames (bad status)', async t => {
-		const spy = spyLogger(t, 'warn')
-		const fx = new Fixture('bar.GET._INVALID_STATUS_.json')
-		await fx.write()
-		await sleep()
 		equal(spy.calls[0].arguments[0], 'Invalid HTTP Response Status: "NaN"')
-		await fx.unlink()
+		equal(spy.calls[1].arguments[0], 'Unrecognized HTTP Method: "_INVALID_METHOD_"')
+		equal(spy.calls[2].arguments[0], 'Invalid Filename Convention')
+
+		await fx0.unlink()
+		await fx1.unlink()
+		await fx2.unlink()
 	})
 
 	describe('Rejects malicious URLs', () => [
@@ -247,27 +244,6 @@ describe('Dashboard', () => {
 		match(await res.text(), new RegExp('<!DOCTYPE html>'))
 	})
 
-	describe('getSyncVersion', () => {
-		let version
-
-		it('getSyncVersion responds immediately when version mismatches', async () => {
-			const res = await api.getSyncVersion(-1)
-			version = await res.json()
-		})
-
-		const fx0 = new Fixture('runtime1.GET.200.txt')
-		it('responds when a file is added', async () => {
-			const prom = api.getSyncVersion(version)
-			await fx0.register()
-			equal(await (await prom).json(), version + 1)
-		})
-
-		it('responds when a file is deleted', async () => {
-			const prom = api.getSyncVersion(version + 1)
-			await fx0.unregister()
-			equal(await (await prom).json(), version + 2)
-		})
-	})
 })
 
 
@@ -453,7 +429,8 @@ describe('Proxy Fallback', () => {
 
 	it('updating selected mock resets proxied flag', async () => {
 		const fx = new Fixture('select-resets-proxied.GET.200.txt')
-		await fx.register()
+		await fx.write()
+		await init()
 		await api.setProxyFallback('http://example.com')
 		const r0 = await api.setRouteIsProxied(fx.method, fx.urlMask, true)
 		equal((await r0.json()).proxied, true)
@@ -462,6 +439,7 @@ describe('Proxy Fallback', () => {
 		equal((await r1.json()).proxied, false)
 
 		await api.setProxyFallback('')
+		await fx.unlink()
 	})
 })
 
@@ -495,12 +473,13 @@ describe('Default Mock', () => {
 	const fxA = new Fixture('alpha.GET.200.txt', 'A')
 	const fxB = new Fixture('alpha(default).GET.200.txt', 'B')
 	before(async () => {
-		await fxA.register()
-		await fxB.register()
+		await fxA.write()
+		await fxB.write()
+		await init()
 	})
 	after(async () => {
-		await fxA.unregister()
-		await fxB.unregister()
+		await fxA.unlink()
+		await fxB.unlink()
 	})
 
 	it('sorts mocks list with the user specified default first for dashboard display', async () => {
@@ -523,22 +502,24 @@ describe('Dynamic Mocks', () => {
 		const fx = new Fixture(
 			'js-object.GET.200.js',
 			'export default { FROM_JS: true }')
-		await fx.register()
+		await fx.write()
+		await init()
 		const res = await fx.request()
 		equal(res.headers.get('content-type'), mimeFor('.json'))
 		deepEqual(await res.json(), { FROM_JS: true })
-		await fx.unregister()
+		await fx.unlink()
 	})
 
 	it('TS array is sent as JSON', async () => {
 		const fx = new Fixture(
 			'js-object.GET.200.ts',
 			'export default ["from ts"]')
-		await fx.register()
+		await fx.write()
+		await init()
 		const res = await fx.request()
 		equal(res.headers.get('content-type'), mimeFor('.json'))
 		deepEqual(await res.json(), ['from ts'])
-		await fx.unregister()
+		await fx.unlink()
 	})
 })
 
@@ -549,13 +530,14 @@ describe('Dynamic Function Mocks', () => {
 			export default function (req, response) {
   			return 'SOME_STRING_0'
 			}`)
-		await fx.register()
+		await fx.write()
+		await init()
 		const res = await fx.request()
 		equal(res.status, 200)
 		equal(res.headers.get('content-type'), mimeFor('.json'))
 		equal(res.headers.get('set-cookie'), COOKIES.userA)
 		equal(await res.text(), 'SOME_STRING_0')
-		await fx.unregister()
+		await fx.unlink()
 	})
 
 	it('can override filename convention (also supports TS)', async () => {
@@ -566,13 +548,14 @@ describe('Dynamic Function Mocks', () => {
 			  response.setHeader('set-cookie', 'custom-cookie')
 			  return 'SOME_STRING_1'
 			}`)
-		await fx.register()
+		await fx.write()
+		await init()
 		const res = await fx.request({ method: 'POST' })
 		equal(res.status, 201)
 		equal(res.headers.get('content-type'), 'custom-mime')
 		equal(res.headers.get('set-cookie'), 'custom-cookie')
 		equal(await res.text(), 'SOME_STRING_1')
-		await fx.unregister()
+		await fx.unlink()
 	})
 })
 
@@ -581,9 +564,10 @@ describe('Static Files', () => {
 	const fxsIndex = new FixtureStatic('index.html', '<h1>Index</h1>')
 	const fxsAsset = new FixtureStatic('asset-script.js', 'const a = 1')
 	before(async () => {
-		await fxsIndex.register()
-		await fxsAsset.register()
-	}) // the last test unregisters them
+		await fxsIndex.write()
+		await fxsAsset.write()
+		await init()
+	}) // the last test deletes them
 
 	describe('Static File Serving', () => {
 		it('Defaults to index.html', async () => {
@@ -649,26 +633,9 @@ describe('Static Files', () => {
 		})
 	})
 
-	describe('Resets Static Routes', () => {
-		beforeEach(async () => {
-			await api.setStaticRouteIsDelayed(fxsIndex.urlMask, true)
-			await api.setStaticRouteStatus(fxsIndex.urlMask, 404)
-			await api.reset()
-		})
-
-		it('resets delayed', async () => {
-			const { staticBrokers } = await fetchState()
-			equal(staticBrokers[fxsIndex.urlMask].delayed, false)
-		})
-
-		it('resets status', async () => {
-			const { staticBrokers } = await fetchState()
-			equal(staticBrokers[fxsIndex.urlMask].status, 200)
-		})
-	})
-
 	describe('Static Partial Content', () => {
 		it('206 serves partial content', async () => {
+			await init()
 			const res1 = await fxsIndex.request({ headers: { range: 'bytes=0-3' } })
 			const res2 = await fxsIndex.request({ headers: { range: 'bytes=4-' } })
 			equal(res1.status, 206)
@@ -684,8 +651,9 @@ describe('Static Files', () => {
 	})
 
 	it('unregisters static route', async () => {
-		await fxsIndex.unregister()
-		await fxsAsset.unregister()
+		await fxsIndex.unlink()
+		await fxsAsset.unlink()
+		await init()
 		const { staticBrokers } = await fetchState()
 		equal(staticBrokers[fxsIndex.urlMask], undefined)
 		equal(staticBrokers[fxsAsset.urlMask], undefined)
@@ -705,61 +673,18 @@ describe('500', () => {
 		equal((await r1.json()).auto500, false)
 		equal((await FX.request()).status, FX.status)
 	})
-	
+
 	it('toggling on 500 picks existing 500', async () => {
 		const fx200 = new Fixture('reg-error.GET.200.txt')
 		const fx500 = new Fixture('reg-error.GET.500.txt')
-		await fx200.register()
-		await fx500.register()
+		await fx200.write()
+		await fx500.write()
+		await init()
 		const r0 = await api.toggle500(fx200.method, fx200.urlMask)
 		equal((await r0.json()).auto500, false)
 		equal(await (await fx200.request()).text(), fx500.body)
-		await fx200.unregister()
-		await fx500.unregister()
-	})
-	
-	it('registering a 500 unsets auto500', async () => {
-		const fx200 = new Fixture('reg-error.GET.200.txt')
-		const fx500 = new Fixture('reg-error.GET.500.txt')
-		await fx200.register()
-		await api.toggle500(fx200.method, fx200.urlMask)
-		const b0 = await fx200.fetchBroker()
-		equal(b0.auto500, true)
-		await fx500.register()
-		const b1 = await fx200.fetchBroker()
-		equal(b1.auto500, false)
-		deepEqual(b1.mocks, [
-			fx200.file,
-			fx500.file
-		])
-		await fx200.unregister()
-		await fx500.unregister()
-	})
-})
-
-
-describe('Registering', () => {
-	const fxA = new Fixture('register(default).GET.200.json')
-	const fxB = new Fixture('register(alt).GET.200.json')
-
-	it('register', async () => {
-		await fxA.register()
-		await fxB.register()
-		const b = await fxA.fetchBroker()
-		deepEqual(b.mocks, [fxA.file, fxB.file])
-	})
-
-	it('unregistering selected ensures a mock is selected', async () => {
-		await api.select(fxA.file)
-		await fxA.unregister()
-		const b = await fxA.fetchBroker()
-		deepEqual(b.mocks, [fxB.file])
-	})
-
-	it('unregistering the last mock removes broker', async () => {
-		await fxB.unregister()
-		const b = await fxB.fetchBroker()
-		equal(b, undefined)
+		await fx200.unlink()
+		await fx500.unlink()
 	})
 })
 
@@ -767,10 +692,11 @@ describe('Registering', () => {
 describe('Index-like routes', () => {
 	it('resolves dirs to the file without urlMask', async () => {
 		const fx = new Fixture('.GET.200.json')
-		await fx.register()
+		await fx.write()
+		await init()
 		const res = await request('/')
 		equal(await res.text(), fx.body)
-		await fx.unregister()
+		await fx.unlink()
 	})
 })
 
@@ -778,26 +704,33 @@ describe('Index-like routes', () => {
 describe('MIME', () => {
 	it('derives content-type from known mime', async () => {
 		const fx = new Fixture('tmp.GET.200.json')
-		await fx.register()
+		await fx.write()
+		await init()
 		const res = await fx.request()
 		equal(res.headers.get('content-type'), 'application/json')
-		await fx.unregister()
+		await fx.unlink()
 	})
 
 	it('derives content-type from custom mime', async () => {
 		const fx = new Fixture(`tmp.GET.200.${CUSTOM_EXT}`)
-		await fx.register()
+		await fx.write()
+		await init()
 		const res = await fx.request()
 		equal(res.headers.get('content-type'), CUSTOM_MIME)
-		await fx.unregister()
+		await fx.unlink()
 	})
 })
 
 
 describe('Method and Status', () => {
 	const fx = new Fixture('uncommon-method.ACL.201.txt')
-	before(async () => await fx.register())
-	after(async () => await fx.unregister())
+	before(async () => {
+		await fx.write()
+		await init()
+	})
+	after(async () => {
+		await fx.unlink()
+	})
 
 	it('dispatches the response status', async () => {
 		const res = await fx.request()
@@ -821,12 +754,13 @@ describe('Select', () => {
 	const fxAlt = new Fixture('select(variant).GET.200.txt')
 	const fxUnregistered = new Fixture('select(non-existing).GET.200.txt')
 	before(async () => {
-		await fx.register()
-		await fxAlt.register()
+		await fx.write()
+		await fxAlt.write()
+		await init()
 	})
 	after(async () => {
-		await fx.unregister()
-		await fxAlt.unregister()
+		await fx.unlink()
+		await fxAlt.unlink()
 	})
 
 	it('422 when updating non-existing mock alternative', async () => {
@@ -852,16 +786,17 @@ describe('Bulk Select', () => {
 	const fxKappaA = new Fixture('kappa(comment A).GET.200.txt')
 	const fxKappaB = new Fixture('kappa(comment B).GET.200.txt')
 	before(async () => {
-		await fxIota.register()
-		await fxIotaB.register()
-		await fxKappaA.register()
-		await fxKappaB.register()
+		await fxIota.write()
+		await fxIotaB.write()
+		await fxKappaA.write()
+		await fxKappaB.write()
+		await init()
 	})
 	after(async () => {
-		await fxIota.unregister()
-		await fxIotaB.unregister()
-		await fxKappaA.unregister()
-		await fxKappaB.unregister()
+		await fxIota.unlink()
+		await fxIotaB.unlink()
+		await fxKappaA.unlink()
+		await fxKappaB.unlink()
 	})
 
 	it('extracts all comments without duplicates', async () =>
@@ -877,6 +812,7 @@ describe('Bulk Select', () => {
 	})
 
 	it('selects partial', async () => {
+		await init()
 		await api.bulkSelectByComment('(mment A)')
 		equal((await (await fxKappaB.request()).text()), fxKappaA.body)
 	})
@@ -886,10 +822,11 @@ describe('Bulk Select', () => {
 describe('Decoding URLs', () => {
 	it('allows dots, spaces, amp, etc.', async () => {
 		const fx = new Fixture('dot.in.path and amp & and colon:.GET.200.txt')
-		await fx.register()
+		await fx.write()
+		await init()
 		const res = await fx.request()
 		equal(await res.text(), fx.body)
-		await fx.unregister()
+		await fx.unlink()
 	})
 })
 
@@ -901,16 +838,17 @@ describe('Dynamic Params', () => {
 	const fx3 = new Fixture('dynamic-params/exact-route.GET.200.txt')
 	before(async () => {
 		mkdirSync(mocksDir + 'dynamic-params/[id]/suffix/[id]', { recursive: true })
-		await fx0.register()
-		await fx1.register()
-		await fx2.register()
-		await fx3.register()
+		await fx0.write()
+		await fx1.write()
+		await fx2.write()
+		await fx3.write()
+		await init()
 	})
 	after(async () => {
-		await fx0.unregister()
-		await fx1.unregister()
-		await fx2.unregister()
-		await fx3.unregister()
+		await fx0.unlink()
+		await fx1.unlink()
+		await fx2.unlink()
+		await fx3.unlink()
 	})
 
 	it('variable at end', async () => {
@@ -940,12 +878,13 @@ describe('Query String', () => {
 	const fx1 = new Fixture('query-string/[id]?limit=[limit].GET.200.json')
 	before(async () => {
 		mkdirSync(mocksDir + 'query-string', { recursive: true })
-		await fx0.register()
-		await fx1.register()
+		await fx0.write()
+		await fx1.write()
+		await init()
 	})
 	after(async () => {
-		await fx0.unregister()
-		await fx1.unregister()
+		await fx0.unlink()
+		await fx1.unlink()
 	})
 
 	it('multiple params', async () => {
@@ -975,12 +914,83 @@ it('head for get. returns the headers without body only for GETs requested as HE
 })
 
 
+describe('Registering', () => {
+	before(() => {
+		watchMocksDir()
+		watchStaticDir()
+	})
+	
+	const fxA = new Fixture('register(default).GET.200.json')
+	const fxB = new Fixture('register(alt).GET.200.json')
+
+	it('register', async () => {
+		await fxA.register()
+		await fxB.register()
+		const b = await fxA.fetchBroker()
+		deepEqual(b.mocks, [fxA.file, fxB.file])
+	})
+
+	it('unregistering selected ensures a mock is selected', async () => {
+		await api.select(fxA.file)
+		await fxA.unregister()
+		const b = await fxA.fetchBroker()
+		deepEqual(b.mocks, [fxB.file])
+	})
+
+	it('unregistering the last mock removes broker', async () => {
+		await fxB.unregister()
+		const b = await fxB.fetchBroker()
+		equal(b, undefined)
+	})
+
+	it('registering a 500 unsets auto500', async () => {
+		const fx200 = new Fixture('reg-error.GET.200.txt')
+		const fx500 = new Fixture('reg-error.GET.500.txt')
+		await fx200.register()
+		await api.toggle500(fx200.method, fx200.urlMask)
+		const b0 = await fx200.fetchBroker()
+		equal(b0.auto500, true)
+		await fx500.register()
+		const b1 = await fx200.fetchBroker()
+		equal(b1.auto500, false)
+		deepEqual(b1.mocks, [
+			fx200.file,
+			fx500.file
+		])
+		await fx200.unregister()
+		await fx500.unregister()
+	})
+
+	// TODO @ThinkAbout testing debounced bulk additions or removals
+	describe('getSyncVersion', () => {
+		let version
+
+		it('getSyncVersion responds immediately when version mismatches', async () => {
+			const res = await api.getSyncVersion(-1)
+			version = await res.json()
+		})
+
+		const fx0 = new Fixture('runtime1.GET.200.txt')
+		it('responds when a file is added', async () => {
+			const prom = api.getSyncVersion(version)
+			await fx0.write()
+			equal(await (await prom).json(), version + 1)
+		})
+
+		it('responds when a file is deleted', async () => {
+			const prom = api.getSyncVersion(version + 1)
+			await fx0.unlink()
+			equal(await (await prom).json(), version + 2)
+		})
+	})
+})
+
+
+
 // # Utils
 
 async function sleep(ms = 50) {
 	return new Promise(resolve => setTimeout(resolve, ms))
 }
 
-// TODO @ThinkAbout when running register() multiple times in a setup, each one will reinit the collection
-// TODO @ThinkAbout testing debounced bulk additions or removals
 

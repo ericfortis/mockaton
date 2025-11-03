@@ -1,4 +1,5 @@
 # Changelog
+- 11.1.0 new `config.watcherEnabled`
 - 11.0.0 **Breaking change**, but of undocumented APIs.
   - If you use the Mockaton’s API directly (if you use the [Commander](./src/ApiCommander.js)
   client there’s no breaking change) update the request payloads from 

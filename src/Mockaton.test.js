@@ -473,7 +473,7 @@ describe('404', () => {
 	it('when there’s no mock at all for a method', async () =>
 		equal((await request('/non-existing-too', { method: 'DELETE' })).status, 404))
 
-	it('404s ignored files', async t => {
+	it('404s ignored files', async () => {
 		const fx = new Fixture('ignored.GET.200.json~')
 		await fx.write()
 		await sleep()

@@ -14,11 +14,11 @@ import { sendInternalServerError, sendMockNotFound } from './utils/http-response
 export async function dispatchMock(req, response) {
 	try {
 		const isHead = req.method === 'HEAD'
-		
+
 		let broker = mockBrokerCollection.brokerByRoute(req.method, req.url)
 		if (!broker && isHead)
 			broker = mockBrokerCollection.brokerByRoute('GET', req.url)
-		
+
 		if (config.proxyFallback && (!broker || broker.proxied)) {
 			await proxy(req, response, broker?.delayed ? calcDelay() : 0)
 			return
@@ -42,6 +42,7 @@ export async function dispatchMock(req, response) {
 		logger.accessMock(req.url, broker.file)
 		response.setHeader('Content-Type', mime)
 		response.setHeader('Content-Length', length(body))
+		
 		setTimeout(() => response.end(isHead ? null : body),
 			Number(broker.delayed && calcDelay()))
 	}

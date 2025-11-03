@@ -48,13 +48,15 @@ export function registerMock(file, isFromWatcher = false) {
 	const { method, urlMask } = parseFilename(file)
 	collection[method] ??= {}
 
-	if (!collection[method][urlMask])
-		collection[method][urlMask] = new MockBroker(file)
-	else
-		collection[method][urlMask].register(file)
+	let broker = collection[method][urlMask]
 
-	if (isFromWatcher && !collection[method][urlMask].file)
-		collection[method][urlMask].selectDefaultFile()
+	if (!broker)
+		broker = collection[method][urlMask] = new MockBroker(file)
+	else
+		broker.register(file)
+
+	if (isFromWatcher && !broker.file)
+		broker.selectDefaultFile()
 
 	return true
 }
@@ -83,8 +85,7 @@ export function unregisterMock(file) {
 /** @returns {MockBroker | undefined} */
 export function brokerByFilename(file) {
 	const { method, urlMask } = parseFilename(file)
-	if (collection[method])
-		return collection[method][urlMask]
+	return collection[method]?.[urlMask]
 }
 
 /**
@@ -113,7 +114,7 @@ export function extractAllComments() {
 }
 
 export function setMocksMatchingComment(comment) {
-	forEachBroker(b => 
+	forEachBroker(b =>
 		b.setByMatchingComment(comment))
 }
 

@@ -12,7 +12,7 @@ import * as staticCollection from './staticCollection.js'
 import * as mockBrokersCollection from './mockBrokersCollection.js'
 import { config, ConfigValidator } from './config.js'
 import { DashboardHtml, CSP } from './DashboardHtml.js'
-import { sendOK, sendJSON, sendUnprocessableContent, sendFile, sendHTML } from './utils/http-response.js'
+import { sendOK, sendJSON, sendUnprocessable, sendFile, sendHTML } from './utils/http-response.js'
 import { API, LONG_POLL_SERVER_TIMEOUT, HEADER_SYNC_VERSION } from './ApiConstants.js'
 
 
@@ -116,7 +116,7 @@ async function selectCookie(req, response) {
 
 	const error = cookie.setCurrent(cookieKey)
 	if (error)
-		sendUnprocessableContent(response, error?.message || error)
+		sendUnprocessable(response, error?.message || error)
 	else
 		sendJSON(response, cookie.list())
 }
@@ -127,7 +127,7 @@ async function selectMock(req, response) {
 
 	const broker = mockBrokersCollection.brokerByFilename(file)
 	if (!broker || !broker.hasMock(file))
-		sendUnprocessableContent(response, `Missing Mock: ${file}`)
+		sendUnprocessable(response, `Missing Mock: ${file}`)
 	else {
 		broker.selectFile(file)
 		sendJSON(response, broker)
@@ -140,7 +140,7 @@ async function toggle500(req, response) {
 
 	const broker = mockBrokersCollection.brokerByRoute(method, urlMask)
 	if (!broker)
-		sendUnprocessableContent(response, `Route does not exist: ${method} ${urlMask}`)
+		sendUnprocessable(response, `Route does not exist: ${method} ${urlMask}`)
 	else {
 		broker.toggle500()
 		sendJSON(response, broker)
@@ -153,9 +153,9 @@ async function setRouteIsDelayed(req, response) {
 
 	const broker = mockBrokersCollection.brokerByRoute(method, urlMask)
 	if (!broker)
-		sendUnprocessableContent(response, `Route does not exist: ${method} ${urlMask}`)
+		sendUnprocessable(response, `Route does not exist: ${method} ${urlMask}`)
 	else if (typeof delayed !== 'boolean')
-		sendUnprocessableContent(response, `Expected boolean for "delayed"`)
+		sendUnprocessable(response, `Expected boolean for "delayed"`)
 	else {
 		broker.setDelayed(delayed)
 		sendJSON(response, broker)
@@ -168,11 +168,11 @@ async function setRouteIsProxied(req, response) {
 
 	const broker = mockBrokersCollection.brokerByRoute(method, urlMask)
 	if (!broker)
-		sendUnprocessableContent(response, `Route does not exist: ${method} ${urlMask}`)
+		sendUnprocessable(response, `Route does not exist: ${method} ${urlMask}`)
 	else if (typeof proxied !== 'boolean')
-		sendUnprocessableContent(response, `Expected boolean for "proxied"`)
+		sendUnprocessable(response, `Expected boolean for "proxied"`)
 	else if (proxied && !config.proxyFallback)
-		sendUnprocessableContent(response, `There’s no proxy fallback`)
+		sendUnprocessable(response, `There’s no proxy fallback`)
 	else {
 		broker.setProxied(proxied)
 		sendJSON(response, broker)
@@ -184,7 +184,7 @@ async function updateProxyFallback(req, response) {
 	const fallback = await parseJSON(req)
 
 	if (!ConfigValidator.proxyFallback(fallback))
-		sendUnprocessableContent(response, `Invalid Proxy Fallback URL`)
+		sendUnprocessable(response, `Invalid Proxy Fallback URL`)
 	else {
 		config.proxyFallback = fallback
 		sendOK(response)
@@ -196,7 +196,7 @@ async function setCollectProxied(req, response) {
 	const collectProxied = await parseJSON(req)
 
 	if (!ConfigValidator.collectProxied(collectProxied))
-		sendUnprocessableContent(response, `Expected a boolean for "collectProxied"`)
+		sendUnprocessable(response, `Expected a boolean for "collectProxied"`)
 	else {
 		config.collectProxied = collectProxied
 		sendOK(response)
@@ -216,7 +216,7 @@ async function setCorsAllowed(req, response) {
 	const corsAllowed = await parseJSON(req)
 
 	if (!ConfigValidator.corsAllowed(corsAllowed))
-		sendUnprocessableContent(response, `Expected boolean for "corsAllowed"`)
+		sendUnprocessable(response, `Expected boolean for "corsAllowed"`)
 	else {
 		config.corsAllowed = corsAllowed
 		sendOK(response)
@@ -228,7 +228,7 @@ async function setGlobalDelay(req, response) {
 	const delay = await parseJSON(req)
 
 	if (!ConfigValidator.delay(delay))
-		sendUnprocessableContent(response, `Expected non-negative integer for "delay"`)
+		sendUnprocessable(response, `Expected non-negative integer for "delay"`)
 	else {
 		config.delay = delay
 		sendOK(response)
@@ -242,9 +242,9 @@ async function setStaticRouteStatusCode(req, response) {
 
 	const broker = staticCollection.brokerByRoute(urlMask)
 	if (!broker)
-		sendUnprocessableContent(response, `Static route does not exist: ${urlMask}`)
+		sendUnprocessable(response, `Static route does not exist: ${urlMask}`)
 	else if (!(status === 200 || status === 404))
-		sendUnprocessableContent(response, `Expected 200 or 404 status code`)
+		sendUnprocessable(response, `Expected 200 or 404 status code`)
 	else {
 		broker.setStatus(status)
 		sendOK(response)
@@ -257,9 +257,9 @@ async function setStaticRouteIsDelayed(req, response) {
 
 	const broker = staticCollection.brokerByRoute(urlMask)
 	if (!broker)
-		sendUnprocessableContent(response, `Static route does not exist: ${urlMask}`)
+		sendUnprocessable(response, `Static route does not exist: ${urlMask}`)
 	else if (typeof delayed !== 'boolean')
-		sendUnprocessableContent(response, `Expected boolean for "delayed"`)
+		sendUnprocessable(response, `Expected boolean for "delayed"`)
 	else {
 		broker.setDelayed(delayed)
 		sendOK(response)

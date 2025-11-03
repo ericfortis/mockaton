@@ -53,7 +53,7 @@ export function sendTooLongURI(response) {
 	response.end()
 }
 
-export function sendUnprocessableContent(response, error) {
+export function sendUnprocessable(response, error) {
 	logger.access(response, error)
 	response.statusCode = 422
 	response.end(error)

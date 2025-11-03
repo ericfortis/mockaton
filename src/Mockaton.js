@@ -11,7 +11,7 @@ import { setCorsHeaders, isPreflight } from './utils/http-cors.js'
 import { watchMocksDir, watchStaticDir } from './Watcher.js'
 import { apiPatchRequests, apiGetRequests } from './Api.js'
 import { BodyReaderError, hasControlChars } from './utils/http-request.js'
-import { sendNoContent, sendInternalServerError, sendUnprocessableContent, sendTooLongURI, sendBadRequest } from './utils/http-response.js'
+import { sendNoContent, sendInternalServerError, sendUnprocessable, sendTooLongURI, sendBadRequest } from './utils/http-response.js'
 
 
 export function Mockaton(options) {
@@ -75,7 +75,7 @@ async function onRequest(req, response) {
 	}
 	catch (error) {
 		if (error instanceof BodyReaderError)
-			sendUnprocessableContent(response, `${error.name}: ${error.message}`)
+			sendUnprocessable(response, `${error.name}: ${error.message}`)
 		else
 			sendInternalServerError(response, error)
 	}

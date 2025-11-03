@@ -6,7 +6,7 @@ import { extFor } from './utils/mime.js'
 import { write, isFile } from './utils/fs.js'
 import { makeMockFilename } from './Filename.js'
 import { readBody, BodyReaderError } from './utils/http-request.js'
-import { sendUnprocessableContent, sendBadGateway } from './utils/http-response.js'
+import { sendUnprocessable, sendBadGateway } from './utils/http-response.js'
 
 
 export async function proxy(req, response, delay) {
@@ -22,7 +22,7 @@ export async function proxy(req, response, delay) {
 	}
 	catch (error) { // TESTME
 		if (error instanceof BodyReaderError)
-			sendUnprocessableContent(response, error.name)
+			sendUnprocessable(response, error.name)
 		else
 			sendBadGateway(response, error)
 		return

@@ -183,7 +183,7 @@ describe('Warnings', () => {
 			method: 'PATCH',
 			body: '[invalid_json]'
 		})
-		equal(r.status, 422)
+		statusIsUnprocessable(r)
 		equal(spy.calls[0].arguments[1], 'BodyReaderError: Could not parse')
 	})
 
@@ -200,13 +200,13 @@ describe('CORS', () => {
 	describe('Set CORS allowed', () => {
 		it('422 for non boolean', async () => {
 			const r = await api.setCorsAllowed('not-a-boolean')
-			equal(r.status, 422)
+			statusIsUnprocessable(r)
 			equal(await r.text(), 'Expected boolean for "corsAllowed"')
 		})
 
 		it('200', async () => {
-			const res = await api.setCorsAllowed(true)
-			equal(res.status, 200)
+			const r = await api.setCorsAllowed(true)
+			statusIsOk(r)
 			isTrue((await fetchState()).corsAllowed)
 
 			await api.setCorsAllowed(false)
@@ -229,34 +229,36 @@ describe('CORS', () => {
 	})
 
 	it('responds', async () => {
-		const res = await FX.request({
+		const r = await FX.request({
 			headers: {
 				[CorsHeader.Origin]: ALLOWED_ORIGIN
 			}
 		})
-		equal(res.status, 200)
-		equal(res.headers.get(CorsHeader.AcAllowOrigin), ALLOWED_ORIGIN)
-		equal(res.headers.get(CorsHeader.AcExposeHeaders), 'Content-Encoding')
+		statusIsOk(r)
+		equal(r.headers.get(CorsHeader.AcAllowOrigin), ALLOWED_ORIGIN)
+		equal(r.headers.get(CorsHeader.AcExposeHeaders), 'Content-Encoding')
 	})
 })
 
 
 describe('Dashboard', () => {
 	it('renders', async () => {
-		const res = await request(API.dashboard)
-		match(await res.text(), new RegExp('<!DOCTYPE html>'))
+		const r = await request(API.dashboard)
+		match(await r.text(), new RegExp('<!DOCTYPE html>'))
 	})
 
 	it('query string is accepted', async () => {
-		const res = await request(API.dashboard + '?foo=bar')
-		match(await res.text(), new RegExp('<!DOCTYPE html>'))
+		const r = await request(API.dashboard + '?foo=bar')
+		match(await r.text(), new RegExp('<!DOCTYPE html>'))
 	})
 })
 
 
 describe('Cookie', () => {
-	it('422 when trying to select non-existing cookie', async () =>
-		equal((await api.selectCookie('non-existing-cookie-key')).status, 422))
+	it('422 when trying to select non-existing cookie', async () => {
+		const r = await api.selectCookie('non-existing-cookie-key')
+		statusIsUnprocessable(r)
+	})
 
 	it('defaults to the first key:value', async () =>
 		deepEqual((await fetchState()).cookies, [
@@ -283,13 +285,13 @@ describe('Cookie', () => {
 describe('Delay', () => {
 	describe('Set Global Delay', () => {
 		it('422 for invalid global delay value', async () => {
-			const res = await api.setGlobalDelay('not-a-number')
-			equal(res.status, 422)
-			equal(await res.text(), 'Expected non-negative integer for "delay"')
+			const r = await api.setGlobalDelay('not-a-number')
+			statusIsUnprocessable(r)
+			equal(await r.text(), 'Expected non-negative integer for "delay"')
 		})
 		it('200 for valid global delay value', async () => {
-			const res = await api.setGlobalDelay(150)
-			equal(res.status, 200)
+			const r = await api.setGlobalDelay(150)
+			statusIsOk(r)
 			equal((await fetchState()).delay, 150)
 		})
 	})
@@ -307,7 +309,7 @@ describe('Delay', () => {
 	describe('Set Route is Delayed', () => {
 		it('422 for non-existing route', async () => {
 			const r = await api.setRouteIsDelayed('GET', '/non-existing', true)
-			equal(r.status, 422)
+			statusIsUnprocessable(r)
 			equal(await r.text(), `Route does not exist: GET /non-existing`)
 		})
 		it('422 for invalid delayed value', async () => {
@@ -345,14 +347,14 @@ describe('Proxy Fallback', () => {
 		it('Relays to fallback server and saves the mock', async () => {
 			const reqBodyPayload = 'text_req_body'
 
-			const res = await request(`/non-existing-mock/${randomUUID()}`, {
+			const r = await request(`/non-existing-mock/${randomUUID()}`, {
 				method: 'POST',
 				body: reqBodyPayload
 			})
-			equal(res.status, 423)
-			equal(res.headers.get('custom_header'), 'my_custom_header')
-			equal(res.headers.get('set-cookie'), CUSTOM_COOKIES.join(', '))
-			equal(await res.text(), reqBodyPayload)
+			equal(r.status, 423)
+			equal(r.headers.get('custom_header'), 'my_custom_header')
+			equal(r.headers.get('set-cookie'), CUSTOM_COOKIES.join(', '))
+			equal(await r.text(), reqBodyPayload)
 
 			const savedBody = readFileSync(join(mocksDir, 'non-existing-mock/[id].POST.423.txt'), 'utf8')
 			equal(savedBody, reqBodyPayload)
@@ -361,29 +363,29 @@ describe('Proxy Fallback', () => {
 
 	describe('Set Proxy Fallback', () => {
 		it('422 when value is not a valid URL', async () => {
-			const res = await api.setProxyFallback('bad url')
-			equal(res.status, 422)
-			equal(await res.text(), 'Invalid Proxy Fallback URL')
+			const r = await api.setProxyFallback('bad url')
+			statusIsUnprocessable(r)
+			equal(await r.text(), 'Invalid Proxy Fallback URL')
 		})
 
 		it('sets fallback', async () => {
-			const res = await api.setProxyFallback('http://example.com')
-			equal(res.status, 200)
+			const r = await api.setProxyFallback('http://example.com')
+			statusIsOk(r)
 			equal((await fetchState()).proxyFallback, 'http://example.com')
 		})
 
 		it('unsets fallback', async () => {
-			const res = await api.setProxyFallback('')
-			equal(res.status, 200)
+			const r = await api.setProxyFallback('')
+			statusIsOk(r)
 			equal((await fetchState()).proxyFallback, '')
 		})
 	})
 
 	describe('Set Collect Proxied', () => {
 		it('422 for invalid collectProxied value', async () => {
-			const res = await api.setCollectProxied('not-a-boolean')
-			equal(res.status, 422)
-			equal(await res.text(), 'Expected a boolean for "collectProxied"')
+			const r = await api.setCollectProxied('not-a-boolean')
+			statusIsUnprocessable(r)
+			equal(await r.text(), 'Expected a boolean for "collectProxied"')
 		})
 
 		it('200 set and unset', async () => {
@@ -400,36 +402,36 @@ describe('Proxy Fallback', () => {
 
 		it('422 for non-existing route', async () => {
 			const r = await api.setRouteIsProxied('GET', '/non-existing', true)
-			equal(r.status, 422)
+			statusIsUnprocessable(r)
 			equal(await r.text(), `Route does not exist: GET /non-existing`)
 		})
 
 		it('422 for invalid proxied value', async () => {
 			const r = await api.setRouteIsProxied(FX.method, FX.urlMask, 'not-a-boolean')
-			equal(r.status, 422)
+			statusIsUnprocessable(r)
 			equal(await r.text(), 'Expected boolean for "proxied"')
 		})
 
 		it('422 for missing proxy fallback', async () => {
 			const r = await api.setRouteIsProxied(FX.method, FX.urlMask, true)
-			equal(r.status, 422)
+			statusIsUnprocessable(r)
 			equal(await r.text(), `There’s no proxy fallback`)
 		})
 
 		it('200 when setting', async () => {
 			await api.setProxyFallback('https://example.com')
 			const r0 = await api.setRouteIsProxied(FX.method, FX.urlMask, true)
-			equal(r0.status, 200)
+			statusIsOk(r0)
 			isTrue((await r0.json()).proxied)
 
 			const r1 = await api.setRouteIsProxied(FX.method, FX.urlMask, false)
-			equal(r1.status, 200)
+			statusIsOk(r1)
 			isFalse((await r1.json()).proxied)
 		})
 
 		it('200 when unsetting', async () => {
 			const r = await api.setRouteIsProxied(FX.method, FX.urlMask, false)
-			equal(r.status, 200)
+			statusIsOk(r)
 			isFalse((await r.json()).proxied)
 		})
 	})
@@ -452,17 +454,22 @@ describe('Proxy Fallback', () => {
 
 
 describe('404', () => {
-	it('when there’s no mock', async () =>
-		equal((await request('/non-existing')).status, 404))
+	it('when there’s no mock', async () => {
+		const r = await request('/non-existing')
+		statusIsNotFound(r)
+	})
 
-	it('when there’s no mock at all for a method', async () =>
-		equal((await request('/non-existing-too', { method: 'DELETE' })).status, 404))
+	it('when there’s no mock at all for a method', async () => {
+		const r = await request('/non-existing-too', { method: 'DELETE' })
+		statusIsNotFound(r)
+	})
 
 	it('404s ignored files', async () => {
 		const fx = new Fixture('ignored.GET.200.json~')
 		await fx.write()
 		await sleep()
-		equal((await fx.request()).status, 404)
+		const r = await fx.request()
+		statusIsNotFound(r)
 		await fx.unlink()
 	})
 
@@ -470,7 +477,8 @@ describe('404', () => {
 		const fx = new FixtureStatic('static-ignored.js~')
 		await fx.write()
 		await sleep()
-		equal((await fx.request()).status, 404)
+		const r = await fx.request()
+		statusIsNotFound(r)
 		await fx.unlink()
 	})
 })
@@ -498,8 +506,8 @@ describe('Default Mock', () => {
 	})
 
 	it('Dispatches default mock', async () => {
-		const res = await fxA.request()
-		equal(await res.text(), fxB.body)
+		const r = await fxA.request()
+		equal(await r.text(), fxB.body)
 	})
 })
 
@@ -511,9 +519,9 @@ describe('Dynamic Mocks', () => {
 			'export default { FROM_JS: true }')
 		await fx.write()
 		await init()
-		const res = await fx.request()
-		equal(res.headers.get('content-type'), mimeFor('.json'))
-		deepEqual(await res.json(), { FROM_JS: true })
+		const r = await fx.request()
+		equal(r.headers.get('content-type'), mimeFor('.json'))
+		deepEqual(await r.json(), { FROM_JS: true })
 		await fx.unlink()
 	})
 
@@ -523,9 +531,9 @@ describe('Dynamic Mocks', () => {
 			'export default ["from ts"]')
 		await fx.write()
 		await init()
-		const res = await fx.request()
-		equal(res.headers.get('content-type'), mimeFor('.json'))
-		deepEqual(await res.json(), ['from ts'])
+		const r = await fx.request()
+		equal(r.headers.get('content-type'), mimeFor('.json'))
+		deepEqual(await r.json(), ['from ts'])
 		await fx.unlink()
 	})
 })
@@ -539,11 +547,11 @@ describe('Dynamic Function Mocks', () => {
 			}`)
 		await fx.write()
 		await init()
-		const res = await fx.request()
-		equal(res.status, 200)
-		equal(res.headers.get('content-type'), mimeFor('.json'))
-		equal(res.headers.get('set-cookie'), COOKIES.userA)
-		equal(await res.text(), 'SOME_STRING_0')
+		const r = await fx.request()
+		statusIsOk(r)
+		equal(r.headers.get('content-type'), mimeFor('.json'))
+		equal(r.headers.get('set-cookie'), COOKIES.userA)
+		equal(await r.text(), 'SOME_STRING_0')
 		await fx.unlink()
 	})
 
@@ -557,11 +565,11 @@ describe('Dynamic Function Mocks', () => {
 			}`)
 		await fx.write()
 		await init()
-		const res = await fx.request({ method: 'POST' })
-		equal(res.status, 201)
-		equal(res.headers.get('content-type'), 'custom-mime')
-		equal(res.headers.get('set-cookie'), 'custom-cookie')
-		equal(await res.text(), 'SOME_STRING_1')
+		const r = await fx.request({ method: 'POST' })
+		equal(r.status, 201)
+		equal(r.headers.get('content-type'), 'custom-mime')
+		equal(r.headers.get('set-cookie'), 'custom-cookie')
+		equal(await r.text(), 'SOME_STRING_1')
 		await fx.unlink()
 	})
 })
@@ -578,17 +586,17 @@ describe('Static Files', () => {
 
 	describe('Static File Serving', () => {
 		it('Defaults to index.html', async () => {
-			const res = await request('/')
-			equal(res.status, 200)
-			equal(res.headers.get('content-type'), mimeFor(fxsIndex.file))
-			equal(await res.text(), fxsIndex.body)
+			const r = await request('/')
+			statusIsOk(r)
+			equal(r.headers.get('content-type'), mimeFor(fxsIndex.file))
+			equal(await r.text(), fxsIndex.body)
 		})
 
 		it('Serves exacts paths', async () => {
-			const res = await fxsAsset.request()
-			equal(res.status, 200)
-			equal(res.headers.get('content-type'), mimeFor(fxsAsset.file))
-			equal(await res.text(), fxsAsset.body)
+			const r = await fxsAsset.request()
+			statusIsOk(r)
+			equal(r.headers.get('content-type'), mimeFor(fxsAsset.file))
+			equal(await r.text(), fxsAsset.body)
 		})
 	})
 
@@ -603,7 +611,7 @@ describe('Static Files', () => {
 	describe('Set Static Route is Delayed', () => {
 		it('422 for non-existing route', async () => {
 			const r = await api.setStaticRouteIsDelayed('/non-existing', true)
-			equal(r.status, 422)
+			statusIsUnprocessable(r)
 			equal(await r.text(), `Static route does not exist: /non-existing`)
 		})
 
@@ -621,22 +629,22 @@ describe('Static Files', () => {
 
 	describe('Set Static Route Status Code', () => {
 		it('422 for non-existing route', async () => {
-			const res = await api.setStaticRouteStatus('/non-existing', 200)
-			equal(res.status, 422)
-			equal(await res.text(), `Static route does not exist: /non-existing`)
+			const r = await api.setStaticRouteStatus('/non-existing', 200)
+			statusIsUnprocessable(r)
+			equal(await r.text(), `Static route does not exist: /non-existing`)
 		})
 
 		it('422 for invalid delayed value', async () => {
-			const res = await api.setStaticRouteStatus(fxsIndex.urlMask, 'not-200-or-404')
-			equal(res.status, 422)
-			equal(await res.text(), 'Expected 200 or 404 status code')
+			const r = await api.setStaticRouteStatus(fxsIndex.urlMask, 'not-200-or-404')
+			statusIsUnprocessable(r)
+			equal(await r.text(), 'Expected 200 or 404 status code')
 		})
 
 		it('200', async () => {
-			const res = await api.setStaticRouteStatus(fxsIndex.urlMask, 404)
-			equal(res.status, 200)
+			const r = await api.setStaticRouteStatus(fxsIndex.urlMask, 404)
+			statusIsOk(r)
 			const { staticBrokers } = await fetchState()
-			equal(staticBrokers[fxsIndex.urlMask].status, 404)
+			statusIsNotFound(staticBrokers[fxsIndex.urlMask])
 		})
 	})
 
@@ -652,8 +660,8 @@ describe('Static Files', () => {
 		})
 
 		it('416 on invalid range (end > start)', async () => {
-			const res = await fxsIndex.request({ headers: { range: 'bytes=3-0' } })
-			equal(res.status, 416)
+			const r = await fxsIndex.request({ headers: { range: 'bytes=3-0' } })
+			equal(r.status, 416)
 		})
 	})
 
@@ -662,8 +670,8 @@ describe('Static Files', () => {
 		await fxsAsset.unlink()
 		await init()
 		const { staticBrokers } = await fetchState()
-		equal(staticBrokers[fxsIndex.urlMask], undefined)
-		equal(staticBrokers[fxsAsset.urlMask], undefined)
+		isUndefined(staticBrokers[fxsIndex.urlMask])
+		isUndefined(staticBrokers[fxsAsset.urlMask])
 	})
 })
 
@@ -701,8 +709,8 @@ describe('Index-like routes', () => {
 		const fx = new Fixture('.GET.200.json')
 		await fx.write()
 		await init()
-		const res = await request('/')
-		equal(await res.text(), fx.body)
+		const r = await request('/')
+		equal(await r.text(), fx.body)
 		await fx.unlink()
 	})
 })
@@ -713,8 +721,8 @@ describe('MIME', () => {
 		const fx = new Fixture('tmp.GET.200.json')
 		await fx.write()
 		await init()
-		const res = await fx.request()
-		equal(res.headers.get('content-type'), 'application/json')
+		const r = await fx.request()
+		equal(r.headers.get('content-type'), 'application/json')
 		await fx.unlink()
 	})
 
@@ -722,8 +730,8 @@ describe('MIME', () => {
 		const fx = new Fixture(`tmp.GET.200.${CUSTOM_EXT}`)
 		await fx.write()
 		await init()
-		const res = await fx.request()
-		equal(res.headers.get('content-type'), CUSTOM_MIME)
+		const r = await fx.request()
+		equal(r.headers.get('content-type'), CUSTOM_MIME)
 		await fx.unlink()
 	})
 })
@@ -740,18 +748,18 @@ describe('Method and Status', () => {
 	})
 
 	it('dispatches the response status', async () => {
-		const res = await fx.request()
-		equal(res.status, fx.status)
+		const r = await fx.request()
+		equal(r.status, fx.status)
 	})
 
 	it('dispatches uncommon but supported methods', async () => {
-		const res = await fx.request()
-		equal(res.status, fx.status)
+		const r = await fx.request()
+		equal(r.status, fx.status)
 	})
 
 	it('404s when method mismatches', async () => {
-		const res = await fx.request({ method: 'POST' })
-		equal(res.status, 404)
+		const r = await fx.request({ method: 'POST' })
+		statusIsNotFound(r)
 	})
 })
 
@@ -771,18 +779,18 @@ describe('Select', () => {
 	})
 
 	it('422 when updating non-existing mock alternative', async () => {
-		const res = await api.select(fxUnregistered.file)
-		equal(res.status, 422)
-		equal(await res.text(), `Missing Mock: ${fxUnregistered.file}`)
+		const r = await api.select(fxUnregistered.file)
+		statusIsUnprocessable(r)
+		equal(await r.text(), `Missing Mock: ${fxUnregistered.file}`)
 	})
 
 	it('selects variant', async () => {
-		const res0 = await request('/select')
-		equal(await res0.text(), fx.body)
+		const r0 = await request('/select')
+		equal(await r0.text(), fx.body)
 
 		await api.select(fxAlt.file)
-		const res1 = await request('/select')
-		equal(await res1.text(), fxAlt.body)
+		const r1 = await request('/select')
+		equal(await r1.text(), fxAlt.body)
 	})
 })
 
@@ -831,8 +839,8 @@ describe('Decoding URLs', () => {
 		const fx = new Fixture('dot.in.path and amp & and colon:.GET.200.txt')
 		await fx.write()
 		await init()
-		const res = await fx.request()
-		equal(await res.text(), fx.body)
+		const r = await fx.request()
+		equal(await r.text(), fx.body)
 		await fx.unlink()
 	})
 })
@@ -859,23 +867,23 @@ describe('Dynamic Params', () => {
 	})
 
 	it('variable at end', async () => {
-		const res = await fx0.request()
-		equal(await res.text(), fx0.body)
+		const r = await fx0.request()
+		equal(await r.text(), fx0.body)
 	})
 
 	it('sandwich variable present in another route at its end', async () => {
-		const res = await fx1.request()
-		equal(await res.text(), fx1.body)
+		const r = await fx1.request()
+		equal(await r.text(), fx1.body)
 	})
 
 	it('sandwich fixed part in dynamic variables', async () => {
-		const res = await fx2.request()
-		equal(await res.text(), fx2.body)
+		const r = await fx2.request()
+		equal(await r.text(), fx2.body)
 	})
 
 	it('ensure dynamic params do not take precedence over exact routes', async () => {
-		const res = await fx3.request()
-		equal(await res.text(), fx3.body)
+		const r = await fx3.request()
+		equal(await r.text(), fx3.body)
 	})
 })
 
@@ -895,29 +903,29 @@ describe('Query String', () => {
 	})
 
 	it('multiple params', async () => {
-		const res = await fx0.request()
-		equal(await res.text(), fx0.body)
+		const r = await fx0.request()
+		equal(await r.text(), fx0.body)
 	})
 	it('with pretty-param and without query-params', async () => {
-		const res = await request('/query-string/1234')
-		equal(await res.text(), fx1.body)
+		const r = await request('/query-string/1234')
+		equal(await r.text(), fx1.body)
 	})
 	it('with pretty-param and without query-params, but with trailing slash and "?"', async () => {
-		const res = await request('/query-string/1234/?')
-		equal(await res.text(), fx1.body)
+		const r = await request('/query-string/1234/?')
+		equal(await r.text(), fx1.body)
 	})
 	it('with pretty-param and query-params', async () => {
-		const res = await request('/query-string/1234/?limit=4')
-		equal(await res.text(), fx1.body)
+		const r = await request('/query-string/1234/?limit=4')
+		equal(await r.text(), fx1.body)
 	})
 })
 
 
 it('head for get. returns the headers without body only for GETs requested as HEAD', async () => {
-	const res = await FX.request({ method: 'HEAD' })
-	equal(res.status, 200)
-	equal(res.headers.get('content-length'), String(Buffer.byteLength(FX.body)))
-	equal(await res.text(), '')
+	const r = await FX.request({ method: 'HEAD' })
+	statusIsOk(r)
+	equal(r.headers.get('content-length'), String(Buffer.byteLength(FX.body)))
+	equal(await r.text(), '')
 })
 
 
@@ -947,7 +955,7 @@ describe('Registering', () => {
 	it('unregistering the last mock removes broker', async () => {
 		await fxB.unregister()
 		const b = await fxB.fetchBroker()
-		equal(b, undefined)
+		isUndefined(b)
 	})
 
 	it('registering a 500 unsets auto500', async () => {
@@ -973,8 +981,8 @@ describe('Registering', () => {
 		let version
 
 		it('getSyncVersion responds immediately when version mismatches', async () => {
-			const res = await api.getSyncVersion(-1)
-			version = await res.json()
+			const r = await api.getSyncVersion(-1)
+			version = await r.json()
 		})
 
 		const fx0 = new Fixture('runtime1.GET.200.txt')
@@ -998,6 +1006,11 @@ describe('Registering', () => {
 
 function isTrue(val) { equal(val, true) }
 function isFalse(val) { equal(val, false) }
+function isUndefined(val) { equal(val, undefined) }
+
+function statusIsOk(response) { equal(response.status, 200) }
+function statusIsNotFound(response) { equal(response.status, 404) }
+function statusIsUnprocessable(response) { equal(response.status, 422) }
 
 async function sleep(ms = 50) {
 	return new Promise(resolve => setTimeout(resolve, ms))

@@ -179,18 +179,18 @@ describe('Warnings', () => {
 
 	it('body parser rejects invalid JSON in API requests', async t => {
 		const spy = spyLogger(t, 'access')
-		const res = await request(API.cookies, {
+		const r = await request(API.cookies, {
 			method: 'PATCH',
 			body: '[invalid_json]'
 		})
-		equal(res.status, 422)
+		equal(r.status, 422)
 		equal(spy.calls[0].arguments[1], 'BodyReaderError: Could not parse')
 	})
 
 	it('returns 500 when a handler throws', async t => {
 		const spy = spyLogger(t, 'error')
-		const res = await request(API.throws)
-		equal(res.status, 500)
+		const r = await request(API.throws)
+		equal(r.status, 500)
 		equal(spy.calls[0].arguments[2], 'Test500')
 	})
 })
@@ -199,33 +199,33 @@ describe('Warnings', () => {
 describe('CORS', () => {
 	describe('Set CORS allowed', () => {
 		it('422 for non boolean', async () => {
-			const res = await api.setCorsAllowed('not-a-boolean')
-			equal(res.status, 422)
-			equal(await res.text(), 'Expected boolean for "corsAllowed"')
+			const r = await api.setCorsAllowed('not-a-boolean')
+			equal(r.status, 422)
+			equal(await r.text(), 'Expected boolean for "corsAllowed"')
 		})
 
 		it('200', async () => {
 			const res = await api.setCorsAllowed(true)
 			equal(res.status, 200)
-			equal((await fetchState()).corsAllowed, true)
+			isTrue((await fetchState()).corsAllowed)
 
 			await api.setCorsAllowed(false)
-			equal((await fetchState()).corsAllowed, false)
+			isFalse((await fetchState()).corsAllowed)
 		})
 	})
 
 	it('preflights', async () => {
 		await api.setCorsAllowed(true)
-		const res = await request('/does-not-matter', {
+		const r = await request('/does-not-matter', {
 			method: 'OPTIONS',
 			headers: {
 				[CorsHeader.Origin]: ALLOWED_ORIGIN,
 				[CorsHeader.AcRequestMethod]: 'GET'
 			}
 		})
-		equal(res.status, 204)
-		equal(res.headers.get(CorsHeader.AcAllowOrigin), ALLOWED_ORIGIN)
-		equal(res.headers.get(CorsHeader.AcAllowMethods), 'GET')
+		equal(r.status, 204)
+		equal(r.headers.get(CorsHeader.AcAllowOrigin), ALLOWED_ORIGIN)
+		equal(r.headers.get(CorsHeader.AcAllowMethods), 'GET')
 	})
 
 	it('responds', async () => {
@@ -299,24 +299,24 @@ describe('Delay', () => {
 		await api.setGlobalDelay(delay)
 		await api.setRouteIsDelayed(FX.method, FX.urlMask, true)
 		const now = new Date()
-		const res = await FX.request()
-		equal(await res.text(), FX.body)
-		equal((new Date()).getTime() - now.getTime() > delay, true)
+		const r = await FX.request()
+		equal(await r.text(), FX.body)
+		isTrue((new Date()).getTime() - now.getTime() > delay)
 	})
 
 	describe('Set Route is Delayed', () => {
 		it('422 for non-existing route', async () => {
-			const res = await api.setRouteIsDelayed('GET', '/non-existing', true)
-			equal(res.status, 422)
-			equal(await res.text(), `Route does not exist: GET /non-existing`)
+			const r = await api.setRouteIsDelayed('GET', '/non-existing', true)
+			equal(r.status, 422)
+			equal(await r.text(), `Route does not exist: GET /non-existing`)
 		})
 		it('422 for invalid delayed value', async () => {
-			const res = await api.setRouteIsDelayed(FX.method, FX.urlMask, 'not-a-boolean')
-			equal(await res.text(), 'Expected boolean for "delayed"')
+			const r = await api.setRouteIsDelayed(FX.method, FX.urlMask, 'not-a-boolean')
+			equal(await r.text(), 'Expected boolean for "delayed"')
 		})
 		it('200', async () => {
-			const res = await api.setRouteIsDelayed(FX.method, FX.urlMask, true)
-			equal((await res.json()).delayed, true)
+			const r = await api.setRouteIsDelayed(FX.method, FX.urlMask, true)
+			isTrue((await r.json()).delayed)
 		})
 	})
 })
@@ -388,10 +388,10 @@ describe('Proxy Fallback', () => {
 
 		it('200 set and unset', async () => {
 			await api.setCollectProxied(true)
-			equal((await fetchState()).collectProxied, true)
+			isTrue((await fetchState()).collectProxied)
 
 			await api.setCollectProxied(false)
-			equal((await fetchState()).collectProxied, false)
+			isFalse((await fetchState()).collectProxied)
 		})
 	})
 
@@ -399,38 +399,38 @@ describe('Proxy Fallback', () => {
 		beforeEach(async () => await api.setProxyFallback(''))
 
 		it('422 for non-existing route', async () => {
-			const res = await api.setRouteIsProxied('GET', '/non-existing', true)
-			equal(res.status, 422)
-			equal(await res.text(), `Route does not exist: GET /non-existing`)
+			const r = await api.setRouteIsProxied('GET', '/non-existing', true)
+			equal(r.status, 422)
+			equal(await r.text(), `Route does not exist: GET /non-existing`)
 		})
 
 		it('422 for invalid proxied value', async () => {
-			const res = await api.setRouteIsProxied(FX.method, FX.urlMask, 'not-a-boolean')
-			equal(res.status, 422)
-			equal(await res.text(), 'Expected boolean for "proxied"')
+			const r = await api.setRouteIsProxied(FX.method, FX.urlMask, 'not-a-boolean')
+			equal(r.status, 422)
+			equal(await r.text(), 'Expected boolean for "proxied"')
 		})
 
 		it('422 for missing proxy fallback', async () => {
-			const res = await api.setRouteIsProxied(FX.method, FX.urlMask, true)
-			equal(res.status, 422)
-			equal(await res.text(), `There’s no proxy fallback`)
+			const r = await api.setRouteIsProxied(FX.method, FX.urlMask, true)
+			equal(r.status, 422)
+			equal(await r.text(), `There’s no proxy fallback`)
 		})
 
 		it('200 when setting', async () => {
 			await api.setProxyFallback('https://example.com')
-			const res = await api.setRouteIsProxied(FX.method, FX.urlMask, true)
-			equal(res.status, 200)
-			equal((await res.json()).proxied, true)
+			const r0 = await api.setRouteIsProxied(FX.method, FX.urlMask, true)
+			equal(r0.status, 200)
+			isTrue((await r0.json()).proxied)
 
-			const res2 = await api.setRouteIsProxied(FX.method, FX.urlMask, false)
-			equal(res2.status, 200)
-			equal((await res2.json()).proxied, false)
+			const r1 = await api.setRouteIsProxied(FX.method, FX.urlMask, false)
+			equal(r1.status, 200)
+			isFalse((await r1.json()).proxied)
 		})
 
 		it('200 when unsetting', async () => {
-			const res = await api.setRouteIsProxied(FX.method, FX.urlMask, false)
-			equal(res.status, 200)
-			equal((await res.json()).proxied, false)
+			const r = await api.setRouteIsProxied(FX.method, FX.urlMask, false)
+			equal(r.status, 200)
+			isFalse((await r.json()).proxied)
 		})
 	})
 
@@ -440,10 +440,10 @@ describe('Proxy Fallback', () => {
 		await init()
 		await api.setProxyFallback('http://example.com')
 		const r0 = await api.setRouteIsProxied(fx.method, fx.urlMask, true)
-		equal((await r0.json()).proxied, true)
+		isTrue((await r0.json()).proxied)
 
 		const r1 = await api.select(fx.file)
-		equal((await r1.json()).proxied, false)
+		isFalse((await r1.json()).proxied)
 
 		await api.setProxyFallback('')
 		await fx.unlink()
@@ -602,20 +602,20 @@ describe('Static Files', () => {
 
 	describe('Set Static Route is Delayed', () => {
 		it('422 for non-existing route', async () => {
-			const res = await api.setStaticRouteIsDelayed('/non-existing', true)
-			equal(res.status, 422)
-			equal(await res.text(), `Static route does not exist: /non-existing`)
+			const r = await api.setStaticRouteIsDelayed('/non-existing', true)
+			equal(r.status, 422)
+			equal(await r.text(), `Static route does not exist: /non-existing`)
 		})
 
 		it('422 for invalid delayed value', async () => {
-			const res = await api.setStaticRouteIsDelayed(fxsIndex.urlMask, 'not-a-boolean')
-			equal(await res.text(), 'Expected boolean for "delayed"')
+			const r = await api.setStaticRouteIsDelayed(fxsIndex.urlMask, 'not-a-boolean')
+			equal(await r.text(), 'Expected boolean for "delayed"')
 		})
 
 		it('200', async () => {
 			await api.setStaticRouteIsDelayed(fxsIndex.urlMask, true)
 			const { staticBrokers } = await fetchState()
-			equal(staticBrokers[fxsIndex.urlMask].delayed, true)
+			isTrue(staticBrokers[fxsIndex.urlMask].delayed)
 		})
 	})
 
@@ -673,11 +673,11 @@ describe('500', () => {
 		equal((await FX.request()).status, FX.status)
 
 		const r0 = await api.toggle500(FX.method, FX.urlMask)
-		equal((await r0.json()).auto500, true)
+		isTrue((await r0.json()).auto500)
 		equal((await FX.request()).status, 500)
 
 		const r1 = await api.toggle500(FX.method, FX.urlMask)
-		equal((await r1.json()).auto500, false)
+		isFalse((await r1.json()).auto500)
 		equal((await FX.request()).status, FX.status)
 	})
 
@@ -688,7 +688,7 @@ describe('500', () => {
 		await fx500.write()
 		await init()
 		const r0 = await api.toggle500(fx200.method, fx200.urlMask)
-		equal((await r0.json()).auto500, false)
+		isFalse((await r0.json()).auto500)
 		equal(await (await fx200.request()).text(), fx500.body)
 		await fx200.unlink()
 		await fx500.unlink()
@@ -956,10 +956,10 @@ describe('Registering', () => {
 		await fx200.register()
 		await api.toggle500(fx200.method, fx200.urlMask)
 		const b0 = await fx200.fetchBroker()
-		equal(b0.auto500, true)
+		isTrue(b0.auto500)
 		await fx500.register()
 		const b1 = await fx200.fetchBroker()
-		equal(b1.auto500, false)
+		isFalse(b1.auto500)
 		deepEqual(b1.mocks, [
 			fx200.file,
 			fx500.file
@@ -995,6 +995,9 @@ describe('Registering', () => {
 
 
 // # Utils
+
+function isTrue(val) { equal(val, true) }
+function isFalse(val) { equal(val, false) }
 
 async function sleep(ms = 50) {
 	return new Promise(resolve => setTimeout(resolve, ms))

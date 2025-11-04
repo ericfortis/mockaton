@@ -46,7 +46,7 @@ export async function dispatchMock(req, response) {
 		setTimeout(() => response.end(isHead ? null : body),
 			Number(broker.delayed && calcDelay()))
 	}
-	catch (error) {
+	catch (error) { // TESTME
 		if (error?.code === 'ENOENT') // mock-file has been deleted
 			sendMockNotFound(response)
 		else

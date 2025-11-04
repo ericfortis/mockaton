@@ -45,7 +45,7 @@ export function watchMocksDir() {
 		if (!file)
 			return
 
-		if (isDirectory(join(dir, file))) {
+		if (isDirectory(join(dir, file))) { // TESTME
 			mockBrokerCollection.init()
 			uiSyncVersion.increment()
 		}
@@ -61,7 +61,7 @@ export function watchMocksDir() {
 	})
 }
 
-export function watchStaticDir() {
+export function watchStaticDir() { // TESTME
 	const dir = config.staticDir
 	if (!dir)
 		return

@@ -99,29 +99,59 @@ const server = await Mockaton({
 	corsExposedHeaders: ['Content-Encoding'],
 	watcherEnabled: false,
 })
+after(() => server?.close())
+
 const addr = `http://${server.address().address}:${server.address().port}`
 const api = new Commander(addr)
+
 
 /** @returns {Promise<State>} */
 async function fetchState() {
 	return (await api.getState()).json()
 }
 
-function request(path, options = {}) {
-	return fetch(addr + path, options)
-}
-
 async function init() {
 	await api.reset()
+}
+
+function request(path, options = {}) {
+	return fetch(addr + path, options)
 }
 
 const FX = new Fixture('basic.GET.200.json')
 await FX.write()
 await init()
 
-after(() => server?.close())
 
-describe('Error Handling', () => {
+describe('Windows', () => {
+	it('path separators are normalized to forward slashes', async () => {
+		const b = await FX.fetchBroker()
+		equal(b.file, FX.file)
+	})
+})
+
+
+describe('Rejects malicious URLs', () => {
+	[
+		['double-encoded', `/${encodeURIComponent(encodeURIComponent('/'))}user`, 400],
+		['encoded null byte', '/user%00/admin', 400],
+		['invalid percent-encoding', '/user%ZZ', 400],
+		['encoded CRLF sequence', '/user%0d%0aSet-Cookie:%20x=1', 400],
+		['overlong/illegal UTF-8 sequence', '/user%C0%AF', 400],
+		['double-double-encoding trick', '/%25252Fuser', 400],
+		['zero-width/invisible char', '/user%E2%80%8Binfo', 404],
+		['encoded path traversal', '/user/..%2Fadmin', 404],
+		['raw path traversal', '/../user', 404],
+
+		['very long path', '/'.repeat(2048 + 1), 414]
+	]
+		.map(([title, url, status]) =>
+			it(title, async () =>
+				equal((await request(url)).status, status)))
+})
+
+
+describe('Warnings', () => {
 	function spyLogger(t, method) {
 		const spy = t.mock.method(logger, method)
 		spy.mock.mockImplementation(() => null)
@@ -147,23 +177,6 @@ describe('Error Handling', () => {
 		await fx2.unlink()
 	})
 
-	describe('Rejects malicious URLs', () => [
-		['double-encoded', `/${encodeURIComponent(encodeURIComponent('/'))}user`, 400],
-		['encoded null byte', '/user%00/admin', 400],
-		['invalid percent-encoding', '/user%ZZ', 400],
-		['encoded CRLF sequence', '/user%0d%0aSet-Cookie:%20x=1', 400],
-		['overlong/illegal UTF-8 sequence', '/user%C0%AF', 400],
-		['double-double-encoding trick', '/%25252Fuser', 400],
-		['zero-width/invisible char', '/user%E2%80%8Binfo', 404],
-		['encoded path traversal', '/user/..%2Fadmin', 404],
-		['raw path traversal', '/../user', 404],
-
-		['very long path', '/'.repeat(2048 + 1), 414]
-	]
-		.map(([title, url, status]) =>
-			it(title, async () =>
-				equal((await request(url)).status, status))))
-
 	it('body parser rejects invalid JSON in API requests', async t => {
 		const spy = spyLogger(t, 'access')
 		const res = await request(API.cookies, {
@@ -179,11 +192,6 @@ describe('Error Handling', () => {
 		const res = await request(API.throws)
 		equal(res.status, 500)
 		equal(spy.calls[0].arguments[2], 'Test500')
-	})
-
-	it('on Windows, path separators are normalized to forward slashes', async () => {
-		const b = await FX.fetchBroker()
-		equal(b.file, FX.file)
 	})
 })
 
@@ -243,7 +251,6 @@ describe('Dashboard', () => {
 		const res = await request(API.dashboard + '?foo=bar')
 		match(await res.text(), new RegExp('<!DOCTYPE html>'))
 	})
-
 })
 
 
@@ -919,7 +926,7 @@ describe('Registering', () => {
 		watchMocksDir()
 		watchStaticDir()
 	})
-	
+
 	const fxA = new Fixture('register(default).GET.200.json')
 	const fxB = new Fixture('register(alt).GET.200.json')
 

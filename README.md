@@ -267,6 +267,7 @@ export default defineConfig({
   mocksDir: 'mockaton-mocks',
   staticDir: 'mockaton-static-mocks',
   ignore: /(\.DS_Store|~)$/,
+  watcherEnabled: true,
 
   host: '127.0.0.1',
   port: 0,
@@ -297,8 +298,7 @@ export default defineConfig({
     [/\.(js|ts)$/, jsToJsonPlugin]
   ],
 
-  onReady: await openInBrowser,
-  watcherEnabled: true
+  onReady: await openInBrowser
 })
 ```
 
@@ -329,9 +329,22 @@ my-static-dir<b>/foo/bar.jpg</b> <span style="color:green"> // Wins</span>
 <br/>
 
 ### `ignore?: RegExp`
-Defaults to `/(\.DS_Store|~)$/`. The regex rule is
-tested against the basename (filename without directory path).
+Defaults to `/(\.DS_Store|~)$/`
 
+The regex rule is tested against the basename (filename without directory path).
+
+
+<br/>
+
+
+### `watcherEnabled?: boolean`
+Defaults to `true` 
+
+When `false`, if you **add**, **delete**, or **rename** you’ll need to click **"Reset"**
+on the Dashboard, or call `commander.reset()` in order to re-initialize the collection.
+
+On the other hand, **edits are not affected by this
+flag**; mocks are always read from disk on every request.
 
 <br/>
 
@@ -548,13 +561,6 @@ Defaults to `'normal'`.
 - `quiet`: only errors (stderr)
 - `normal`: info, mock access, warnings, and errors
 - `verbose`: normal + API access
-
-<br/>
-
-
-### `watcherEnabled?: boolean`
-Defaults to `true`. When `true`, newly added mocks get registered,
-or unregistered when deleting them.
 
 </details>
 

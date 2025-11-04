@@ -1,6 +1,6 @@
 import { Server, IncomingMessage, OutgoingMessage } from 'node:http'
 
-type Plugin = (
+export type Plugin = (
 	filePath: string,
 	request: IncomingMessage,
 	response: OutgoingMessage
@@ -9,10 +9,11 @@ type Plugin = (
 	body: string | Uint8Array
 }>
 
-interface Config {
+export interface Config {
 	mocksDir?: string
 	staticDir?: string
 	ignore?: RegExp
+	watcherEnabled?: boolean
 
 	host?: string,
 	port?: number
@@ -42,8 +43,6 @@ interface Config {
 	plugins?: [filenameTester: RegExp, plugin: Plugin][]
 
 	onReady?: (address: string) => void
-
-	watcherEnabled?: boolean
 }
 
 

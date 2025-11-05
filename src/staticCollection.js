@@ -41,7 +41,7 @@ export function registerMock(relativeFile) {
 }
 
 
-export function unregisterMock(relativeFile) { // TESTME
+export function unregisterMock(relativeFile) {
 	delete collection['/' + relativeFile]
 }
 

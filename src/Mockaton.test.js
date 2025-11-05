@@ -651,11 +651,11 @@ describe('Static Files', () => {
 	describe('Static Partial Content', () => {
 		it('206 serves partial content', async () => {
 			await init()
-			const res1 = await fxsIndex.request({ headers: { range: 'bytes=0-3' } })
-			const res2 = await fxsIndex.request({ headers: { range: 'bytes=4-' } })
-			equal(res1.status, 206)
-			equal(res2.status, 206)
-			const body = await res1.text() + await res2.text()
+			const r0 = await fxsIndex.request({ headers: { range: 'bytes=0-3' } })
+			const r1 = await fxsIndex.request({ headers: { range: 'bytes=4-' } })
+			equal(r0.status, 206)
+			equal(r1.status, 206)
+			const body = await r0.text() + await r1.text()
 			equal(body, fxsIndex.body)
 		})
 
@@ -695,8 +695,8 @@ describe('500', () => {
 		await fx200.write()
 		await fx500.write()
 		await init()
-		const r0 = await api.toggle500(fx200.method, fx200.urlMask)
-		isFalse((await r0.json()).auto500)
+		const r = await api.toggle500(fx200.method, fx200.urlMask)
+		isFalse((await r.json()).auto500)
 		equal(await (await fx200.request()).text(), fx500.body)
 		await fx200.unlink()
 		await fx500.unlink()
@@ -929,7 +929,7 @@ it('head for get. returns the headers without body only for GETs requested as HE
 })
 
 
-describe('Registering', () => {
+describe('Registering Non-Static Mocks', () => {
 	before(() => {
 		watchMocksDir()
 		watchStaticDir()
@@ -997,6 +997,28 @@ describe('Registering', () => {
 			await fx0.unlink()
 			equal(await (await prom).json(), version + 2)
 		})
+	})
+})
+
+describe('Registering Static Mocks', () => {
+	const fx = new FixtureStatic('static-register.txt')
+
+	it('registers static', async () => {
+		await fx.register()
+		const { staticBrokers } = await fetchState()
+		deepEqual(staticBrokers, {
+			['/' + fx.file]: {
+				route: '/' + fx.file,
+				status: 200,
+				delayed: false
+			}
+		})
+	})
+
+	it('unregisters static', async () => {
+		await fx.unregister()
+		const { staticBrokers } = await fetchState()
+		deepEqual(staticBrokers, {})
 	})
 })
 

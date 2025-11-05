@@ -50,7 +50,7 @@ class BaseFixture {
 	
 	async sync() {
 		await this.write()
-		await init()
+		await sync()
 	}
 
 	get path() { return join(this.dir, this.file) }
@@ -115,7 +115,7 @@ async function fetchState() {
 	return (await api.getState()).json()
 }
 
-async function init() {
+async function sync() {
 	await api.reset()
 }
 
@@ -168,7 +168,7 @@ describe('Warnings', () => {
 		const fx1 = new Fixture('foo._INVALID_METHOD_.202.json')
 		const fx2 = new Fixture('missing-method-and-status.json')
 		await Promise.all([fx0.write(), fx1.write(), fx2.write()])
-		await init()
+		await sync()
 
 		equal(spy.calls[0].arguments[0], 'Invalid HTTP Response Status: "NaN"')
 		equal(spy.calls[1].arguments[0], 'Unrecognized HTTP Method: "_INVALID_METHOD_"')
@@ -461,8 +461,7 @@ describe('Proxy Fallback', () => {
 		
 		it('unsets auto500', async () => {
 			const fx = new Fixture('unset-500-on-proxy.GET.200.txt')
-			await fx.write()
-			await init()
+			await fx.sync()
 			await api.setProxyFallback('https://example.com')
 			
 			const r0 = await api.toggle500(fx.method, fx.urlMask)
@@ -482,8 +481,7 @@ describe('Proxy Fallback', () => {
 
 	it('updating selected mock resets proxied flag', async () => {
 		const fx = new Fixture('select-resets-proxied.GET.200.txt')
-		await fx.write()
-		await init()
+		await fx.sync()
 		await api.setProxyFallback('http://example.com')
 		const r0 = await api.setRouteIsProxied(fx.method, fx.urlMask, true)
 		isTrue((await r0.json()).proxied)
@@ -534,7 +532,7 @@ describe('Default Mock', () => {
 	before(async () => {
 		await fxA.write()
 		await fxB.write()
-		await init()
+		await sync()
 	})
 	after(async () => {
 		await fxA.unlink()
@@ -561,8 +559,7 @@ describe('Dynamic Mocks', () => {
 		const fx = new Fixture(
 			'js-object.GET.200.js',
 			'export default { FROM_JS: true }')
-		await fx.write()
-		await init()
+		await fx.sync()
 		const r = await fx.request()
 		equal(r.headers.get('content-type'), mimeFor('.json'))
 		deepEqual(await r.json(), { FROM_JS: true })
@@ -573,8 +570,7 @@ describe('Dynamic Mocks', () => {
 		const fx = new Fixture(
 			'js-object.GET.200.ts',
 			'export default ["from ts"]')
-		await fx.write()
-		await init()
+		await fx.sync()
 		const r = await fx.request()
 		equal(r.headers.get('content-type'), mimeFor('.json'))
 		deepEqual(await r.json(), ['from ts'])
@@ -589,8 +585,7 @@ describe('Dynamic Function Mocks', () => {
 			export default function (req, response) {
   			return 'SOME_STRING_0'
 			}`)
-		await fx.write()
-		await init()
+		await fx.sync()
 		const r = await fx.request()
 		statusIsOk(r)
 		equal(r.headers.get('content-type'), mimeFor('.json'))
@@ -607,8 +602,7 @@ describe('Dynamic Function Mocks', () => {
 			  response.setHeader('set-cookie', 'custom-cookie')
 			  return 'SOME_STRING_1'
 			}`)
-		await fx.write()
-		await init()
+		await fx.sync()
 		const r = await fx.request({ method: 'POST' })
 		equal(r.status, 201)
 		equal(r.headers.get('content-type'), 'custom-mime')
@@ -625,7 +619,7 @@ describe('Static Files', () => {
 	before(async () => {
 		await fxsIndex.write()
 		await fxsAsset.write()
-		await init()
+		await sync()
 	}) // the last test deletes them
 
 	describe('Static File Serving', () => {
@@ -694,7 +688,7 @@ describe('Static Files', () => {
 
 	describe('Static Partial Content', () => {
 		it('206 serves partial content', async () => {
-			await init()
+			await sync()
 			const r0 = await fxsIndex.request({ headers: { range: 'bytes=0-3' } })
 			const r1 = await fxsIndex.request({ headers: { range: 'bytes=4-' } })
 			equal(r0.status, 206)
@@ -712,7 +706,7 @@ describe('Static Files', () => {
 	it('unregisters static route', async () => {
 		await fxsIndex.unlink()
 		await fxsAsset.unlink()
-		await init()
+		await sync()
 		const { staticBrokers } = await fetchState()
 		isUndefined(staticBrokers[fxsIndex.urlMask])
 		isUndefined(staticBrokers[fxsAsset.urlMask])
@@ -740,7 +734,7 @@ describe('500', () => {
 		const fx500 = new Fixture('reg-error.GET.500.txt')
 		await fx200.write()
 		await fx500.write()
-		await init()
+		await sync()
 		const r = await api.toggle500(fx200.method, fx200.urlMask)
 		isFalse((await r.json()).auto500)
 		equal(await (await fx200.request()).text(), fx500.body)
@@ -750,8 +744,7 @@ describe('500', () => {
 	
 	it('toggling 500 unsets `proxied` flag', async () => {
 		const fx = new Fixture('proxied-to-500.GET.200.txt')
-		await fx.write()
-		await init()
+		await fx.sync()
 		await api.setProxyFallback('http://example.com')
 		await api.setRouteIsProxied(fx.method, fx.urlMask, true)
 		await api.toggle500(fx.method, fx.urlMask)
@@ -765,8 +758,7 @@ describe('500', () => {
 describe('Index-like routes', () => {
 	it('resolves dirs to the file without urlMask', async () => {
 		const fx = new Fixture('.GET.200.json')
-		await fx.write()
-		await init()
+		await fx.sync()
 		const r = await request('/')
 		equal(await r.text(), fx.body)
 		await fx.unlink()
@@ -777,8 +769,7 @@ describe('Index-like routes', () => {
 describe('MIME', () => {
 	it('derives content-type from known mime', async () => {
 		const fx = new Fixture('tmp.GET.200.json')
-		await fx.write()
-		await init()
+		await fx.sync()
 		const r = await fx.request()
 		equal(r.headers.get('content-type'), 'application/json')
 		await fx.unlink()
@@ -786,8 +777,7 @@ describe('MIME', () => {
 
 	it('derives content-type from custom mime', async () => {
 		const fx = new Fixture(`tmp.GET.200.${CUSTOM_EXT}`)
-		await fx.write()
-		await init()
+		await fx.sync()
 		const r = await fx.request()
 		equal(r.headers.get('content-type'), CUSTOM_MIME)
 		await fx.unlink()
@@ -797,13 +787,8 @@ describe('MIME', () => {
 
 describe('Method and Status', () => {
 	const fx = new Fixture('uncommon-method.ACL.201.txt')
-	before(async () => {
-		await fx.write()
-		await init()
-	})
-	after(async () => {
-		await fx.unlink()
-	})
+	before(async () => await fx.sync())
+	after(async () => await fx.unlink())
 
 	it('dispatches the response status', async () => {
 		const r = await fx.request()
@@ -829,7 +814,7 @@ describe('Select', () => {
 	before(async () => {
 		await fx.write()
 		await fxAlt.write()
-		await init()
+		await sync()
 	})
 	after(async () => {
 		await fx.unlink()
@@ -863,7 +848,7 @@ describe('Bulk Select', () => {
 		await fxIotaB.write()
 		await fxKappaA.write()
 		await fxKappaB.write()
-		await init()
+		await sync()
 	})
 	after(async () => {
 		await fxIota.unlink()
@@ -885,7 +870,7 @@ describe('Bulk Select', () => {
 	})
 
 	it('selects partial', async () => {
-		await init()
+		await sync()
 		await api.bulkSelectByComment('(mment A)')
 		equal((await (await fxKappaB.request()).text()), fxKappaA.body)
 	})
@@ -895,8 +880,7 @@ describe('Bulk Select', () => {
 describe('Decoding URLs', () => {
 	it('allows dots, spaces, amp, etc.', async () => {
 		const fx = new Fixture('dot.in.path and amp & and colon:.GET.200.txt')
-		await fx.write()
-		await init()
+		await fx.sync()
 		const r = await fx.request()
 		equal(await r.text(), fx.body)
 		await fx.unlink()
@@ -915,7 +899,7 @@ describe('Dynamic Params', () => {
 		await fx1.write()
 		await fx2.write()
 		await fx3.write()
-		await init()
+		await sync()
 	})
 	after(async () => {
 		await fx0.unlink()
@@ -953,7 +937,7 @@ describe('Query String', () => {
 		mkdirSync(mocksDir + 'query-string', { recursive: true })
 		await fx0.write()
 		await fx1.write()
-		await init()
+		await sync()
 	})
 	after(async () => {
 		await fx0.unlink()

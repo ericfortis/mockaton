@@ -74,7 +74,7 @@ export class MockBroker {
 	}
 
 	setProxied(proxied) {
-		this.auto500 = false // TESTME
+		this.auto500 = false
 		this.proxied = proxied
 	}
 

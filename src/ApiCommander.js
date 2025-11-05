@@ -13,7 +13,7 @@ export class Commander {
 	getState = () =>
 		fetch(this.#addr + API.state)
 
-	/** 
+	/**
 	 * @param {number?} currSyncVer - On mismatch, it responds immediately. Otherwise, long polls.
 	 * @param {AbortSignal} abortSignal
 	 * @returns {JsonPromise<number>}
@@ -24,8 +24,8 @@ export class Commander {
 				abortSignal,
 				AbortSignal.timeout(LONG_POLL_SERVER_TIMEOUT + 1000)
 			].filter(Boolean)),
-			headers: currSyncVer !== undefined 
-				? { [HEADER_SYNC_VERSION]: currSyncVer } 
+			headers: currSyncVer !== undefined
+				? { [HEADER_SYNC_VERSION]: currSyncVer }
 				: {}
 		})
 
@@ -45,12 +45,24 @@ export class Commander {
 	setProxyFallback = proxyAddr => this.#patch(API.fallback, proxyAddr)
 	setCollectProxied = shouldCollect => this.#patch(API.collectProxied, shouldCollect)
 
-	select = file => this.#patch(API.select, file)
-	bulkSelectByComment = comment => this.#patch(API.bulkSelect, comment)
+	/** @returns {JsonPromise<ClientMockBroker>} */
+	select = file => 
+		this.#patch(API.select, file)
 
-	toggle500 = (method, urlMask) => this.#patch(API.toggle500, [method, urlMask])
-	setRouteIsProxied = (method, urlMask, proxied) => this.#patch(API.proxied, [method, urlMask, proxied])
-	setRouteIsDelayed = (method, urlMask, delayed) => this.#patch(API.delay, [method, urlMask, delayed])
+	bulkSelectByComment = comment => 
+		this.#patch(API.bulkSelect, comment)
+
+	/** @returns {JsonPromise<ClientMockBroker>} */
+	toggle500 = (method, urlMask) =>
+		this.#patch(API.toggle500, [method, urlMask])
+
+	/** @returns {JsonPromise<ClientMockBroker>} */
+	setRouteIsProxied = (method, urlMask, proxied) =>
+		this.#patch(API.proxied, [method, urlMask, proxied])
+
+	/** @returns {JsonPromise<ClientMockBroker>} */
+	setRouteIsDelayed = (method, urlMask, delayed) =>
+		this.#patch(API.delay, [method, urlMask, delayed])
 
 	setStaticRouteStatus = (urlMask, status) => this.#patch(API.staticStatus, [urlMask, status])
 	setStaticRouteIsDelayed = (urlMask, delayed) => this.#patch(API.delayStatic, [urlMask, delayed])

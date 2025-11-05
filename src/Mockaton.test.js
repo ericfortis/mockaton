@@ -434,6 +434,26 @@ describe('Proxy Fallback', () => {
 			statusIsOk(r)
 			isFalse((await r.json()).proxied)
 		})
+		
+		it('unsets auto500', async () => {
+			const fx = new Fixture('unset-500-on-proxy.GET.200.txt')
+			await fx.write()
+			await init()
+			await api.setProxyFallback('https://example.com')
+			
+			const r0 = await api.toggle500(fx.method, fx.urlMask)
+			const b0 = await r0.json()
+			isFalse(b0.proxied)
+			isTrue(b0.auto500)
+			
+			const r1 = await api.setRouteIsProxied(fx.method, fx.urlMask, true)
+			const b1 = await r1.json()
+			isTrue(b1.proxied)
+			isFalse(b1.auto500)
+			
+			await fx.unlink()
+			await api.setProxyFallback('')
+		})
 	})
 
 	it('updating selected mock resets proxied flag', async () => {
@@ -1050,5 +1070,4 @@ function statusIsUnprocessable(response) { equal(response.status, 422) }
 async function sleep(ms = 50) {
 	return new Promise(resolve => setTimeout(resolve, ms))
 }
-
 

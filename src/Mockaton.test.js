@@ -47,6 +47,11 @@ class BaseFixture {
 
 	async write() { await writeFile(this.path, this.body, 'utf8') }
 	async unlink() { await unlink(this.path) }
+	
+	async sync() {
+		await this.write()
+		await init()
+	}
 
 	get path() { return join(this.dir, this.file) }
 
@@ -118,15 +123,14 @@ function request(path, options = {}) {
 	return fetch(addr + path, options)
 }
 
-const FX = new Fixture('basic.GET.200.json')
-await FX.write()
-await init()
-
 
 describe('Windows', () => {
 	it('path separators are normalized to forward slashes', async () => {
-		const b = await FX.fetchBroker()
-		equal(b.file, FX.file)
+		const fx = new Fixture('win-paths.GET.200.json')
+		await fx.sync()
+		const b = await fx.fetchBroker()
+		equal(b.file, fx.file)
+		await fx.unlink()
 	})
 })
 
@@ -163,18 +167,14 @@ describe('Warnings', () => {
 		const fx0 = new Fixture('bar.GET._INVALID_STATUS_.json')
 		const fx1 = new Fixture('foo._INVALID_METHOD_.202.json')
 		const fx2 = new Fixture('missing-method-and-status.json')
-		await fx0.write()
-		await fx1.write()
-		await fx2.write()
+		await Promise.all([fx0.write(), fx1.write(), fx2.write()])
 		await init()
 
 		equal(spy.calls[0].arguments[0], 'Invalid HTTP Response Status: "NaN"')
 		equal(spy.calls[1].arguments[0], 'Unrecognized HTTP Method: "_INVALID_METHOD_"')
 		equal(spy.calls[2].arguments[0], 'Invalid Filename Convention')
 
-		await fx0.unlink()
-		await fx1.unlink()
-		await fx2.unlink()
+		await Promise.all([fx0.unlink(), fx1.unlink(), fx2.unlink()])
 	})
 
 	it('body parser rejects invalid JSON in API requests', async t => {
@@ -229,7 +229,9 @@ describe('CORS', () => {
 	})
 
 	it('responds', async () => {
-		const r = await FX.request({
+		const fx = new Fixture('cors-response.GET.200.json')
+		await fx.sync()
+		const r = await fx.request({
 			headers: {
 				[CorsHeader.Origin]: ALLOWED_ORIGIN
 			}
@@ -237,6 +239,7 @@ describe('CORS', () => {
 		statusIsOk(r)
 		equal(r.headers.get(CorsHeader.AcAllowOrigin), ALLOWED_ORIGIN)
 		equal(r.headers.get(CorsHeader.AcExposeHeaders), 'Content-Encoding')
+		await fx.unlink()
 	})
 })
 
@@ -267,7 +270,9 @@ describe('Cookie', () => {
 		]))
 
 	it('updates selected cookie', async () => {
-		const resA = await FX.request()
+		const fx = new Fixture('update-cookie.GET.200.json')
+		await fx.sync()
+		const resA = await fx.request()
 		equal(resA.headers.get('set-cookie'), COOKIES.userA)
 
 		const response = await api.selectCookie('userB')
@@ -276,8 +281,9 @@ describe('Cookie', () => {
 			['userB', true]
 		])
 
-		const resB = await FX.request()
+		const resB = await fx.request()
 		equal(resB.headers.get('set-cookie'), COOKIES.userB)
+		await fx.unlink()
 	})
 })
 
@@ -297,13 +303,16 @@ describe('Delay', () => {
 	})
 
 	it('updates route delay', async () => {
+		const fx = new Fixture('route-delay.GET.200.json')
+		await fx.sync()
 		const delay = 120
 		await api.setGlobalDelay(delay)
-		await api.setRouteIsDelayed(FX.method, FX.urlMask, true)
+		await api.setRouteIsDelayed(fx.method, fx.urlMask, true)
 		const now = new Date()
-		const r = await FX.request()
-		equal(await r.text(), FX.body)
+		const r = await fx.request()
+		equal(await r.text(), fx.body)
 		isTrue((new Date()).getTime() - now.getTime() > delay)
+		await fx.unlink()
 	})
 
 	describe('Set Route is Delayed', () => {
@@ -312,13 +321,21 @@ describe('Delay', () => {
 			statusIsUnprocessable(r)
 			equal(await r.text(), `Route does not exist: GET /non-existing`)
 		})
+		
 		it('422 for invalid delayed value', async () => {
-			const r = await api.setRouteIsDelayed(FX.method, FX.urlMask, 'not-a-boolean')
+			const fx = new Fixture('set-route-delay.GET.200.json')
+			await fx.sync()
+			const r = await api.setRouteIsDelayed(fx.method, fx.urlMask, 'not-a-boolean')
 			equal(await r.text(), 'Expected boolean for "delayed"')
+			await fx.unlink()
 		})
+		
 		it('200', async () => {
-			const r = await api.setRouteIsDelayed(FX.method, FX.urlMask, true)
+			const fx = new Fixture('set-route-delay.GET.200.json')
+			await fx.sync()
+			const r = await api.setRouteIsDelayed(fx.method, fx.urlMask, true)
 			isTrue((await r.json()).delayed)
+			await fx.unlink()
 		})
 	})
 })
@@ -398,7 +415,14 @@ describe('Proxy Fallback', () => {
 	})
 
 	describe('Set Route is Proxied', () => {
-		beforeEach(async () => await api.setProxyFallback(''))
+		const fx = new Fixture('route-is-proxied.GET.200.json')
+		beforeEach(async () => {
+			await fx.sync()
+			await api.setProxyFallback('')
+		})
+		after(async () => {
+			await fx.unlink()
+		})
 
 		it('422 for non-existing route', async () => {
 			const r = await api.setRouteIsProxied('GET', '/non-existing', true)
@@ -407,30 +431,30 @@ describe('Proxy Fallback', () => {
 		})
 
 		it('422 for invalid proxied value', async () => {
-			const r = await api.setRouteIsProxied(FX.method, FX.urlMask, 'not-a-boolean')
+			const r = await api.setRouteIsProxied(fx.method, fx.urlMask, 'not-a-boolean')
 			statusIsUnprocessable(r)
 			equal(await r.text(), 'Expected boolean for "proxied"')
 		})
 
 		it('422 for missing proxy fallback', async () => {
-			const r = await api.setRouteIsProxied(FX.method, FX.urlMask, true)
+			const r = await api.setRouteIsProxied(fx.method, fx.urlMask, true)
 			statusIsUnprocessable(r)
 			equal(await r.text(), `There’s no proxy fallback`)
 		})
 
 		it('200 when setting', async () => {
 			await api.setProxyFallback('https://example.com')
-			const r0 = await api.setRouteIsProxied(FX.method, FX.urlMask, true)
+			const r0 = await api.setRouteIsProxied(fx.method, fx.urlMask, true)
 			statusIsOk(r0)
 			isTrue((await r0.json()).proxied)
 
-			const r1 = await api.setRouteIsProxied(FX.method, FX.urlMask, false)
+			const r1 = await api.setRouteIsProxied(fx.method, fx.urlMask, false)
 			statusIsOk(r1)
 			isFalse((await r1.json()).proxied)
 		})
 
 		it('200 when unsetting', async () => {
-			const r = await api.setRouteIsProxied(FX.method, FX.urlMask, false)
+			const r = await api.setRouteIsProxied(fx.method, fx.urlMask, false)
 			statusIsOk(r)
 			isFalse((await r.json()).proxied)
 		})
@@ -698,15 +722,17 @@ describe('Static Files', () => {
 
 describe('500', () => {
 	it('toggling on 500 on a route without 500 auto-generates one', async () => {
-		equal((await FX.request()).status, FX.status)
+		const fx = new Fixture('toggling-500-without-500.GET.200.json')
+		await fx.sync()
+		equal((await fx.request()).status, fx.status)
 
-		const r0 = await api.toggle500(FX.method, FX.urlMask)
+		const r0 = await api.toggle500(fx.method, fx.urlMask)
 		isTrue((await r0.json()).auto500)
-		equal((await FX.request()).status, 500)
+		equal((await fx.request()).status, 500)
 
-		const r1 = await api.toggle500(FX.method, FX.urlMask)
+		const r1 = await api.toggle500(fx.method, fx.urlMask)
 		isFalse((await r1.json()).auto500)
-		equal((await FX.request()).status, FX.status)
+		equal((await fx.request()).status, fx.status)
 	})
 
 	it('toggling on 500 picks existing 500', async () => {
@@ -954,10 +980,13 @@ describe('Query String', () => {
 
 
 it('head for get. returns the headers without body only for GETs requested as HEAD', async () => {
-	const r = await FX.request({ method: 'HEAD' })
+	const fx = new Fixture('head-get.GET.200.json')
+	await fx.sync()
+	const r = await fx.request({ method: 'HEAD' })
 	statusIsOk(r)
-	equal(r.headers.get('content-length'), String(Buffer.byteLength(FX.body)))
+	equal(r.headers.get('content-length'), String(Buffer.byteLength(fx.body)))
 	equal(await r.text(), '')
+	await fx.unlink()
 })
 
 

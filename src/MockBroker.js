@@ -55,7 +55,7 @@ export class MockBroker {
 	}
 
 	toggle500() {
-		this.proxied = false // TESTME
+		this.proxied = false
 		if (this.auto500 || this.status === 500)
 			this.selectDefaultFile()
 		else {

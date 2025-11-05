@@ -701,6 +701,18 @@ describe('500', () => {
 		await fx200.unlink()
 		await fx500.unlink()
 	})
+	
+	it('toggling 500 unsets `proxied` flag', async () => {
+		const fx = new Fixture('proxied-to-500.GET.200.txt')
+		await fx.write()
+		await init()
+		await api.setProxyFallback('http://example.com')
+		await api.setRouteIsProxied(fx.method, fx.urlMask, true)
+		await api.toggle500(fx.method, fx.urlMask)
+		isFalse((await fx.fetchBroker()).proxied)
+		await fx.unlink()
+		await api.setProxyFallback('')
+	})
 })
 
 
@@ -999,6 +1011,7 @@ describe('Registering Non-Static Mocks', () => {
 		})
 	})
 })
+
 
 describe('Registering Static Mocks', () => {
 	const fx = new FixtureStatic('static-register.txt')

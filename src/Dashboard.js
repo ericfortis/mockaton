@@ -139,12 +139,11 @@ function GlobalDelayField() {
 }
 
 function BulkSelector() {
-	// TODO For a11y, this should be a `menu` instead of this `select`
 	const { comments } = store
 	const firstOption = t`Pick Comment…`
 	function onChange() {
 		const value = this.value
-		this.value = firstOption // Hack
+		this.value = firstOption // hack so it’s always selected
 		store.bulkSelectByComment(value)
 	}
 	const disabled = !comments.length
@@ -161,6 +160,7 @@ function BulkSelector() {
 				r('option', { value: firstOption }, firstOption),
 				r('hr'),
 				comments.map(value => r('option', { value }, value)))))
+	// TODO For a11y, use `menu` instead of `select`
 }
 
 function CookieSelector() {

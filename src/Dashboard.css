@@ -15,7 +15,7 @@
 		--colorSecondaryActionBorder: #ddd;
 		--colorSecondaryAction: #666;
 		--colorDisabledMockSelector: #444;
-		--colorHover: #dfefff;
+		--colorHover: rgba(119, 193, 255, 0.5);
 		--colorLabel: #555;
 		--colorLightRed: #ffe4ee;
 		--colorRed: #da0f00;
@@ -37,7 +37,7 @@
 		--colorSecondaryAction: #aaa;
 		--colorComboBoxHeaderBackground: #222;
 		--colorDisabledMockSelector: #b9b9b9;
-		--colorHover: #023661;
+		--colorHover: rgba(0, 63, 115, 0.5);
 		--colorLabel: #aaa;
 		--colorLightRed: #ffe4ee;
 		--colorRed: #f41606;
@@ -76,11 +76,24 @@ body {
 	scrollbar-width: thin;
 }
 
-select, a, input, button {
+a,
+input,
+select,
+button {
+	&:focus-visible {
+		outline-offset: -1px;
+		outline: 2px solid var(--colorAccent);
+	}
+}
+
+a,
+select,
+button,
+input[type=checkbox] {
 	cursor: pointer;
 
-	&:focus-visible {
-		outline: 2px solid var(--colorAccent);
+	&:active {
+		cursor: grabbing;
 	}
 }
 
@@ -88,17 +101,10 @@ a {
 	text-decoration: none;
 }
 
-a:active,
-button:active,
-input[type=checkbox]:active {
-	cursor: grabbing;
-}
-
 select {
 	border: 1px solid transparent;
 	font-size: 100%;
 	color: var(--colorText);
-	cursor: pointer;
 	border-radius: var(--radius);
 	appearance: none;
 	background: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%23888888'><path d='M16.59 8.59 12 13.17 7.41 8.59 6 10l6 6 6-6z'/></svg>") no-repeat;
@@ -110,7 +116,6 @@ select {
 		background-color: var(--colorSecondaryButtonBackground);
 		&:hover {
 			border-color: var(--colorHover);
-			cursor: pointer;
 			background-color: var(--colorHover);
 		}
 	}
@@ -247,7 +252,6 @@ header {
 		border: 1px solid var(--colorRed);
 		margin-right: 8px;
 		margin-left: 4px;
-		outline-offset: 1px;
 		background: transparent;
 		border-radius: 50px;
 		color: var(--colorRed);

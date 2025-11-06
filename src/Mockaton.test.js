@@ -678,11 +678,22 @@ describe('Static Files', () => {
 			equal(await r.text(), 'Expected 200 or 404 status code')
 		})
 
-		it('200', async () => {
-			const r = await api.setStaticRouteStatus(fxsIndex.urlMask, 404)
-			statusIsOk(r)
-			const { staticBrokers } = await fetchState()
-			statusIsNotFound(staticBrokers[fxsIndex.urlMask])
+		it('sets 404 and 200', async () => {
+			await api.setStaticRouteStatus(fxsIndex.urlMask, 404)
+			const r0 = await fxsIndex.request()
+			statusIsNotFound(r0)
+			await api.setStaticRouteStatus(fxsIndex.urlMask, 200)
+			const r1 = await fxsIndex.request()
+			statusIsOk(r1)
+		})
+		
+		it('404s on a registered route but its file has been deleted', async () => {
+			// Possible: (1) due to watcher delay. (2) or, when not-watching and deleting.
+			const fx = new FixtureStatic('to-be-deleted.js')
+			await fx.sync()
+			await fx.unlink()
+			const r = await fx.request()
+			statusIsNotFound(r)
 		})
 	})
 

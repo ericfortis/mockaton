@@ -13,14 +13,14 @@ export async function dispatchStatic(req, response) {
 	const broker = brokerByRoute(req.url)
 
 	setTimeout(async () => {
-		if (!broker || broker.status === 404) { // TESTME
+		if (!broker || broker.status === 404) {
 			sendMockNotFound(response)
 			return
 		}
 
 		const file = join(config.staticDir, broker.route)
 		if (!isFile(file)) {
-			sendMockNotFound(response) // TESTME
+			sendMockNotFound(response)
 			return
 		}
 		

@@ -13,6 +13,7 @@
   selecting across pages, (e.g. for selecting and copying)
 - Document cookies for scraping mocks
 - Think about what to do for /.well-known/appspecific/com.chrome.devtools.json
+- Homebrew
 
 
 ### Cookies WIP

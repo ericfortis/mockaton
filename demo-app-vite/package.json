@@ -4,8 +4,8 @@
 	"version": "0.0.1",
 	"type": "module",
 	"scripts": {
-		"mockaton": "mockaton --port=2345",
-		"start": "BACKEND=http://localhost:2345 vite",
+		"mockaton": "mockaton --port=4040",
+		"start": "BACKEND=http://localhost:4040 vite",
 		"pixaton": "node --test --import=./pixaton-tests/_setup.js --experimental-test-isolation=none \"./pixaton-tests/**/*.test.js\"",
 		"outdated": "npm outdated --parseable | awk -F: '{ printf \"npm i %-30s ;# %s\\n\", $4, $2 }'"
 	},

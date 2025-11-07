@@ -70,7 +70,7 @@ function filenameIsValid(file) {
 
 export function unregisterMock(file) {
 	const broker = brokerByFilename(file)
-	if (!broker)
+	if (!broker) // TESTME
 		return
 	const isEmpty = broker.unregister(file)
 	if (isEmpty) {

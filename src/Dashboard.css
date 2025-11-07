@@ -376,11 +376,11 @@ table {
 	tr.animIn {
 		opacity: 0;
 		transform: scaleY(0);
-		animation: _kfAnimIn 180ms ease-in-out forwards;
+		animation: _kfRowIn 180ms ease-in-out forwards;
 	}
 }
 
-@keyframes _kfAnimIn {
+@keyframes _kfRowIn {
 	to {
 		opacity: 1;
 		transform: scaleY(1);

@@ -2,7 +2,7 @@
 
 # Runs Mockaton and Vite in different Terminal windows
 
-MOCKATON_PORT=2345
+MOCKATON_PORT=4040
 MOCKATON_ADDR=http://localhost:${MOCKATON_PORT}
 
 HERE=$(dirname $(realpath $0)) # For running this script from any dir

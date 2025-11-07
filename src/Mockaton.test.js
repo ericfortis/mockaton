@@ -682,6 +682,7 @@ describe('Static Files', () => {
 			await api.setStaticRouteStatus(fxsIndex.urlMask, 404)
 			const r0 = await fxsIndex.request()
 			statusIsNotFound(r0)
+			
 			await api.setStaticRouteStatus(fxsIndex.urlMask, 200)
 			const r1 = await fxsIndex.request()
 			statusIsOk(r1)

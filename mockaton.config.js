@@ -1,9 +1,10 @@
-import { jwtCookie, defineConfig } from './index.js'
+import { jwtCookie } from './index.js'
 
 // See src/config.js for all the options
 // This file is just developing and testing Mockaton
-export default defineConfig({
-	port: 4040,
+
+export default {
+	port: 2020,
 
 	cookies: {
 		'Admin User': 'my-cookie=1;Path=/;SameSite=strict',
@@ -16,4 +17,4 @@ export default defineConfig({
 	},
 	
 	logLevel: 'verbose',
-})
+}

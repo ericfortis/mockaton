@@ -135,42 +135,41 @@ No API state should be too hard to test.
 
 
 ## Use Cases
-<details>
 
-<summary><b>Testing Backend or Frontend</b></summary>
-
-- Empty responses
-- Errors such as _Bad Request_ and _Internal Server Error_
+### Backend or Frontend
+- Testing empty responses
+- Testing errors such as _Bad Request_ and _Internal Server Error_
 - Mocking third-party APIs
-- Polled resources (for triggering their different states)
-  - alerts
-  - notifications
-  - slow to build resources
-
-</details>
+- Triggering different states on an API
+  - alerts, notifications, polled resources
 
 
-<details>
-<summary><b>Testing Frontend</b></summary>
-
+### Frontend
 - Spinners by delaying responses
 - Setting up UI tests
- 
-</details>
 
 
-<details>
-<summary><b>Demoing Complex Backend States</b></summary>
-
+### Simulating Complex Backend States
 Sometimes, the ideal flow you need is too difficult to reproduce from the actual backend.
 For this, you can **Bulk Select** mocks by comments to simulate the complete states
 you want. For example, by adding `(demo-part1)`, `(demo-part2)` to the filenames.
 
-Similarly, you can deploy a **Standalone Demo Server** by compiling the frontend app and
-putting its built assets in `config.staticDir`. And simulate the flow by Bulk Selecting mocks.
-The [aot-fetch-demo repo](https://github.com/ericfortis/aot-fetch-demo) has a working example.
 
-</details>
+### Standalone Demo Server
+You can demo your app by compiling the frontend and putting
+its built assets in `config.staticDir`. For example, this
+repo includes a demo which builds and runs a docker container.
+
+```sh
+git clone https://github.com/ericfortis/mockaton.git --depth 1
+cd mockaton/demo-app-vite
+make
+```
+
+App: http://localhost:4040
+
+Dashboard: http://localhost:4040/mockaton
+
 
 
 
@@ -195,19 +194,10 @@ npx mockaton --port 4040
 curl localhost:4040/api/foo 
 ```
 
-5. Optionally, use a `mockaton.config.js`
-```js
-import { defineConfig } from 'mockaton'
-
-export default defineConfig({
-  port: 4040
-})
-```
-
 
 ### Alternative Installations
 <details>
-<summary>With NPM (package.json script)…</summary>
+<summary>With NPM and package.json script…</summary>
 
 ```shell
 npm install mockaton --save-dev
@@ -590,7 +580,6 @@ Defaults to `'normal'`.
 ```js
 import { Mockaton } from 'mockaton'
 import config from './mockaton.config.js'
-
 
 const server = await Mockaton(
   config // Not required, but it’s not read by default.

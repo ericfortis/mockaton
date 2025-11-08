@@ -21,6 +21,24 @@ For example, for [/api/user/123](#), the filename could be:
 </pre>
 
 
+## Quick Start (Docker)
+This will spin up Mockaton with the mocks included in this repo:
+[mockaton-mocks/](./mockaton-mocks) and [mockaton-static-mocks/](./mockaton-static-mocks)
+
+```sh
+git clone https://github.com/ericfortis/mockaton.git --depth 1
+make docker
+```
+Dashboard: http://localhost:2020/mockaton
+
+
+Test it:
+```shell
+curl localhost:2020/api/user
+```
+
+
+
 ## Dashboard
 
 On the dashboard you can select a mock variant for a particular route,
@@ -149,22 +167,6 @@ make start-standalone-demo
   - Zero dependencies. No runtime and no build packages.
 
 <br/>
-
-## Quick Start (Docker)
-This will spin up Mockaton with the mocks included in this repo:
-[mockaton-mocks/](./mockaton-mocks) and [mockaton-static-mocks/](./mockaton-static-mocks)
-
-```sh
-git clone https://github.com/ericfortis/mockaton.git --depth 1
-make docker
-```
-Dashboard: http://localhost:2020/mockaton
-
-
-Test it:
-```shell
-curl localhost:2020/api/user
-```
 
 
 ## Usage Without Docker

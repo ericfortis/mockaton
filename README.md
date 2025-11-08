@@ -24,8 +24,9 @@ For example, for [/api/company/123](#), the filename could be:
 
 
 ## Quick Start (Docker)
-This will spin up Mockaton with the mocks included in this repo:
+This will spin up Mockaton and the mock directories included in this repo:
 [mockaton-mocks/](./mockaton-mocks) and [mockaton-static-mocks/](./mockaton-static-mocks)
+will be mounted on the container.
 
 ```sh
 git clone https://github.com/ericfortis/mockaton.git --depth 1

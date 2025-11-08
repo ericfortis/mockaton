@@ -1,10 +1,15 @@
 docker: docker-build docker-start
 
 docker-build:
-	docker build -t mockaton .
+	docker build --tag mockaton $(PWD)
 
 docker-start: docker-stop
-	docker run --name mockaton -p 127.0.0.1:2020:2020 mockaton
+	@docker run --name mockaton \
+		--publish 127.0.0.1:2020:2020 \
+		--volume $(PWD)/mockaton.config.js:/app/mockaton.config.js \
+    --volume $(PWD)/mockaton-mocks:/app/mockaton-mocks \
+    --volume $(PWD)/mockaton-static-mocks:/app/mockaton-static-mocks \
+		mockaton
 
 docker-stop:
 	@docker stop mockaton >/dev/null 2>&1 || true
@@ -23,7 +28,7 @@ test:
 
 test-docker:
 	@docker run --rm --interactive --tty \
-		--volume .:/app \
+		--volume $(PWD):/app \
 		--workdir /app \
 		node:24 \
 		make test

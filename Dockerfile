@@ -1,13 +1,6 @@
 FROM node:24-slim
 WORKDIR /app
 
-# Optional
-COPY mockaton.config.js ./
-
-# Your mocks dirs
-COPY mockaton-mocks ./mockaton-mocks
-COPY mockaton-static-mocks ./mockaton-static-mocks
-
 RUN npm init --init-type=module -y
 RUN npm install mockaton@11
 

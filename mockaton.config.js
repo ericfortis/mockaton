@@ -1,7 +1,8 @@
 import { jwtCookie } from 'mockaton'
 
-// See src/config.js for all the options
-// This file is just developing and testing Mockaton
+// See src/config.js for all the options.
+// This file is just developing and testing Mockaton.
+// This file is optional everywhere.
 
 export default {
 	port: 2020,

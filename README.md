@@ -20,6 +20,8 @@ For example, for [/api/company/123](#), the filename could be:
 <code>my-mocks-dir/<b>api/company</b>/[company-id].GET.200.json</code>
 </pre>
 
+<br/>
+
 
 ## Quick Start (Docker)
 This will spin up Mockaton with the mocks included in this repo:
@@ -27,6 +29,7 @@ This will spin up Mockaton with the mocks included in this repo:
 
 ```sh
 git clone https://github.com/ericfortis/mockaton.git --depth 1
+cd mockaton
 make docker
 ```
 Dashboard: http://localhost:2020/mockaton
@@ -38,6 +41,7 @@ curl localhost:2020/api/user
 ```
 
 
+<br/>
 
 ## Dashboard
 
@@ -143,7 +147,6 @@ If you commit the mocks to your repo, you don’t have to downgrade backends whe
 
 <img src="./demo-app-vite/pixaton-tests/pic-for-readme.vp740x880.light.gold.png" alt="Mockaton Demo App Screenshot" width="740" />
 
-<br/>
 
 ### Standalone demo server (Docker)
 You can demo your app by compiling the frontend and putting
@@ -228,8 +231,6 @@ Mockaton looks for a file `mockaton.config.js` in its current working directory.
 
 <details>
 <summary>Defaults Overview… </summary>
-
-As an overview, these are the defaults:
 
 ```js
 import {

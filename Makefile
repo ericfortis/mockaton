@@ -1,7 +1,7 @@
 docker: docker-build docker-run
 
 docker-build:
-	docker build --tag mockaton $(PWD)
+	@docker build --tag mockaton $(PWD)
 
 docker-run: docker-stop
 	@docker run --name mockaton \
@@ -44,8 +44,10 @@ pixaton:
 		--import=./pixaton-tests/_setup.js \
 		'pixaton-tests/**/*.test.js'
 
+
 outdated:
 	@npm outdated --parseable |\
 		awk -F: '{ printf "npm i %-30s ;# %s\n", $$4, $$2 }'
+
 
 .PHONY: *

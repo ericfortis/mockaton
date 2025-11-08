@@ -9,6 +9,7 @@ import { config, calcDelay } from './config.js'
 import { sendMockNotFound, sendPartialContent } from './utils/http-response.js'
 
 
+// TODO HEAD
 export async function dispatchStatic(req, response) {
 	const broker = brokerByRoute(req.url)
 

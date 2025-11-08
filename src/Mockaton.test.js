@@ -16,7 +16,7 @@ import { readBody } from './utils/http-request.js'
 import { Commander } from './ApiCommander.js'
 import { CorsHeader } from './utils/http-cors.js'
 import { parseFilename } from './Filename.js'
-import { uiSyncVersion, watchMocksDir, watchStaticDir } from './Watcher.js'
+import { watchMocksDir, watchStaticDir } from './Watcher.js'
 
 
 const mocksDir = mkdtempSync(tmpdir() + '/mocks') + '/'
@@ -34,15 +34,15 @@ class BaseFixture {
 	}
 
 	async register() {
-		const nextVer = api.getSyncVersion(uiSyncVersion.version)
+		const nextVerPromise = api.getSyncVersion()
 		await this.write()
-		await nextVer
+		await nextVerPromise
 	}
 
 	async unregister() {
-		const nextVer = api.getSyncVersion(uiSyncVersion.version)
+		const nextVerPromise = api.getSyncVersion()
 		await this.unlink()
-		await nextVer
+		await nextVerPromise
 	}
 
 	async write() { await writeFile(this.path, this.body, 'utf8') }
@@ -509,7 +509,7 @@ describe('404', () => {
 	it('404s ignored files', async () => {
 		const fx = new Fixture('ignored.GET.200.json~')
 		await fx.write()
-		await sleep()
+		await sync()
 		const r = await fx.request()
 		statusIsNotFound(r)
 		await fx.unlink()
@@ -518,7 +518,7 @@ describe('404', () => {
 	it('404s ignored static files', async () => {
 		const fx = new FixtureStatic('static-ignored.js~')
 		await fx.write()
-		await sleep()
+		await sync()
 		const r = await fx.request()
 		statusIsNotFound(r)
 		await fx.unlink()
@@ -540,7 +540,7 @@ describe('Default Mock', () => {
 	})
 
 	it('sorts mocks list with the user specified default first for dashboard display', async () => {
-		const { mocks } = (await fetchState()).brokersByMethod.GET[fxA.urlMask]
+		const { mocks } = await fxA.fetchBroker()
 		deepEqual(mocks, [
 			fxB.file,
 			fxA.file
@@ -1092,7 +1092,4 @@ function statusIsOk(response) { equal(response.status, 200) }
 function statusIsNotFound(response) { equal(response.status, 404) }
 function statusIsUnprocessable(response) { equal(response.status, 422) }
 
-async function sleep(ms = 50) {
-	return new Promise(resolve => setTimeout(resolve, ms))
-}
 

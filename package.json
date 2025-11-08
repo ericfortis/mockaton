@@ -23,8 +23,7 @@
 		"mockaton": "src/cli.js"
 	},
 	"scripts": {
-		"start": "make start",
-		"outdated": "npm outdated --parseable | awk -F: '{ printf \"npm i %-30s ;# %s\\n\", $4, $2 }'"
+		"start": "make start"
 	},
 	"devDependencies": {
 		"pixaton": "1.1.3",

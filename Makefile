@@ -1,9 +1,9 @@
-docker: docker-build docker-start
+docker: docker-build docker-run
 
 docker-build:
 	docker build --tag mockaton $(PWD)
 
-docker-start: docker-stop
+docker-run: docker-stop
 	@docker run --name mockaton \
 		--publish 127.0.0.1:2020:2020 \
 		--volume $(PWD)/mockaton.config.js:/app/mockaton.config.js \

@@ -14,10 +14,10 @@ With Mockaton, you don’t need to write code for wiring up your
 mocks. Instead, a given directory is scanned for filenames
 following a convention similar to the URLs.
 
-For example, for [/api/user/123](#), the filename could be:
+For example, for [/api/company/123](#), the filename could be:
 
 <pre>
-<code>my-mocks-dir/<b>api/user</b>/[user-id].GET.200.json</code>
+<code>my-mocks-dir/<b>api/company</b>/[company-id].GET.200.json</code>
 </pre>
 
 

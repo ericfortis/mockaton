@@ -1,4 +1,4 @@
-import { jwtCookie } from './index.js'
+import { jwtCookie } from 'mockaton'
 
 // See src/config.js for all the options
 // This file is just developing and testing Mockaton

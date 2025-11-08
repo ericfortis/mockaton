@@ -1,3 +1,16 @@
+docker: docker-build docker-start
+
+docker-build:
+	docker build -t mockaton .
+
+docker-start: docker-stop
+	docker run --name mockaton -p 127.0.0.1:2020:2020 mockaton
+
+docker-stop:
+	@docker stop mockaton >/dev/null 2>&1 || true
+	@docker rm mockaton >/dev/null 2>&1 || true
+	
+
 start:
 	@node src/cli.js
 

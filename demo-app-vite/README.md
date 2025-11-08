@@ -5,14 +5,15 @@ This a minimal React + Vite + Mockaton app you can play with.
 <img src="./pixaton-tests/pic-for-readme.vp740x880.light.gold.png" alt="Mockaton Demo App Screenshot" width="740" />
 
 
-## Install Dependencies
+## Dev Setup
+### Install Dependencies
 ```
 cd demo-app-vite
 npm install
 ```
 
 
-## Start Mockaton and Vite
+### Start Mockaton and Vite
 ```sh
 npm run mockaton
 ```
@@ -31,7 +32,7 @@ Alternatively, you can start Mockaton and Vite in one command:
 ```
 
 
-## vite.config.js
+### vite.config.js
 
 For proxying Mockaton we pass its address as an environment variable:
 
@@ -43,4 +44,15 @@ server: {
       changeOrigin: true
     }
 }
+```
+
+---
+
+## Standalone Demo Server
+This will build the frontend SPA, and start a docker container
+with Mockaton serving that SPA.
+
+```sh
+cd demo-app-vite
+make
 ```

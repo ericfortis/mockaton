@@ -1,12 +1,12 @@
-all: build-demo run-demo
+all: build-standalone-demo start-standalone-demo
 
-build-demo:
+build-standalone-demo:
 	docker build -t mockaton .
 
-run-demo: down
+start-standalone-demo: stop-standalone-demo
 	docker run --name mockaton -p 127.0.0.1:4040:4040 mockaton
 
-down:
+stop-standalone-demo:
 	@docker stop mockaton >/dev/null 2>&1 || true
 	@docker rm mockaton >/dev/null 2>&1 || true
 	

@@ -1,4 +1,4 @@
-# STAGE 1: Build App
+# Stage 1: Build Frontend App
 FROM node:24-slim AS builder
 WORKDIR /app
 
@@ -12,7 +12,7 @@ RUN npm ci
 RUN npm run build
 
 
-# STAGE 2: Run Mockaton
+# Stage 2: Run Mockaton as standalone demo server
 FROM node:24-slim
 WORKDIR /app
 
@@ -25,10 +25,4 @@ RUN npm init --init-type=module -y
 RUN npm install mockaton@11
 
 EXPOSE 4040
-CMD [ \
-	"npx", "mockaton", \
-		"--host", "0.0.0.0", \
-		"--port", "4040", \
-		"--mocks-dir", "/app/mockaton-mocks", \
-		"--static-dir", "/app/mockaton-static-mocks" \
-]
+CMD ["npx", "mockaton",  "--host", "0.0.0.0",  "--port", "4040"]

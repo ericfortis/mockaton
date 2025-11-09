@@ -31,17 +31,20 @@ export async function dispatchMock(req, response) {
 		if (cookie.getCurrent())
 			response.setHeader('Set-Cookie', cookie.getCurrent())
 
-		response.statusCode = broker.auto500 ? 500 : broker.status // TESTME plugins can change it
+		response.statusCode = broker.auto500 
+			? 500 
+			: broker.status
 		const { mime, body } = broker.auto500
 			? { mime: '', body: '' }
 			: await applyPlugins(join(config.mocksDir, broker.file), req, response)
 
-		logger.accessMock(req.url, broker.file)
 		response.setHeader('Content-Type', mime)
 		response.setHeader('Content-Length', length(body))
 		
 		setTimeout(() => response.end(isHead ? null : body),
 			Number(broker.delayed && calcDelay()))
+		
+		logger.accessMock(req.url, broker.file)
 	}
 	catch (error) { // TESTME
 		if (error?.code === 'ENOENT') // mock-file has been deleted

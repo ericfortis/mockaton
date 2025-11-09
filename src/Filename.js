@@ -1,4 +1,4 @@
-const httpMethods = [ // @KeepSync with node:http.METHODS
+const httpMethods = [ // @KeepSync node:http.METHODS (this file is used on the client too)
 	'ACL', 'BIND', 'CHECKOUT', 'CONNECT', 'COPY', 'DELETE',
 	'GET', 'HEAD', 'LINK', 'LOCK', 'M-SEARCH', 'MERGE',
 	'MKACTIVITY', 'MKCALENDAR', 'MKCOL', 'MOVE', 'NOTIFY', 'OPTIONS',
@@ -28,7 +28,7 @@ export function validateFilename(file) {
 	if (!httpMethods.includes(method))
 		return `Unrecognized HTTP Method: "${method}"`
 } 
-// TODO ThinkAbout 206 (reject, handle, or send in full?)
+// TODO @ThinkAbout 206 (reject, handle, or send in full?)
 
 
 export function parseFilename(file) {
@@ -53,7 +53,7 @@ function responseStatusIsValid(status) {
 		&& status >= 100
 		&& status <= 599
 }
-// TODO ThinkAbout allowing custom status codes
+// TODO @ThinkAbout allowing custom status codes
 
 
 export function makeMockFilename(url, method, status, ext) {

@@ -29,7 +29,7 @@ export function init() {
 
 /** @returns {boolean} registered */
 export function registerMock(relativeFile) {
-	if (!isFileAllowed(basename(relativeFile))) // TESTME
+	if (!isFileAllowed(basename(relativeFile)))
 		return false
 
 	const route = '/' + relativeFile

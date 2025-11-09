@@ -22,7 +22,7 @@ export class MockBroker {
 
 	#sortMocks() {
 		this.mocks.sort()
-		const defaults = this.mocks.filter(file => includesComment(file, DEFAULT_MOCK_COMMENT))
+		const defaults = this.mocks.filter(f => includesComment(f, DEFAULT_MOCK_COMMENT))
 		this.mocks = Array.from(new Set(defaults).union(new Set(this.mocks)))
 	}
 

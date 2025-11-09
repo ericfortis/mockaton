@@ -70,10 +70,8 @@ function filenameIsValid(file) {
 
 export function unregisterMock(file) {
 	const broker = brokerByFilename(file)
-	if (!broker) // TESTME
-		return
-	const isEmpty = broker.unregister(file)
-	if (isEmpty) {
+	const hasNoMoreMocks = broker?.unregister(file)
+	if (hasNoMoreMocks) {
 		const { method, urlMask } = parseFilename(file)
 		delete collection[method][urlMask]
 		if (!Object.keys(collection[method]).length)
@@ -96,9 +94,7 @@ export function brokerByFilename(file) {
  * worry about the primacy of array-like keys when iterating.
  @returns {MockBroker | undefined} */
 export function brokerByRoute(method, url) {
-	if (!collection[method])
-		return
-	const brokers = Object.values(collection[method])
+	const brokers = Object.values(collection[method] || {})
 	for (let i = brokers.length - 1; i >= 0; i--)
 		if (brokers[i].urlMaskMatches(url))
 			return brokers[i]

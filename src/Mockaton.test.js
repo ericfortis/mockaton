@@ -1031,7 +1031,7 @@ describe('Registering Non-Static Mocks', () => {
 		const b = await fxB.fetchBroker()
 		isUndefined(b)
 	})
-
+	
 	it('registering a 500 unsets auto500', async () => {
 		const fx200 = new Fixture('reg-error.GET.200.txt')
 		const fx500 = new Fixture('reg-error.GET.500.txt')
@@ -1059,17 +1059,19 @@ describe('Registering Non-Static Mocks', () => {
 			version = await r.json()
 		})
 
-		const fx0 = new Fixture('runtime1.GET.200.txt')
+		const fx = new Fixture('runtime1.GET.200.txt')
 		it('responds when a file is added', async () => {
 			const prom = api.getSyncVersion(version)
-			await fx0.write()
-			equal(await (await prom).json(), version + 1)
+			await fx.write()
+			const r = await prom
+			equal(await r.json(), version + 1)
 		})
 
 		it('responds when a file is deleted', async () => {
 			const prom = api.getSyncVersion(version + 1)
-			await fx0.unlink()
-			equal(await (await prom).json(), version + 2)
+			await fx.unlink()
+			const r = await prom
+			equal(await r.json(), version + 2)
 		})
 	})
 })

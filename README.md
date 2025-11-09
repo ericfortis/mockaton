@@ -123,24 +123,12 @@ They will be saved in your `config.mocksDir` following the filename convention.
 
 ## Motivation
 
-### Testing scenarios that would otherwise be skipped
-- Simulate errors on third-party APIs, or on your project’s backend (if you are a frontend dev, or unfamiliar with that code)
-- Trigger dynamic states on an API. You can do this by using comments on mock filenames, for example, for polled alerts or notifications.
-- Trigger empty (no content) responses
-- Sometimes, the ideal flow you need is just too difficult to reproduce from the actual backend
-
-### Works around unstable dev backends while developing UIs
-- Spinning up dev infrastructure
-- Syncing the database
-- Mitigates progress from being blocked by waiting for APIs
-
-### Time travel
-If you commit the mocks to your repo, you don’t have to downgrade backends when:
-- Checking out long-lived branches
-- Bisecting bugs
-
 ### Deterministic and comprehensive states
-- Ideal for setting up screenshot tests, e.g., with [pixaton](https://github.com/ericfortis/pixaton)
+Sometimes, the flow you need to test or demo is
+too difficult to reproduce from the actual backend.
+ 
+- Demo edge cases to design and PMs
+- Sett up screenshot tests, e.g., with [pixaton](https://github.com/ericfortis/pixaton)
 - Spot inadvertent regressions during development. For example, the demo app in
   this repo has a list of colors containing all of their possible states, such as
   permutations for out-of-stock, new-arrival, and discontinued. This way you’ll
@@ -148,6 +136,10 @@ If you commit the mocks to your repo, you don’t have to downgrade backends whe
 
 <img src="./demo-app-vite/pixaton-tests/pic-for-readme.vp740x880.light.gold.png" alt="Mockaton Demo App Screenshot" width="740" />
 
+<br/>
+
+
+## Benefits
 
 ### Standalone demo server (Docker)
 You can demo your app by compiling the frontend and putting
@@ -162,6 +154,15 @@ make start-standalone-demo
 - App: http://localhost:4040
 - Dashboard: http://localhost:4040/mockaton
 
+### Testing scenarios that would otherwise be skipped
+- Trigger dynamic states on an API. You can do this by using comments on mock filenames, for example, for polled alerts or notifications.
+- Simulate errors on third-party APIs, or on your project’s backend (if you are a frontend dev, or unfamiliar with that code)
+- Generating dynamic responses on the fly. Mockaton lets you use Node’s HTTP handlers (see function mocks) when using function mocks.
+So you can, e.g.:
+  - have an in-memory database
+  - read from disk
+  - read query string 
+  - pretty much anything you can do with a normal backend request handler
 
 ### Privacy and security
 - Does not write to disk. Except when you select ✅ **Save Mocks** for scraping mocks from a backend
@@ -170,10 +171,27 @@ make start-standalone-demo
 - Auditable, organized, and small. 4 KLoC (half is UI and tests)
   - Zero dependencies. No runtime and no build packages.
 
+
+## Benefits of Mocking APIs in General
+The section above highlights benefits specific to Mockaton. There are more, but
+in general there are benefits which Mockaton has but other tools have as well, such as:
+
+### Works around unstable dev backends while developing UIs
+- Spinning up dev infrastructure
+- Syncing the database
+- Mitigates progress from being blocked by waiting for APIs
+
+### Time travel
+If you commit the mocks to your repo, you don’t have to downgrade backends when:
+- Checking out long-lived branches
+- Bisecting bugs
+
 <br/>
 
 
-## Usage Without Docker
+## Usage (without Docker)
+
+_For Docker, see Quick-Start section above._
 
 Requires Node.js. **v22.18+** support writing mocks in TypeScript.
 
@@ -230,16 +248,11 @@ The CLI options override their counterparts in `mockaton.config.js`
 ## mockaton.config.js (Optional)
 Mockaton looks for a file `mockaton.config.js` in its current working directory.
 
-<details>
-<summary>Defaults Overview… </summary>
+### Defaults Overview
+The next section has the documentation, but here's an overview of the defaults:
 
 ```js
-import {
-  defineConfig,
-  jsToJsonPlugin,
-  openInBrowser,
-  SUPPORTED_METHODS
-} from 'mockaton'
+import { defineConfig, jsToJsonPlugin, openInBrowser, SUPPORTED_METHODS } from 'mockaton'
 
 export default defineConfig({
   mocksDir: 'mockaton-mocks',
@@ -248,11 +261,11 @@ export default defineConfig({
   watcherEnabled: true,
 
   host: '127.0.0.1',
-  port: 0,
+  port: 0, // auto-assigned
 
   logLevel: 'normal',
 
-  delay: 1200,
+  delay: 1200, // Global value in ms. But only applied to routes with the Delayed checkbox "ON"
   delayJitter: 0,
 
   proxyFallback: '',
@@ -280,8 +293,7 @@ export default defineConfig({
 })
 ```
 
-</details>
-
+<br/>
 <details>
 <summary><b>Config Documentation…</b></summary>
 
@@ -572,7 +584,7 @@ For example, `api/foo.GET.200.js`
 export default { foo: 'bar' }
 ```
 
-### Option B: Function (async or sync)
+### Option B: Function Mocks (async or sync)
 
 **Return** a `string | Buffer | Uint8Array`, but **don’t call** `response.end()`
 

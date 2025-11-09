@@ -610,10 +610,7 @@ table {
 		> code {
 			white-space: pre;
 			tab-size: 2;
-
-			> .json {
-				color: var(--colorSecondaryAction);
-			}
+			color: var(--colorSecondaryAction);
 
 			.syntaxPunc {
 				color: var(--colorSecondaryAction);

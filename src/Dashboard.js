@@ -36,7 +36,6 @@ const CSS = {
 	rightSide: null,
 	status4xx: null,
 
-	json: null,
 	syntaxAttr: null,
 	syntaxAttrVal: null,
 	syntaxKey: null,
@@ -649,8 +648,8 @@ async function updatePayloadViewer(proxied, file, response) {
 		}))
 	else {
 		const body = await response.text() || t`/* Empty Response Body */`
-		if (mime === 'application/json')
-			payloadViewerCodeRef.elem.replaceChildren(r('span', className(CSS.json), SyntaxJSON(body)))
+		if (mime === 'application/json') 
+			payloadViewerCodeRef.elem.replaceChildren(SyntaxJSON(body))
 		else if (isXML(mime))
 			payloadViewerCodeRef.elem.replaceChildren(SyntaxXML(body))
 		else
@@ -755,9 +754,11 @@ function initRealTimeUpdates() {
 					ErrorToast.close()
 
 				const version = await response.json()
+				const shouldSkip = oldVersion === undefined
 				if (oldVersion !== version) { // because it could be < or >
 					oldVersion = version
-					store.fetchState()
+					if (!shouldSkip)
+						store.fetchState()
 				}
 				longPoll()
 			}

@@ -55,18 +55,19 @@ export class MockBroker {
 	}
 
 	toggle500() {
-		this.proxied = false
-		if (this.auto500 || this.status === 500)
+		const shouldUnset = this.auto500 || this.status === 500
+		if (shouldUnset)
 			this.selectDefaultFile()
 		else {
-			const f = this.mocks.find(this.#is500) // TESTME
-			if (f)
-				this.selectFile(f)
+			const f500 = this.mocks.find(this.#is500)
+			if (f500)
+				this.selectFile(f500)
 			else {
 				this.auto500 = true
-				this.status = 500 // TESTME
+				this.status = 500
 			}
 		}
+		this.proxied = false
 	}
 
 	setDelayed(delayed) {

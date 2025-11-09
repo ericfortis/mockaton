@@ -41,7 +41,9 @@ export function Mockaton(options) {
 
 async function onRequest(req, response) {
 	response.on('error', logger.warn)
-	response.setHeader('Server', 'Mockaton')
+	
+	for (let i = 0; i < config.extraHeaders.length; i += 2)
+		response.setHeader(config.extraHeaders[i], config.extraHeaders[i + 1])
 
 	const url = req.url || ''
 

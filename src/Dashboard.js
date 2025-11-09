@@ -250,20 +250,24 @@ function SettingsMenu(id) {
 				}
 			},
 
-			r('label', className(CSS.GroupByMethod),
-				r('input', {
-					ref: firstInputRef,
-					type: 'checkbox',
-					checked: store.groupByMethod,
-					onChange: store.toggleGroupByMethod
-				}),
-				r('span', null, t`Group by Method`)),
+			r('div', null,
+				r('label', className(CSS.GroupByMethod),
+					r('input', {
+						ref: firstInputRef,
+						type: 'checkbox',
+						checked: store.groupByMethod,
+						onChange: store.toggleGroupByMethod
+					}),
+					r('span', null, t`Group by Method`)),
 
-			r('a', {
-				href: 'https://github.com/ericfortis/mockaton',
-				target: '_blank',
-				rel: 'noopener noreferrer'
-			}, t`Documentation`)))
+				r('a', {
+					href: 'https://github.com/ericfortis/mockaton',
+					target: '_blank',
+					rel: 'noopener noreferrer'
+				}, t`Documentation`),
+
+				r('p', null, `v${store.mockatonVersion}`)
+			)))
 }
 
 
@@ -648,7 +652,7 @@ async function updatePayloadViewer(proxied, file, response) {
 		}))
 	else {
 		const body = await response.text() || t`/* Empty Response Body */`
-		if (mime === 'application/json') 
+		if (mime === 'application/json')
 			payloadViewerCodeRef.elem.replaceChildren(SyntaxJSON(body))
 		else if (isXML(mime))
 			payloadViewerCodeRef.elem.replaceChildren(SyntaxXML(body))

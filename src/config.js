@@ -1,4 +1,5 @@
 import { resolve } from 'node:path'
+import pkgJSON from '../package.json' with { type: 'json' }
 
 import { logger } from './utils/logger.js'
 import { isDirectory } from './utils/fs.js'
@@ -81,6 +82,7 @@ export function setup(options) {
 	Object.assign(config, options)
 	validate(config, ConfigValidator)
 	logger.setLevel(config.logLevel)
+	config.extraHeaders.push('Server', `Mockaton ${pkgJSON.version}`)
 }
 
 

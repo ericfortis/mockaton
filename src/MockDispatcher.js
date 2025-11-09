@@ -31,9 +31,6 @@ export async function dispatchMock(req, response) {
 		if (cookie.getCurrent())
 			response.setHeader('Set-Cookie', cookie.getCurrent())
 
-		for (let i = 0; i < config.extraHeaders.length; i += 2) // TESTME
-			response.setHeader(config.extraHeaders[i], config.extraHeaders[i + 1])
-
 		response.statusCode = broker.auto500 ? 500 : broker.status // TESTME plugins can change it
 		const { mime, body } = broker.auto500
 			? { mime: '', body: '' }

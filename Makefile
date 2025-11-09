@@ -1,7 +1,7 @@
 docker: docker-build docker-run
 
 docker-build:
-	@docker build --tag mockaton $(PWD)
+	@docker build --no-cache --tag mockaton $(PWD)
 
 docker-run: docker-stop
 	@docker run --name mockaton \

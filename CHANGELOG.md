@@ -1,4 +1,7 @@
 # Changelog
+- 11.2.0 dashboard: show Mockaton’s version
+![](docs/11.2.0-version.png)
+ 
 - 11.1.0 new `config.watcherEnabled`
 - 11.0.0 **Breaking change**, but of undocumented APIs.
   - If you use the Mockaton’s API directly (if you use the [Commander](./src/ApiCommander.js)

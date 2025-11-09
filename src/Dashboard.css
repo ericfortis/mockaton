@@ -235,6 +235,9 @@ header {
 					margin: 0;
 					margin-right: 4px;
 				}
+				input:enabled + span {
+					cursor: pointer;
+				}
 				input:disabled + span {
 					opacity: 0.8;
 				}
@@ -287,23 +290,30 @@ header {
 	top: 62px;
 	right: 10px;
 	left: auto;
-	padding: 20px;
 	border: 1px solid var(--colorSecondaryActionBorder);
-	text-align: left;
 	color: var(--colorText);
 	border-radius: var(--radius);
 	box-shadow: var(--boxShadow1);
 	background: var(--colorHeaderBackground);
 
-	a {
-		color: var(--colorAccent);
-	}
+	> div {
+		display: inline-flex;
+		flex-direction: column;
+		padding: 20px;
+		cursor: auto;
+		gap: 12px;
+		text-align: left;
 
-	.GroupByMethod {
-		display: flex;
-		align-items: center;
-		margin-bottom: 12px;
-		gap: 6px;
+		a {
+			color: var(--colorAccent);
+		}
+
+		.GroupByMethod {
+			display: flex;
+			align-items: center;
+			gap: 6px;
+			cursor: pointer;
+		}
 	}
 }
 

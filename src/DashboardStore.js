@@ -26,10 +26,13 @@ export const store = {
 
 	getSyncVersion: api.getSyncVersion,
 
+	mockatonVersion: '',
+	
 	async fetchState() {
 		try {
 			const response = await api.getState()
 			if (!response.ok) throw response
+			store.mockatonVersion = response.headers.get('server').split(' ').pop()
 			Object.assign(store, await response.json())
 			store.render()
 		}

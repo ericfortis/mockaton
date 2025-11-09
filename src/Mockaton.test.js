@@ -47,7 +47,7 @@ class BaseFixture {
 
 	async write() { await writeFile(this.path, this.body, 'utf8') }
 	async unlink() { await unlink(this.path) }
-	
+
 	async sync() {
 		await this.write()
 		await sync()
@@ -90,6 +90,8 @@ class FixtureStatic extends BaseFixture {
 const COOKIES = { userA: 'CookieA', userB: 'CookieB' }
 const CUSTOM_EXT = 'custom_extension'
 const CUSTOM_MIME = 'custom_mime'
+const CUSTOM_HEADER_NAME = 'custom_header_name'
+const CUSTOM_HEADER_VAL = 'custom_header_val'
 const ALLOWED_ORIGIN = 'http://example.com'
 
 const server = await Mockaton({
@@ -97,7 +99,7 @@ const server = await Mockaton({
 	staticDir,
 	onReady() {},
 	cookies: COOKIES,
-	extraHeaders: ['Server', 'MockatonTester'],
+	extraHeaders: [CUSTOM_HEADER_NAME, CUSTOM_HEADER_VAL],
 	extraMimes: { [CUSTOM_EXT]: CUSTOM_MIME },
 	logLevel: 'quiet',
 	corsOrigins: [ALLOWED_ORIGIN],
@@ -321,7 +323,7 @@ describe('Delay', () => {
 			statusIsUnprocessable(r)
 			equal(await r.text(), `Route does not exist: GET /non-existing`)
 		})
-		
+
 		it('422 for invalid delayed value', async () => {
 			const fx = new Fixture('set-route-delay.GET.200.json')
 			await fx.sync()
@@ -329,7 +331,7 @@ describe('Delay', () => {
 			equal(await r.text(), 'Expected boolean for "delayed"')
 			await fx.unlink()
 		})
-		
+
 		it('200', async () => {
 			const fx = new Fixture('set-route-delay.GET.200.json')
 			await fx.sync()
@@ -458,22 +460,22 @@ describe('Proxy Fallback', () => {
 			statusIsOk(r)
 			isFalse((await r.json()).proxied)
 		})
-		
+
 		it('unsets auto500', async () => {
 			const fx = new Fixture('unset-500-on-proxy.GET.200.txt')
 			await fx.sync()
 			await api.setProxyFallback('https://example.com')
-			
+
 			const r0 = await api.toggle500(fx.method, fx.urlMask)
 			const b0 = await r0.json()
 			isFalse(b0.proxied)
 			isTrue(b0.auto500)
-			
+
 			const r1 = await api.setRouteIsProxied(fx.method, fx.urlMask, true)
 			const b1 = await r1.json()
 			isTrue(b1.proxied)
 			isFalse(b1.auto500)
-			
+
 			await fx.unlink()
 			await api.setProxyFallback('')
 		})
@@ -682,12 +684,12 @@ describe('Static Files', () => {
 			await api.setStaticRouteStatus(fxsIndex.urlMask, 404)
 			const r0 = await fxsIndex.request()
 			statusIsNotFound(r0)
-			
+
 			await api.setStaticRouteStatus(fxsIndex.urlMask, 200)
 			const r1 = await fxsIndex.request()
 			statusIsOk(r1)
 		})
-		
+
 		it('404s on a registered route but its file has been deleted', async () => {
 			// Possible: (1) due to watcher delay. (2) or, when not-watching and deleting.
 			const fx = new FixtureStatic('to-be-deleted.js')
@@ -753,7 +755,7 @@ describe('500', () => {
 		await fx200.unlink()
 		await fx500.unlink()
 	})
-	
+
 	it('toggling 500 unsets `proxied` flag', async () => {
 		const fx = new Fixture('proxied-to-500.GET.200.txt')
 		await fx.sync()
@@ -793,6 +795,21 @@ describe('MIME', () => {
 		const r = await fx.request()
 		equal(r.headers.get('content-type'), CUSTOM_MIME)
 		await fx.unlink()
+	})
+})
+
+
+describe('Headers', () => {
+	it('responses have version in "Server" header', async () => {
+		const r = await api.getState()
+		const val = r.headers.get('server')
+		match(val, /^Mockaton \d+\.\d+\.\d+$/)
+	})
+	
+	it('custom headers are included', async () => {
+		const r = await api.getState()
+		const val = r.headers.get(CUSTOM_HEADER_NAME)
+		equal(val, CUSTOM_HEADER_VAL)
 	})
 })
 

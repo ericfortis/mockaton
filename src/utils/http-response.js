@@ -1,8 +1,14 @@
 import fs, { readFileSync } from 'node:fs'
+
 import { logger } from './logger.js'
 import { mimeFor } from './mime.js'
 import { HEADER_502 } from '../ApiConstants.js'
 
+
+export function setHeaders(response, headers) {
+	for (let i = 0; i < headers.length; i += 2)
+		response.setHeader(headers[i], headers[i + 1])
+}
 
 export function sendOK(response) {
 	logger.access(response)

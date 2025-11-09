@@ -1,5 +1,4 @@
 import { resolve } from 'node:path'
-import pkgJSON from '../package.json' with { type: 'json' }
 
 import { logger } from './utils/logger.js'
 import { isDirectory } from './utils/fs.js'
@@ -82,13 +81,10 @@ export function setup(options) {
 	Object.assign(config, options)
 	validate(config, ConfigValidator)
 	logger.setLevel(config.logLevel)
-	config.extraHeaders.push('Server', `Mockaton ${pkgJSON.version}`)
 }
-
 
 export const isFileAllowed = f => !config.ignore.test(f)
 
 export const calcDelay = () => config.delayJitter
 	? config.delay * (1 + Math.random() * config.delayJitter)
 	: config.delay
-

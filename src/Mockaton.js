@@ -1,4 +1,5 @@
 import { createServer } from 'node:http'
+import pkgJSON from '../package.json' with { type: 'json' }
 
 import { API } from './ApiConstants.js'
 import { logger } from './utils/logger.js'
@@ -11,7 +12,10 @@ import { setCorsHeaders, isPreflight } from './utils/http-cors.js'
 import { watchMocksDir, watchStaticDir } from './Watcher.js'
 import { apiPatchRequests, apiGetRequests } from './Api.js'
 import { BodyReaderError, hasControlChars } from './utils/http-request.js'
-import { sendNoContent, sendInternalServerError, sendUnprocessable, sendTooLongURI, sendBadRequest } from './utils/http-response.js'
+import {
+	setHeaders, sendNoContent, sendInternalServerError,
+	sendUnprocessable, sendTooLongURI, sendBadRequest
+} from './utils/http-response.js'
 
 
 export function Mockaton(options) {
@@ -41,9 +45,9 @@ export function Mockaton(options) {
 
 async function onRequest(req, response) {
 	response.on('error', logger.warn)
-	
-	for (let i = 0; i < config.extraHeaders.length; i += 2)
-		response.setHeader(config.extraHeaders[i], config.extraHeaders[i + 1])
+
+	response.setHeader('Server', `Mockaton ${pkgJSON.version}`)
+	setHeaders(response, config.extraHeaders)
 
 	const url = req.url || ''
 

@@ -209,10 +209,10 @@ describe('CORS', () => {
 		it('200', async () => {
 			const r = await api.setCorsAllowed(true)
 			statusIsOk(r)
-			isTrue((await fetchState()).corsAllowed)
+			equal((await fetchState()).corsAllowed, true)
 
 			await api.setCorsAllowed(false)
-			isFalse((await fetchState()).corsAllowed)
+			equal((await fetchState()).corsAllowed, false)
 		})
 	})
 
@@ -313,7 +313,7 @@ describe('Delay', () => {
 		const now = new Date()
 		const r = await fx.request()
 		equal(await r.text(), fx.body)
-		isTrue((new Date()).getTime() - now.getTime() > delay)
+		equal((new Date()).getTime() - now.getTime() > delay, true)
 		await fx.unlink()
 	})
 
@@ -336,7 +336,7 @@ describe('Delay', () => {
 			const fx = new Fixture('set-route-delay.GET.200.json')
 			await fx.sync()
 			const r = await api.setRouteIsDelayed(fx.method, fx.urlMask, true)
-			isTrue((await r.json()).delayed)
+			equal((await r.json()).delayed, true)
 			await fx.unlink()
 		})
 	})
@@ -409,10 +409,10 @@ describe('Proxy Fallback', () => {
 
 		it('200 set and unset', async () => {
 			await api.setCollectProxied(true)
-			isTrue((await fetchState()).collectProxied)
+			equal((await fetchState()).collectProxied, true)
 
 			await api.setCollectProxied(false)
-			isFalse((await fetchState()).collectProxied)
+			equal((await fetchState()).collectProxied, false)
 		})
 	})
 
@@ -448,17 +448,17 @@ describe('Proxy Fallback', () => {
 			await api.setProxyFallback('https://example.com')
 			const r0 = await api.setRouteIsProxied(fx.method, fx.urlMask, true)
 			statusIsOk(r0)
-			isTrue((await r0.json()).proxied)
+			equal((await r0.json()).proxied, true)
 
 			const r1 = await api.setRouteIsProxied(fx.method, fx.urlMask, false)
 			statusIsOk(r1)
-			isFalse((await r1.json()).proxied)
+			equal((await r1.json()).proxied, false)
 		})
 
 		it('200 when unsetting', async () => {
 			const r = await api.setRouteIsProxied(fx.method, fx.urlMask, false)
 			statusIsOk(r)
-			isFalse((await r.json()).proxied)
+			equal((await r.json()).proxied, false)
 		})
 
 		it('unsets auto500', async () => {
@@ -468,13 +468,13 @@ describe('Proxy Fallback', () => {
 
 			const r0 = await api.toggle500(fx.method, fx.urlMask)
 			const b0 = await r0.json()
-			isFalse(b0.proxied)
-			isTrue(b0.auto500)
+			equal(b0.proxied, false)
+			equal(b0.auto500, true)
 
 			const r1 = await api.setRouteIsProxied(fx.method, fx.urlMask, true)
 			const b1 = await r1.json()
-			isTrue(b1.proxied)
-			isFalse(b1.auto500)
+			equal(b1.proxied, true)
+			equal(b1.auto500, false)
 
 			await fx.unlink()
 			await api.setProxyFallback('')
@@ -486,10 +486,10 @@ describe('Proxy Fallback', () => {
 		await fx.sync()
 		await api.setProxyFallback('http://example.com')
 		const r0 = await api.setRouteIsProxied(fx.method, fx.urlMask, true)
-		isTrue((await r0.json()).proxied)
+		equal((await r0.json()).proxied, true)
 
 		const r1 = await api.select(fx.file)
-		isFalse((await r1.json()).proxied)
+		equal((await r1.json()).proxied, false)
 
 		await api.setProxyFallback('')
 		await fx.unlink()
@@ -663,7 +663,7 @@ describe('Static Files', () => {
 		it('200', async () => {
 			await api.setStaticRouteIsDelayed(fxsIndex.urlMask, true)
 			const { staticBrokers } = await fetchState()
-			isTrue(staticBrokers[fxsIndex.urlMask].delayed)
+			equal(staticBrokers[fxsIndex.urlMask].delayed, true)
 		})
 	})
 
@@ -722,8 +722,8 @@ describe('Static Files', () => {
 		await fxsAsset.unlink()
 		await sync()
 		const { staticBrokers } = await fetchState()
-		isUndefined(staticBrokers[fxsIndex.urlMask])
-		isUndefined(staticBrokers[fxsAsset.urlMask])
+		equal(staticBrokers[fxsIndex.urlMask], undefined)
+		equal(staticBrokers[fxsAsset.urlMask], undefined)
 	})
 })
 
@@ -736,12 +736,12 @@ describe('500', () => {
 
 		const bp0 = await api.toggle500(fx.method, fx.urlMask)
 		const b0 = await bp0.json()
-		isTrue(b0.auto500)
+		equal(b0.auto500, true)
 		equal(b0.status, 500)
 		equal((await fx.request()).status, 500)
 
 		const r1 = await api.toggle500(fx.method, fx.urlMask)
-		isFalse((await r1.json()).auto500)
+		equal((await r1.json()).auto500, false)
 		equal((await fx.request()).status, fx.status)
 	})
 
@@ -754,13 +754,13 @@ describe('500', () => {
 		
 		const bp0 = await api.toggle500(fx200.method, fx200.urlMask)
 		const b0 = await bp0.json()
-		isFalse(b0.auto500)
+		equal(b0.auto500, false)
 		equal(b0.status, 500)
 		equal(await (await fx200.request()).text(), fx500.body)
 		
 		const bp1 = await api.toggle500(fx200.method, fx200.urlMask)
 		const b1 = await bp1.json()
-		isFalse(b0.auto500)
+		equal(b0.auto500, false)
 		equal(b1.status, 200)
 		equal(await (await fx200.request()).text(), fx200.body)
 		
@@ -774,7 +774,7 @@ describe('500', () => {
 		await api.setProxyFallback('http://example.com')
 		await api.setRouteIsProxied(fx.method, fx.urlMask, true)
 		await api.toggle500(fx.method, fx.urlMask)
-		isFalse((await fx.fetchBroker()).proxied)
+		equal((await fx.fetchBroker()).proxied, false)
 		await fx.unlink()
 		await api.setProxyFallback('')
 	})
@@ -1041,7 +1041,7 @@ describe('Registering Non-Static Mocks', () => {
 	it('unregistering the last mock removes broker', async () => {
 		await fxB.unregister()
 		const b = await fxB.fetchBroker()
-		isUndefined(b)
+		equal(b, undefined)
 	})
 	
 	it('registering a 500 unsets auto500', async () => {
@@ -1050,10 +1050,10 @@ describe('Registering Non-Static Mocks', () => {
 		await fx200.register()
 		await api.toggle500(fx200.method, fx200.urlMask)
 		const b0 = await fx200.fetchBroker()
-		isTrue(b0.auto500)
+		equal(b0.auto500, true)
 		await fx500.register()
 		const b1 = await fx200.fetchBroker()
-		isFalse(b1.auto500)
+		equal(b1.auto500, false)
 		deepEqual(b1.mocks, [
 			fx200.file,
 			fx500.file
@@ -1114,11 +1114,6 @@ describe('Registering Static Mocks', () => {
 
 
 // # Utils
-
-function isTrue(val) { equal(val, true) }
-function isFalse(val) { equal(val, false) }
-function isUndefined(val) { equal(val, undefined) }
-
 function statusIsOk(response) { equal(response.status, 200) }
 function statusIsNotFound(response) { equal(response.status, 404) }
 function statusIsUnprocessable(response) { equal(response.status, 422) }

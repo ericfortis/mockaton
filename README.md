@@ -24,9 +24,10 @@ For example, for [/api/company/123](#), the filename could be:
 
 
 ## Quick Start (Docker)
-This will spin up Mockaton with the mock directories included in this repo:
-[mockaton-mocks/](./mockaton-mocks) and [mockaton-static-mocks/](./mockaton-static-mocks)
+This will spin up Mockaton with the mock directories included in this repo
 mounted on the container.
+
+_[mockaton-mocks/](./mockaton-mocks) and [mockaton-static-mocks/](./mockaton-static-mocks)_
 
 ```sh
 git clone https://github.com/ericfortis/mockaton.git --depth 1
@@ -156,9 +157,9 @@ make run-standalone-demo
 
 ### Testing scenarios that would otherwise be skipped
 - Trigger dynamic states on an API. You can do this by using comments on mock filenames, for example, for polled alerts or notifications.
-- Testing retries, on-the-fly you can change an endpoint from a 500 to a 200.
+- Testing retries, you can change an endpoint from a 500 to a 200 on the fly.
 - Simulate errors on third-party APIs, or on your project’s backend (if you are a frontend dev, or unfamiliar with that code)
-- Generating dynamic responses on the fly. Mockaton lets you use Node’s HTTP handlers (see function mocks) when using function mocks.
+- Generating dynamic responses. Mockaton lets you use Node’s HTTP handlers (see function mocks) when using function mocks.
 So you can, e.g.:
   - have an in-memory database
   - read from disk
@@ -715,10 +716,8 @@ api/foo.GET.200.json
 
 A filename can have many comments.
 
-<br/>
-
 ### Default mock for a route
-You can add the comment: `(default)`.
+You can add the comment: `(default)` to the filename.
 Otherwise, the first file in **alphabetical order** wins.
 
 <pre>

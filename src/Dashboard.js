@@ -96,9 +96,9 @@ function App() {
 function Header() {
 	return (
 		r('header', null,
-			r('img', {
-				alt: t`Mockaton`,
-				src: 'Logo.svg',
+			r('object', {
+				data: 'Logo.svg',
+				type: 'image/svg+xml',
 				width: 120,
 				height: 22
 			}),

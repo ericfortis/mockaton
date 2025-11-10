@@ -132,7 +132,7 @@ header {
 	border-bottom: 1px solid var(--colorSecondaryActionBorder);
 	background: var(--colorHeaderBackground);
 
-	> img {
+	> object {
 		align-self: end;
 		margin-right: 22px;
 		margin-bottom: 5px;

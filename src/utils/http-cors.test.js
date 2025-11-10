@@ -1,7 +1,7 @@
 import { equal } from 'node:assert/strict'
 import { promisify } from 'node:util'
 import { createServer } from 'node:http'
-import { describe, it, after } from 'node:test'
+import { describe, test, after } from 'node:test'
 import { isPreflight, setCorsHeaders, CorsHeader as CH } from './http-cors.js'
 
 
@@ -44,12 +44,12 @@ await describe('CORS', async () => {
 			[CH.AcRequestMethod]: 'POST'
 		}
 
-		await it('Ignores non-OPTIONS requests', async () => {
+		await test('Ignores non-OPTIONS requests', async () => {
 			const res = await request(requiredRequestHeaders, 'POST')
 			equal(await res.text(), 'NON_PREFLIGHT')
 		})
 
-		await it(`Ignores non-parseable req ${CH.Origin} header`, async () => {
+		await test(`Ignores non-parseable req ${CH.Origin} header`, async () => {
 			const headers = {
 				...requiredRequestHeaders,
 				[CH.Origin]: 'non-url'
@@ -58,14 +58,14 @@ await describe('CORS', async () => {
 			equal(await res.text(), 'NON_PREFLIGHT')
 		})
 
-		await it(`Ignores missing method in ${CH.AcRequestMethod} header`, async () => {
+		await test(`Ignores missing method in ${CH.AcRequestMethod} header`, async () => {
 			const headers = { ...requiredRequestHeaders }
 			delete headers[CH.AcRequestMethod]
 			const res = await preflight(headers)
 			equal(await res.text(), 'NON_PREFLIGHT')
 		})
 
-		await it(`Ignores non-standard method in ${CH.AcRequestMethod} header`, async () => {
+		await test(`Ignores non-standard method in ${CH.AcRequestMethod} header`, async () => {
 			const headers = {
 				...requiredRequestHeaders,
 				[CH.AcRequestMethod]: 'NON_STANDARD'
@@ -74,14 +74,14 @@ await describe('CORS', async () => {
 			equal(await res.text(), 'NON_PREFLIGHT')
 		})
 
-		await it('204 valid preflights', async () => {
+		await test('204 valid preflights', async () => {
 			const res = await preflight(requiredRequestHeaders)
 			equal(res.status, 204)
 		})
 	})
 
 	await describe('Preflight Response Headers', async () => {
-		await it('no origins allowed', async () => {
+		await test('no origins allowed', async () => {
 			corsConfig = {
 				corsOrigins: [],
 				corsMethods: ['GET']
@@ -97,7 +97,7 @@ await describe('CORS', async () => {
 			headerIs(p, CH.AcMaxAge, null)
 		})
 
-		await it('not in allowed origins', async () => {
+		await test('not in allowed origins', async () => {
 			corsConfig = {
 				corsOrigins: [AllowedDotCom],
 				corsMethods: ['GET']
@@ -112,7 +112,7 @@ await describe('CORS', async () => {
 			headerIs(p, CH.AcAllowHeaders, null)
 		})
 
-		await it('origin and method match', async () => {
+		await test('origin and method match', async () => {
 			corsConfig = {
 				corsOrigins: [AllowedDotCom],
 				corsMethods: ['GET']
@@ -127,7 +127,7 @@ await describe('CORS', async () => {
 			headerIs(p, CH.AcAllowHeaders, null)
 		})
 
-		await it('origin matches from multiple', async () => {
+		await test('origin matches from multiple', async () => {
 			corsConfig = {
 				corsOrigins: [AllowedDotCom, FooDotCom],
 				corsMethods: ['GET']
@@ -142,7 +142,7 @@ await describe('CORS', async () => {
 			headerIs(p, CH.AcAllowHeaders, null)
 		})
 
-		await it('wildcard origin', async () => {
+		await test('wildcard origin', async () => {
 			corsConfig = {
 				corsOrigins: ['*'],
 				corsMethods: ['GET']
@@ -157,7 +157,7 @@ await describe('CORS', async () => {
 			headerIs(p, CH.AcAllowHeaders, null)
 		})
 
-		await it(`wildcard and credentials`, async () => {
+		await test(`wildcard and credentials`, async () => {
 			corsConfig = {
 				corsOrigins: ['*'],
 				corsMethods: ['GET'],
@@ -173,7 +173,7 @@ await describe('CORS', async () => {
 			headerIs(p, CH.AcAllowHeaders, null)
 		})
 
-		await it(`wildcard, credentials, and headers`, async () => {
+		await test(`wildcard, credentials, and headers`, async () => {
 			corsConfig = {
 				corsOrigins: ['*'],
 				corsMethods: ['GET'],
@@ -192,7 +192,7 @@ await describe('CORS', async () => {
 	})
 
 	await describe('Non-Preflight (Actual Response) Headers', async () => {
-		await it('no origins allowed', async () => {
+		await test('no origins allowed', async () => {
 			corsConfig = {
 				corsOrigins: [],
 				corsMethods: ['GET']
@@ -206,7 +206,7 @@ await describe('CORS', async () => {
 			headerIs(p, CH.AcExposeHeaders, null)
 		})
 
-		await it('origin allowed', async () => {
+		await test('origin allowed', async () => {
 			corsConfig = {
 				corsOrigins: [AllowedDotCom],
 				corsMethods: ['GET'],

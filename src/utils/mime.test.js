@@ -1,23 +1,23 @@
-import { describe } from 'node:test'
+import { test } from 'node:test'
 import { equal } from 'node:assert/strict'
 import { parseMime, extFor, mimeFor } from './mime.js'
 
 
-describe('parseMime', () => [
+test('parseMime', () => [
 	'text/html',
 	'TEXT/html',
 	'text/html; charset=utf-8'
 ].map(input =>
 	equal(parseMime(input), 'text/html')))
 
-describe('extFor', () => [
+test('extFor', () => [
 	'text/html',
 	'Text/html',
 	'text/Html; charset=UTF-16'
 ].map(input =>
 	equal(extFor(input), 'html')))
 
-describe('mimeFor', () => [
+test('mimeFor', () => [
 	'file.html',
 	'file.HTmL'
 ].map(input =>

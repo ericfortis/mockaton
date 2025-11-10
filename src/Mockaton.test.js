@@ -5,7 +5,7 @@ import { createServer } from 'node:http'
 import { randomUUID } from 'node:crypto'
 import { writeFile, unlink } from 'node:fs/promises'
 import { equal, deepEqual, match } from 'node:assert/strict'
-import { describe, it, before, beforeEach, after } from 'node:test'
+import { describe, test, before, beforeEach, after } from 'node:test'
 import { mkdtempSync, mkdirSync, readFileSync } from 'node:fs'
 
 import { API } from './ApiConstants.js'
@@ -127,7 +127,7 @@ function request(path, options = {}) {
 
 
 describe('Windows', () => {
-	it('path separators are normalized to forward slashes', async () => {
+	test('path separators are normalized to forward slashes', async () => {
 		const fx = new Fixture('win-paths.GET.200.json')
 		await fx.sync()
 		const b = await fx.fetchBroker()
@@ -152,7 +152,7 @@ describe('Rejects malicious URLs', () => {
 		['very long path', '/'.repeat(2048 + 1), 414]
 	]
 		.map(([title, url, status]) =>
-			it(title, async () =>
+			test(title, async () =>
 				equal((await request(url)).status, status)))
 })
 
@@ -164,7 +164,7 @@ describe('Warnings', () => {
 		return spy.mock
 	}
 
-	it('Rejects invalid filenames', async t => {
+	test('rejects invalid filenames', async t => {
 		const spy = spyLogger(t, 'warn')
 		const fx0 = new Fixture('bar.GET._INVALID_STATUS_.json')
 		const fx1 = new Fixture('foo._INVALID_METHOD_.202.json')
@@ -179,7 +179,7 @@ describe('Warnings', () => {
 		await Promise.all([fx0.unlink(), fx1.unlink(), fx2.unlink()])
 	})
 
-	it('body parser rejects invalid JSON in API requests', async t => {
+	test('body parser rejects invalid JSON in API requests', async t => {
 		const spy = spyLogger(t, 'access')
 		const r = await request(API.cookies, {
 			method: 'PATCH',
@@ -189,7 +189,7 @@ describe('Warnings', () => {
 		equal(spy.calls[0].arguments[1], 'BodyReaderError: Could not parse')
 	})
 
-	it('returns 500 when a handler throws', async t => {
+	test('returns 500 when a handler throws', async t => {
 		const spy = spyLogger(t, 'error')
 		const r = await request(API.throws)
 		equal(r.status, 500)
@@ -200,13 +200,13 @@ describe('Warnings', () => {
 
 describe('CORS', () => {
 	describe('Set CORS allowed', () => {
-		it('422 for non boolean', async () => {
+		test('422 for non boolean', async () => {
 			const r = await api.setCorsAllowed('not-a-boolean')
 			equal(r.status, 422)
 			equal(await r.text(), 'Expected boolean for "corsAllowed"')
 		})
 
-		it('200', async () => {
+		test('200', async () => {
 			const r = await api.setCorsAllowed(true)
 			equal(r.status, 200)
 			equal((await fetchState()).corsAllowed, true)
@@ -216,7 +216,7 @@ describe('CORS', () => {
 		})
 	})
 
-	it('preflights', async () => {
+	test('preflights', async () => {
 		await api.setCorsAllowed(true)
 		const r = await request('/does-not-matter', {
 			method: 'OPTIONS',
@@ -230,7 +230,7 @@ describe('CORS', () => {
 		equal(r.headers.get(CorsHeader.AcAllowMethods), 'GET')
 	})
 
-	it('responds', async () => {
+	test('responds', async () => {
 		const fx = new Fixture('cors-response.GET.200.json')
 		await fx.sync()
 		const r = await fx.request({
@@ -247,12 +247,12 @@ describe('CORS', () => {
 
 
 describe('Dashboard', () => {
-	it('renders', async () => {
+	test('renders', async () => {
 		const r = await request(API.dashboard)
 		match(await r.text(), new RegExp('<!DOCTYPE html>'))
 	})
 
-	it('query string is accepted', async () => {
+	test('query string is accepted', async () => {
 		const r = await request(API.dashboard + '?foo=bar')
 		match(await r.text(), new RegExp('<!DOCTYPE html>'))
 	})
@@ -260,18 +260,18 @@ describe('Dashboard', () => {
 
 
 describe('Cookie', () => {
-	it('422 when trying to select non-existing cookie', async () => {
+	test('422 when trying to select non-existing cookie', async () => {
 		const r = await api.selectCookie('non-existing-cookie-key')
 		equal(r.status, 422)
 	})
 
-	it('defaults to the first key:value', async () =>
+	test('defaults to the first key:value', async () =>
 		deepEqual((await fetchState()).cookies, [
 			['userA', true],
 			['userB', false]
 		]))
 
-	it('updates selected cookie', async () => {
+	test('updates selected cookie', async () => {
 		const fx = new Fixture('update-cookie.GET.200.json')
 		await fx.sync()
 		const resA = await fx.request()
@@ -292,19 +292,19 @@ describe('Cookie', () => {
 
 describe('Delay', () => {
 	describe('Set Global Delay', () => {
-		it('422 for invalid global delay value', async () => {
+		test('422 for invalid global delay value', async () => {
 			const r = await api.setGlobalDelay('not-a-number')
 			equal(r.status, 422)
 			equal(await r.text(), 'Expected non-negative integer for "delay"')
 		})
-		it('200 for valid global delay value', async () => {
+		test('200 for valid global delay value', async () => {
 			const r = await api.setGlobalDelay(150)
 			equal(r.status, 200)
 			equal((await fetchState()).delay, 150)
 		})
 	})
 
-	it('updates route delay', async () => {
+	test('updates route delay', async () => {
 		const fx = new Fixture('route-delay.GET.200.json')
 		await fx.sync()
 		const delay = 120
@@ -318,13 +318,13 @@ describe('Delay', () => {
 	})
 
 	describe('Set Route is Delayed', () => {
-		it('422 for non-existing route', async () => {
+		test('422 for non-existing route', async () => {
 			const r = await api.setRouteIsDelayed('GET', '/non-existing', true)
 			equal(r.status, 422)
 			equal(await r.text(), `Route does not exist: GET /non-existing`)
 		})
 
-		it('422 for invalid delayed value', async () => {
+		test('422 for invalid delayed value', async () => {
 			const fx = new Fixture('set-route-delay.GET.200.json')
 			await fx.sync()
 			const r = await api.setRouteIsDelayed(fx.method, fx.urlMask, 'not-a-boolean')
@@ -332,7 +332,7 @@ describe('Delay', () => {
 			await fx.unlink()
 		})
 
-		it('200', async () => {
+		test('200', async () => {
 			const fx = new Fixture('set-route-delay.GET.200.json')
 			await fx.sync()
 			const r = await api.setRouteIsDelayed(fx.method, fx.urlMask, true)
@@ -363,7 +363,7 @@ describe('Proxy Fallback', () => {
 
 		after(() => fallbackServer.close())
 
-		it('Relays to fallback server and saves the mock', async () => {
+		test('Relays to fallback server and saves the mock', async () => {
 			const reqBodyPayload = 'text_req_body'
 
 			const r = await request(`/non-existing-mock/${randomUUID()}`, {
@@ -381,19 +381,19 @@ describe('Proxy Fallback', () => {
 	})
 
 	describe('Set Proxy Fallback', () => {
-		it('422 when value is not a valid URL', async () => {
+		test('422 when value is not a valid URL', async () => {
 			const r = await api.setProxyFallback('bad url')
 			equal(r.status, 422)
 			equal(await r.text(), 'Invalid Proxy Fallback URL')
 		})
 
-		it('sets fallback', async () => {
+		test('sets fallback', async () => {
 			const r = await api.setProxyFallback('http://example.com')
 			equal(r.status, 200)
 			equal((await fetchState()).proxyFallback, 'http://example.com')
 		})
 
-		it('unsets fallback', async () => {
+		test('unsets fallback', async () => {
 			const r = await api.setProxyFallback('')
 			equal(r.status, 200)
 			equal((await fetchState()).proxyFallback, '')
@@ -401,13 +401,13 @@ describe('Proxy Fallback', () => {
 	})
 
 	describe('Set Collect Proxied', () => {
-		it('422 for invalid collectProxied value', async () => {
+		test('422 for invalid collectProxied value', async () => {
 			const r = await api.setCollectProxied('not-a-boolean')
 			equal(r.status, 422)
 			equal(await r.text(), 'Expected a boolean for "collectProxied"')
 		})
 
-		it('200 set and unset', async () => {
+		test('200 set and unset', async () => {
 			await api.setCollectProxied(true)
 			equal((await fetchState()).collectProxied, true)
 
@@ -426,25 +426,25 @@ describe('Proxy Fallback', () => {
 			await fx.unlink()
 		})
 
-		it('422 for non-existing route', async () => {
+		test('422 for non-existing route', async () => {
 			const r = await api.setRouteIsProxied('GET', '/non-existing', true)
 			equal(r.status, 422)
 			equal(await r.text(), `Route does not exist: GET /non-existing`)
 		})
 
-		it('422 for invalid proxied value', async () => {
+		test('422 for invalid proxied value', async () => {
 			const r = await api.setRouteIsProxied(fx.method, fx.urlMask, 'not-a-boolean')
 			equal(r.status, 422)
 			equal(await r.text(), 'Expected boolean for "proxied"')
 		})
 
-		it('422 for missing proxy fallback', async () => {
+		test('422 for missing proxy fallback', async () => {
 			const r = await api.setRouteIsProxied(fx.method, fx.urlMask, true)
 			equal(r.status, 422)
 			equal(await r.text(), `There’s no proxy fallback`)
 		})
 
-		it('200 when setting', async () => {
+		test('200 when setting', async () => {
 			await api.setProxyFallback('https://example.com')
 			const r0 = await api.setRouteIsProxied(fx.method, fx.urlMask, true)
 			equal(r0.status, 200)
@@ -455,13 +455,13 @@ describe('Proxy Fallback', () => {
 			equal((await r1.json()).proxied, false)
 		})
 
-		it('200 when unsetting', async () => {
+		test('200 when unsetting', async () => {
 			const r = await api.setRouteIsProxied(fx.method, fx.urlMask, false)
 			equal(r.status, 200)
 			equal((await r.json()).proxied, false)
 		})
 
-		it('unsets auto500', async () => {
+		test('unsets auto500', async () => {
 			const fx = new Fixture('unset-500-on-proxy.GET.200.txt')
 			await fx.sync()
 			await api.setProxyFallback('https://example.com')
@@ -481,7 +481,7 @@ describe('Proxy Fallback', () => {
 		})
 	})
 
-	it('updating selected mock resets proxied flag', async () => {
+	test('updating selected mock resets proxied flag', async () => {
 		const fx = new Fixture('select-resets-proxied.GET.200.txt')
 		await fx.sync()
 		await api.setProxyFallback('http://example.com')
@@ -498,17 +498,17 @@ describe('Proxy Fallback', () => {
 
 
 describe('404', () => {
-	it('when there’s no mock', async () => {
+	test('when there’s no mock', async () => {
 		const r = await request('/non-existing')
 		equal(r.status, 404)
 	})
 
-	it('when there’s no mock at all for a method', async () => {
+	test('when there’s no mock at all for a method', async () => {
 		const r = await request('/non-existing-too', { method: 'DELETE' })
 		equal(r.status, 404)
 	})
 
-	it('404s ignored files', async () => {
+	test('404s ignored files', async () => {
 		const fx = new Fixture('ignored.GET.200.json~')
 		await fx.write()
 		await sync()
@@ -517,7 +517,7 @@ describe('404', () => {
 		await fx.unlink()
 	})
 
-	it('404s ignored static files', async () => {
+	test('404s ignored static files', async () => {
 		const fx = new FixtureStatic('static-ignored.js~')
 		await fx.write()
 		await sync()
@@ -541,7 +541,7 @@ describe('Default Mock', () => {
 		await fxB.unlink()
 	})
 
-	it('sorts mocks list with the user specified default first for dashboard display', async () => {
+	test('sorts mocks list with the user specified default first for dashboard display', async () => {
 		const { mocks } = await fxA.fetchBroker()
 		deepEqual(mocks, [
 			fxB.file,
@@ -549,7 +549,7 @@ describe('Default Mock', () => {
 		])
 	})
 
-	it('Dispatches default mock', async () => {
+	test('Dispatches default mock', async () => {
 		const r = await fxA.request()
 		equal(await r.text(), fxB.body)
 	})
@@ -557,7 +557,7 @@ describe('Default Mock', () => {
 
 
 describe('Dynamic Mocks', () => {
-	it('JS object is sent as JSON', async () => {
+	test('JS object is sent as JSON', async () => {
 		const fx = new Fixture(
 			'js-object.GET.200.js',
 			'export default { FROM_JS: true }')
@@ -568,7 +568,7 @@ describe('Dynamic Mocks', () => {
 		await fx.unlink()
 	})
 
-	it('TS array is sent as JSON', async () => {
+	test('TS array is sent as JSON', async () => {
 		const fx = new Fixture(
 			'js-object.GET.200.ts',
 			'export default ["from ts"]')
@@ -582,7 +582,7 @@ describe('Dynamic Mocks', () => {
 
 
 describe('Dynamic Function Mocks', () => {
-	it('honors filename convention', async () => {
+	test('honors filename convention', async () => {
 		const body = 'SOME_STRING'
 		const fx = new Fixture('func.GET.200.js', `
 			export default function (req, response) {
@@ -598,7 +598,7 @@ describe('Dynamic Function Mocks', () => {
 		await fx.unlink()
 	})
 
-	it('can override filename convention (also supports TS)', async () => {
+	test('can override filename convention (also supports TS)', async () => {
 		const fx = new Fixture('func.POST.200.ts', `
 			export default function (req, response) {
 			  response.statusCode = 201
@@ -628,14 +628,14 @@ describe('Static Files', () => {
 	}) // the last test deletes them
 
 	describe('Static File Serving', () => {
-		it('Defaults to index.html', async () => {
+		test('Defaults to index.html', async () => {
 			const r = await request('/')
 			equal(r.status, 200)
 			equal(r.headers.get('content-type'), mimeFor(fxsIndex.file))
 			equal(await r.text(), fxsIndex.body)
 		})
 
-		it('Serves exacts paths', async () => {
+		test('Serves exacts paths', async () => {
 			const r = await fxsAsset.request()
 			equal(r.status, 200)
 			equal(r.headers.get('content-type'), mimeFor(fxsAsset.file))
@@ -643,7 +643,7 @@ describe('Static Files', () => {
 		})
 	})
 
-	it('Static File List', async () => {
+	test('Static File List', async () => {
 		const { staticBrokers } = await fetchState()
 		deepEqual(Object.keys(staticBrokers), [
 			fxsAsset.urlMask,
@@ -652,18 +652,18 @@ describe('Static Files', () => {
 	})
 
 	describe('Set Static Route is Delayed', () => {
-		it('422 for non-existing route', async () => {
+		test('422 for non-existing route', async () => {
 			const r = await api.setStaticRouteIsDelayed('/non-existing', true)
 			equal(r.status, 422)
 			equal(await r.text(), `Static route does not exist: /non-existing`)
 		})
 
-		it('422 for invalid delayed value', async () => {
+		test('422 for invalid delayed value', async () => {
 			const r = await api.setStaticRouteIsDelayed(fxsIndex.urlMask, 'not-a-boolean')
 			equal(await r.text(), 'Expected boolean for "delayed"')
 		})
 
-		it('200', async () => {
+		test('200', async () => {
 			await api.setStaticRouteIsDelayed(fxsIndex.urlMask, true)
 			const { staticBrokers } = await fetchState()
 			equal(staticBrokers[fxsIndex.urlMask].delayed, true)
@@ -671,19 +671,19 @@ describe('Static Files', () => {
 	})
 
 	describe('Set Static Route Status Code', () => {
-		it('422 for non-existing route', async () => {
+		test('422 for non-existing route', async () => {
 			const r = await api.setStaticRouteStatus('/non-existing', 200)
 			equal(r.status, 422)
 			equal(await r.text(), `Static route does not exist: /non-existing`)
 		})
 
-		it('422 for invalid delayed value', async () => {
+		test('422 for invalid delayed value', async () => {
 			const r = await api.setStaticRouteStatus(fxsIndex.urlMask, 'not-200-or-404')
 			equal(r.status, 422)
 			equal(await r.text(), 'Expected 200 or 404 status code')
 		})
 
-		it('sets 404 and 200', async () => {
+		test('sets 404 and 200', async () => {
 			await api.setStaticRouteStatus(fxsIndex.urlMask, 404)
 			const r0 = await fxsIndex.request()
 			equal(r0.status, 404)
@@ -693,7 +693,7 @@ describe('Static Files', () => {
 			equal(r1.status, 200)
 		})
 
-		it('404s on a registered route but its file has been deleted', async () => {
+		test('404s on a registered route but its file has been deleted', async () => {
 			// Possible: (1) due to watcher delay. (2) or, when not-watching and deleting.
 			const fx = new FixtureStatic('to-be-deleted.js')
 			await fx.sync()
@@ -704,7 +704,7 @@ describe('Static Files', () => {
 	})
 
 	describe('Static Partial Content', () => {
-		it('206 serves partial content', async () => {
+		test('206 serves partial content', async () => {
 			await sync()
 			const r0 = await fxsIndex.request({ headers: { range: 'bytes=0-3' } })
 			const r1 = await fxsIndex.request({ headers: { range: 'bytes=4-' } })
@@ -714,13 +714,13 @@ describe('Static Files', () => {
 			equal(body, fxsIndex.body)
 		})
 
-		it('416 on invalid range (end > start)', async () => {
+		test('416 on invalid range (end > start)', async () => {
 			const r = await fxsIndex.request({ headers: { range: 'bytes=3-0' } })
 			equal(r.status, 416)
 		})
 	})
 
-	it('unregisters static route', async () => {
+	test('unregisters static route', async () => {
 		await fxsIndex.unlink()
 		await fxsAsset.unlink()
 		await sync()
@@ -732,7 +732,7 @@ describe('Static Files', () => {
 
 
 describe('500', () => {
-	it('toggling ON 500 on a route without 500 auto-generates one', async () => {
+	test('toggling ON 500 on a route without 500 auto-generates one', async () => {
 		const fx = new Fixture('toggling-500-without-500.GET.200.json')
 		await fx.sync()
 		equal((await fx.request()).status, fx.status)
@@ -748,7 +748,7 @@ describe('500', () => {
 		equal((await fx.request()).status, fx.status)
 	})
 
-	it('toggling ON 500 picks existing 500 and toggling OFF selects default', async () => {
+	test('toggling ON 500 picks existing 500 and toggling OFF selects default', async () => {
 		const fx200 = new Fixture('reg-error.GET.200.txt')
 		const fx500 = new Fixture('reg-error.GET.500.txt')
 		await fx200.write()
@@ -771,7 +771,7 @@ describe('500', () => {
 		await fx500.unlink()
 	})
 
-	it('toggling ON 500 unsets `proxied` flag', async () => {
+	test('toggling ON 500 unsets `proxied` flag', async () => {
 		const fx = new Fixture('proxied-to-500.GET.200.txt')
 		await fx.sync()
 		await api.setProxyFallback('http://example.com')
@@ -785,7 +785,7 @@ describe('500', () => {
 
 
 describe('Index-like routes', () => {
-	it('resolves dirs to the file without urlMask', async () => {
+	test('resolves dirs to the file without urlMask', async () => {
 		const fx = new Fixture('.GET.200.json')
 		await fx.sync()
 		const r = await request('/')
@@ -796,7 +796,7 @@ describe('Index-like routes', () => {
 
 
 describe('MIME', () => {
-	it('derives content-type from known mime', async () => {
+	test('derives content-type from known mime', async () => {
 		const fx = new Fixture('tmp.GET.200.json')
 		await fx.sync()
 		const r = await fx.request()
@@ -804,7 +804,7 @@ describe('MIME', () => {
 		await fx.unlink()
 	})
 
-	it('derives content-type from custom mime', async () => {
+	test('derives content-type from custom mime', async () => {
 		const fx = new Fixture(`tmp.GET.200.${CUSTOM_EXT}`)
 		await fx.sync()
 		const r = await fx.request()
@@ -815,13 +815,13 @@ describe('MIME', () => {
 
 
 describe('Headers', () => {
-	it('responses have version in "Server" header', async () => {
+	test('responses have version in "Server" header', async () => {
 		const r = await api.getState()
 		const val = r.headers.get('server')
 		match(val, /^Mockaton \d+\.\d+\.\d+$/)
 	})
 	
-	it('custom headers are included', async () => {
+	test('custom headers are included', async () => {
 		const r = await api.getState()
 		const val = r.headers.get(CUSTOM_HEADER_NAME)
 		equal(val, CUSTOM_HEADER_VAL)
@@ -834,17 +834,17 @@ describe('Method and Status', () => {
 	before(async () => await fx.sync())
 	after(async () => await fx.unlink())
 
-	it('dispatches the response status', async () => {
+	test('dispatches the response status', async () => {
 		const r = await fx.request()
 		equal(r.status, fx.status)
 	})
 
-	it('dispatches uncommon but supported methods', async () => {
+	test('dispatches uncommon but supported methods', async () => {
 		const r = await fx.request()
 		equal(r.status, fx.status)
 	})
 
-	it('404s when method mismatches', async () => {
+	test('404s when method mismatches', async () => {
 		const r = await fx.request({ method: 'POST' })
 		equal(r.status, 404)
 	})
@@ -865,13 +865,13 @@ describe('Select', () => {
 		await fxAlt.unlink()
 	})
 
-	it('422 when updating non-existing mock alternative', async () => {
+	test('422 when updating non-existing mock alternative', async () => {
 		const r = await api.select(fxUnregistered.file)
 		equal(r.status, 422)
 		equal(await r.text(), `Missing Mock: ${fxUnregistered.file}`)
 	})
 
-	it('selects variant', async () => {
+	test('selects variant', async () => {
 		const r0 = await request('/select')
 		equal(await r0.text(), fx.body)
 
@@ -901,19 +901,19 @@ describe('Bulk Select', () => {
 		await fxKappaB.unlink()
 	})
 
-	it('extracts all comments without duplicates', async () =>
+	test('extracts all comments without duplicates', async () =>
 		deepEqual((await fetchState()).comments, [
 			'(comment A)',
 			'(comment B)',
 		]))
 
-	it('selects exact', async () => {
+	test('selects exact', async () => {
 		await api.bulkSelectByComment('(comment B)')
 		equal((await (await fxIota.request()).text()), fxIotaB.body)
 		equal((await (await fxKappaA.request()).text()), fxKappaB.body)
 	})
 
-	it('selects partial', async () => {
+	test('selects partial', async () => {
 		await sync()
 		await api.bulkSelectByComment('(mment A)')
 		equal((await (await fxKappaB.request()).text()), fxKappaA.body)
@@ -922,7 +922,7 @@ describe('Bulk Select', () => {
 
 
 describe('Decoding URLs', () => {
-	it('allows dots, spaces, amp, etc.', async () => {
+	test('allows dots, spaces, amp, etc.', async () => {
 		const fx = new Fixture('dot.in.path and amp & and colon:.GET.200.txt')
 		await fx.sync()
 		const r = await fx.request()
@@ -952,22 +952,22 @@ describe('Dynamic Params', () => {
 		await fx3.unlink()
 	})
 
-	it('variable at end', async () => {
+	test('variable at end', async () => {
 		const r = await fx0.request()
 		equal(await r.text(), fx0.body)
 	})
 
-	it('sandwich variable present in another route at its end', async () => {
+	test('sandwich variable present in another route at its end', async () => {
 		const r = await fx1.request()
 		equal(await r.text(), fx1.body)
 	})
 
-	it('sandwich fixed part in dynamic variables', async () => {
+	test('sandwich fixed part in dynamic variables', async () => {
 		const r = await fx2.request()
 		equal(await r.text(), fx2.body)
 	})
 
-	it('ensure dynamic params do not take precedence over exact routes', async () => {
+	test('ensure dynamic params do not take precedence over exact routes', async () => {
 		const r = await fx3.request()
 		equal(await r.text(), fx3.body)
 	})
@@ -988,26 +988,26 @@ describe('Query String', () => {
 		await fx1.unlink()
 	})
 
-	it('multiple params', async () => {
+	test('multiple params', async () => {
 		const r = await fx0.request()
 		equal(await r.text(), fx0.body)
 	})
-	it('with pretty-param and without query-params', async () => {
+	test('with pretty-param and without query-params', async () => {
 		const r = await request('/query-string/1234')
 		equal(await r.text(), fx1.body)
 	})
-	it('with pretty-param and without query-params, but with trailing slash and "?"', async () => {
+	test('with pretty-param and without query-params, but with trailing slash and "?"', async () => {
 		const r = await request('/query-string/1234/?')
 		equal(await r.text(), fx1.body)
 	})
-	it('with pretty-param and query-params', async () => {
+	test('with pretty-param and query-params', async () => {
 		const r = await request('/query-string/1234/?limit=4')
 		equal(await r.text(), fx1.body)
 	})
 })
 
 
-it('head for get. returns the headers without body only for GETs requested as HEAD', async () => {
+test('head for get. returns the headers without body only for GETs requested as HEAD', async () => {
 	const fx = new Fixture('head-get.GET.200.json')
 	await fx.sync()
 	const r = await fx.request({ method: 'HEAD' })
@@ -1027,27 +1027,27 @@ describe('Registering Mocks', () => {
 	const fxA = new Fixture('register(default).GET.200.json')
 	const fxB = new Fixture('register(alt).GET.200.json')
 
-	it('register', async () => {
+	test('register', async () => {
 		await fxA.register()
 		await fxB.register()
 		const b = await fxA.fetchBroker()
 		deepEqual(b.mocks, [fxA.file, fxB.file])
 	})
 
-	it('unregistering selected ensures a mock is selected', async () => {
+	test('unregistering selected ensures a mock is selected', async () => {
 		await api.select(fxA.file)
 		await fxA.unregister()
 		const b = await fxA.fetchBroker()
 		deepEqual(b.mocks, [fxB.file])
 	})
 
-	it('unregistering the last mock removes broker', async () => {
+	test('unregistering the last mock removes broker', async () => {
 		await fxB.unregister()
 		const b = await fxB.fetchBroker()
 		equal(b, undefined)
 	})
 	
-	it('registering a 500 unsets auto500', async () => {
+	test('registering a 500 unsets auto500', async () => {
 		const fx200 = new Fixture('reg-error.GET.200.txt')
 		const fx500 = new Fixture('reg-error.GET.500.txt')
 		await fx200.register()
@@ -1069,20 +1069,20 @@ describe('Registering Mocks', () => {
 	describe('getSyncVersion', () => {
 		let version
 
-		it('getSyncVersion responds immediately when version mismatches', async () => {
+		test('getSyncVersion responds immediately when version mismatches', async () => {
 			const r = await api.getSyncVersion(-1)
 			version = await r.json()
 		})
 
 		const fx = new Fixture('runtime1.GET.200.txt')
-		it('responds when a file is added', async () => {
+		test('responds when a file is added', async () => {
 			const prom = api.getSyncVersion(version)
 			await fx.write()
 			const r = await prom
 			equal(await r.json(), version + 1)
 		})
 
-		it('responds when a file is deleted', async () => {
+		test('responds when a file is deleted', async () => {
 			const prom = api.getSyncVersion(version + 1)
 			await fx.unlink()
 			const r = await prom
@@ -1095,7 +1095,7 @@ describe('Registering Mocks', () => {
 describe('Registering Static Mocks', () => {
 	const fx = new FixtureStatic('static-register.txt')
 
-	it('registers static', async () => {
+	test('registers static', async () => {
 		await fx.register()
 		const { staticBrokers } = await fetchState()
 		deepEqual(staticBrokers, {
@@ -1107,7 +1107,7 @@ describe('Registering Static Mocks', () => {
 		})
 	})
 
-	it('unregisters static', async () => {
+	test('unregisters static', async () => {
 		await fx.unregister()
 		const { staticBrokers } = await fetchState()
 		deepEqual(staticBrokers, {})

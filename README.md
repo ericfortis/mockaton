@@ -171,6 +171,7 @@ So you can, e.g.:
 - Auditable, organized, and small. 4 KLoC (half is UI and tests)
   - Zero dependencies. No runtime and no build packages.
 
+<br/>
 
 ## Benefits of Mocking APIs in General
 The section above highlights benefits specific to Mockaton. There are more, but
@@ -182,9 +183,8 @@ in general there are benefits which Mockaton has but other tools have as well, s
 - Mitigates progress from being blocked by waiting for APIs
 
 ### Time travel
-If you commit the mocks to your repo, you don’t have to downgrade backends when:
-- Checking out long-lived branches
-- Bisecting bugs
+If you commit the mocks to your repo, you don’t have to downgrade
+backends when checking out long-lived branches or bisecting bugs.
 
 <br/>
 

@@ -56,3 +56,6 @@ with Mockaton serving that SPA.
 cd demo-app-vite
 make
 ```
+
+- App: http://127.0.0.1:4040/mockaton
+- Dashboard: http://127.0.0.1:4040/mockaton

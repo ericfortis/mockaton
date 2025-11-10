@@ -77,7 +77,7 @@ export async function jsToJsonPlugin(filePath, req, response) {
 
 function length(body) {
 	if (typeof body === 'string') return Buffer.byteLength(body)
-	if (Buffer.isBuffer(body)) return body.length
+	if (Buffer.isBuffer(body)) return body.length // TESTME
 	if (body instanceof Uint8Array) return body.byteLength
 	return 0
 }

@@ -6,8 +6,8 @@
 [![CodeQL](https://github.com/ericfortis/mockaton/actions/workflows/github-code-scanning/codeql/badge.svg)](https://github.com/ericfortis/mockaton/actions/workflows/github-code-scanning/codeql)
 [![codecov](https://codecov.io/github/ericfortis/mockaton/graph/badge.svg?token=90NYLMMG1J)](https://codecov.io/github/ericfortis/mockaton)
 
-An HTTP mock server for simulating APIs with minimal setup
-&mdash; ideal for testing difficult to reproduce backend states.
+An HTTP mock server for simulating APIs with minimal setup &mdash; ideal
+for testing difficult to reproduce backend states. 
 
 ## Overview
 With Mockaton, you don’t need to write code for wiring up your
@@ -97,8 +97,8 @@ api/videos.GET.<b>500</b>.txt   # Internal Server Error
 ### Option 1: Browser extension
 The companion Chrome [devtools
 extension](https://github.com/ericfortis/download-http-requests-browser-ext)
-lets you download all the HTTP responses, and they
-get saved following Mockaton’s filename convention.
+lets you download all the HTTP responses and 
+save them following Mockaton’s filename convention.
 
 ### Option 2: Fallback to your backend
 <details>
@@ -124,11 +124,11 @@ They will be saved in your `config.mocksDir` following the filename convention.
 ## Motivation
 
 ### Deterministic and comprehensive states
-Sometimes, the flow you need to test or demo is
+Sometimes the flow you need to test is
 too difficult to reproduce from the actual backend.
  
-- Demo edge cases to design and PMs
-- Sett up screenshot tests, e.g., with [pixaton](https://github.com/ericfortis/pixaton)
+- Demo edge cases to PMs, Design, and clients
+- Set up screenshot tests, e.g., with [pixaton](https://github.com/ericfortis/pixaton)
 - Spot inadvertent regressions during development. For example, the demo app in
   this repo has a list of colors containing all of their possible states, such as
   permutations for out-of-stock, new-arrival, and discontinued. This way you’ll
@@ -149,13 +149,14 @@ repo includes a demo which builds and runs a docker container.
 ```sh
 git clone https://github.com/ericfortis/mockaton.git --depth 1
 cd mockaton/demo-app-vite
-make start-standalone-demo
+make run-standalone-demo
 ```
 - App: http://localhost:4040
 - Dashboard: http://localhost:4040/mockaton
 
 ### Testing scenarios that would otherwise be skipped
 - Trigger dynamic states on an API. You can do this by using comments on mock filenames, for example, for polled alerts or notifications.
+- Testing retries, on-the-fly you can change an endpoint from a 500 to a 200.
 - Simulate errors on third-party APIs, or on your project’s backend (if you are a frontend dev, or unfamiliar with that code)
 - Generating dynamic responses on the fly. Mockaton lets you use Node’s HTTP handlers (see function mocks) when using function mocks.
 So you can, e.g.:
@@ -175,11 +176,10 @@ So you can, e.g.:
 
 ## Benefits of Mocking APIs in General
 The section above highlights benefits specific to Mockaton. There are more, but
-in general there are benefits which Mockaton has but other tools have as well, such as:
+in general here are some benefits which Mockaton has but other tools have as well:
 
 ### Works around unstable dev backends while developing UIs
-- Spinning up dev infrastructure
-- Syncing the database
+- Syncing the database and spinning up dev infrastructure can be time complex
 - Mitigates progress from being blocked by waiting for APIs
 
 ### Time travel
@@ -191,9 +191,9 @@ backends when checking out long-lived branches or bisecting bugs.
 
 ## Usage (without Docker)
 
-_For Docker, see Quick-Start section above._
+_For Docker, see the Quick-Start section above._
 
-Requires Node.js. **v22.18+** support writing mocks in TypeScript.
+Requires Node.js **v22.18+**, which supports mocks in TypeScript.
 
 1. Create a mock in the default mocks directory (`./mockaton-mocks`)
 ```sh
@@ -763,7 +763,6 @@ api/foo/bar.GET.200.json
 All of its methods return their `fetch` response promise.
 ```js
 import { Commander } from 'mockaton'
-
 
 const myMockatonAddr = 'http://localhost:4040'
 const mockaton = new Commander(myMockatonAddr)

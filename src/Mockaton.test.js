@@ -583,16 +583,18 @@ describe('Dynamic Mocks', () => {
 
 describe('Dynamic Function Mocks', () => {
 	it('honors filename convention', async () => {
+		const body = 'SOME_STRING'
 		const fx = new Fixture('func.GET.200.js', `
 			export default function (req, response) {
-  			return 'SOME_STRING_0'
+  			return "${body}"
 			}`)
 		await fx.sync()
 		const r = await fx.request()
 		equal(r.status, 200)
+		equal(r.headers.get('content-length'), String(Buffer.byteLength(body)))
 		equal(r.headers.get('content-type'), mimeFor('.json'))
 		equal(r.headers.get('set-cookie'), COOKIES.userA)
-		equal(await r.text(), 'SOME_STRING_0')
+		equal(await r.text(), body)
 		await fx.unlink()
 	})
 
@@ -602,14 +604,15 @@ describe('Dynamic Function Mocks', () => {
 			  response.statusCode = 201
 			  response.setHeader('content-type', 'custom-mime')
 			  response.setHeader('set-cookie', 'custom-cookie')
-			  return 'SOME_STRING_1'
+			  return new Uint8Array([65, 65])
 			}`)
 		await fx.sync()
 		const r = await fx.request({ method: 'POST' })
 		equal(r.status, 201)
+		equal(r.headers.get('content-length'), String(2))
 		equal(r.headers.get('content-type'), 'custom-mime')
 		equal(r.headers.get('set-cookie'), 'custom-cookie')
-		equal(await r.text(), 'SOME_STRING_1')
+		equal(await r.text(), 'AA')
 		await fx.unlink()
 	})
 })

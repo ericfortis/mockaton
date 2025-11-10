@@ -5,17 +5,8 @@ import { QaId } from './QaId.js'
 import CSS from './ColorList.module.css'
 
 
-const Strings = {
-	delete: 'Delete',
-	discontinued: 'Discontinued',
-	loading: 'Loading…',
-	new: 'New',
-	no_colors_found: 'No colors found',
-	oops: 'Oops',
-	out_of_stock: 'Out of stock',
-	something_went_wrong: 'Something went wrong',
-	stock: 'Stock'
-}
+const t = translation => translation[0]
+
 
 export function ColorList() {
 	const [loaded, setLoaded] = useState(false)
@@ -29,7 +20,7 @@ export function ColorList() {
 				if (res.ok)
 					setColors((await res.json()).map(c => new ColorModel(c)))
 				else
-					setError(Strings.something_went_wrong)
+					setError(t`Something went wrong`)
 			}
 			catch {}
 			finally {
@@ -41,7 +32,7 @@ export function ColorList() {
 	if (!loaded)
 		return (
 			<div className={CSS.Spinner} data-qaid={QaId.ColorListPreloader}>
-				{Strings.loading}
+				{t`Loading…`}
 			</div>
 		)
 
@@ -55,7 +46,7 @@ export function ColorList() {
 	if (!colors.length)
 		return (
 			<div className={CSS.Empty} data-qaid={QaId.ColorListEmpty}>
-				{Strings.no_colors_found}
+				{t`No colors found`}
 			</div>
 		)
 
@@ -79,20 +70,20 @@ export function ColorCard(color) {
 			<h2>{color.name}</h2>
 			<div>{color.isValid
 				? color.color
-				: Strings.oops}</div>
+				: t`Oops`}</div>
 
 			<div className={CSS.foot}>
-				{color.isNew && <div className={CSS.newBadge}>{Strings.new}</div>}
-				{color.discontinued && <div className={CSS.discontinuedBadge}>{Strings.discontinued}</div>}
+				{color.isNew && <div className={CSS.newBadge}>{t`New`}</div>}
+				{color.discontinued && <div className={CSS.discontinuedBadge}>{t`Discontinued`}</div>}
 				{color.inStock
-					? <span className={CSS.stock}>{Strings.stock}: {color.stockFormatted}</span>
-					: <span className={CSS.outOfStockBadge}>{Strings.out_of_stock}</span>}
+					? <span className={CSS.stock}>{t`Stock`}: {color.stockFormatted}</span>
+					: <span className={CSS.outOfStockBadge}>{t`Out of stock`}</span>}
 			</div>
 
 			{isAdmin && <div className={CSS.adminFoot}>
 				<button type="button" onClick={() => {
 					alert('TODO: Implement Delete')
-				}}>{Strings.delete}</button>
+				}}>{t`Delete`}</button>
 			</div>}
 		</li>
 	)

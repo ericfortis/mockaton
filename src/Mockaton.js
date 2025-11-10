@@ -45,8 +45,8 @@ export function Mockaton(options) {
 
 async function onRequest(req, response) {
 	response.on('error', logger.warn)
-
-	response.setHeader('Server', `Mockaton ${pkgJSON.version}`)
+	
+	setHeaders(response, ['Server', `Mockaton ${pkgJSON.version}`])
 	setHeaders(response, config.extraHeaders)
 
 	const url = req.url || ''

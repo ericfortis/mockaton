@@ -169,7 +169,8 @@ So you can, e.g.:
 - Does not write to disk. Except when you select ✅ **Save Mocks** for scraping mocks from a backend
 - Does not initiate network connections (no logs, no telemetry)
 - Does not hijack your HTTP client
-- Auditable, organized, and small. 4 KLoC (half is UI and tests)
+- Auditable
+  - Organized and small. 4 KLoC (half is UI and tests)
   - Zero dependencies. No runtime and no build packages.
 
 <br/>
@@ -179,7 +180,7 @@ The section above highlights benefits specific to Mockaton. There are more, but
 in general here are some benefits which Mockaton has but other tools have as well:
 
 ### Works around unstable dev backends while developing UIs
-- Syncing the database and spinning up dev infrastructure can be time complex
+- Syncing the database and spinning up dev infrastructure can be complex
 - Mitigates progress from being blocked by waiting for APIs
 
 ### Time travel

@@ -373,7 +373,7 @@ the filename will have `[id]` in their place. For example:
   my-mocks-dir<b>/api/user/</b>[id]<b>/likes</b>.GET.200.json
 </pre>
 
-Your existing mocks won’t be overwritten. In other words, responses of routes with
+Your existing mocks won’t be overwritten. Responses of routes with
 the ☁️ **Cloud Checkbox** selected will be saved with unique filename-comments.
 
 
@@ -423,7 +423,7 @@ If you need to send more than one cookie, you can inject them globally
 in `config.extraHeaders`, or individually in a function `.js` or `.ts` mock.
 
 By the way, the `jwtCookie` helper has a hardcoded header and signature.
-In other words, it’s useful only if you care about its payload.
+So it’s useful only if you care about its payload.
 
 <br/>
 
@@ -644,7 +644,7 @@ export default function listColors() {
 **What if I need to serve a static .js or .ts?**
 
 **Option A:** Put it in your `config.staticDir` without the `.GET.200.js` extension.
-In other words, mocks in `staticDir` take precedence over `mocksDir/*`.
+Mocks in `staticDir` take precedence over `mocksDir/*`.
 
 **Option B:** Read it and return it. For example:
 ```js
@@ -727,7 +727,7 @@ api/user<b>(default)</b>.GET.200.json
 <br/>
 
 ### Query string params
-The query string is ignored for routing purposes. In other words, it’s only used for
+The query string is ignored for routing purposes. It’s only used for
 documenting the URL contract.
 <pre>
 api/video<b>?limit=[limit]</b>.GET.200.json
@@ -887,6 +887,7 @@ programs hijack your browser’s HTTP client (and Node’s).
 - [Wire Mock](https://github.com/wiremock/wiremock)
 - [Mock](https://github.com/dhuan/mock)
 - [Swagger](https://swagger.io/)
+- [Mockoon](https://mockoon.com)
 
 
 <br/>

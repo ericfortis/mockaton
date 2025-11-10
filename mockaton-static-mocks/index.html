@@ -4,14 +4,46 @@
 	<meta charset="UTF-8">
 	<meta content="width=device-width" name="viewport">
 	<link rel="icon" href="data:">
-	<title>Title</title>
+	<title>Mockaton</title>
+	<style>
+		body {
+			margin: 0;
+			padding: 40px;
+			font-family: system-ui, sans-serif;
+		}
+		
+		h2 {
+			margin-top: 60px;
+		}
+	</style>
+
 </head>
 <body>
-<h1>Welcome!</h1>
-<video src="assets/video.mp4" width="720" controls></video>
+<h1>Welcome to Mockaton!</h1>
+<p>
+	This is a static mock (mockaton-static-mocks/index.html). For
+	example, you can compile your frontend SPA, and copy it to that
+	directory, and deploy Mockaton as a stand-alone demo server you can
+	control its API states on the dashboard.
+</p>
+
+<h2>Dashboard</h2>
+<a href="/mockaton" target="_blank">/mockaton</a>
 
 <h2>/api/user</h2>
+<p>This is the response from a mock (mockaton-mocks/api/user.GET.200.json)</p>
 <pre></pre>
+
+
+<h2>Static Files</h2>
+<p>This image was served from the static dir</p>
+<img src="media/picture.png" width="300" alt="demo-pic" />
+
+
+<h2>Partial content</h2>
+<p>Similarly, you can serve Partial Content assets from that static dir, for example for videos.</p>
+<video src="media/video.mp4" width="720" controls></video>
+
 
 <script>
 	(async () => {

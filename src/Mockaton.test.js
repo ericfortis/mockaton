@@ -583,18 +583,17 @@ describe('Dynamic Mocks', () => {
 
 describe('Dynamic Function Mocks', () => {
 	test('honors filename convention', async () => {
-		const body = 'SOME_STRING'
 		const fx = new Fixture('func.GET.200.js', `
 			export default function (req, response) {
-  			return "${body}"
+  			return Buffer.from('A')
 			}`)
 		await fx.sync()
 		const r = await fx.request()
 		equal(r.status, 200)
-		equal(r.headers.get('content-length'), String(Buffer.byteLength(body)))
+		equal(r.headers.get('content-length'), '1')
 		equal(r.headers.get('content-type'), mimeFor('.json'))
 		equal(r.headers.get('set-cookie'), COOKIES.userA)
-		equal(await r.text(), body)
+		equal(await r.text(), 'A')
 		await fx.unlink()
 	})
 
@@ -754,19 +753,19 @@ describe('500', () => {
 		await fx200.write()
 		await fx500.write()
 		await sync()
-		
+
 		const bp0 = await api.toggle500(fx200.method, fx200.urlMask)
 		const b0 = await bp0.json()
 		equal(b0.auto500, false)
 		equal(b0.status, 500)
 		equal(await (await fx200.request()).text(), fx500.body)
-		
+
 		const bp1 = await api.toggle500(fx200.method, fx200.urlMask)
 		const b1 = await bp1.json()
 		equal(b0.auto500, false)
 		equal(b1.status, 200)
 		equal(await (await fx200.request()).text(), fx200.body)
-		
+
 		await fx200.unlink()
 		await fx500.unlink()
 	})
@@ -820,7 +819,7 @@ describe('Headers', () => {
 		const val = r.headers.get('server')
 		match(val, /^Mockaton \d+\.\d+\.\d+$/)
 	})
-	
+
 	test('custom headers are included', async () => {
 		const r = await api.getState()
 		const val = r.headers.get(CUSTOM_HEADER_NAME)
@@ -1046,7 +1045,7 @@ describe('Registering Mocks', () => {
 		const b = await fxB.fetchBroker()
 		equal(b, undefined)
 	})
-	
+
 	test('registering a 500 unsets auto500', async () => {
 		const fx200 = new Fixture('reg-error.GET.200.txt')
 		const fx500 = new Fixture('reg-error.GET.500.txt')

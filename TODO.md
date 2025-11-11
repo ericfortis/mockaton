@@ -1,6 +1,7 @@
-# TODO
+# TODO Think About
 
-- Refactor tests
+- `config.auto500Template` return { mime, body }
+- `config.ignore` as Array of regex
 - openapi
   - parsing it for examples?
   - displaying documentation (.openapi)
@@ -13,7 +14,6 @@
   selecting across pages, (e.g. for selecting and copying)
 - Document cookies for scraping mocks
 - Think about what to do for /.well-known/appspecific/com.chrome.devtools.json
-- Homebrew
 
 
 ### Cookies WIP

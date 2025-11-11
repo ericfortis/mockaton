@@ -31,8 +31,8 @@ export async function dispatchMock(req, response) {
 		if (cookie.getCurrent())
 			response.setHeader('Set-Cookie', cookie.getCurrent())
 
-		response.statusCode = broker.auto500 
-			? 500 
+		response.statusCode = broker.auto500
+			? 500
 			: broker.status
 		const { mime, body } = broker.auto500
 			? { mime: '', body: '' }
@@ -40,10 +40,13 @@ export async function dispatchMock(req, response) {
 
 		response.setHeader('Content-Type', mime)
 		response.setHeader('Content-Length', length(body))
-		
-		setTimeout(() => response.end(isHead ? null : body),
-			Number(broker.delayed && calcDelay()))
-		
+
+		setTimeout(() =>
+			response.end(isHead
+				? null
+				: body
+			), Number(broker.delayed && calcDelay()))
+
 		logger.accessMock(req.url, broker.file)
 	}
 	catch (error) { // TESTME
@@ -77,7 +80,6 @@ export async function jsToJsonPlugin(filePath, req, response) {
 
 function length(body) {
 	if (typeof body === 'string') return Buffer.byteLength(body)
-	if (Buffer.isBuffer(body)) return body.length // TESTME
-	if (body instanceof Uint8Array) return body.byteLength
+	if (body instanceof Uint8Array) return body.byteLength // Buffers are u8
 	return 0
 }

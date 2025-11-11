@@ -1,7 +1,6 @@
 <img src="src/Logo.svg" alt="Mockaton Logo" width="210" style="margin-top: 30px"/>
 
 ![NPM Version](https://img.shields.io/npm/v/mockaton)
-![NPM Version](https://img.shields.io/npm/l/mockaton)
 [![Test](https://github.com/ericfortis/mockaton/actions/workflows/test.yml/badge.svg)](https://github.com/ericfortis/mockaton/actions/workflows/test.yml)
 [![CodeQL](https://github.com/ericfortis/mockaton/actions/workflows/github-code-scanning/codeql/badge.svg)](https://github.com/ericfortis/mockaton/actions/workflows/github-code-scanning/codeql)
 [![codecov](https://codecov.io/github/ericfortis/mockaton/graph/badge.svg?token=90NYLMMG1J)](https://codecov.io/github/ericfortis/mockaton)
@@ -118,7 +117,6 @@ They will be saved in your `config.mocksDir` following the filename convention.
 </details>
 
 <br/>
-
 <br/>
 
 
@@ -267,7 +265,7 @@ export default defineConfig({
 
   logLevel: 'normal',
 
-  delay: 1200, // Global value in ms. But only applied to routes with the Delayed checkbox "ON"
+  delay: 1200, // ms. Applies to routes with Delayed Checkbox "ON"
   delayJitter: 0,
 
   proxyFallback: '',
@@ -285,7 +283,6 @@ export default defineConfig({
   corsExposedHeaders: [],
   corsCredentials: true,
   corsMaxAge: 0,
-
 
   plugins: [
     [/\.(js|ts)$/, jsToJsonPlugin]
@@ -863,6 +860,9 @@ await mockaton.reset()
 
 ## Alternatives worth learning as well
 
+<details>
+<summary>Learn more…</summary>
+
 ### Proxy-like
 These are similar to Mockaton in the sense that you can modify the
 mock response without loosing or risking your frontend code state. For
@@ -888,6 +888,7 @@ programs hijack your browser’s HTTP client (and Node’s).
 - [Swagger](https://swagger.io/)
 - [Mockoon](https://mockoon.com)
 
+</details>
 
 <br/>
 <br/>

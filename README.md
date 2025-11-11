@@ -193,9 +193,9 @@ backends when checking out long-lived branches or bisecting bugs.
 
 _For Docker, see the Quick-Start section above._
 
-Requires Node.js **v22.18+**, which supports mocks in TypeScript.
+Requires Node.js **v22.18+**, which supports TypeScript mocks.
 
-1. Create a mock in the default mocks directory (`./mockaton-mocks`)
+1. Create a mock in the default directory (`./mockaton-mocks`)
 ```sh
 mkdir -p         mockaton-mocks/api
 echo "[1,2,3]" > mockaton-mocks/api/foo.GET.200.json
@@ -238,7 +238,7 @@ The CLI options override their counterparts in `mockaton.config.js`
 -p, --port <port>      (default: 0) which means auto-assigned
 
 -q, --quiet            Errors only
---no-open              Don’t open dashboard in a browser (noops onReady callback)
+--no-open              Don’t open dashboard in a browser
 
 -h, --help
 -v, --version
@@ -265,7 +265,7 @@ export default defineConfig({
 
   logLevel: 'normal',
 
-  delay: 1200, // ms. Applies to routes with Delayed Checkbox "ON"
+  delay: 1200, // ms. Applies to routes with the Delay Checkbox "ON"
   delayJitter: 0,
 
   proxyFallback: '',
@@ -573,7 +573,7 @@ const server = await Mockaton(
 
 
 ## You can write JSON mocks in JavaScript or TypeScript
-_TypeScript mocks need **Node 22.18+ or 23.6+**_
+_TypeScript needs **Node 22.18+ or 23.6+**_
 
 For example, `api/foo.GET.200.js`
 
@@ -673,7 +673,6 @@ want a `Content-Type` header in the response.
 
 <details>
 <summary>Supported Methods</summary>
-<p>From <code>require('node:http').METHODS</code></p>
 <p>
 	ACL, BIND, CHECKOUT,
 	CONNECT, COPY, DELETE,
@@ -714,7 +713,7 @@ api/foo.GET.200.json
 A filename can have many comments.
 
 ### Default mock for a route
-You can add the comment: `(default)` to the filename.
+You can add the comment: `(default)`.
 Otherwise, the first file in **alphabetical order** wins.
 
 <pre>
@@ -732,7 +731,7 @@ api/video<b>?limit=[limit]</b>.GET.200.json
 
 On Windows, filenames containing "?" are [not
 permitted](https://learn.microsoft.com/en-us/windows/win32/fileio/naming-a-file), but since that’s part of the query
-string it’s ignored anyway.
+string, it’s ignored anyway.
 
 <br/>
 

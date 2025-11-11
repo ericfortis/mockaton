@@ -53,7 +53,7 @@ Options:
   -p, --port <port>      (default: 0) which means auto-assigned
   
   -q, --quiet            Errors only
-  --no-open              Don’t open dashboard in a browser (noops onReady callback)
+  --no-open              Don’t open dashboard in a browser
   
   -h, --help             Show this help
   -v, --version          Show version

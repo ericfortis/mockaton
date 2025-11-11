@@ -11,6 +11,7 @@ pixaton-tests/
 
 src/**/*.test.js
 
+Makefile
 .dockerignore
 CHANGELOG.md
 Dockerfile

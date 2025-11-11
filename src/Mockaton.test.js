@@ -6,7 +6,7 @@ import { randomUUID } from 'node:crypto'
 import { writeFile, unlink } from 'node:fs/promises'
 import { equal, deepEqual, match } from 'node:assert/strict'
 import { describe, test, before, beforeEach, after } from 'node:test'
-import { mkdtempSync, mkdirSync, readFileSync } from 'node:fs'
+import { mkdtempSync, mkdirSync, readFileSync, renameSync } from 'node:fs'
 
 import { API } from './ApiConstants.js'
 import { logger } from './utils/logger.js'
@@ -977,7 +977,7 @@ describe('Query String', () => {
 	const fx0 = new Fixture('query-string?foo=[foo]&bar=[bar].GET.200.json')
 	const fx1 = new Fixture('query-string/[id]?limit=[limit].GET.200.json')
 	before(async () => {
-		mkdirSync(mocksDir + 'query-string', { recursive: true })
+		mkdirSync(mocksDir + 'query-string')
 		await fx0.write()
 		await fx1.write()
 		await sync()
@@ -1018,10 +1018,7 @@ test('head for get. returns the headers without body only for GETs requested as 
 
 
 describe('Registering Mocks', () => {
-	before(() => {
-		watchMocksDir()
-		watchStaticDir()
-	})
+	before(watchMocksDir)
 
 	const fxA = new Fixture('register(default).GET.200.json')
 	const fxB = new Fixture('register(alt).GET.200.json')
@@ -1066,6 +1063,12 @@ describe('Registering Mocks', () => {
 
 	// TODO @ThinkAbout testing debounced bulk additions or removals
 	describe('getSyncVersion', () => {
+		const fx0 = new Fixture('reg0/runtime0.GET.200.txt')
+		before(async () => {
+			mkdirSync(mocksDir + 'reg0')
+			await fx0.sync()
+		})
+
 		let version
 
 		test('getSyncVersion responds immediately when version mismatches', async () => {
@@ -1087,11 +1090,25 @@ describe('Registering Mocks', () => {
 			const r = await prom
 			equal(await r.json(), version + 2)
 		})
+
+		test('responds when dir is renamed', async () => {
+			const p0 = api.getSyncVersion(version + 2)
+			renameSync(
+				mocksDir + 'reg0',
+				mocksDir + 'reg1')
+			const r0 = await p0
+			equal(await r0.json(), version + 3)
+			
+			const s = await fetchState()
+			equal(s.brokersByMethod.GET['/reg1/runtime0'].file, 'reg1/runtime0.GET.200.txt')
+		})
 	})
 })
 
 
 describe('Registering Static Mocks', () => {
+	before(watchStaticDir)
+
 	const fx = new FixtureStatic('static-register.txt')
 
 	test('registers static', async () => {

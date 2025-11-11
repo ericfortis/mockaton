@@ -45,7 +45,7 @@ export function watchMocksDir() {
 		if (!file)
 			return
 
-		if (isDirectory(join(dir, file))) { // TESTME
+		if (isDirectory(join(dir, file))) {
 			mockBrokerCollection.init()
 			uiSyncVersion.increment()
 		}

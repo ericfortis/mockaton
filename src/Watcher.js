@@ -30,7 +30,7 @@ export const uiSyncVersion = new class extends EventEmitter {
 		this.removeListener('ARR', listener)
 	}
 
-	#debounce(fn) {
+	#debounce(fn) { // TESTME 
 		let timer
 		return () => {
 			clearTimeout(timer)
@@ -61,7 +61,7 @@ export function watchMocksDir() {
 	})
 }
 
-export function watchStaticDir() { // TESTME
+export function watchStaticDir() {
 	const dir = config.staticDir
 	if (!dir)
 		return

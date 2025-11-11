@@ -101,7 +101,7 @@ const server = await Mockaton({
 	cookies: COOKIES,
 	extraHeaders: [CUSTOM_HEADER_NAME, CUSTOM_HEADER_VAL],
 	extraMimes: { [CUSTOM_EXT]: CUSTOM_MIME },
-	logLevel: 'quiet',
+	logLevel: 'verbose',
 	corsOrigins: [ALLOWED_ORIGIN],
 	corsExposedHeaders: ['Content-Encoding'],
 	watcherEnabled: false,
@@ -1061,7 +1061,6 @@ describe('Registering Mocks', () => {
 		await fx500.unregister()
 	})
 
-	// TODO @ThinkAbout testing debounced bulk additions or removals
 	describe('getSyncVersion', () => {
 		const fx0 = new Fixture('reg0/runtime0.GET.200.txt')
 		before(async () => {
@@ -1127,5 +1126,47 @@ describe('Registering Static Mocks', () => {
 		await fx.unregister()
 		const { staticBrokers } = await fetchState()
 		deepEqual(staticBrokers, {})
+	})
+	
+	describe('getSyncVersion', () => {
+		const fx0 = new FixtureStatic('reg0/static0.txt')
+		before(async () => {
+			mkdirSync(staticDir + 'reg0')
+			await fx0.sync()
+		})
+
+		let version
+
+		test('getSyncVersion responds immediately when version mismatches', async () => {
+			const r = await api.getSyncVersion(-1)
+			version = await r.json()
+		})
+
+		const fx = new FixtureStatic('static1.txt')
+		test('responds when a file is added', async () => {
+			const prom = api.getSyncVersion(version)
+			await fx.write()
+			const r = await prom
+			equal(await r.json(), version + 1)
+		})
+
+		test('responds when a file is deleted', async () => {
+			const prom = api.getSyncVersion(version + 1)
+			await fx.unlink()
+			const r = await prom
+			equal(await r.json(), version + 2)
+		})
+
+		test('responds when dir is renamed', async () => {
+			const p0 = api.getSyncVersion(version + 2)
+			renameSync(
+				staticDir + 'reg0',
+				staticDir + 'reg1')
+			const r0 = await p0
+			equal(await r0.json(), version + 3)
+
+			const s = await fetchState()
+			equal(s.staticBrokers['/reg1/static0.txt'].route, '/reg1/static0.txt')
+		})
 	})
 })

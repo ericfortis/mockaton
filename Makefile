@@ -23,21 +23,24 @@ watch:
 	@node --watch src/cli.js
 
 
+TEST_CMD = MOCKATON_WATCHER_DEBOUNCE_MS=0 node --test 'src/**/*.test.js'
+
 test:
-	@MOCKATON_WATCHER_DEBOUNCE_MS=0 node --test 'src/**/*.test.js'
+	$(TEST_CMD)
 
 test-docker:
 	@docker run --rm --interactive --tty \
 		--volume $(PWD):/app \
 		--workdir /app \
-		node:24 \
-		make test
+		node:24-slim \
+		sh -c "$(TEST_CMD)"
 
 coverage:
-	@MOCKATON_WATCHER_DEBOUNCE_MS=0 node --test --experimental-test-coverage \
+	$(TEST_CMD) \
+		--experimental-test-coverage \
 		--test-reporter=spec --test-reporter-destination=stdout \
-		--test-reporter=lcov --test-reporter-destination=lcov.info \
-		'src/**/*.test.js'
+		--test-reporter=lcov --test-reporter-destination=lcov.info
+
 
 pixaton:
 	@node --test --experimental-test-isolation=none \

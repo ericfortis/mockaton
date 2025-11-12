@@ -41,9 +41,6 @@ async function readFromMocksDir(f) {
 	return await readFile(join(mocksDir, f), 'utf8')
 }
 
-async function nextMacroTask() {
-	await new Promise(resolve => setTimeout(resolve, 0))
-}
 
 
 class BaseFixture {
@@ -55,17 +52,21 @@ class BaseFixture {
 		this.file = file
 		this.body = body || `Body for ${file}`
 	}
+	
+	async #nextMacroTask() {
+		await new Promise(resolve => setTimeout(resolve, 0))
+	}
 
 	async register() {
 		const nextVerPromise = api.getSyncVersion()
-		await nextMacroTask()
+		await this.#nextMacroTask()
 		await this.write()
 		await nextVerPromise
 	}
 
 	async unregister() {
 		const nextVerPromise = api.getSyncVersion()
-		await nextMacroTask()
+		await this.#nextMacroTask()
 		await this.unlink()
 		await nextVerPromise
 	}
@@ -1044,10 +1045,7 @@ test('head for get. returns the headers without body only for GETs requested as 
 
 
 describe('Registering Mocks', () => {
-	before(async () => {
-		watchMocksDir()
-		await nextMacroTask()
-	})
+	before(watchMocksDir)
 
 	const fxA = new Fixture('register(default).GET.200.json')
 	const fxB = new Fixture('register(alt).GET.200.json')
@@ -1133,10 +1131,7 @@ describe('Registering Mocks', () => {
 
 
 describe('Registering Static Mocks', () => {
-	before(async () => {
-		watchStaticDir()
-		await nextMacroTask()
-	})
+	before(watchStaticDir)
 
 	const fx = new FixtureStatic('static-register.txt')
 

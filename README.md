@@ -16,15 +16,15 @@ following a convention similar to the URLs.
 For example, for [/api/company/123](#), the filename could be:
 
 <pre>
-<code>my-mocks-dir/<b>api/company</b>/[company-id].GET.200.json</code>
+<code>my-mocks-dir/<b>api/company</b>/[id].GET.200.json</code>
 </pre>
 
 <br/>
 
 
 ## Quick Start (Docker)
-This will spin up Mockaton with the mock directories included in this repo
-mounted on the container.
+This will spin up Mockaton with the sample directories
+included in this repo mounted on the container.
 
 _[mockaton-mocks/](./mockaton-mocks) and [mockaton-static-mocks/](./mockaton-static-mocks)_
 

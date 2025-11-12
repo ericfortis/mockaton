@@ -3,10 +3,11 @@ import { tmpdir } from 'node:os'
 import { promisify } from 'node:util'
 import { createServer } from 'node:http'
 import { randomUUID } from 'node:crypto'
-import { writeFile, unlink } from 'node:fs/promises'
 import { equal, deepEqual, match } from 'node:assert/strict'
 import { describe, test, before, beforeEach, after } from 'node:test'
-import { mkdtempSync, mkdirSync, readFileSync, renameSync } from 'node:fs'
+
+import { mkdtempSync } from 'node:fs'
+import { writeFile, unlink, mkdir, readFile, rename } from 'node:fs/promises'
 
 import { API } from './ApiConstants.js'
 import { logger } from './utils/logger.js'
@@ -22,6 +23,28 @@ import { watchMocksDir, watchStaticDir } from './Watcher.js'
 const mocksDir = mkdtempSync(tmpdir() + '/mocks') + '/'
 const staticDir = mkdtempSync(tmpdir() + '/static') + '/'
 
+async function makeDirInMocks(dir) {
+	await mkdir(mocksDir + dir, { recursive: true })
+}
+async function makeDirInStaticMocks(dir) {
+	await mkdir(staticDir + dir, { recursive: true })
+}
+
+async function renameInMocksDir(src, target) {
+	await rename(mocksDir + src, mocksDir + target)
+}
+async function renameInStaticMocksDir(src, target) {
+	await rename(staticDir + src, staticDir + target)
+}
+
+async function readFromMocksDir(f) {
+	return await readFile(join(mocksDir, f), 'utf8')
+}
+
+async function nextMacroTask() {
+	await new Promise(resolve => setTimeout(resolve, 0))
+}
+
 
 class BaseFixture {
 	dir = ''
@@ -35,12 +58,14 @@ class BaseFixture {
 
 	async register() {
 		const nextVerPromise = api.getSyncVersion()
+		await nextMacroTask()
 		await this.write()
 		await nextVerPromise
 	}
 
 	async unregister() {
 		const nextVerPromise = api.getSyncVersion()
+		await nextMacroTask()
 		await this.unlink()
 		await nextVerPromise
 	}
@@ -124,6 +149,7 @@ async function sync() {
 function request(path, options = {}) {
 	return fetch(addr + path, options)
 }
+
 
 
 describe('Windows', () => {
@@ -375,7 +401,7 @@ describe('Proxy Fallback', () => {
 			equal(r.headers.get('set-cookie'), CUSTOM_COOKIES.join(', '))
 			equal(await r.text(), reqBodyPayload)
 
-			const savedBody = readFileSync(join(mocksDir, 'non-existing-mock/[id].POST.423.txt'), 'utf8')
+			const savedBody = await readFromMocksDir('non-existing-mock/[id].POST.423.txt')
 			equal(savedBody, reqBodyPayload)
 		})
 	})
@@ -937,7 +963,7 @@ describe('Dynamic Params', () => {
 	const fx2 = new Fixture('dynamic-params/[id]/suffix/[id].GET.200.txt')
 	const fx3 = new Fixture('dynamic-params/exact-route.GET.200.txt')
 	before(async () => {
-		mkdirSync(mocksDir + 'dynamic-params/[id]/suffix/[id]', { recursive: true })
+		await makeDirInMocks('dynamic-params/[id]/suffix/[id]')
 		await fx0.write()
 		await fx1.write()
 		await fx2.write()
@@ -977,7 +1003,7 @@ describe('Query String', () => {
 	const fx0 = new Fixture('query-string?foo=[foo]&bar=[bar].GET.200.json')
 	const fx1 = new Fixture('query-string/[id]?limit=[limit].GET.200.json')
 	before(async () => {
-		mkdirSync(mocksDir + 'query-string')
+		await makeDirInMocks('query-string')
 		await fx0.write()
 		await fx1.write()
 		await sync()
@@ -1018,7 +1044,10 @@ test('head for get. returns the headers without body only for GETs requested as 
 
 
 describe('Registering Mocks', () => {
-	before(watchMocksDir)
+	before(async () => {
+		watchMocksDir()
+		await nextMacroTask()
+	})
 
 	const fxA = new Fixture('register(default).GET.200.json')
 	const fxB = new Fixture('register(alt).GET.200.json')
@@ -1064,7 +1093,7 @@ describe('Registering Mocks', () => {
 	describe('getSyncVersion', () => {
 		const fx0 = new Fixture('reg0/runtime0.GET.200.txt')
 		before(async () => {
-			mkdirSync(mocksDir + 'reg0')
+			await makeDirInMocks('reg0')
 			await fx0.sync()
 		})
 
@@ -1092,12 +1121,10 @@ describe('Registering Mocks', () => {
 
 		test('responds when dir is renamed', async () => {
 			const p0 = api.getSyncVersion(version + 2)
-			renameSync(
-				mocksDir + 'reg0',
-				mocksDir + 'reg1')
+			await renameInMocksDir('reg0', 'reg1')
 			const r0 = await p0
 			equal(await r0.json(), version + 3)
-			
+
 			const s = await fetchState()
 			equal(s.brokersByMethod.GET['/reg1/runtime0'].file, 'reg1/runtime0.GET.200.txt')
 		})
@@ -1106,7 +1133,10 @@ describe('Registering Mocks', () => {
 
 
 describe('Registering Static Mocks', () => {
-	before(watchStaticDir)
+	before(async () => {
+		watchStaticDir()
+		await nextMacroTask()
+	})
 
 	const fx = new FixtureStatic('static-register.txt')
 
@@ -1127,11 +1157,11 @@ describe('Registering Static Mocks', () => {
 		const { staticBrokers } = await fetchState()
 		deepEqual(staticBrokers, {})
 	})
-	
+
 	describe('getSyncVersion', () => {
 		const fx0 = new FixtureStatic('reg0/static0.txt')
 		before(async () => {
-			mkdirSync(staticDir + 'reg0')
+			await makeDirInStaticMocks('reg0')
 			await fx0.sync()
 		})
 
@@ -1159,9 +1189,7 @@ describe('Registering Static Mocks', () => {
 
 		test('responds when dir is renamed', async () => {
 			const p0 = api.getSyncVersion(version + 2)
-			renameSync(
-				staticDir + 'reg0',
-				staticDir + 'reg1')
+			await renameInStaticMocksDir('reg0', 'reg1')
 			const r0 = await p0
 			equal(await r0.json(), version + 3)
 

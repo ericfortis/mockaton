@@ -737,7 +737,7 @@ function SettingsIcon() {
  * The version increments when a mock file is added, removed, or renamed.
  */
 function initRealTimeUpdates() {
-	let oldVersion = undefined // undefined waits until next event or timeout 
+	let oldVersion = undefined // undefined so it waits until next event or timeout 
 	let controller = new AbortController()
 
 	longPoll()
@@ -823,8 +823,12 @@ function initKeyboardNavigation() {
 
 
 function SyntaxJSON(json) {
+	// Capture groups: [string, optional colon, punc]
+	const regex = /("(?:\\u[a-fA-F0-9]{4}|\\[^u]|[^\\"])*")(\s*:)?|([{}\[\],:\s]+)|\S+/g
+
 	const MAX_NODES = 50_000
 	let nNodes = 0
+
 	const frag = new DocumentFragment()
 
 	function span(className, textContent) {
@@ -842,8 +846,7 @@ function SyntaxJSON(json) {
 
 	let match
 	let lastIndex = 0
-	SyntaxJSON.regex.lastIndex = 0 // resets regex
-	while ((match = SyntaxJSON.regex.exec(json)) !== null) {
+	while ((match = regex.exec(json)) !== null) {
 		if (nNodes > MAX_NODES)
 			break
 
@@ -865,13 +868,15 @@ function SyntaxJSON(json) {
 	text(json.slice(lastIndex))
 	return frag
 }
-SyntaxJSON.regex = /("(?:\\u[a-fA-F0-9]{4}|\\[^u]|[^\\"])*")(\s*:)?|([{}\[\],:\s]+)|\S+/g
-// Capture group order: [string, optional colon, punc]
 
 
 function SyntaxXML(xml) {
+	// Capture groups: [tagPunc, tagName, attrName, attrVal]
+	const regex = /(<\/?|\/?>|\?>)|(?<=<\??\/?)([A-Za-z_:][\w:.-]*)|([A-Za-z_:][\w:.-]*)(?==)|("(?:[^"\\]|\\.)*")/g
+
 	const MAX_NODES = 50_000
 	let nNodes = 0
+
 	const frag = new DocumentFragment()
 
 	function span(className, textContent) {
@@ -889,8 +894,7 @@ function SyntaxXML(xml) {
 
 	let match
 	let lastIndex = 0
-	SyntaxXML.regex.lastIndex = 0
-	while ((match = SyntaxXML.regex.exec(xml)) !== null) {
+	while ((match = regex.exec(xml)) !== null) {
 		if (nNodes > MAX_NODES)
 			break
 
@@ -908,6 +912,4 @@ function SyntaxXML(xml) {
 	frag.normalize()
 	return frag
 }
-SyntaxXML.regex = /(<\/?|\/?>|\?>)|(?<=<\??\/?)([A-Za-z_:][\w:.-]*)|([A-Za-z_:][\w:.-]*)(?==)|("(?:[^"\\]|\\.)*")/g
-// Capture groups order:  [tagPunc, tagName, attrName, attrVal]
 

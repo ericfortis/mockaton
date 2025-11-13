@@ -52,7 +52,7 @@ class BaseFixture {
 		this.file = file
 		this.body = body || `Body for ${file}`
 	}
-	
+
 	async #nextMacroTask() {
 		await new Promise(resolve => setTimeout(resolve, 0))
 	}
@@ -891,7 +891,14 @@ describe('Select', () => {
 		await fxAlt.unlink()
 	})
 
-	test('422 when updating non-existing mock alternative', async () => {
+	test('422 when updating non-existing mock', async () => {
+		const file = 'route-does-not-exist.GET.200.txt'
+		const r = await api.select(file)
+		equal(r.status, 422)
+		equal(await r.text(), `Missing Mock: ${file}`)
+	})
+
+	test('422 when updating non-existing mock alternative but there are other mocks for the route', async () => {
 		const r = await api.select(fxUnregistered.file)
 		equal(r.status, 422)
 		equal(await r.text(), `Missing Mock: ${fxUnregistered.file}`)
@@ -951,8 +958,7 @@ describe('Decoding URLs', () => {
 	test('allows dots, spaces, amp, etc.', async () => {
 		const fx = new Fixture('dot.in.path and amp & and colon:.GET.200.txt')
 		await fx.sync()
-		const r = await fx.request()
-		equal(await r.text(), fx.body)
+		equal(await (await fx.request()).text(), fx.body)
 		await fx.unlink()
 	})
 })

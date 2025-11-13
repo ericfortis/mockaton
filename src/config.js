@@ -68,17 +68,17 @@ export const config = Object.seal(defaults)
 export const ConfigValidator = Object.freeze(validators)
 
 
-/** @param {Partial<Config>} options */
-export function setup(options) {
-	if (options.mocksDir)
-		options.mocksDir = resolve(options.mocksDir)
+/** @param {Partial<Config>} opts */
+export function setup(opts) {
+	if (opts.mocksDir)
+		opts.mocksDir = resolve(opts.mocksDir)
 
-	if (options.staticDir)
-		options.staticDir = resolve(options.staticDir)
+	if (opts.staticDir)
+		opts.staticDir = resolve(opts.staticDir)
 	else if (!isDirectory(defaults.staticDir))
-		options.staticDir = ''
+		opts.staticDir = ''
 
-	Object.assign(config, options)
+	Object.assign(config, opts)
 	validate(config, ConfigValidator)
 	logger.setLevel(config.logLevel)
 }

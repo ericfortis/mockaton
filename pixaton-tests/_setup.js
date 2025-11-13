@@ -10,6 +10,7 @@ import { removeDiffsAndCandidates, testPixels as _testPixels, diffServer } from 
 const mockatonServer = await Mockaton({
 	...devConfig,
 	port: 0,
+	hotReload: false,
 	onReady: () => {}
 })
 const mockatonAddr = `http://${mockatonServer.address().address}:${mockatonServer.address().port}`

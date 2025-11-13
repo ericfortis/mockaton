@@ -30,7 +30,7 @@ export const DashboardHtml = hotReloadEnabled => `<!DOCTYPE html>
   <title>Mockaton</title>
 </head>
 <body>
-${hotReloadEnabled &&`<script type="module" src="DashboardDevHotReload.js"></script>` }
+${hotReloadEnabled ? `<script type="module" src="DashboardDevHotReload.js"></script>` : '' }
 </body>
 </html>
 `

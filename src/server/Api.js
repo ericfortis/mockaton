@@ -9,7 +9,7 @@ import { readdirSync } from 'node:fs'
 import { IndexHtml, CSP } from '../client/indexHtml.js'
 
 import { cookie } from './cookie.js'
-import { devWatcher } from './WatcherDev.js'
+import { devClientWatcher } from './WatcherDevClient.js'
 import { parseJSON } from './utils/http-request.js'
 import { uiSyncVersion } from './Watcher.js'
 import * as staticCollection from './staticCollection.js'
@@ -25,9 +25,8 @@ const CLIENT_DIR = join(import.meta.dirname, '../client')
 
 export const apiGetRequests = new Map([
 	[API.dashboard, serveDashboard],
-	...readdirSync(CLIENT_DIR).map(f =>
-		[API.dashboard + '/' + f, serveStatic(f)]),
-
+	...readdirSync(CLIENT_DIR).map(f => [API.dashboard + '/' + f, serveStatic(f)]),
+	
 	[API.state, getState],
 	[API.syncVersion, longPollClientSyncVersion],
 ])
@@ -35,6 +34,7 @@ if (DEV) {
 	apiGetRequests.set(API.throws, () => { throw new Error('Test500') })
 	apiGetRequests.set(API.watchHotReload, longPollDevHotReload)
 }
+
 
 export const apiPatchRequests = new Map([
 	[API.cors, setCorsAllowed],
@@ -104,18 +104,18 @@ function longPollClientSyncVersion(req, response) {
 
 function longPollDevHotReload(req, response) {
 	function onDevChange(file) {
-		devWatcher.unsubscribe(onDevChange)
+		devClientWatcher.unsubscribe(onDevChange)
 		sendJSON(response, file)
 	}
 	response.setTimeout(LONG_POLL_SERVER_TIMEOUT, () => {
-		devWatcher.unsubscribe(onDevChange)
+		devClientWatcher.unsubscribe(onDevChange)
 		sendJSON(response, '')
 	})
 	req.on('error', () => {
-		devWatcher.unsubscribe(onDevChange)
+		devClientWatcher.unsubscribe(onDevChange)
 		response.destroy()
 	})
-	devWatcher.subscribe(onDevChange)
+	devClientWatcher.subscribe(onDevChange)
 }
 
 

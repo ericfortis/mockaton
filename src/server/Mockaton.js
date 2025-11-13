@@ -15,7 +15,7 @@ import {
 	setHeaders, sendNoContent, sendInternalServerError,
 	sendUnprocessable, sendTooLongURI, sendBadRequest
 } from './utils/http-response.js'
-import { watchDevSPA } from './WatcherDev.js'
+import { watchDevSPA } from './WatcherDevClient.js'
 import { watchMocksDir, watchStaticDir } from './Watcher.js'
 
 

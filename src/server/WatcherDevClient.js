@@ -2,7 +2,7 @@ import { watch } from 'node:fs'
 import { EventEmitter } from 'node:events'
 
 
-export const devWatcher = new class extends EventEmitter {
+export const devClientWatcher = new class extends EventEmitter {
 	emit(file) { super.emit('RELOAD', file) }
 	subscribe(listener) { this.once('RELOAD', listener) }
 	unsubscribe(listener) { this.removeListener('RELOAD', listener) }
@@ -12,6 +12,6 @@ export const devWatcher = new class extends EventEmitter {
 // It would need dynamic import + cache busting
 export function watchDevSPA() {
 	watch('src/client', (_, file) => {
-		devWatcher.emit(file)
+		devClientWatcher.emit(file)
 	})
 }

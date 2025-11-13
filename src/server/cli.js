@@ -4,8 +4,8 @@ import { resolve } from 'node:path'
 import { parseArgs } from 'node:util'
 
 import { isFile } from './utils/fs.js'
-import { Mockaton } from '../index.js'
-import pkgJSON from '../package.json' with { type: 'json' }
+import { Mockaton } from '../../index.js'
+import pkgJSON from '../../package.json' with { type: 'json' }
 
 
 process.on('unhandledRejection', error => { throw error })

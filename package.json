@@ -20,7 +20,7 @@
 		"testing"
 	],
 	"bin": {
-		"mockaton": "src/cli.js"
+		"mockaton": "src/server/cli.js"
 	},
 	"scripts": {
 		"start": "make start"

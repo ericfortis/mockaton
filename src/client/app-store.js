@@ -1,4 +1,4 @@
-import { deferred } from './DashboardDom.js'
+import { deferred } from './dom-utils.js'
 import { Commander } from './ApiCommander.js'
 import { parseFilename, extractComments } from './Filename.js'
 

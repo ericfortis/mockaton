@@ -4,6 +4,9 @@
  */
 
 import { join } from 'node:path'
+import { readdirSync } from 'node:fs'
+
+import { IndexHtml, CSP } from '../client/indexHtml.js'
 
 import { cookie } from './cookie.js'
 import { devWatcher } from './WatcherDev.js'
@@ -12,29 +15,19 @@ import { uiSyncVersion } from './Watcher.js'
 import * as staticCollection from './staticCollection.js'
 import * as mockBrokersCollection from './mockBrokersCollection.js'
 import { config, ConfigValidator } from './config.js'
-import { DashboardHtml, CSP } from './DashboardHtml.js'
 import { sendOK, sendJSON, sendUnprocessable, sendFile, sendHTML } from './utils/http-response.js'
 import { API, LONG_POLL_SERVER_TIMEOUT, HEADER_SYNC_VERSION } from './ApiConstants.js'
 
 
 const DEV = process.env.NODE_ENV === 'development'
+const CLIENT_DIR = join(import.meta.dirname, '../client')
 
-export const DASHBOARD_ASSETS = [
-	'Dashboard.css',
-	'Dashboard.js',
-	'DashboardDom.js',
-	'DashboardStore.js',
-	'DashboardDevHotReload.js',
-	'ApiCommander.js',
-	'Logo.svg',
-	'Filename.js', // used on server too
-	'ApiConstants.js', // used on server too
-]
 
 export const apiGetRequests = new Map([
 	[API.dashboard, serveDashboard],
-	...DASHBOARD_ASSETS.map(f => [API.dashboard + '/' + f, serveStatic(f)]),
-	
+	...readdirSync(CLIENT_DIR).map(f =>
+		[API.dashboard + '/' + f, serveStatic(f)]),
+
 	[API.state, getState],
 	[API.syncVersion, longPollClientSyncVersion],
 ])
@@ -63,11 +56,11 @@ export const apiPatchRequests = new Map([
 /** # GET */
 
 function serveDashboard(_, response) {
-	sendHTML(response, DashboardHtml(config.hotReload), CSP)
+	sendHTML(response, IndexHtml(config.hotReload), CSP)
 }
 
 function serveStatic(f) {
-	return (_, response) => sendFile(response, join(import.meta.dirname, f))
+	return (_, response) => sendFile(response, join(CLIENT_DIR, f))
 }
 
 

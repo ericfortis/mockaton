@@ -1,3 +1,5 @@
+// @Linked src/server => src/client
+
 const MOUNT = '/mockaton'
 export const API = {
 	dashboard: MOUNT,

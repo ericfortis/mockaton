@@ -1,6 +1,5 @@
 import { watch } from 'node:fs'
 import { EventEmitter } from 'node:events'
-import { DASHBOARD_ASSETS } from './Api.js'
 
 
 export const devWatcher = new class extends EventEmitter {
@@ -12,8 +11,7 @@ export const devWatcher = new class extends EventEmitter {
 // DashboardHtml.js is not watched.
 // It would need dynamic import + cache busting
 export function watchDevSPA() {
-	watch('src', (_, file) => {
-		if (DASHBOARD_ASSETS.includes(file))
-			devWatcher.emit(file)
+	watch('src/client', (_, file) => {
+		devWatcher.emit(file)
 	})
 }

@@ -1,4 +1,4 @@
-<img src="src/Logo.svg" alt="Mockaton Logo" width="210" style="margin-top: 30px"/>
+<img src="src/client/logo.svg" alt="Mockaton Logo" width="210" style="margin-top: 30px"/>
 
 ![NPM Version](https://img.shields.io/npm/v/mockaton)
 [![Test](https://github.com/ericfortis/mockaton/actions/workflows/test.yml/badge.svg)](https://github.com/ericfortis/mockaton/actions/workflows/test.yml)
@@ -447,7 +447,7 @@ config.extraMimes = {
 }
 ```
 Those extra media types take precedence over the built-in
-[utils/mime.js](src/utils/mime.js), so you can override them.
+[utils/mime.js](src/server/utils/mime.js), so you can override them.
 
 <br/>
 

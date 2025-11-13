@@ -1,4 +1,6 @@
-const httpMethods = [ // @KeepSync node:http.METHODS (this file is used on the client too)
+// @Linked src/server => src/client
+
+const httpMethods = [ // @KeepSync node:http.METHODS 
 	'ACL', 'BIND', 'CHECKOUT', 'CONNECT', 'COPY', 'DELETE',
 	'GET', 'HEAD', 'LINK', 'LOCK', 'M-SEARCH', 'MERGE',
 	'MKACTIVITY', 'MKCALENDAR', 'MKCOL', 'MOVE', 'NOTIFY', 'OPTIONS',

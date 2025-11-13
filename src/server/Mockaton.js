@@ -1,5 +1,5 @@
 import { createServer } from 'node:http'
-import pkgJSON from '../package.json' with { type: 'json' }
+import pkgJSON from '../../package.json' with { type: 'json' }
 
 import { API } from './ApiConstants.js'
 import { logger } from './utils/logger.js'

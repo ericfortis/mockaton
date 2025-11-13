@@ -36,10 +36,11 @@ test-docker:
 		sh -c "$(TEST_CMD)"
 
 coverage:
-	$(TEST_CMD) \
-		--experimental-test-coverage \
+	@MOCKATON_WATCHER_DEBOUNCE_MS=0 node \
+		--test --experimental-test-coverage \
 		--test-reporter=spec --test-reporter-destination=stdout \
-		--test-reporter=lcov --test-reporter-destination=lcov.info
+		--test-reporter=lcov --test-reporter-destination=lcov.info \
+		'src/**/*.test.js'
 
 
 pixaton:

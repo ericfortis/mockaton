@@ -2,7 +2,7 @@
 	"name": "mockaton",
 	"description": "HTTP Mock Server",
 	"type": "module",
-	"version": "11.2.1",
+	"version": "11.2.2",
 	"types": "./index.d.ts",
 	"exports": {
 		".": {

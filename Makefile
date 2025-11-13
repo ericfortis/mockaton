@@ -1,3 +1,5 @@
+export NODE_ENV = development
+
 docker: docker-build docker-run
 
 docker-build:
@@ -30,6 +32,7 @@ test:
 
 test-docker:
 	@docker run --rm --interactive --tty \
+		--env NODE_ENV=$$NODE_ENV \
 		--volume $(PWD):/app \
 		--workdir /app \
 		node:24-slim \

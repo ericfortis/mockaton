@@ -17,6 +17,8 @@ import { sendOK, sendJSON, sendUnprocessable, sendFile, sendHTML } from './utils
 import { API, LONG_POLL_SERVER_TIMEOUT, HEADER_SYNC_VERSION } from './ApiConstants.js'
 
 
+const DEV = process.env.NODE_ENV === 'development'
+
 export const DASHBOARD_ASSETS = [
 	'Dashboard.css',
 	'Dashboard.js',
@@ -32,12 +34,14 @@ export const DASHBOARD_ASSETS = [
 export const apiGetRequests = new Map([
 	[API.dashboard, serveDashboard],
 	...DASHBOARD_ASSETS.map(f => [API.dashboard + '/' + f, serveStatic(f)]),
-
+	
 	[API.state, getState],
 	[API.syncVersion, longPollClientSyncVersion],
-	[API.watchHotReload, longPollDevHotReload],
-	[API.throws, () => { throw new Error('Test500') }]
 ])
+if (DEV) {
+	apiGetRequests.set(API.throws, () => { throw new Error('Test500') })
+	apiGetRequests.set(API.watchHotReload, longPollDevHotReload)
+}
 
 export const apiPatchRequests = new Map([
 	[API.cors, setCorsAllowed],

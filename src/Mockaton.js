@@ -19,6 +19,8 @@ import { watchDevSPA } from './WatcherDev.js'
 import { watchMocksDir, watchStaticDir } from './Watcher.js'
 
 
+const DEV = process.env.NODE_ENV === 'development'
+
 export function Mockaton(options) {
 	return new Promise((resolve, reject) => {
 		setup(options)
@@ -30,7 +32,7 @@ export function Mockaton(options) {
 			watchMocksDir()
 			watchStaticDir()
 		}
-		if (config.hotReload) 
+		if (DEV && config.hotReload)
 			watchDevSPA()
 
 		const server = createServer(onRequest)
@@ -48,7 +50,7 @@ export function Mockaton(options) {
 
 async function onRequest(req, response) {
 	response.on('error', logger.warn)
-	
+
 	setHeaders(response, ['Server', `Mockaton ${pkgJSON.version}`])
 	setHeaders(response, config.extraHeaders)
 

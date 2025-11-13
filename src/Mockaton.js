@@ -9,13 +9,14 @@ import { dispatchStatic } from './StaticDispatcher.js'
 import * as staticCollection from './staticCollection.js'
 import * as mockBrokerCollection from './mockBrokersCollection.js'
 import { setCorsHeaders, isPreflight } from './utils/http-cors.js'
-import { watchMocksDir, watchStaticDir } from './Watcher.js'
 import { apiPatchRequests, apiGetRequests } from './Api.js'
 import { BodyReaderError, hasControlChars } from './utils/http-request.js'
 import {
 	setHeaders, sendNoContent, sendInternalServerError,
 	sendUnprocessable, sendTooLongURI, sendBadRequest
 } from './utils/http-response.js'
+import { watchDevSPA } from './WatcherDev.js'
+import { watchMocksDir, watchStaticDir } from './Watcher.js'
 
 
 export function Mockaton(options) {
@@ -29,6 +30,8 @@ export function Mockaton(options) {
 			watchMocksDir()
 			watchStaticDir()
 		}
+		if (config.hotReload) 
+			watchDevSPA()
 
 		const server = createServer(onRequest)
 		server.on('error', reject)

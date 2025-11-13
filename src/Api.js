@@ -6,6 +6,7 @@
 import { join } from 'node:path'
 
 import { cookie } from './cookie.js'
+import { devWatcher } from './WatcherDev.js'
 import { parseJSON } from './utils/http-request.js'
 import { uiSyncVersion } from './Watcher.js'
 import * as staticCollection from './staticCollection.js'
@@ -16,21 +17,25 @@ import { sendOK, sendJSON, sendUnprocessable, sendFile, sendHTML } from './utils
 import { API, LONG_POLL_SERVER_TIMEOUT, HEADER_SYNC_VERSION } from './ApiConstants.js'
 
 
+export const DASHBOARD_ASSETS = [
+	'Dashboard.css',
+	'Dashboard.js',
+	'DashboardDom.js',
+	'DashboardStore.js',
+	'DashboardDevHotReload.js',
+	'ApiCommander.js',
+	'Logo.svg',
+	'Filename.js', // used on server too
+	'ApiConstants.js', // used on server too
+]
+
 export const apiGetRequests = new Map([
 	[API.dashboard, serveDashboard],
-	...[
-		'Logo.svg',
-		'Dashboard.css',
-		'ApiCommander.js',
-		'ApiConstants.js',
-		'Dashboard.js',
-		'DashboardDom.js',
-		'DashboardStore.js',
-		'Filename.js'
-	].map(f => [API.dashboard + '/' + f, serveStatic(f)]),
+	...DASHBOARD_ASSETS.map(f => [API.dashboard + '/' + f, serveStatic(f)]),
 
 	[API.state, getState],
 	[API.syncVersion, longPollClientSyncVersion],
+	[API.watchHotReload, longPollDevHotReload],
 	[API.throws, () => { throw new Error('Test500') }]
 ])
 
@@ -54,7 +59,7 @@ export const apiPatchRequests = new Map([
 /** # GET */
 
 function serveDashboard(_, response) {
-	sendHTML(response, DashboardHtml, CSP)
+	sendHTML(response, DashboardHtml(config.hotReload), CSP)
 }
 
 function serveStatic(f) {
@@ -98,6 +103,23 @@ function longPollClientSyncVersion(req, response) {
 		response.destroy()
 	})
 	uiSyncVersion.subscribe(onAddOrRemoveMock)
+}
+
+
+function longPollDevHotReload(req, response) {
+	function onDevChange(file) {
+		devWatcher.unsubscribe(onDevChange)
+		sendJSON(response, file)
+	}
+	response.setTimeout(LONG_POLL_SERVER_TIMEOUT, () => {
+		devWatcher.unsubscribe(onDevChange)
+		sendJSON(response, '')
+	})
+	req.on('error', () => {
+		devWatcher.unsubscribe(onDevChange)
+		response.destroy()
+	})
+	devWatcher.subscribe(onDevChange)
 }
 
 

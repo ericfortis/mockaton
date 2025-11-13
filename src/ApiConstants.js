@@ -17,7 +17,8 @@ export const API = {
 	staticStatus: MOUNT + '/static-status',
 	syncVersion: MOUNT + '/sync-version',
 	throws: MOUNT + '/throws',
-	toggle500: MOUNT + '/toggle500'
+	toggle500: MOUNT + '/toggle500',
+	watchHotReload: MOUNT + '/watch-hot-reload',
 }
 
 export const HEADER_502 = 'Mockaton502'

@@ -43,6 +43,8 @@ export interface Config {
 	plugins?: [filenameTester: RegExp, plugin: Plugin][]
 
 	onReady?: (address: string) => void
+	
+	hotReload?: boolean // For UI dev purposes only
 }
 
 

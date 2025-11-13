@@ -1,34 +1,33 @@
 import { API } from './ApiConstants.js'
 
 
-longPoll()
-async function longPoll() {
+longPollDevChanges()
+async function longPollDevChanges() {
 	try {
 		const response = await fetch(API.watchHotReload)
-		if (response.ok) {
-			const editedFile = await response.json() || ''
-			if (editedFile.endsWith('.css')) {
-				hotReloadCSS(editedFile)
-				longPoll()
-			}
-			else if (editedFile)
-				location.reload()
-			else
-				longPoll()
-		}
-		else
+		if (!response.ok)
 			throw response.statusText
+
+		const file = await response.json() || ''
+		if (file.endsWith('.css')) {
+			hotReloadCSS(file)
+			longPollDevChanges()
+		}
+		else if (file)
+			location.reload()
+		else
+			longPollDevChanges()
 	}
 	catch (error) {
 		console.error('hot reload', error?.message || error)
-		setTimeout(longPoll, 3000)
+		setTimeout(longPollDevChanges, 3000)
 	}
 }
 
-function hotReloadCSS(editedFile) {
-	const link = document.querySelector(`link[href*="${editedFile}"]`)
+function hotReloadCSS(file) {
+	const link = document.querySelector(`link[href*="${file}"]`)
 	if (link) {
-		const href = link.href.split('?')[0]
-		link.href = href + '?t=' + Date.now()
+		const [url] = link.href.split('?')
+		link.href = url + '?' + Date.now()
 	}
 }

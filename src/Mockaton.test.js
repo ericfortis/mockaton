@@ -20,27 +20,16 @@ import { parseFilename } from './Filename.js'
 import { watchMocksDir, watchStaticDir } from './Watcher.js'
 
 
-const mocksDir = mkdtempSync(tmpdir() + '/mocks') + '/'
-const staticDir = mkdtempSync(tmpdir() + '/static') + '/'
+const mocksDir = mkdtempSync(join(tmpdir(), 'mocks'))
+const staticDir = mkdtempSync(join(tmpdir(), 'static'))
 
-async function makeDirInMocks(dir) {
-	await mkdir(mocksDir + dir, { recursive: true })
-}
-async function makeDirInStaticMocks(dir) {
-	await mkdir(staticDir + dir, { recursive: true })
-}
+const makeDirInMocks = dir => mkdir(join(mocksDir, dir), { recursive: true })
+const makeDirInStaticMocks = dir => mkdir(join(staticDir, dir), { recursive: true })
 
-async function renameInMocksDir(src, target) {
-	await rename(mocksDir + src, mocksDir + target)
-}
-async function renameInStaticMocksDir(src, target) {
-	await rename(staticDir + src, staticDir + target)
-}
+const renameInMocksDir = (src, target) => rename(join(mocksDir, src), join(mocksDir, target))
+const renameInStaticMocksDir = (src, target) => rename(join(staticDir, src), join(staticDir, target))
 
-async function readFromMocksDir(f) {
-	return await readFile(join(mocksDir, f), 'utf8')
-}
-
+const readFromMocksDir = f => readFile(join(mocksDir, f), 'utf8')
 
 
 class BaseFixture {
@@ -196,14 +185,18 @@ describe('Warnings', () => {
 		const fx0 = new Fixture('bar.GET._INVALID_STATUS_.json')
 		const fx1 = new Fixture('foo._INVALID_METHOD_.202.json')
 		const fx2 = new Fixture('missing-method-and-status.json')
-		await Promise.all([fx0.write(), fx1.write(), fx2.write()])
+		await fx0.write()
+		await fx1.write()
+		await fx2.write()
 		await sync()
 
 		equal(spy.calls[0].arguments[0], 'Invalid HTTP Response Status: "NaN"')
 		equal(spy.calls[1].arguments[0], 'Unrecognized HTTP Method: "_INVALID_METHOD_"')
 		equal(spy.calls[2].arguments[0], 'Invalid Filename Convention')
 
-		await Promise.all([fx0.unlink(), fx1.unlink(), fx2.unlink()])
+		await fx0.unlink()
+		await fx1.unlink()
+		await fx2.unlink()
 	})
 
 	test('body parser rejects invalid JSON in API requests', async t => {

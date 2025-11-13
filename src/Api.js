@@ -96,7 +96,6 @@ function longPollClientSyncVersion(req, response) {
 		sendJSON(response, uiSyncVersion.version)
 		return
 	}
-
 	function onAddOrRemoveMock() {
 		uiSyncVersion.unsubscribe(onAddOrRemoveMock)
 		sendJSON(response, uiSyncVersion.version)

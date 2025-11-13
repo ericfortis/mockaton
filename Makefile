@@ -22,7 +22,7 @@ start:
 	@node src/cli.js
 
 watch:
-	@node --watch src/cli.js
+	@node --watch-path=src src/cli.js
 
 
 TEST_CMD = MOCKATON_WATCHER_DEBOUNCE_MS=0 node --test 'src/**/*.test.js'

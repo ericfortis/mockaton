@@ -1,12 +1,14 @@
 import { API } from './ApiConstants.js'
 
+
 export const CSP = [
 	`default-src 'self'`,
 	`img-src data: blob: 'self'`
 ].join(';')
 
 
-export const DashboardHtml = hotReloadEnabled => `<!DOCTYPE html>
+export const DashboardHtml = hotReloadEnabled => `
+<!DOCTYPE html>
 <html lang="en-US">
 <head>
   <meta charset="UTF-8">
@@ -30,7 +32,9 @@ export const DashboardHtml = hotReloadEnabled => `<!DOCTYPE html>
   <title>Mockaton</title>
 </head>
 <body>
-${hotReloadEnabled ? `<script type="module" src="DashboardDevHotReload.js"></script>` : '' }
+${hotReloadEnabled
+	? '<script type="module" src="DashboardDevHotReload.js"></script>'
+	: ''}
 </body>
 </html>
 `

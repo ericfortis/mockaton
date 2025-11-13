@@ -15,7 +15,7 @@ async function longPollDevChanges() {
 		}
 		else if (file)
 			location.reload()
-		else
+		else // server timeout
 			longPollDevChanges()
 	}
 	catch (error) {

@@ -157,11 +157,10 @@ make run-standalone-demo
 - Dashboard: http://localhost:4040/mockaton
 
 ### Testing scenarios that would otherwise be skipped
-- Trigger dynamic states on an API. You can do this by using comments on mock filenames, for example, for polled alerts or notifications.
+- Trigger dynamic states on an API. For example, for polled alerts or notifications.
 - Testing retries, you can change an endpoint from a 500 to a 200 on the fly.
-- Simulate errors on third-party APIs, or on your project’s backend (if you are a frontend dev, or unfamiliar with that code)
-- Generating dynamic responses. Mockaton lets you use Node’s HTTP handlers (see function mocks) when using function mocks.
-So you can, e.g.:
+- Simulate errors on third-party APIs, or on your project’s backend.
+- Generate dynamic responses. Use Node’s HTTP handlers (see function mocks below). So you can, e.g.:
   - have an in-memory database
   - read from disk
   - read query string 

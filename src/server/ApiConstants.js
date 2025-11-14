@@ -1,4 +1,4 @@
-// @Linked src/server => src/client
+// @KeepSync src/client/ApiConstants.js
 
 const MOUNT = '/mockaton'
 export const API = {

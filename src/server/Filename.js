@@ -1,13 +1,7 @@
-// @Linked src/server => src/client
+// @KeepSync src/client/Filename.js
 
-const httpMethods = [ // @KeepSync node:http.METHODS 
-	'ACL', 'BIND', 'CHECKOUT', 'CONNECT', 'COPY', 'DELETE',
-	'GET', 'HEAD', 'LINK', 'LOCK', 'M-SEARCH', 'MERGE',
-	'MKACTIVITY', 'MKCALENDAR', 'MKCOL', 'MOVE', 'NOTIFY', 'OPTIONS',
-	'PATCH', 'POST', 'PROPFIND', 'PROPPATCH', 'PURGE', 'PUT',
-	'QUERY', 'REBIND', 'REPORT', 'SEARCH', 'SOURCE', 'SUBSCRIBE',
-	'TRACE', 'UNBIND', 'UNLINK', 'UNLOCK', 'UNSUBSCRIBE'
-]
+import { METHODS } from 'node:http'
+
 
 const reComments = /\(.*?\)/g // Anything within parentheses
 
@@ -27,7 +21,7 @@ export function validateFilename(file) {
 	if (!responseStatusIsValid(status))
 		return `Invalid HTTP Response Status: "${status}"`
 
-	if (!httpMethods.includes(method))
+	if (!METHODS.includes(method))
 		return `Unrecognized HTTP Method: "${method}"`
 } 
 

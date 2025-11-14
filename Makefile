@@ -25,7 +25,8 @@ watch:
 	@node --watch-path=src/server src/server/cli.js
 
 
-TEST_CMD = MOCKATON_WATCHER_DEBOUNCE_MS=0 node --test 'src/**/*.test.js'
+TEST_CMD = MOCKATON_WATCHER_DEBOUNCE_MS=0 \
+	node --test 'src/**/*.test.js'
 
 test:
 	$(TEST_CMD)
@@ -47,14 +48,6 @@ coverage:
 
 
 pixaton:
-	@node --test --experimental-test-isolation=none \
-		--import=./pixaton-tests/_setup.js \
-		'pixaton-tests/**/*.test.js'
-
-
-outdated:
-	@npm outdated --parseable |\
-		awk -F: '{ printf "npm i %-30s ;# %s\n", $$4, $$2 }'
-
+	cd pixaton-tests && npm t
 
 .PHONY: *

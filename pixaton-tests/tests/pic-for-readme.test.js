@@ -1,4 +1,4 @@
-import { testPixels, mockaton, clickLinkByText } from './_setup.js'
+import { testPixels, mockaton, clickLinkByText } from '../setup.js'
 
 
 testPixels(import.meta.filename, {

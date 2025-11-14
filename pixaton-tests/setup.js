@@ -1,22 +1,26 @@
 import { join } from 'node:path'
 import { after } from 'node:test'
+
 import { launch } from 'puppeteer'
+import { removeDiffsAndCandidates, testPixels as _testPixels, diffServer } from 'pixaton'
 
 import devConfig from '../mockaton.config.js'
 import { Commander, Mockaton } from '../index.js'
-import { removeDiffsAndCandidates, testPixels as _testPixels, diffServer } from 'pixaton'
 
 
 const mockatonServer = await Mockaton({
 	...devConfig,
 	port: 0,
 	hotReload: false,
-	onReady: () => {}
+	onReady() {},
+	logLevel: 'quiet'
 })
 const mockatonAddr = `http://${mockatonServer.address().address}:${mockatonServer.address().port}`
 export const mockaton = new Commander(mockatonAddr)
 
-const testsDir = join(import.meta.dirname, 'macos')
+
+const testsDir = join(import.meta.dirname, 'tests')
+const outputDir = join(import.meta.dirname, 'tests', 'macos')
 
 removeDiffsAndCandidates(testsDir)
 let browser
@@ -35,6 +39,7 @@ after(() => {
 	diffServer(testsDir)
 })
 
+
 export function testPixels(testFileName, options = {}) {
 	options.beforeSuite ??= async () => {
 		await mockaton.reset()
@@ -44,10 +49,12 @@ export function testPixels(testFileName, options = {}) {
 		height: 800
 	}]
 	options.colorSchemes ??= ['light']
-	options.outputDir = testsDir
+	options.outputDir = outputDir
 	_testPixels(page, testFileName, mockatonAddr + '/mockaton', 'body', options)
 }
 
+
+// Utils
 
 export async function clickLinkByText(linkText) {
 	const selector = `a ::-p-text(${linkText})`

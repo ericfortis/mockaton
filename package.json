@@ -3,7 +3,6 @@
 	"description": "HTTP Mock Server",
 	"type": "module",
 	"version": "11.2.3",
-	"types": "./index.d.ts",
 	"exports": {
 		".": {
 			"import": "./index.js",
@@ -24,10 +23,6 @@
 	},
 	"scripts": {
 		"start": "make start"
-	},
-	"devDependencies": {
-		"pixaton": "1.1.3",
-		"puppeteer": "24.29.1"
 	},
 	"engines": {
 		"node": ">=22.18 <23 || >=23.6"

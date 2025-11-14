@@ -3,15 +3,15 @@ import { API, LONG_POLL_SERVER_TIMEOUT, HEADER_SYNC_VERSION } from './ApiConstan
 
 /** Client for controlling Mockaton via its HTTP API */
 export class Commander {
-	#addr = ''
+	addr = ''
 
 	constructor(addr) {
-		this.#addr = addr
+		this.addr = addr
 	}
 
 	/** @returns {JsonPromise<State>} */
 	getState = () =>
-		fetch(this.#addr + API.state)
+		fetch(this.addr + API.state)
 
 	/**
 	 * @param {number?} currSyncVer - On mismatch, it responds immediately. Otherwise, long polls.
@@ -19,7 +19,7 @@ export class Commander {
 	 * @returns {JsonPromise<number>}
 	 */
 	getSyncVersion = (currSyncVer = undefined, abortSignal = undefined) =>
-		fetch(this.#addr + API.syncVersion, {
+		fetch(this.addr + API.syncVersion, {
 			signal: AbortSignal.any([
 				abortSignal,
 				AbortSignal.timeout(LONG_POLL_SERVER_TIMEOUT + 1000)
@@ -31,7 +31,7 @@ export class Commander {
 
 
 	#patch(api, body) {
-		return fetch(this.#addr + api, {
+		return fetch(this.addr + api, {
 			method: 'PATCH',
 			body: JSON.stringify(body)
 		})

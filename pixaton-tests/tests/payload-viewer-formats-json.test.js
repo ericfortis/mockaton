@@ -1,4 +1,4 @@
-import { testPixels, clickLinkByText } from '../setup.js'
+import { clickLinkByText, testPixels } from '../utils.js'
 
 
 testPixels(import.meta.filename, {

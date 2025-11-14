@@ -1,4 +1,4 @@
-import { testPixels } from '../setup.js'
+import { testPixels } from '../utils.js'
 
 
 testPixels(import.meta.filename)

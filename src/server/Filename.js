@@ -11,11 +11,11 @@ const httpMethods = [ // @KeepSync node:http.METHODS
 
 const reComments = /\(.*?\)/g // Anything within parentheses
 
-export const extractComments = filename =>
-	Array.from(filename.matchAll(reComments), ([comment]) => comment)
+export const extractComments = file =>
+	Array.from(file.matchAll(reComments), ([c]) => c)
 
-export const includesComment = (filename, search) =>
-	extractComments(filename).some(comment => comment.includes(search))
+export const includesComment = (file, search) =>
+	extractComments(file).some(c => c.includes(search))
 
 
 export function validateFilename(file) {
@@ -30,7 +30,6 @@ export function validateFilename(file) {
 	if (!httpMethods.includes(method))
 		return `Unrecognized HTTP Method: "${method}"`
 } 
-// TODO @ThinkAbout 206 (reject, handle, or send in full?)
 
 
 export function parseFilename(file) {
@@ -55,7 +54,6 @@ function responseStatusIsValid(status) {
 		&& status >= 100
 		&& status <= 599
 }
-// TODO @ThinkAbout allowing custom status codes
 
 
 export function makeMockFilename(url, method, status, ext) {

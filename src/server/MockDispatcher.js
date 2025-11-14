@@ -6,8 +6,8 @@ import { logger } from './utils/logger.js'
 import { proxy } from './ProxyRelay.js'
 import { cookie } from './cookie.js'
 import { mimeFor } from './utils/mime.js'
+import { brokerByRoute } from './mockBrokersCollection.js'
 import { config, calcDelay } from './config.js'
-import * as mockBrokerCollection from './mockBrokersCollection.js'
 import { sendInternalServerError, sendMockNotFound } from './utils/http-response.js'
 
 
@@ -15,9 +15,9 @@ export async function dispatchMock(req, response) {
 	try {
 		const isHead = req.method === 'HEAD'
 
-		let broker = mockBrokerCollection.brokerByRoute(req.method, req.url)
+		let broker = brokerByRoute(req.method, req.url)
 		if (!broker && isHead)
-			broker = mockBrokerCollection.brokerByRoute('GET', req.url)
+			broker = brokerByRoute('GET', req.url)
 
 		if (config.proxyFallback && (!broker || broker.proxied)) {
 			await proxy(req, response, broker?.delayed ? calcDelay() : 0)

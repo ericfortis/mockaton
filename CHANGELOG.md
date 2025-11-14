@@ -1,5 +1,6 @@
 # Changelog
 - 11.2.0 dashboard: show Mockaton’s version
+ 
 ![](docs/11.2.0-version.png)
  
 - 11.1.0 new `config.watcherEnabled`

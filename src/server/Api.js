@@ -9,12 +9,15 @@ import { readdirSync } from 'node:fs'
 import { IndexHtml, CSP } from '../client/indexHtml.js'
 
 import { cookie } from './cookie.js'
-import { devClientWatcher } from './WatcherDevClient.js'
-import { parseJSON } from './utils/http-request.js'
+import { config, ConfigValidator } from './config.js'
+
 import { uiSyncVersion } from './Watcher.js'
+import { devClientWatcher } from './WatcherDevClient.js'
+
 import * as staticCollection from './staticCollection.js'
 import * as mockBrokersCollection from './mockBrokersCollection.js'
-import { config, ConfigValidator } from './config.js'
+
+import { parseJSON } from './utils/http-request.js'
 import { sendOK, sendJSON, sendUnprocessable, sendFile, sendHTML } from './utils/http-response.js'
 import { API, LONG_POLL_SERVER_TIMEOUT, HEADER_SYNC_VERSION } from './ApiConstants.js'
 
@@ -25,8 +28,9 @@ const CLIENT_DIR = join(import.meta.dirname, '../client')
 
 export const apiGetRequests = new Map([
 	[API.dashboard, serveDashboard],
-	...readdirSync(CLIENT_DIR).map(f => [API.dashboard + '/' + f, serveStatic(f)]),
-	
+	...readdirSync(CLIENT_DIR)
+		.map(f => [API.dashboard + '/' + f, serveStatic(f)]),
+
 	[API.state, getState],
 	[API.syncVersion, longPollClientSyncVersion],
 ])

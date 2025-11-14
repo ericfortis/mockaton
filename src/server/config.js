@@ -18,7 +18,7 @@ import { validateCorsAllowedMethods, validateCorsAllowedOrigins } from './utils/
 const schema = {
 	mocksDir: [resolve('mockaton-mocks'), isDirectory],
 	staticDir: [resolve('mockaton-static-mocks'), optional(isDirectory)],
-	ignore: [/(\.DS_Store|~)$/, is(RegExp)], // TODO think about .well-known/appspecific/com.chrome.devtools
+	ignore: [/(\.DS_Store|~)$/, is(RegExp)],
 	watcherEnabled: [true, is(Boolean)],
 
 	host: ['127.0.0.1', is(String)],

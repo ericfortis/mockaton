@@ -26,7 +26,7 @@ const DEV = process.env.NODE_ENV === 'development'
 const CLIENT_DIR = join(import.meta.dirname, '../client')
 
 
-export const apiGetRequests = new Map([
+export const apiGetReqs = new Map([
 	[API.dashboard, serveDashboard],
 	...readdirSync(CLIENT_DIR)
 		.map(f => [API.dashboard + '/' + f, serveStatic(f)]),
@@ -35,12 +35,12 @@ export const apiGetRequests = new Map([
 	[API.syncVersion, longPollClientSyncVersion],
 ])
 if (DEV) {
-	apiGetRequests.set(API.throws, () => { throw new Error('Test500') })
-	apiGetRequests.set(API.watchHotReload, longPollDevHotReload)
+	apiGetReqs.set(API.throws, () => { throw new Error('Test500') })
+	apiGetReqs.set(API.watchHotReload, longPollDevHotReload)
 }
 
 
-export const apiPatchRequests = new Map([
+export const apiPatchReqs = new Map([
 	[API.cors, setCorsAllowed],
 	[API.delay, setRouteIsDelayed],
 	[API.reset, reinitialize],
@@ -64,7 +64,9 @@ function serveDashboard(_, response) {
 }
 
 function serveStatic(f) {
-	return (_, response) => sendFile(response, join(CLIENT_DIR, f))
+	return (_, response) => {
+		sendFile(response, join(CLIENT_DIR, f))
+	}
 }
 
 

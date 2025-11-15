@@ -1,15 +1,17 @@
-// @KeepSync src/client/Filename.js
+/** @KeepSync src/client/Filename.js */
 
 import { METHODS } from 'node:http'
 
 
 const reComments = /\(.*?\)/g // Anything within parentheses
 
-export const extractComments = file =>
-	Array.from(file.matchAll(reComments), ([c]) => c)
+export function extractComments(file) {
+	return Array.from(file.matchAll(reComments), ([c]) => c)
+}
 
-export const includesComment = (file, search) =>
-	extractComments(file).some(c => c.includes(search))
+export function includesComment(file, search) {
+	return extractComments(file).some(c => c.includes(search))
+}
 
 
 export function validateFilename(file) {
@@ -23,7 +25,7 @@ export function validateFilename(file) {
 
 	if (!METHODS.includes(method))
 		return `Unrecognized HTTP Method: "${method}"`
-} 
+}
 
 
 export function parseFilename(file) {

@@ -9,7 +9,7 @@ import { dispatchStatic } from './StaticDispatcher.js'
 import * as staticCollection from './staticCollection.js'
 import * as mockBrokerCollection from './mockBrokersCollection.js'
 import { setCorsHeaders, isPreflight } from './utils/http-cors.js'
-import { apiPatchRequests, apiGetRequests } from './Api.js'
+import { apiPatchReqs, apiGetReqs } from './Api.js'
 import { BodyReaderError, hasControlChars } from './utils/http-request.js'
 import {
 	setHeaders, sendNoContent, sendInternalServerError,
@@ -73,11 +73,11 @@ async function onRequest(req, response) {
 		if (isPreflight(req))
 			sendNoContent(response)
 
-		else if (method === 'PATCH' && apiPatchRequests.has(pathname))
-			await apiPatchRequests.get(pathname)(req, response)
+		else if (method === 'PATCH' && apiPatchReqs.has(pathname))
+			await apiPatchReqs.get(pathname)(req, response)
 
-		else if (method === 'GET' && apiGetRequests.has(pathname))
-			apiGetRequests.get(pathname)(req, response)
+		else if (method === 'GET' && apiGetReqs.has(pathname))
+			apiGetReqs.get(pathname)(req, response)
 
 		else if (method === 'GET' && staticCollection.brokerByRoute(pathname))
 			await dispatchStatic(req, response)

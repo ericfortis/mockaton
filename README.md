@@ -99,10 +99,9 @@ api/videos.GET.<b>500</b>.txt   # Internal Server Error
 ## Scraping Mocks from your Backend
 
 ### Option 1: Browser extension
-The companion Chrome [devtools
-extension](https://github.com/ericfortis/download-http-requests-browser-ext)
+The companion Chrome [devtools extension](https://github.com/ericfortis/download-http-requests-browser-ext)
 lets you download all the HTTP responses and 
-save them following Mockaton’s filename convention.
+save them in bulk following Mockaton’s filename convention.
 
 ### Option 2: Fallback to your backend
 <details>
@@ -131,7 +130,7 @@ Sometimes the flow you need to test is
 too difficult to reproduce from the actual backend.
  
 - Demo edge cases to PMs, Design, and clients
-- Set up screenshot tests, e.g., with [pixaton](https://github.com/ericfortis/pixaton)
+- Set up screenshot tests (see [pixaton-tests/](pixaton-tests) in this repo)
 - Spot inadvertent regressions during development. For example, the demo
   app in this repo has a list of colors containing all of their possible
   states. This way you’ll indirectly notice if something broke.
@@ -875,15 +874,13 @@ example, if you are polling, and you want to test the state change.
 
 ### Client Side
 In contrast to Mockaton, which is an HTTP Server, these
-programs hijack your browser’s HTTP client (and Node’s).
-
+programs hijack your browser’s HTTP client (or Node’s).
 - [Mock Server Worker (MSW)](https://mswjs.io)
 - [Nock](https://github.com/nock/nock)
 - [Fetch Mock](https://github.com/wheresrhys/fetch-mock)
-- [Mentoss](https://github.com/humanwhocodes/mentoss) Has a server side too
+- [Mentoss](https://github.com/humanwhocodes/mentoss)
 
 ### Server Side
-
 - [Wire Mock](https://github.com/wiremock/wiremock)
 - [Mock](https://github.com/dhuan/mock)
 - [Swagger](https://swagger.io/)

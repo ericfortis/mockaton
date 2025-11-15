@@ -2,9 +2,9 @@
 
 const reComments = /\(.*?\)/g // Anything within parentheses
 
-export const extractComments = file =>
-	Array.from(file.matchAll(reComments), ([c]) => c)
-
+export function extractComments(file) {
+	return Array.from(file.matchAll(reComments), ([c]) => c)
+}
 
 export function parseFilename(file) {
 	const tokens = file.replace(reComments, '').split('.')

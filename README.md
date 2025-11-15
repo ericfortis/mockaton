@@ -56,9 +56,9 @@ Nonetheless, there’s a programmatic API, which is handy for
 setting up tests (see **Commander&nbsp;API** section below).
 
 <picture>
-  <source media="(prefers-color-scheme: light)" srcset="pixaton-tests/tests/macos/pic-for-readme.vp761x720.light.gold.png">
-  <source media="(prefers-color-scheme: dark)" srcset="pixaton-tests/tests/macos/pic-for-readme.vp761x720.dark.gold.png">
-  <img alt="Mockaton Dashboard" src="pixaton-tests/tests/macos/pic-for-readme.vp761x720.light.gold.png">
+  <source media="(prefers-color-scheme: light)" srcset="pixaton-tests/tests/macos/pic-for-readme.vp761x740.light.gold.png">
+  <source media="(prefers-color-scheme: dark)" srcset="pixaton-tests/tests/macos/pic-for-readme.vp761x740.dark.gold.png">
+  <img alt="Mockaton Dashboard" src="pixaton-tests/tests/macos/pic-for-readme.vp761x740.light.gold.png">
 </picture>
 
 

@@ -24,19 +24,18 @@ import { API, LONG_POLL_SERVER_TIMEOUT, HEADER_SYNC_VERSION } from './ApiConstan
 
 const DEV = process.env.NODE_ENV === 'development'
 const CLIENT_DIR = join(import.meta.dirname, '../client')
+const DASHBOARD_ASSETS = readdirSync(CLIENT_DIR)
 
 
 export const apiGetReqs = new Map([
 	[API.dashboard, serveDashboard],
-	...readdirSync(CLIENT_DIR)
-		.map(f => [API.dashboard + '/' + f, serveStatic(f)]),
-
+	...DASHBOARD_ASSETS.map(f => [API.dashboard + '/' + f, serveStatic(f)]),
 	[API.state, getState],
 	[API.syncVersion, longPollClientSyncVersion],
 ])
 if (DEV) {
 	apiGetReqs.set(API.throws, () => { throw new Error('Test500') })
-	apiGetReqs.set(API.watchHotReload, longPollDevHotReload)
+	apiGetReqs.set(API.watchHotReload, longPollDevClientHotReload)
 }
 
 
@@ -88,6 +87,7 @@ function getState(_, response) {
 }
 
 
+/** Realtime notify ARR Events (Add, Remove, or Rename mock) */
 function longPollClientSyncVersion(req, response) {
 	const clientVersion = req.headers[HEADER_SYNC_VERSION]
 	if (clientVersion !== undefined && uiSyncVersion.version !== Number(clientVersion)) {
@@ -95,20 +95,21 @@ function longPollClientSyncVersion(req, response) {
 		sendJSON(response, uiSyncVersion.version)
 		return
 	}
-	function onAddOrRemoveMock() {
-		uiSyncVersion.unsubscribe(onAddOrRemoveMock)
+	function onARR() { 
+		uiSyncVersion.unsubscribe(onARR)
 		sendJSON(response, uiSyncVersion.version)
 	}
-	response.setTimeout(LONG_POLL_SERVER_TIMEOUT, onAddOrRemoveMock)
+	response.setTimeout(LONG_POLL_SERVER_TIMEOUT, onARR)
 	req.on('error', () => {
-		uiSyncVersion.unsubscribe(onAddOrRemoveMock)
+		uiSyncVersion.unsubscribe(onARR)
 		response.destroy()
 	})
-	uiSyncVersion.subscribe(onAddOrRemoveMock)
+	uiSyncVersion.subscribe(onARR)
 }
 
 
-function longPollDevHotReload(req, response) {
+/** Realtime notify Dev UI changes */
+function longPollDevClientHotReload(req, response) {
 	function onDevChange(file) {
 		devClientWatcher.unsubscribe(onDevChange)
 		sendJSON(response, file)

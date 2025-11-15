@@ -10,7 +10,7 @@ import * as mockBrokerCollection from './mockBrokersCollection.js'
 
 
 /**
- * ARR = Add, Remove, or Rename Mock Event
+ * ARR Event = Add, Remove, or Rename Mock
  *
  * The emitter is debounced so it handles e.g. bulk deletes,
  * and also renames, which are two events (delete + add).

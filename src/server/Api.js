@@ -47,7 +47,7 @@ export const apiPatchReqs = new Map([
 	[API.select, selectMock],
 	[API.proxied, setRouteIsProxied],
 	[API.cookies, selectCookie],
-	[API.fallback, updateProxyFallback],
+	[API.fallback, setProxyFallback],
 	[API.toggle500, toggle500],
 	[API.bulkSelect, bulkUpdateBrokersByCommentTag],
 	[API.globalDelay, setGlobalDelay],
@@ -204,7 +204,7 @@ async function setRouteIsProxied(req, response) {
 }
 
 
-async function updateProxyFallback(req, response) {
+async function setProxyFallback(req, response) {
 	const fallback = await parseJSON(req)
 
 	if (!ConfigValidator.proxyFallback(fallback))

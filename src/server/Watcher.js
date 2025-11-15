@@ -4,6 +4,7 @@ import { EventEmitter } from 'node:events'
 
 import { config } from './config.js'
 import { isFile, isDirectory } from './utils/fs.js'
+
 import * as staticCollection from './staticCollection.js'
 import * as mockBrokerCollection from './mockBrokersCollection.js'
 

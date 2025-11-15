@@ -3,9 +3,10 @@ import {
 	createSvgElement as s,
 	className, restoreFocus, Defer, Fragment
 } from './dom-utils.js'
-import { HEADER_502 } from './ApiConstants.js'
-import { parseFilename } from './Filename.js'
+
 import { store } from './app-store.js'
+import { parseFilename } from './Filename.js'
+import { HEADER_502 } from './ApiConstants.js'
 
 
 const CSS = {

@@ -1,20 +1,25 @@
 import { createServer } from 'node:http'
+
 import pkgJSON from '../../package.json' with { type: 'json' }
 
-import { API } from './ApiConstants.js'
 import { logger } from './utils/logger.js'
-import { config, setup } from './config.js'
-import { dispatchMock } from './MockDispatcher.js'
-import { dispatchStatic } from './StaticDispatcher.js'
-import * as staticCollection from './staticCollection.js'
-import * as mockBrokerCollection from './mockBrokersCollection.js'
 import { setCorsHeaders, isPreflight } from './utils/http-cors.js'
-import { apiPatchReqs, apiGetReqs } from './Api.js'
 import { BodyReaderError, hasControlChars } from './utils/http-request.js'
 import {
 	setHeaders, sendNoContent, sendInternalServerError,
 	sendUnprocessable, sendTooLongURI, sendBadRequest
 } from './utils/http-response.js'
+
+import { API } from './ApiConstants.js'
+import { config, setup } from './config.js'
+import { apiPatchReqs, apiGetReqs } from './Api.js'
+
+import { dispatchMock } from './MockDispatcher.js'
+import { dispatchStatic } from './StaticDispatcher.js'
+
+import * as staticCollection from './staticCollection.js'
+import * as mockBrokerCollection from './mockBrokersCollection.js'
+
 import { watchDevSPA } from './WatcherDevClient.js'
 import { watchMocksDir, watchStaticDir } from './Watcher.js'
 

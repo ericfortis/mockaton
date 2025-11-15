@@ -5,6 +5,7 @@ import { parseArgs } from 'node:util'
 
 import { isFile } from './utils/fs.js'
 import { Mockaton } from '../../index.js'
+
 import pkgJSON from '../../package.json' with { type: 'json' }
 
 

@@ -3,12 +3,13 @@ import { readFileSync } from 'node:fs'
 import { pathToFileURL } from 'node:url'
 
 import { logger } from './utils/logger.js'
+import { mimeFor } from './utils/mime.js'
+import { sendInternalServerError, sendMockNotFound } from './utils/http-response.js'
+
 import { proxy } from './ProxyRelay.js'
 import { cookie } from './cookie.js'
-import { mimeFor } from './utils/mime.js'
 import { brokerByRoute } from './mockBrokersCollection.js'
 import { config, calcDelay } from './config.js'
-import { sendInternalServerError, sendMockNotFound } from './utils/http-response.js'
 
 
 export async function dispatchMock(req, response) {

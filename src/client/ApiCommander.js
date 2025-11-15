@@ -1,4 +1,8 @@
-import { API, LONG_POLL_SERVER_TIMEOUT, HEADER_SYNC_VERSION } from './ApiConstants.js'
+import {
+	API,
+	HEADER_SYNC_VERSION,
+	LONG_POLL_SERVER_TIMEOUT
+} from './ApiConstants.js'
 
 
 /** Client for controlling Mockaton via its HTTP API */
@@ -32,13 +36,13 @@ export class Commander {
 	/** @returns {JsonPromise<State.cookies>} */
 	selectCookie = label => this.#patch(API.cookies, label)
 
-	
+
 	/** @returns {Promise<Response>} */
 	bulkSelectByComment = comment => this.#patch(API.bulkSelect, comment)
 
 	/** @returns {JsonPromise<ClientMockBroker>} */
 	select = file => this.#patch(API.select, file)
-	
+
 
 	/** @returns {JsonPromise<ClientMockBroker>} */
 	toggle500 = (method, urlMask) => this.#patch(API.toggle500, [method, urlMask])
@@ -48,7 +52,7 @@ export class Commander {
 
 	/** @returns {JsonPromise<ClientMockBroker>} */
 	setRouteIsDelayed = (method, urlMask, delayed) => this.#patch(API.delay, [method, urlMask, delayed])
-	
+
 
 	/** @returns {Promise<Response>} */
 	setStaticRouteStatus = (urlMask, status) => this.#patch(API.staticStatus, [urlMask, status])

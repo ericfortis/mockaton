@@ -4,53 +4,55 @@
  */
 
 import { join } from 'node:path'
-import { readdirSync } from 'node:fs'
+
+import {
+	longPollDevClientHotReload,
+	DASHBOARD_ASSETS,
+	CLIENT_DIR
+} from './WatcherDevClient.js'
+import { longPollClientSyncVersion } from './Watcher.js'
 
 import { IndexHtml, CSP } from '../client/indexHtml.js'
 
+import { API } from './ApiConstants.js'
 import { cookie } from './cookie.js'
 import { config, ConfigValidator } from './config.js'
-
-import { uiSyncVersion } from './Watcher.js'
-import { devClientWatcher } from './WatcherDevClient.js'
 
 import * as staticCollection from './staticCollection.js'
 import * as mockBrokersCollection from './mockBrokersCollection.js'
 
 import { parseJSON } from './utils/http-request.js'
 import { sendOK, sendJSON, sendUnprocessable, sendFile, sendHTML } from './utils/http-response.js'
-import { API, LONG_POLL_SERVER_TIMEOUT, HEADER_SYNC_VERSION } from './ApiConstants.js'
-
-
-const DEV = process.env.NODE_ENV === 'development'
-const CLIENT_DIR = join(import.meta.dirname, '../client')
-const DASHBOARD_ASSETS = readdirSync(CLIENT_DIR)
 
 
 export const apiGetReqs = new Map([
 	[API.dashboard, serveDashboard],
 	...DASHBOARD_ASSETS.map(f => [API.dashboard + '/' + f, serveStatic(f)]),
+
 	[API.state, getState],
 	[API.syncVersion, longPollClientSyncVersion],
+	
+	[API.watchHotReload, longPollDevClientHotReload],
+	[API.throws, () => { throw new Error('Test500') }]
 ])
-if (DEV) {
-	apiGetReqs.set(API.throws, () => { throw new Error('Test500') })
-	apiGetReqs.set(API.watchHotReload, longPollDevClientHotReload)
-}
 
 
 export const apiPatchReqs = new Map([
 	[API.cors, setCorsAllowed],
-	[API.delay, setRouteIsDelayed],
 	[API.reset, reinitialize],
+	[API.cookies, selectCookie],
+	[API.globalDelay, setGlobalDelay],
+	
+	[API.fallback, setProxyFallback],
+	[API.collectProxied, setCollectProxied],
+	
+	[API.bulkSelect, bulkUpdateBrokersByCommentTag],
+
+	[API.delay, setRouteIsDelayed],
 	[API.select, selectMock],
 	[API.proxied, setRouteIsProxied],
-	[API.cookies, selectCookie],
-	[API.fallback, setProxyFallback],
 	[API.toggle500, toggle500],
-	[API.bulkSelect, bulkUpdateBrokersByCommentTag],
-	[API.globalDelay, setGlobalDelay],
-	[API.collectProxied, setCollectProxied],
+	
 	[API.delayStatic, setStaticRouteIsDelayed],
 	[API.staticStatus, setStaticRouteStatusCode]
 ])
@@ -68,7 +70,6 @@ function serveStatic(f) {
 	}
 }
 
-
 function getState(_, response) {
 	sendJSON(response, {
 		cookies: cookie.list(),
@@ -85,46 +86,6 @@ function getState(_, response) {
 		corsAllowed: config.corsAllowed
 	})
 }
-
-
-/** Realtime notify ARR Events (Add, Remove, or Rename mock) */
-function longPollClientSyncVersion(req, response) {
-	const clientVersion = req.headers[HEADER_SYNC_VERSION]
-	if (clientVersion !== undefined && uiSyncVersion.version !== Number(clientVersion)) {
-		// e.g., tab was hidden while new mocks were added or removed
-		sendJSON(response, uiSyncVersion.version)
-		return
-	}
-	function onARR() { 
-		uiSyncVersion.unsubscribe(onARR)
-		sendJSON(response, uiSyncVersion.version)
-	}
-	response.setTimeout(LONG_POLL_SERVER_TIMEOUT, onARR)
-	req.on('error', () => {
-		uiSyncVersion.unsubscribe(onARR)
-		response.destroy()
-	})
-	uiSyncVersion.subscribe(onARR)
-}
-
-
-/** Realtime notify Dev UI changes */
-function longPollDevClientHotReload(req, response) {
-	function onDevChange(file) {
-		devClientWatcher.unsubscribe(onDevChange)
-		sendJSON(response, file)
-	}
-	response.setTimeout(LONG_POLL_SERVER_TIMEOUT, () => {
-		devClientWatcher.unsubscribe(onDevChange)
-		sendJSON(response, '')
-	})
-	req.on('error', () => {
-		devClientWatcher.unsubscribe(onDevChange)
-		response.destroy()
-	})
-	devClientWatcher.subscribe(onDevChange)
-}
-
 
 
 /** # PATCH */
@@ -290,4 +251,3 @@ async function setStaticRouteIsDelayed(req, response) {
 		sendOK(response)
 	}
 }
-

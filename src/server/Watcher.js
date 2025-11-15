@@ -2,7 +2,13 @@ import { join } from 'node:path'
 import { watch } from 'node:fs'
 import { EventEmitter } from 'node:events'
 
+import {
+	HEADER_SYNC_VERSION,
+	LONG_POLL_SERVER_TIMEOUT
+} from './ApiConstants.js'
+
 import { config } from './config.js'
+import { sendJSON } from './utils/http-response.js'
 import { isFile, isDirectory } from './utils/fs.js'
 
 import * as staticCollection from './staticCollection.js'
@@ -15,7 +21,7 @@ import * as mockBrokerCollection from './mockBrokersCollection.js'
  * The emitter is debounced so it handles e.g. bulk deletes,
  * and also renames, which are two events (delete + add).
  */
-export const uiSyncVersion = new class extends EventEmitter {
+const uiSyncVersion = new class extends EventEmitter {
 	delay = Number(process.env.MOCKATON_WATCHER_DEBOUNCE_MS ?? 80)
 	version = 0
 
@@ -40,6 +46,7 @@ export const uiSyncVersion = new class extends EventEmitter {
 	}
 }
 
+
 export function watchMocksDir() {
 	const dir = config.mocksDir
 	watch(dir, { recursive: true, persistent: false }, (_, file) => {
@@ -61,6 +68,7 @@ export function watchMocksDir() {
 		}
 	})
 }
+
 
 export function watchStaticDir() {
 	const dir = config.staticDir
@@ -87,4 +95,23 @@ export function watchStaticDir() {
 	})
 }
 
-// TODO ThinkAbout watching for config changes
+
+/** Realtime notify ARR Events */
+export function longPollClientSyncVersion(req, response) {
+	const clientVersion = req.headers[HEADER_SYNC_VERSION]
+	if (clientVersion !== undefined && uiSyncVersion.version !== Number(clientVersion)) {
+		// e.g., tab was hidden while new mocks were added or removed
+		sendJSON(response, uiSyncVersion.version)
+		return
+	}
+	function onARR() {
+		uiSyncVersion.unsubscribe(onARR)
+		sendJSON(response, uiSyncVersion.version)
+	}
+	response.setTimeout(LONG_POLL_SERVER_TIMEOUT, onARR)
+	req.on('error', () => {
+		uiSyncVersion.unsubscribe(onARR)
+		response.destroy()
+	})
+	uiSyncVersion.subscribe(onARR)
+}

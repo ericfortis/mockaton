@@ -1,8 +1,17 @@
-import { watch } from 'node:fs'
+import { join } from 'node:path'
 import { EventEmitter } from 'node:events'
+import { watch, readdirSync } from 'node:fs'
+import { sendJSON, sendNotFound } from './utils/http-response.js'
+import { LONG_POLL_SERVER_TIMEOUT } from './ApiConstants.js'
 
 
-export const devClientWatcher = new class extends EventEmitter {
+const DEV = process.env.NODE_ENV === 'development'
+
+export const CLIENT_DIR = join(import.meta.dirname, '../client')
+export const DASHBOARD_ASSETS = readdirSync(CLIENT_DIR)
+
+
+const devClientWatcher = new class extends EventEmitter {
 	emit(file) { super.emit('RELOAD', file) }
 	subscribe(listener) { this.once('RELOAD', listener) }
 	unsubscribe(listener) { this.removeListener('RELOAD', listener) }
@@ -11,7 +20,30 @@ export const devClientWatcher = new class extends EventEmitter {
 // DashboardHtml.js is not watched.
 // It would need dynamic import + cache busting
 export function watchDevSPA() {
-	watch('src/client', (_, file) => {
+	watch(CLIENT_DIR, (_, file) => {
 		devClientWatcher.emit(file)
 	})
+}
+
+
+/** Realtime notify Dev UI changes */
+export function longPollDevClientHotReload(req, response) {
+	if (!DEV) {
+		sendNotFound(response)
+		return
+	}
+	
+	function onDevChange(file) {
+		devClientWatcher.unsubscribe(onDevChange)
+		sendJSON(response, file)
+	}
+	response.setTimeout(LONG_POLL_SERVER_TIMEOUT, () => {
+		devClientWatcher.unsubscribe(onDevChange)
+		sendJSON(response, '')
+	})
+	req.on('error', () => {
+		devClientWatcher.unsubscribe(onDevChange)
+		response.destroy()
+	})
+	devClientWatcher.subscribe(onDevChange)
 }

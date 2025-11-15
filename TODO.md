@@ -16,6 +16,7 @@
 - Think about what to do for /.well-known/appspecific/com.chrome.devtools.json
 - 206 (reject, handle, or send in full?)
 - allowing custom status codes?
+- ThinkAbout watching for config changes
 
 
 ### Cookies WIP

@@ -51,7 +51,7 @@ export const apiPatchReqs = new Map([
 	[API.delay, setRouteIsDelayed],
 	[API.select, selectMock],
 	[API.proxied, setRouteIsProxied],
-	[API.toggle500, toggle500],
+	[API.toggle500, toggleRoute500],
 	
 	[API.delayStatic, setStaticRouteIsDelayed],
 	[API.staticStatus, setStaticRouteStatusCode]
@@ -97,6 +97,30 @@ function reinitialize(_, response) {
 }
 
 
+async function setCorsAllowed(req, response) {
+	const corsAllowed = await parseJSON(req)
+
+	if (!ConfigValidator.corsAllowed(corsAllowed))
+		sendUnprocessable(response, `Expected boolean for "corsAllowed"`)
+	else {
+		config.corsAllowed = corsAllowed
+		sendOK(response)
+	}
+}
+
+
+async function setGlobalDelay(req, response) {
+	const delay = await parseJSON(req)
+
+	if (!ConfigValidator.delay(delay))
+		sendUnprocessable(response, `Expected non-negative integer for "delay"`)
+	else {
+		config.delay = delay
+		sendOK(response)
+	}
+}
+
+
 async function selectCookie(req, response) {
 	const cookieKey = await parseJSON(req)
 
@@ -105,6 +129,38 @@ async function selectCookie(req, response) {
 		sendUnprocessable(response, error?.message || error)
 	else
 		sendJSON(response, cookie.list())
+}
+
+
+async function setProxyFallback(req, response) {
+	const fallback = await parseJSON(req)
+
+	if (!ConfigValidator.proxyFallback(fallback))
+		sendUnprocessable(response, `Invalid Proxy Fallback URL`)
+	else {
+		config.proxyFallback = fallback
+		sendOK(response)
+	}
+}
+
+async function setCollectProxied(req, response) {
+	const collectProxied = await parseJSON(req)
+
+	if (!ConfigValidator.collectProxied(collectProxied))
+		sendUnprocessable(response, `Expected a boolean for "collectProxied"`)
+	else {
+		config.collectProxied = collectProxied
+		sendOK(response)
+	}
+}
+
+
+
+async function bulkUpdateBrokersByCommentTag(req, response) {
+	const comment = await parseJSON(req)
+
+	mockBrokersCollection.setMocksMatchingComment(comment)
+	sendOK(response)
 }
 
 
@@ -121,7 +177,7 @@ async function selectMock(req, response) {
 }
 
 
-async function toggle500(req, response) {
+async function toggleRoute500(req, response) {
 	const [method, urlMask] = await parseJSON(req)
 
 	const broker = mockBrokersCollection.brokerByRoute(method, urlMask)
@@ -162,62 +218,6 @@ async function setRouteIsProxied(req, response) {
 	else {
 		broker.setProxied(proxied)
 		sendJSON(response, broker)
-	}
-}
-
-
-async function setProxyFallback(req, response) {
-	const fallback = await parseJSON(req)
-
-	if (!ConfigValidator.proxyFallback(fallback))
-		sendUnprocessable(response, `Invalid Proxy Fallback URL`)
-	else {
-		config.proxyFallback = fallback
-		sendOK(response)
-	}
-}
-
-
-async function setCollectProxied(req, response) {
-	const collectProxied = await parseJSON(req)
-
-	if (!ConfigValidator.collectProxied(collectProxied))
-		sendUnprocessable(response, `Expected a boolean for "collectProxied"`)
-	else {
-		config.collectProxied = collectProxied
-		sendOK(response)
-	}
-}
-
-
-async function bulkUpdateBrokersByCommentTag(req, response) {
-	const comment = await parseJSON(req)
-
-	mockBrokersCollection.setMocksMatchingComment(comment)
-	sendOK(response)
-}
-
-
-async function setCorsAllowed(req, response) {
-	const corsAllowed = await parseJSON(req)
-
-	if (!ConfigValidator.corsAllowed(corsAllowed))
-		sendUnprocessable(response, `Expected boolean for "corsAllowed"`)
-	else {
-		config.corsAllowed = corsAllowed
-		sendOK(response)
-	}
-}
-
-
-async function setGlobalDelay(req, response) {
-	const delay = await parseJSON(req)
-
-	if (!ConfigValidator.delay(delay))
-		sendUnprocessable(response, `Expected non-negative integer for "delay"`)
-	else {
-		config.delay = delay
-		sendOK(response)
 	}
 }
 

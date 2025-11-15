@@ -76,14 +76,12 @@ body {
 	scrollbar-width: thin;
 }
 
-a,
-input,
-select,
-button {
-	&:focus-visible {
-		outline-offset: -1px;
-		outline: 2px solid var(--colorAccent);
-	}
+a:focus-visible,
+input:focus-visible,
+select:focus-visible,
+button:focus-visible {
+	outline-offset: -1px;
+	outline: 2px solid var(--colorAccent);
 }
 
 a,
@@ -91,10 +89,13 @@ select,
 button,
 input[type=checkbox] {
 	cursor: pointer;
+}
 
-	&:active {
-		cursor: grabbing;
-	}
+a:active,
+select:active,
+button:active,
+input[type=checkbox]:active {
+	cursor: grabbing;
 }
 
 a {
@@ -231,14 +232,14 @@ header {
 				font-size: 11px;
 				gap: 4px;
 
-				input + span {
+				input + .checkboxBody {
 					margin: 0;
 					margin-right: 4px;
 				}
-				input:enabled + span {
+				input:enabled + .checkboxBody {
 					cursor: pointer;
 				}
-				input:disabled + span {
+				input:disabled + .checkboxBody {
 					opacity: 0.8;
 				}
 			}
@@ -565,30 +566,30 @@ table {
 
 		&:focus-visible {
 			outline: 0;
-			& + span {
+			& + .checkboxBody {
 				outline: 2px solid var(--colorAccent)
 			}
 		}
 
-		&:disabled + span {
+		&:disabled + .checkboxBody {
 			cursor: not-allowed;
 			opacity: 0.7;
 		}
-		&:checked + span {
+		&:checked + .checkboxBody {
 			border-color: var(--colorRed);
 			color: white;
 			background: var(--colorRed);
 		}
-		&:not(:checked):enabled:hover + span {
+		&:not(:checked):enabled:hover + .checkboxBody {
 			border-color: var(--colorRed);
 			color: var(--colorRed);
 		}
-		&:enabled:active + span {
+		&:enabled:active + .checkboxBody {
 			cursor: grabbing;
 		}
 	}
 
-	> span {
+	> .checkboxBody {
 		padding: 4px;
 		border: 1px solid var(--colorSecondaryActionBorder);
 		font-size: 10px;
@@ -621,22 +622,26 @@ table {
 			white-space: pre;
 			tab-size: 2;
 			color: var(--colorSecondaryAction);
-
-			.syntaxPunc {
-				color: var(--colorSecondaryAction);
-			}
-			.syntaxKey, .syntaxTag {
-				color: var(--colorPink);
-			}
-			.syntaxVal, .syntaxAttr {
-				color: var(--colorPurple);
-			}
-			.syntaxStr, .syntaxAttrVal {
-				color: var(--colorGreen);
-			}
 		}
 	}
 }
+
+.syntaxPunc {
+	color: var(--colorSecondaryAction);
+}
+.syntaxKey, 
+.syntaxTag {
+	color: var(--colorPink);
+}
+.syntaxVal, 
+.syntaxAttr {
+	color: var(--colorPurple);
+}
+.syntaxStr, 
+.syntaxAttrVal {
+	color: var(--colorGreen);
+}
+
 
 .ProgressBar {
 	position: relative;

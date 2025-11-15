@@ -1,5 +1,5 @@
 import {
-	createElement as r, 
+	createElement as r,
 	createSvgElement as s,
 	className, restoreFocus, Defer, Fragment
 } from './dom-utils.js'
@@ -33,6 +33,7 @@ const CSS = {
 	SettingsMenu: null,
 
 	animIn: null,
+	checkboxBody: null,
 	chosen: null,
 	dittoDir: null,
 	leftSide: null,
@@ -216,7 +217,7 @@ function SaveProxiedCheckbox(ref) {
 				checked: store.collectProxied,
 				onChange() { store.setCollectProxied(this.checked) }
 			}),
-			r('span', null, t`Save Mocks`)))
+			r('span', className(CSS.checkboxBody), t`Save Mocks`)))
 }
 
 
@@ -262,7 +263,7 @@ function SettingsMenu(id) {
 						checked: store.groupByMethod,
 						onChange: store.toggleGroupByMethod
 					}),
-					r('span', null, t`Group by Method`)),
+					r('span', className(CSS.checkboxBody), t`Group by Method`)),
 
 				r('a', {
 					href: 'https://github.com/ericfortis/mockaton',
@@ -402,7 +403,7 @@ function InternalServerErrorToggler(method, urlMask, checked, disabled) {
 				onChange() { store.toggle500(method, urlMask) },
 				'data-focus-group': FocusGroup.StatusToggler
 			}),
-			r('span', null, t`500`)))
+			r('span', className(CSS.checkboxBody), t`500`)))
 }
 
 function ProxyToggler(method, urlMask, checked) {

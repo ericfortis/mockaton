@@ -17,8 +17,9 @@ const devClientWatcher = new class extends EventEmitter {
 	unsubscribe(listener) { this.removeListener('RELOAD', listener) }
 }
 
-// DashboardHtml.js is not watched.
-// It would need dynamic import + cache busting
+
+// Although `client/indexHtml.js` is watched, it returns a stale version.
+// i.e., it would need to be a dynamic import + cache busting.
 export function watchDevSPA() {
 	watch(CLIENT_DIR, (_, file) => {
 		devClientWatcher.emit(file)

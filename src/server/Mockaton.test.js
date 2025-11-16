@@ -34,6 +34,40 @@ const renameInStaticMocksDir = (src, target) => rename(join(staticDir, src), joi
 const readFromMocksDir = f => readFile(join(mocksDir, f), 'utf8')
 
 
+const COOKIES = { userA: 'CookieA', userB: 'CookieB' }
+const CUSTOM_EXT = 'custom_extension'
+const CUSTOM_MIME = 'custom_mime'
+const CUSTOM_HEADER_NAME = 'custom_header_name'
+const CUSTOM_HEADER_VAL = 'custom_header_val'
+const ALLOWED_ORIGIN = 'http://example.com'
+
+const server = await Mockaton({
+	mocksDir,
+	staticDir,
+	onReady() {},
+	cookies: COOKIES,
+	extraHeaders: [CUSTOM_HEADER_NAME, CUSTOM_HEADER_VAL],
+	extraMimes: { [CUSTOM_EXT]: CUSTOM_MIME },
+	logLevel: 'verbose',
+	corsOrigins: [ALLOWED_ORIGIN],
+	corsExposedHeaders: ['Content-Encoding'],
+	watcherEnabled: false,
+})
+after(() => server?.close())
+
+const api = new Commander(
+	`http://${server.address().address}:${server.address().port}`)
+
+/** @returns {Promise<State>} */
+async function fetchState() {
+	return (await api.getState()).json()
+}
+
+function request(path, options = {}) {
+	return fetch(api.addr + path, options)
+}
+
+
 class BaseFixture {
 	dir = ''
 	urlMask = ''
@@ -67,7 +101,7 @@ class BaseFixture {
 
 	async sync() {
 		await this.write()
-		await sync()
+		await api.reset()
 	}
 
 	get path() { return join(this.dir, this.file) }
@@ -101,45 +135,6 @@ class FixtureStatic extends BaseFixture {
 		this.urlMask = '/' + file
 		this.method = 'GET'
 	}
-}
-
-
-const COOKIES = { userA: 'CookieA', userB: 'CookieB' }
-const CUSTOM_EXT = 'custom_extension'
-const CUSTOM_MIME = 'custom_mime'
-const CUSTOM_HEADER_NAME = 'custom_header_name'
-const CUSTOM_HEADER_VAL = 'custom_header_val'
-const ALLOWED_ORIGIN = 'http://example.com'
-
-const server = await Mockaton({
-	mocksDir,
-	staticDir,
-	onReady() {},
-	cookies: COOKIES,
-	extraHeaders: [CUSTOM_HEADER_NAME, CUSTOM_HEADER_VAL],
-	extraMimes: { [CUSTOM_EXT]: CUSTOM_MIME },
-	logLevel: 'verbose',
-	corsOrigins: [ALLOWED_ORIGIN],
-	corsExposedHeaders: ['Content-Encoding'],
-	watcherEnabled: false,
-})
-after(() => server?.close())
-
-const addr = `http://${server.address().address}:${server.address().port}`
-const api = new Commander(addr)
-
-
-/** @returns {Promise<State>} */
-async function fetchState() {
-	return (await api.getState()).json()
-}
-
-async function sync() {
-	await api.reset()
-}
-
-function request(path, options = {}) {
-	return fetch(addr + path, options)
 }
 
 
@@ -190,7 +185,7 @@ describe('Warnings', () => {
 		await fx0.write()
 		await fx1.write()
 		await fx2.write()
-		await sync()
+		await api.reset()
 
 		equal(spy.calls[0].arguments[0], 'Invalid HTTP Response Status: "NaN"')
 		equal(spy.calls[1].arguments[0], 'Unrecognized HTTP Method: "_INVALID_METHOD_"')
@@ -329,13 +324,13 @@ describe('Delay', () => {
 	test('updates route delay', async () => {
 		const fx = new Fixture('route-delay.GET.200.json')
 		await fx.sync()
-		const delay = 120
-		await api.setGlobalDelay(delay)
+		const DELAY = 100
+		await api.setGlobalDelay(DELAY)
 		await api.setRouteIsDelayed(fx.method, fx.urlMask, true)
-		const now = new Date()
+		const t0 = performance.now()
 		const r = await fx.request()
 		equal(await r.text(), fx.body)
-		equal((new Date()).getTime() - now.getTime() > delay, true)
+		equal(performance.now() - t0 > DELAY, true)
 		await fx.unlink()
 	})
 
@@ -533,7 +528,7 @@ describe('404', () => {
 	test('404s ignored files', async () => {
 		const fx = new Fixture('ignored.GET.200.json~')
 		await fx.write()
-		await sync()
+		await api.reset()
 		const r = await fx.request()
 		equal(r.status, 404)
 		await fx.unlink()
@@ -542,7 +537,7 @@ describe('404', () => {
 	test('404s ignored static files', async () => {
 		const fx = new FixtureStatic('static-ignored.js~')
 		await fx.write()
-		await sync()
+		await api.reset()
 		const r = await fx.request()
 		equal(r.status, 404)
 		await fx.unlink()
@@ -556,7 +551,7 @@ describe('Default Mock', () => {
 	before(async () => {
 		await fxA.write()
 		await fxB.write()
-		await sync()
+		await api.reset()
 	})
 	after(async () => {
 		await fxA.unlink()
@@ -645,7 +640,7 @@ describe('Static Files', () => {
 	before(async () => {
 		await fxsIndex.write()
 		await fxsAsset.write()
-		await sync()
+		await api.reset()
 	}) // the last test deletes them
 
 	describe('Static File Serving', () => {
@@ -726,7 +721,7 @@ describe('Static Files', () => {
 
 	describe('Static Partial Content', () => {
 		test('206 serves partial content', async () => {
-			await sync()
+			await api.reset()
 			const r0 = await fxsIndex.request({ headers: { range: 'bytes=0-3' } })
 			const r1 = await fxsIndex.request({ headers: { range: 'bytes=4-' } })
 			equal(r0.status, 206)
@@ -744,7 +739,7 @@ describe('Static Files', () => {
 	test('unregisters static route', async () => {
 		await fxsIndex.unlink()
 		await fxsAsset.unlink()
-		await sync()
+		await api.reset()
 		const { staticBrokers } = await fetchState()
 		equal(staticBrokers[fxsIndex.urlMask], undefined)
 		equal(staticBrokers[fxsAsset.urlMask], undefined)
@@ -774,7 +769,7 @@ describe('500', () => {
 		const fx500 = new Fixture('reg-error.GET.500.txt')
 		await fx200.write()
 		await fx500.write()
-		await sync()
+		await api.reset()
 
 		const bp0 = await api.toggle500(fx200.method, fx200.urlMask)
 		const b0 = await bp0.json()
@@ -879,7 +874,7 @@ describe('Select', () => {
 	before(async () => {
 		await fx.write()
 		await fxAlt.write()
-		await sync()
+		await api.reset()
 	})
 	after(async () => {
 		await fx.unlink()
@@ -920,7 +915,7 @@ describe('Bulk Select', () => {
 		await fxIotaB.write()
 		await fxKappaA.write()
 		await fxKappaB.write()
-		await sync()
+		await api.reset()
 	})
 	after(async () => {
 		await fxIota.unlink()
@@ -942,7 +937,7 @@ describe('Bulk Select', () => {
 	})
 
 	test('selects partial', async () => {
-		await sync()
+		await api.reset()
 		await api.bulkSelectByComment('(mment A)')
 		equal((await (await fxKappaB.request()).text()), fxKappaA.body)
 	})
@@ -970,7 +965,7 @@ describe('Dynamic Params', () => {
 		await fx1.write()
 		await fx2.write()
 		await fx3.write()
-		await sync()
+		await api.reset()
 	})
 	after(async () => {
 		await fx0.unlink()
@@ -1008,7 +1003,7 @@ describe('Query String', () => {
 		await makeDirInMocks('query-string')
 		await fx0.write()
 		await fx1.write()
-		await sync()
+		await api.reset()
 	})
 	after(async () => {
 		await fx0.unlink()

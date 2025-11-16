@@ -224,11 +224,11 @@ async function setRouteIsProxied(req, response) {
 
 
 async function setStaticRouteStatusCode(req, response) {
-	const [urlMask, status] = await parseJSON(req)
+	const [route, status] = await parseJSON(req)
 
-	const broker = staticCollection.brokerByRoute(urlMask)
+	const broker = staticCollection.brokerByRoute(route)
 	if (!broker)
-		sendUnprocessable(response, `Static route does not exist: ${urlMask}`)
+		sendUnprocessable(response, `Static route does not exist: ${route}`)
 	else if (!(status === 200 || status === 404))
 		sendUnprocessable(response, `Expected 200 or 404 status code`)
 	else {
@@ -239,11 +239,11 @@ async function setStaticRouteStatusCode(req, response) {
 
 
 async function setStaticRouteIsDelayed(req, response) {
-	const [urlMask, delayed] = await parseJSON(req)
+	const [route, delayed] = await parseJSON(req)
 
-	const broker = staticCollection.brokerByRoute(urlMask)
+	const broker = staticCollection.brokerByRoute(route)
 	if (!broker)
-		sendUnprocessable(response, `Static route does not exist: ${urlMask}`)
+		sendUnprocessable(response, `Static route does not exist: ${route}`)
 	else if (typeof delayed !== 'boolean')
 		sendUnprocessable(response, `Expected boolean for "delayed"`)
 	else {

@@ -492,7 +492,7 @@ function NotFoundToggler(route, checked) {
 					store.setStaticRouteStatus(route, this.checked ? 404 : 200)
 				}
 			}),
-			r('span', null, t`404`)))
+			r('span', className(CSS.checkboxBody), t`404`)))
 }
 
 

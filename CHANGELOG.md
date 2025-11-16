@@ -1,7 +1,7 @@
 # Changelog
 - 11.2.0 dashboard: show Mockaton’s version
  
-![](docs/11.2.0-version.png)
+![](docs/changelog/11.2.0-version.png)
  
 - 11.1.0 new `config.watcherEnabled`
 - 11.0.0 **Breaking change**, but of undocumented APIs.
@@ -16,11 +16,11 @@
 
 - 10.7.0 dashboard: animate in newly added mocks
 
-![](docs/10.7.0-newly-added-anim.gif)
+![](docs/changelog/10.7.0-newly-added-anim.gif)
 
 - 10.6.0 dashboard: arrow navigation
  
-![](docs/10.6.0-arrow-nav.gif)
+![](docs/changelog/10.6.0-arrow-nav.gif)
 
 - 10.5.0 dashboard: qs option `?groupByMethod=false`
 - 10.4.0 allow changing delay with wheel event
@@ -29,7 +29,7 @@
 - 10.2.0 reject malicious URLs
 - 10.1.0 dashboard: toggle delay with click-drag 
  
-![](docs/10.1.0-click-drag-toggle.gif)
+![](docs/changelog/10.1.0-click-drag-toggle.gif)
  
 - 10.0.0 **Breaking Change**: `Mockaton` constructor is now async. 
 So if you launch it programmatically, change:
@@ -45,7 +45,7 @@ await Mockaton()
 - 9.5.0 cli: new `config.logLevel=verbose`
 - 9.4.0 dashboard: users can resize panels
  
-![](docs/9.4.0-resize-panels.gif)
+![](docs/changelog/9.4.0-resize-panels.gif)
 
 - 9.3.0 handle head requests for get mocks
 - 9.2.0 dashboard: syntax highlight more xml files (such as html)
@@ -57,7 +57,7 @@ await Mockaton()
 
 - 8.27.0 dashboard: group by method checkbox
  
-![](docs/8.27.0-group-by-method.gif)
+![](docs/changelog/8.27.0-group-by-method.gif)
  
 - 8.26.0 ui simplify mock-selector label text
 - 8.25.0 `--quiet` and `config.logLevel` options
@@ -74,7 +74,7 @@ await Mockaton()
 - 8.14.0 static files controls
 - 8.13.0 dashboard: dim repeated dirs
  
-![](docs/8.13.0-ditto-dirs.png)
+![](docs/changelog/8.13.0-ditto-dirs.png)
 
 - 8.12.0 add `config.formatCollectedJSON`
 - 8.11.0 allow all the HTTP methods Node.js supports

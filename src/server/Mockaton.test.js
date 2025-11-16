@@ -96,15 +96,14 @@ class BaseFixture {
 		await nextVerPromise
 	}
 
-	async write() { await writeFile(this.path, this.body, 'utf8') }
-	async unlink() { await unlink(this.path) }
+	async write() { await writeFile(this.#path(), this.body, 'utf8') }
+	async unlink() { await unlink(this.#path()) }
+	#path() { return join(this.dir, this.file) }
 
 	async sync() {
 		await this.write()
 		await api.reset()
 	}
-
-	get path() { return join(this.dir, this.file) }
 
 	request(options = {}) {
 		options.method ??= this.method

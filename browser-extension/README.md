@@ -1,0 +1,38 @@
+# Mockaton Downloader
+
+Browser extension for downloading HTTP request responses.
+
+
+## Overview
+This extension lets you save to disk API calls, images, and static
+assets in general. 
+
+**Download All** saves them to your disk. There’s an option for
+using a file extension Mockaton understands, so you can serve them
+without wiring them up.
+
+<br/>
+
+<img src="README-overview.png" />
+
+<br/>
+
+They get saved to disk like this:
+<img src="README-saved-to-disk.png" />
+
+## Caveats
+
+### Videos and Cached Resources
+Videos and cached resources are ignored. For the latter
+you can [x] **Disable cache** in the Network panel.
+
+
+### .dot-files
+We add a `_DOT_` prefix to dot-files. Otherwise, Chrome
+doesn’t save them. For example,
+
+```txt
+     example.com/.foo/bar
+example.com/_DOT_.foo/bar // renamed
+```
+

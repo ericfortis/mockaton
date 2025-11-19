@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8" />
+  <style>
+    html, body {
+      padding: 0;
+      margin: 0;
+    }
+
+    menu {
+      position: sticky;
+      z-index: 100;
+      top: 0;
+      padding: 4px 9px;
+      border-bottom: 1px solid #ddd;
+      margin: 0;
+      background: white;
+
+      .Filter {
+        display: inline-flex;
+        align-items: center;
+        vertical-align: middle;
+
+        input {
+          width: 120px;
+          padding: 0 2px;
+          margin-left: 4px;
+        }
+      }
+
+      .FilterIsRegex,
+      .UseMockatonExt {
+        display: inline-flex;
+        align-items: center;
+        vertical-align: middle;
+
+        input {
+          margin-right: 4px;
+        }
+      }
+
+      .UseMockatonExt {
+        margin-left: 20px;
+      }
+
+      .DownloadAll,
+      .ClearList {
+        padding: 4px 10px;
+        border: 0;
+        margin-left: 20px;
+        background: dodgerblue;
+        color: white;
+        border-radius: 4px;
+        cursor: pointer;
+      }
+
+      .ClearList {
+        margin-left: 8px;
+        background: #bd0707;
+      }
+    }
+
+    .FileList {
+      padding: 0 9px;
+
+      li {
+        list-style: none;
+
+        button {
+          padding: 2px 0;
+          border: 0;
+          background: transparent;
+          color: dodgerblue;
+          cursor: pointer;
+
+          &:hover {
+            text-decoration: underline;
+          }
+        }
+      }
+    }
+  </style>
+</head>
+<body>
+</body>
+</html>

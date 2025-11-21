@@ -3,6 +3,7 @@
 .github
 .idea
 
+browser-extension/
 demo-app-vite/
 docs/
 mockaton-mocks/

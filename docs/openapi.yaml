@@ -1,3 +1,5 @@
+# https://www.rfc-editor.org/rfc/rfc9457.html TODO
+
 openapi: 3.1.2
 
 info:
@@ -46,6 +48,11 @@ paths:
           $ref: '#/components/responses/Broker'
         '422':
           description: Mock file doesn’t exist
+          content:
+            application/json:
+              schema:
+                type: string
+              example: 'Mock file does not exist'
   
   
   /mockaton/toggle500:
@@ -207,7 +214,7 @@ paths:
         required: true
         content:
           application/json:
-            schema: 
+            schema:
               type: boolean
               description: Is enabled?
       responses:
@@ -222,7 +229,7 @@ paths:
         required: true
         content:
           application/json:
-            schema: 
+            schema:
               type: string
               description: URL
             example: 'https://example.com'
@@ -238,7 +245,7 @@ paths:
         required: true
         content:
           application/json:
-            schema: 
+            schema:
               type: boolean
               description: Should Collect?
       responses:
@@ -253,7 +260,7 @@ paths:
         required: true
         content:
           application/json:
-            schema: 
+            schema:
               type: string
               description: Cookie key
               example: 'Normal User'
@@ -294,7 +301,7 @@ paths:
           description: Sync version value
           content:
             application/json:
-              schema: 
+              schema:
                 type: number
                 description: Incremental integer
 

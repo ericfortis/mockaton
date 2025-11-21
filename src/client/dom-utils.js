@@ -1,5 +1,7 @@
 export function className(...args) {
-	return { className: args.filter(Boolean).join(' ') }
+	return {
+		className: args.filter(Boolean).join(' ')
+	}
 }
 
 export function createElement(tag, props, ...children) {
@@ -14,8 +16,8 @@ export function createElement(tag, props, ...children) {
 	return elem
 }
 
-export function createSvgElement(tagName, props, ...children) {
-	const elem = document.createElementNS('http://www.w3.org/2000/svg', tagName)
+export function createSvgElement(tag, props, ...children) {
+	const elem = document.createElementNS('http://www.w3.org/2000/svg', tag)
 	for (const [k, v] of Object.entries(props))
 		elem.setAttribute(k, v)
 	elem.append(...children.flat().filter(Boolean))

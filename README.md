@@ -98,7 +98,7 @@ api/videos.GET.<b>500</b>.txt   # Internal Server Error
 ## Scraping Mocks from your Backend
 
 ### Option 1: Browser extension
-The companion Chrome [devtools extension](browser-extension)
+The companion Chrome [devtools extension](https://chromewebstore.google.com/detail/mockaton-downloader/babjpljmacbefcmlomjedmgmkecnmlaa)
 lets you download all the HTTP responses and 
 save them in bulk following Mockaton’s filename convention.
 

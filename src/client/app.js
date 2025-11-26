@@ -32,13 +32,18 @@ const CSS = {
 	Resizer: null,
 	SaveProxiedCheckbox: null,
 	SettingsMenu: null,
+	Table: null,
+	TableHeading: null,
+	TableRow: null,
 
 	animIn: null,
+	canProxy: null,
 	checkboxBody: null,
 	chosen: null,
 	dittoDir: null,
 	leftSide: null,
 	nonDefault: null,
+	nonGroupedByMethod: null,
 	rightSide: null,
 	status4xx: null,
 
@@ -90,7 +95,7 @@ function App() {
 					style: { width: leftSideRef.width },
 					className: CSS.leftSide
 				},
-				r('table', null,
+				r('div', className(CSS.Table),
 					MockList(),
 					StaticFilesList())),
 			r('div', { className: CSS.rightSide },
@@ -286,9 +291,8 @@ function MockList() {
 
 	if (store.groupByMethod)
 		return Object.keys(store.brokersByMethod).map(method => Fragment(
-			r('tr', null,
-				r('th', { colspan: 2 + Number(store.canProxy) }),
-				r('th', { colspan: 2 }, method)),
+			r('div', className(CSS.TableHeading, store.canProxy && CSS.canProxy),
+				method),
 			store.brokersAsRowsByMethod(method).map(Row)))
 
 	return store.brokersAsRowsByMethod('*').map(Row)
@@ -299,33 +303,26 @@ function MockList() {
  * @param {number} i
  */
 function Row(row, i) {
-	const { key, method, urlMask } = row
+	const { method, urlMask } = row
 	return (
-		r('tr', {
-				key,
-				...className(render.count > 1 && row.isNew && CSS.animIn)
+		r('div', {
+				key: row.key,
+				...className(CSS.TableRow,
+					render.count > 1 && row.isNew && CSS.animIn)
 			},
-			store.canProxy && r('td', null,
-				ProxyToggler(method, urlMask, row.proxied)),
+			store.canProxy && ProxyToggler(method, urlMask, row.proxied),
 
-			r('td', null,
-				DelayRouteToggler(method, urlMask, row.delayed)),
+			DelayRouteToggler(method, urlMask, row.delayed),
 
-			r('td', null,
-				InternalServerErrorToggler(
-					method,
-					urlMask,
-					!row.proxied && row.status === 500, // checked
-					row.opts.length === 1 && row.status === 500)), // disabled
+			InternalServerErrorToggler(method, urlMask,
+				!row.proxied && row.status === 500, // checked
+				row.opts.length === 1 && row.status === 500), // disabled
 
-			!store.groupByMethod && r('td', className(CSS.Method),
-				method),
+			!store.groupByMethod && r('span', className(CSS.Method), method),
 
-			r('td', null,
-				PreviewLink(method, urlMask, row.urlMaskDittoed, i === 0)),
+			PreviewLink(method, urlMask, row.urlMaskDittoed, i === 0),
 
-			r('td', null,
-				MockSelector(row))))
+			MockSelector(row)))
 }
 
 function renderRow(method, urlMask) {
@@ -337,10 +334,10 @@ function renderRow(method, urlMask) {
 	})
 
 	function trFor(key) {
-		return leftSideRef.elem.querySelector(`tr[key="${key}"]`)
+		return leftSideRef.elem.querySelector(`.${CSS.TableRow}[key="${key}"]`)
 	}
 	function unChooseOld() {
-		return leftSideRef.elem.querySelector(`td > a.${CSS.chosen}`)
+		return leftSideRef.elem.querySelector(`a.${CSS.chosen}`)
 			?.classList.remove(CSS.chosen)
 	}
 }
@@ -427,49 +424,47 @@ function ProxyToggler(method, urlMask, checked) {
 /** # StaticFilesList */
 
 function StaticFilesList() {
-	const { canProxy, groupByMethod } = store
 	const rows = store.staticBrokersAsRows()
 	return !rows.length
 		? null
 		: Fragment(
-			r('tr', null,
-				r('th', { colspan: (2 + Number(!groupByMethod)) + Number(canProxy) }),
-				r('th', { colspan: 2 }, t`Static GET`)),
+			r('div',
+				className(CSS.TableHeading,
+					store.canProxy && CSS.canProxy,
+					!store.groupByMethod && CSS.nonGroupedByMethod),
+				store.groupByMethod ? t`Static GET` : t`Static`),
 			rows.map(StaticRow))
 }
 
 /** @param {StaticBrokerRowModel} row */
 function StaticRow(row) {
-	const { canProxy, groupByMethod } = store
+	const { groupByMethod } = store
 	const [ditto, tail] = row.urlMaskDittoed
 	return (
-		r('tr', {
+		r('div', {
 				key: row.key,
-				...className(render.count > 1 && row.isNew && CSS.animIn)
+				...className(CSS.TableRow,
+					render.count > 1 && row.isNew && CSS.animIn)
 			},
-			canProxy && r('td'),
-			r('td', null,
-				DelayStaticRouteToggler(row.urlMask, row.delayed)),
+			DelayStaticRouteToggler(row.urlMask, row.delayed),
 
-			r('td', null,
-				NotFoundToggler(row.urlMask, row.status === 404)),
+			NotFoundToggler(row.urlMask, row.status === 404),
 
-			!groupByMethod && r('td', className(CSS.Method),
-				'GET'),
+			!groupByMethod && r('span', className(CSS.Method), 'GET'),
 
-			r('td', { colspan: 2 },
-				r('a', {
-					href: row.urlMask,
-					target: '_blank',
-					className: CSS.PreviewLink,
-					'data-focus-group': FocusGroup.PreviewLink
-				}, ditto
-					? [r('span', className(CSS.dittoDir), ditto), tail]
-					: tail))))
+			r('a', {
+				href: row.urlMask,
+				target: '_blank',
+				className: CSS.PreviewLink,
+				'data-focus-group': FocusGroup.PreviewLink
+			}, ditto
+				? [r('span', className(CSS.dittoDir), ditto), tail]
+				: tail)))
 }
 
 function DelayStaticRouteToggler(route, checked) {
 	return ClickDragToggler({
+		optClassName: store.canProxy && CSS.canProxy,
 		checked,
 		focusGroup: FocusGroup.DelayToggler,
 		commit(checked) {
@@ -496,7 +491,7 @@ function NotFoundToggler(route, checked) {
 }
 
 
-function ClickDragToggler({ checked, commit, focusGroup }) {
+function ClickDragToggler({ checked, commit, focusGroup, optClassName }) {
 	function onPointerEnter(event) {
 		if (event.buttons === 1)
 			onPointerDown.call(this)
@@ -515,7 +510,7 @@ function ClickDragToggler({ checked, commit, focusGroup }) {
 	}
 	return (
 		r('label', {
-				className: CSS.DelayToggler,
+				...className(CSS.DelayToggler, optClassName),
 				title: t`Delay`
 			},
 			r('input', {
@@ -548,7 +543,7 @@ function Resizer(ref) {
 	}
 
 	function onMove(event) {
-		const MIN_LEFT_WIDTH = 380
+		const MIN_LEFT_WIDTH = 340
 		raf = raf || requestAnimationFrame(() => {
 			ref.width = Math.max(initialWidth - (initialX - event.clientX), MIN_LEFT_WIDTH) + 'px'
 			ref.elem.style.width = ref.width
@@ -810,7 +805,7 @@ function initKeyboardNavigation() {
 	}
 
 	function rowFocusable(el, step) {
-		const row = el.closest('tr')
+		const row = el.closest(`.${CSS.TableRow}`)
 		if (row) {
 			const focusables = Array.from(row.querySelectorAll('a, input, select:not(:disabled)'))
 			return circularAdjacent(step, focusables, el)
@@ -819,7 +814,7 @@ function initKeyboardNavigation() {
 
 	function allInFocusGroup(focusGroup) {
 		return Array.from(leftSideRef.elem.querySelectorAll(
-			`tr > td [data-focus-group="${focusGroup}"]:is(input, a)`))
+			`.${CSS.TableRow} [data-focus-group="${focusGroup}"]:is(input, a)`))
 	}
 
 	function circularAdjacent(step = 1, arr, pivot) {

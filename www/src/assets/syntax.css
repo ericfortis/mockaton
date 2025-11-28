@@ -1,0 +1,95 @@
+@media (prefers-color-scheme: light) {
+	:root {
+		--syntaxCmd: dodgerblue;
+		--syntaxComment: #777;
+		--syntaxKeyword: #ff9100;
+		--syntaxNum: #f44ef4;
+		--syntaxPunctionation: #999;
+		--syntaxRegex: #f0a;
+		--syntaxString: #ff0aad;
+		--syntaxVar: green;
+	}
+}
+@media (prefers-color-scheme: dark) {
+	:root {
+		--syntaxCmd: #359dff;
+		--syntaxComment: #8c8c8c;
+		--syntaxKeyword: #8aa19b;
+		--syntaxNum: #894eff;
+		--syntaxPunctionation: #999;
+		--syntaxRegex: #f0a;
+		--syntaxString: #ff0fb3;
+		--syntaxVar: #21cd3e;
+	}
+}
+
+
+.syntax_punctuation {
+	color: var(--syntaxPunctionation);
+}
+
+.syntax_comment,
+.syntax_prolog,
+.syntax_doctype,
+.syntax_cdata {
+	color: var(--syntaxComment);
+}
+
+.syntax_property,
+.syntax_tag,
+.syntax_boolean,
+.syntax_number,
+.syntax_constant,
+.syntax_symbol,
+.syntax_deleted {
+	color: var(--syntaxNum);
+}
+
+.syntax_selector,
+.syntax_attr-name,
+.syntax_string,
+.syntax_char,
+.syntax_builtin,
+.syntax_inserted {
+	color: var(--syntaxVar);
+}
+
+.syntax_operator,
+.syntax_entity,
+.syntax_url,
+.syntax_string,
+.syntax_string {
+	color: var(--syntaxString);
+}
+
+.syntax_atrule,
+.syntax_attr-value,
+.syntax_keyword {
+	color: var(--syntaxKeyword);
+}
+
+.syntax_function,
+.syntax_class-name {
+	color: var(--syntaxCmd);
+}
+
+.syntax_regex,
+.syntax_important,
+.syntax_variable {
+	color: var(--syntaxRegex);
+}
+
+.syntax_namespace {
+	opacity: 0.7;
+}
+
+.syntax_important,
+.syntax_bold {
+	font-weight: bold;
+}
+.syntax_italic {
+	font-style: italic;
+}
+.syntax_entity {
+	cursor: help;
+}

@@ -1,0 +1,424 @@
+:root {
+	--headerHeight: 48px;
+	--footerHeight: 36px;
+
+	--navWidth: 117px;
+	--pMaxWidth: 560px;
+	--sectionPad: 40px;
+
+	--boxShadow2: 0 3px 1px -2px rgb(0, 0, 0, .2), 0 2px 2px 0 rgb(0, 0, 0, .14), 0 1px 5px 0 rgb(0, 0, 0, .12);
+
+	--zIndexNav: 40;
+	--zIndexHeader: 50;
+	--zIndexHamburger: 51;
+}
+
+@media (prefers-color-scheme: light) {
+	:root {
+		--bgHeader: #272727;
+		--bg: #fff;
+		--fgHigh: #000;
+		--fg: #000;
+		--fg2: #444;
+		--bgFaint: #fafafa;
+		--faintBorder: #e6e6e6;
+
+		--videoTrackHoverBG: #6b93fd;
+		--accentFaint: #e1ebff;
+		--accentLight: #6b93fd;
+		--accent: #2962ff;
+		--nullLink: #e61779;
+
+		--colorAccentLighter: #6b93fd;
+		--colorAccent: #2962ff;
+		--colorAccentDarker: #2356e3;
+
+	}
+}
+@media (prefers-color-scheme: dark) {
+	:root {
+		--bgHeader: #000;
+		--bg: #1a1a1a;
+		--fgHigh: #fff;
+		--fg: #dbdbdb;
+		--fg2: #ccc;
+		--bgFaint: #282828;
+		--faintBorder: #333;
+
+		--videoTrackHoverBG: #6b93fd;
+		--accentFaint: #e1ebff;
+		--accentLight: #6b93fd;
+		--accent: #2962ff;
+		--nullLink: #b968d8;
+
+		--colorAccentLighter: #6b93fd;
+		--colorAccent: #2962ff;
+		--colorAccentDarker: #2356e3;
+	}
+}
+
+
+::selection {
+	background: var(--accent);
+	color: white;
+	fill: white; /* for svg text */
+}
+
+* {
+	box-sizing: border-box;
+	padding: 0;
+	border: 0;
+	margin: 0;
+	background: none;
+	color: inherit;
+	font-family: "Avenir Next", system-ui, sans-serif;
+	font-size: inherit;
+	outline: 0;
+}
+
+html {
+	background: var(--bgHeader);
+	scroll-behavior: smooth;
+}
+
+body {
+	position: relative;
+	background: var(--bg);
+	color: var(--fg);
+	font-size: 17px;
+	line-height: 1.5;
+
+	@media (max-width: 480px) {
+		font-size: 16px;
+	}
+	@media (max-width: 400px) {
+		font-size: 15px;
+	}
+	@media (max-width: 360px) {
+		font-size: 14px;
+	}
+}
+
+a {
+	display: inline-block;
+	color: var(--accent);
+	outline: 0;
+	text-decoration: none;
+	-webkit-user-drag: none;
+
+	&:hover,
+	&:focus-visible {
+		text-decoration: underline;
+	}
+}
+
+a,
+button {
+	:active {
+		cursor: grabbing;
+	}
+}
+
+pre,
+pre *,
+code,
+code * {
+	color: var(--fgHigh);
+	background: var(--bgFaint);
+	font-family: monospace;
+	text-align: left;
+	white-space: pre;
+	word-spacing: normal;
+	word-break: normal;
+	word-wrap: normal;
+	line-height: 1.5;
+	tab-size: 2;
+	hyphens: none;
+}
+pre {
+	max-width: 760px;
+	padding: 16px;
+	margin-top: 8px;
+	background: var(--bgFaint);
+	font-size: 14px;
+	overflow-x: auto;
+}
+@media (min-width: 800px) {
+	pre {
+		position: relative;
+		left: -15px;
+		width: calc(100% + 30px);
+	}
+}
+
+
+details {
+	margin-top: 20px;
+
+	summary {
+		color: var(--colorAccent);
+		cursor: pointer;
+		outline: 0;
+
+		&:hover,
+		&:focus-visible {
+			color: var(--colorAccent);
+		}
+		&:focus-visible {
+			text-decoration: underline;
+		}
+	}
+}
+details:not([open]) summary::after {
+	content: '…';
+}
+details[open] summary {
+	color: var(--fgHigh);
+}
+details > :not(summary) {
+	margin-left: 30px;
+	animation: fadeIn 140ms ease-in-out;
+}
+
+@keyframes fadeIn {
+	0% {
+		opacity: 0;
+	}
+	100% {
+		opacity: 1;
+	}
+}
+
+
+ul {
+	margin: 16px 0;
+
+	li {
+		max-width: var(--pMaxWidth);
+		padding: 5px 0;
+		margin-left: 30px;
+		list-style: square;
+	}
+}
+
+
+section {
+	padding-top: var(--sectionPad);
+}
+
+
+main {
+	overflow: auto;
+	margin-left: var(--navWidth);
+
+	@media (max-width: 800px) {
+		margin-left: 0;
+	}
+
+	article {
+		min-height: calc(100vh - var(--headerHeight) - var(--footerHeight) - 48px);
+		padding: 0 var(--sectionPad);
+		padding-bottom: 48px;
+	}
+}
+
+
+h1, h2, h3, h4, h5, h6 { /* For the JS highlight on click fragment */
+	position: relative;
+	left: -5px;
+	padding: 5px 0 5px 5px;
+	border-radius: 10px;
+	font-family: Futura, system-ui, sans-serif;
+	font-weight: bold;
+	text-wrap: balance;
+	color: var(--fgHigh);
+}
+
+h1 {
+	width: 100%;
+	margin-top: 82px;
+	font-size: 42px;
+	line-height: 100%;
+}
+h2 {
+	margin-top: 52px;
+	margin-bottom: 12px;
+	font-size: 30px;
+	line-height: 120%;
+}
+.h2Hint {
+	color: #555;
+	font-size: 19px;
+	vertical-align: top;
+}
+h3 {
+	margin-top: 50px;
+	font-size: 21px;
+	line-height: 100%;
+}
+h4 {
+	margin-top: 36px;
+}
+h5 {
+	margin-top: 24px;
+}
+
+@media (max-width: 440px) {
+	h1 {
+		margin-top: 78px;
+		font-size: 38px;
+	}
+	h2 {
+		margin-top: 22px;
+		margin-bottom: 18px;
+		font-size: 30px;
+	}
+	.h2Hint {
+		font-size: 18px;
+	}
+	h3 {
+		margin-top: 46px;
+		font-size: 19px;
+	}
+}
+
+
+p {
+	max-width: var(--pMaxWidth);
+	margin-top: 16px;
+}
+
+
+dl {
+	dt {
+		display: inline-block;
+		width: 140px;
+	}
+	dd {
+		display: inline-block;
+		margin: 0;
+	}
+}
+
+footer {
+	height: var(--footerHeight);
+	padding-right: calc(var(--footerHeight) / 2);
+	margin-top: auto;
+	background: var(--bgHeader);
+	color: #999;
+	font-size: 10px;
+	line-height: var(--footerHeight);
+	text-align: right;
+}
+
+
+img[alt] {
+	background: #333;
+	color: #fff;
+	text-align: center;
+}
+
+video,
+img {
+	display: block;
+	margin-top: 10px;
+	box-shadow: var(--boxShadow2);
+}
+
+video {
+	width: 100%;
+	height: auto;
+	transform: scale(0.99999999);
+
+	&:focus-visible {
+		outline: 0;
+	}
+}
+
+
+@media (max-width: 800px) {
+	.FullImg,
+	.VideoWrap {
+		width: 88vw;
+		min-width: 500px;
+	}
+}
+
+@media (max-width: 580px) {
+	.FullImg,
+	.VideoWrap {
+		width: 100%;
+		min-width: auto;
+	}
+}
+
+.RegionImg {
+	padding-bottom: 4px; /* Not perfect, but to show a some of the boxShadow  */
+	img {
+		max-width: 100%;
+	}
+}
+
+.VideoWrap,
+.FullImg {
+	position: relative;
+	display: block;
+	width: 100%;
+	max-width: 1280px;
+	height: 0;
+	padding-bottom: 56.25%; /* Ratio 16:9 */
+	margin-top: 10px;
+	margin-bottom: 30px;
+	animation: gradientDarkBG 1s linear 2;
+	animation-direction: alternate;
+	background: #555;
+}
+.VideoWrap.light,
+.FullImg.light {
+	animation: gradientLightBG 1s linear 2;
+}
+@keyframes gradientDarkBG {
+	0% {
+		background: #555;
+	}
+	100% {
+		background: #222;
+	}
+}
+@keyframes gradientLightBG {
+	0% {
+		background: #ddd;
+	}
+	100% {
+		background: #bbb;
+	}
+}
+
+
+@media (min-width: 1480px) {
+	/* 56.25% (9/16) cannot be used as the media is clamped at 1280px */
+	.VideoWrap,
+	.FullImg {
+		padding-bottom: 720px;
+	}
+}
+
+.FullImg img {
+	position: absolute;
+	width: 100%;
+	padding: 0;
+	margin: 0;
+}
+.VideoWrap video {
+	width: 100%;
+	padding: 0;
+	margin: 0;
+}
+
+
+.NullLink {
+	color: var(--nullLink);
+	cursor: default;
+	font-family: monospace;
+	font-size: 15px;
+}

@@ -16,7 +16,7 @@ without wiring them up.
 
 <br/>
 
-![Mockaton Download](README-overview.png)
+![Mockaton Download](browser-extension-overview.png)
 
 <br/>
 

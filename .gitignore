@@ -2,6 +2,7 @@
 .idea
 lcov.info
 node_modules/
+www/dist/
 
 pixaton-tests/**/*.candidate.png
 pixaton-tests/**/*.diff.png
@@ -9,3 +10,5 @@ pixaton-tests/**/*.diff.png
 demo-app-vite/pixaton-tests/**/*.candidate.png
 demo-app-vite/pixaton-tests/**/*.diff.png
 demo-app-vite/dist/
+
+

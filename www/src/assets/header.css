@@ -1,0 +1,74 @@
+header {
+	position: fixed;
+	z-index: var(--zIndexHeader);
+	top: 0;
+	left: 0;
+	width: 100%;
+	height: var(--headerHeight);
+	background: var(--bgHeader);
+	box-shadow: var(--boxShadow2);
+	fill: white;
+
+	.Logo {
+		width: 116px;
+		box-sizing: content-box;
+		padding-top: 13px;
+		padding-right: 16px;
+		padding-bottom: 3px;
+		padding-left: 15px;
+
+		&:hover {
+			fill: var(--accentLight);
+		}
+
+		&:focus-visible {
+			background: var(--colorAccent);
+			color: #fff;
+		}
+	}
+
+	.Github {
+		width: 24px;
+		float: right;
+		margin-top: 11px;
+		margin-right: 10px;
+
+		&:hover {
+			fill: var(--accentLight);
+		}
+	}
+}
+
+label[for="hamburger"],
+#hamburger {
+	width: 24px;
+	height: 24px;
+	position: fixed;
+	z-index: var(--zIndexHamburger);
+	top: 11px;
+	right: 10px;
+	display: none;
+	cursor: pointer;
+	fill: #fff;
+	transition: 180ms ease-in-out;
+
+	&:hover {
+		fill: var(--accentLight);
+	}
+}
+@media (max-width: 800px) {
+	label[for="hamburger"] {
+		display: block;
+	}
+
+	header {
+		.Github {
+			margin-right: 46px;
+		}
+	}
+
+	#hamburger:checked + nav {
+		display: block;
+	}
+}
+

@@ -10,13 +10,13 @@ preview: build
 
 
 avif:
-	npx mediasnacks avif -y 'src/media/**/*.png'
+	npx mediasnacks avif -y 'src/static/media/**/*.png'
 
 moov2front:
-	npx mediasnacks moov2front 'src/media/**/*.mp4'
+	npx mediasnacks moov2front 'src/static/media/**/*.mp4'
 
 resize-video:
-	npx mediasnacks resize --overwrite --width 1920 'src/media/**/*.mp4'
+	npx mediasnacks resize --overwrite --width 1920 'src/static/media/**/*.mp4'
 
 
 .PHONY: *

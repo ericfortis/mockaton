@@ -8,7 +8,7 @@ import { readFileSync } from 'node:fs'
 
 const { htmlTemplate } = await import(`./_htmlTemplate.js?${Date.now()}`)
 const { js, json } = await import(`./_syntaxHighlight.js?${Date.now()}`)
-const OpenAPI = JSON.parse(readFileSync(join(import.meta.dirname, './media/misc/openapi.json'), 'utf8'))
+const OpenAPI = JSON.parse(readFileSync(join(import.meta.dirname, './static/openapi.json'), 'utf8'))
 // Not importing so it's not cached on hot-reload
 
 const SERVER = OpenAPI.servers[0].url
@@ -22,7 +22,7 @@ export default () => htmlTemplate({
 	body: `
 		<h1>
 			Control API
-			<a href="./media/misc/openapi.json" target="_blank">OpenAPI Spec ↗</a>
+			<a href="static/openapi.json" target="_blank">OpenAPI Spec ↗</a>
 		</h1>
 
 		<form>

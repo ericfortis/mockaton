@@ -10,7 +10,7 @@ export default () => htmlTemplate({
 			<li>11.2.0 dashboard: show Mockaton’s version</li>
 		</ul>
 		<div class="RegionImg">
-			<img src="media/11.2.0-version.png" alt="">
+			<img src="static/media/11.2.0-version.png" alt="">
 		</div>
 
 		<ul>
@@ -37,14 +37,14 @@ export default () => htmlTemplate({
 			<li>10.7.0 dashboard: animate in newly added mocks</li>
 		</ul>
 		<div class="RegionImg">
-			<img src="media/10.7.0-newly-added-anim.gif" alt="">
+			<img src="static/media/10.7.0-newly-added-anim.gif" alt="">
 		</div>
 
 		<ul>
 			<li>10.6.0 dashboard: arrow navigation</li>
 		</ul>
 		<div class="RegionImg">
-			<img src="media/10.6.0-arrow-nav.gif" alt="">
+			<img src="static/media/10.6.0-arrow-nav.gif" alt="">
 		</div>
 
 		<ul>
@@ -56,7 +56,7 @@ export default () => htmlTemplate({
 			<li>10.1.0 dashboard: toggle delay with click-drag</li>
 		</ul>
 		<div class="RegionImg">
-			<img src="media/10.1.0-click-drag-toggle.gif" alt="">
+			<img src="static/media/10.1.0-click-drag-toggle.gif" alt="">
 		</div>
 
 		<ul>
@@ -79,7 +79,7 @@ await Mockaton()
 			<li>9.4.0 dashboard: users can resize panels</li>
 		</ul>
 		<div class="RegionImg">
-			<img src="media/9.4.0-resize-panels.gif" alt="">
+			<img src="static/media/9.4.0-resize-panels.gif" alt="">
 		</div>
 
 		<ul>
@@ -97,7 +97,7 @@ await Mockaton()
 			<li>8.27.0 dashboard: group by method checkbox</li>
 		</ul>
 		<div class="RegionImg">
-			<img src="media/8.27.0-group-by-method.gif" alt="">
+			<img src="static/media/8.27.0-group-by-method.gif" alt="">
 		</div>
 
 		<ul>
@@ -117,7 +117,7 @@ await Mockaton()
 			<li>8.13.0 dashboard: dim repeated dirs</li>
 		</ul>
 		<div class="RegionImg">
-			<img src="media/8.13.0-ditto-dirs.png" alt="">
+			<img src="static/media/8.13.0-ditto-dirs.png" alt="">
 		</div>
 
 		<ul>
@@ -135,7 +135,7 @@ await Mockaton()
 			<li>8.1.0 describe http status code in payload viewer title</li>
 			<li>8.0.0 <strong>Breaking change</strong>: <code>config.plugins</code> are no longer an Object. Now they are an Array and the
 				test is now a regex. So if you use custom plugins, change e.g.:
-				
+
 				${js`
 plugins = {
   '.js': jsToJsonPlugin,
@@ -161,7 +161,7 @@ plugins = [
 			<li>7.1.0 CORS support</li>
 			<li>7.0.0 <strong>Breaking change</strong>: Split <code>PATCH mockaton/edit</code> into <code>selectMock</code> and <code>setRouteIsDelayed</code>.
 				So instead of:
-				
+
 				${js`
 fetch(addr + '/mockaton/edit', {
   method: 'PATCH',

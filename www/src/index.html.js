@@ -39,12 +39,12 @@ make docker
 		<h2 id="dashboard">Dashboard</h2>
 		<div class="RegionImg">
 			<picture>
-				<source media="(prefers-color-scheme: light)" srcset="media/pic-for-readme.vp761x740.light.gold.png">
-				<source media="(prefers-color-scheme: dark)" srcset="media/pic-for-readme.vp761x740.dark.gold.png">
-				<img alt="Mockaton Dashboard" src="media/pic-for-readme.vp761x740.light.gold.png">
+				<source media="(prefers-color-scheme: light)" srcset="static/media/pic-for-readme.vp761x740.light.gold.png">
+				<source media="(prefers-color-scheme: dark)" srcset="static/media/pic-for-readme.vp761x740.dark.gold.png">
+				<img alt="Mockaton Dashboard" src="static/media/pic-for-readme.vp761x740.light.gold.png">
 			</picture>
 		</div>
-		
+
 		<p>On the dashboard you can:</p>
 		<ul>
 			<li>Select a mock variant for a particular route</li>
@@ -80,7 +80,7 @@ api/login<strong>(invalid login attempt)</strong>.POST.401.json
 		</p>
 
 		<div class="RegionImg">
-			<img src="media/bulk-select.png" alt="">
+			<img src="static/media/bulk-select.png" alt="">
 		</div>
 
 

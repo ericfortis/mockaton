@@ -17,7 +17,7 @@ export default () => htmlTemplate({
 		</p>
 
 		<div class="RegionImg">
-			<img src="media/browser-extension-overview.png" alt="">
+			<img src="static/media/browser-extension-overview.png" alt="">
 		</div>
 
 		<h2 id="option-2-fallback-to-your-backend">

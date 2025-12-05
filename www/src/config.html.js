@@ -107,8 +107,8 @@ export default defineConfig({
 			</p>
 
 			${raw(`
-my-static-dir<b>/foo/bar.jpg</b> <span style="color:green"> // Wins</span>
- my-mocks-dir<b>/foo/bar.jpg</b>.GET.200.jpg <span style="color:red"> // Unreachable</span>
+my-static-dir<strong>/foo/bar.jpg</strong> <span class="green"> // Wins</span>
+ my-mocks-dir<strong>/foo/bar.jpg</strong>.GET.200.jpg <span class="red"> // Unreachable</span>
 			`)}
 
 

@@ -27,7 +27,7 @@ export default () => htmlTemplate({
 		</ul>
 
 		<div class="RegionImg">
-			<img src="media/demo-app.png" alt="Mockaton Demo App Screenshot" />
+			<img src="static/media/demo-app.png" alt="Mockaton Demo App Screenshot" />
 		</div>
 
 

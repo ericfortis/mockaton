@@ -3,8 +3,11 @@ header {
 	z-index: var(--zIndexHeader);
 	top: 0;
 	left: 0;
+	display: flex;
 	width: 100%;
 	height: var(--headerHeight);
+	align-items: center;
+	justify-content: space-between;
 	background: var(--bgHeader);
 	box-shadow: var(--boxShadow2);
 	fill: white;
@@ -27,11 +30,33 @@ header {
 		}
 	}
 
-	.Github {
+	.right {
+		display: flex;
+		height: 100%;
+		align-items: center;
+		padding-right: 10px;
+		gap: 16px;
+
+		.Github {
+			width: 24px;
+			height: 24px;
+
+			&:hover {
+				fill: var(--accentLight);
+			}
+		}
+
+		.Hamburger {
+			display: none;
+		}
+	}
+}
+
+@media (max-width: 800px) {
+	header .right .Hamburger {
+		display: block;
 		width: 24px;
-		float: right;
-		margin-top: 11px;
-		margin-right: 10px;
+		height: 24px;
 
 		&:hover {
 			fill: var(--accentLight);
@@ -39,36 +64,7 @@ header {
 	}
 }
 
-label[for="hamburger"],
-#hamburger {
-	width: 24px;
-	height: 24px;
-	position: fixed;
-	z-index: var(--zIndexHamburger);
-	top: 11px;
-	right: 10px;
-	display: none;
-	cursor: pointer;
-	fill: #fff;
-	transition: 180ms ease-in-out;
-
-	&:hover {
-		fill: var(--accentLight);
-	}
-}
-@media (max-width: 800px) {
-	label[for="hamburger"] {
-		display: block;
-	}
-
-	header {
-		.Github {
-			margin-right: 46px;
-		}
-	}
-
-	#hamburger:checked + nav {
-		display: block;
-	}
+.visible {
+	display: block;
 }
 

@@ -3,6 +3,7 @@
 lcov.info
 node_modules/
 www/dist/
+www/dist.zip
 
 pixaton-tests/**/*.candidate.png
 pixaton-tests/**/*.diff.png

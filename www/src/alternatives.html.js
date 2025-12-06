@@ -18,8 +18,8 @@ export default () => htmlTemplate({
 		<ul>
 			<li>
 				Chrome DevTools allows for <a
-				href="https://developer.chrome.com/docs/devtools/overrides" target="_blank">overriding
-				responses</a>.
+				href="https://developer.chrome.com/docs/devtools/overrides" target="_blank">
+				overriding responses</a>.
 			</li>
 			<li>
 				Reverse Proxies such as <a href="https://portswigger.net/burp" target="_blank">Burp</a>
@@ -29,17 +29,18 @@ export default () => htmlTemplate({
 		
 
 		<h2 id="client-side">
-			Client Side
+			Client Side (Service Worker)
 		</h2>
 		<p>
 			In contrast to Mockaton, which is an HTTP Server, these
-			programs hijack your browser’s HTTP client (or Node’s).
+			programs intercept your browser’s HTTP client (or Node’s).
 		</p>
 		<ul>
-			<li><a href="https://mswjs.io" target="_blank">Mock Server Worker (MSW)</a></li>
+			<li><a href="https://mswjs.io" target="_blank">MSW</a></li>
 			<li><a href="https://github.com/nock/nock" target="_blank">Nock</a></li>
 			<li><a href="https://github.com/wheresrhys/fetch-mock" target="_blank">Fetch Mock</a></li>
 			<li><a href="https://github.com/humanwhocodes/mentoss" target="_blank">Mentoss</a></li>
+			<li><a href="https://github.com/miragejs/miragejs" target="_blank">MirageJS</a></li>
 		</ul>
 		
 		
@@ -51,6 +52,7 @@ export default () => htmlTemplate({
 			<li><a href="https://github.com/dhuan/mock" target="_blank">Mock</a></li>
 			<li><a href="https://swagger.io" target="_blank">Swagger</a></li>
 			<li><a href="https://mockoon.com" target="_blank">Mockoon</a></li>
+			<li><a href="https://github.com/typicode/json-server" target="_blank">JSON Server</a></li>
 		</ul>
 	`
 })

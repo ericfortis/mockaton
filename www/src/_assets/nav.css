@@ -1,9 +1,9 @@
 nav {
 	position: fixed;
-	top: 42px;
+	top: var(--headerHeight);
 	overflow: auto;
 	width: var(--navWidth);
-	height: max-content;
+	max-height: calc(100vh - var(--headerHeight));
 	user-select: none;
 
 	ul {
@@ -76,4 +76,14 @@ nav {
 		opacity: 1;
 		transform: translateX(0);
 	}
+}
+
+.NextDocLink {
+	position:relative;
+	z-index: var(--zIndexNextDoc);
+	padding: 16px;
+	padding-left: 30px;
+	width: 100%;
+	background: var(--accent);
+	color: white;
 }

@@ -16,7 +16,7 @@ export default () => htmlTemplate({
 			and save them in bulk following Mockaton’s filename convention.
 		</p>
 
-		<div class="RegionImg">
+		<div class="RegionImg" data-max-width="1000">
 			<img src="static/media/browser-extension-overview.png" alt="">
 		</div>
 

@@ -9,7 +9,7 @@ export default () => htmlTemplate({
 		<ul>
 			<li>11.2.0 dashboard: show Mockaton’s version</li>
 		</ul>
-		<div class="RegionImg">
+		<div class="RegionImg" data-max-width="200">
 			<img src="static/media/11.2.0-version.png" alt="">
 		</div>
 
@@ -55,7 +55,7 @@ export default () => htmlTemplate({
 			<li>10.2.0 reject malicious URLs</li>
 			<li>10.1.0 dashboard: toggle delay with click-drag</li>
 		</ul>
-		<div class="RegionImg">
+		<div class="RegionImg" data-max-width="400">
 			<img src="static/media/10.1.0-click-drag-toggle.gif" alt="">
 		</div>
 
@@ -116,7 +116,7 @@ await Mockaton()
 			<li>8.14.0 static files controls</li>
 			<li>8.13.0 dashboard: dim repeated dirs</li>
 		</ul>
-		<div class="RegionImg">
+		<div class="RegionImg" data-max-width="460">
 			<img src="static/media/8.13.0-ditto-dirs.png" alt="">
 		</div>
 

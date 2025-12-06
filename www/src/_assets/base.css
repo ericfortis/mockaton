@@ -8,9 +8,11 @@
 
 	--boxShadow2: 0 3px 1px -2px rgb(0, 0, 0, .2), 0 2px 2px 0 rgb(0, 0, 0, .14), 0 1px 5px 0 rgb(0, 0, 0, .12);
 
-	--zIndexNav: 40;
-	--zIndexHeader: 50;
 	--zIndexHamburger: 51;
+	--zIndexHeader: 50;
+	--zIndexNextDoc: 41;
+	--zIndexFooter: 41;
+	--zIndexNav: 40;
 }
 
 @media (prefers-color-scheme: light) {
@@ -48,7 +50,7 @@
 		--videoTrackHoverBG: #6b93fd;
 		--accentFaint: #e1ebff;
 		--accentLight: #6b93fd;
-		--accent: #2962ff;
+		--accent: #3269ff;
 		--nullLink: #b968d8;
 
 		--colorAccentLighter: #6b93fd;
@@ -71,7 +73,7 @@
 	margin: 0;
 	background: none;
 	color: inherit;
-	font-family: "Avenir Next", system-ui, sans-serif;
+	font-family: inherit;
 	font-size: inherit;
 	outline: 0;
 }
@@ -83,6 +85,7 @@ html {
 
 body {
 	position: relative;
+	font-family: "Avenir Next", system-ui, sans-serif;
 	background: var(--bg);
 	color: var(--fg);
 	font-size: 17px;
@@ -110,19 +113,14 @@ a {
 	&:focus-visible {
 		text-decoration: underline;
 	}
-}
-
-a,
-button {
-	:active {
+	
+	&:active {
 		cursor: grabbing;
 	}
 }
 
-pre,
-pre *,
-code,
-code * {
+
+code {
 	color: var(--fgHigh);
 	background: var(--bgFaint);
 	font-family: monospace;
@@ -135,10 +133,16 @@ code * {
 	tab-size: 2;
 	hyphens: none;
 }
+:not(pre) > code {
+	padding: 2px 6px;
+	border-radius: 8px;
+}
 pre {
 	max-width: 760px;
 	padding: 16px;
 	margin-top: 8px;
+	font-family: monospace;
+	border-radius: 16px;
 	background: var(--bgFaint);
 	font-size: 14px;
 	overflow-x: auto;
@@ -241,15 +245,9 @@ h1 {
 	line-height: 100%;
 }
 h2 {
-	margin-top: 52px;
-	margin-bottom: 12px;
+	margin-top: 40px;
 	font-size: 30px;
 	line-height: 120%;
-}
-.h2Hint {
-	color: #555;
-	font-size: 19px;
-	vertical-align: top;
 }
 h3 {
 	margin-top: 50px;
@@ -301,6 +299,8 @@ dl {
 }
 
 footer {
+	position: relative;
+	z-index: var(--zIndexFooter);
 	height: var(--footerHeight);
 	padding-right: calc(var(--footerHeight) / 2);
 	margin-top: auto;
@@ -356,6 +356,7 @@ video {
 	padding-bottom: 4px; /* Not perfect, but to show a some of the boxShadow  */
 	img {
 		max-width: 100%;
+		border-radius: 16px;
 	}
 }
 
@@ -425,9 +426,13 @@ video {
 
 
 .red {
-	color: #ec1919;
+	color: #ff2e2e;
 }
 
 .green {
 	color: #0fac0f;
+}
+
+.normalWeight {
+	font-weight: normal;
 }

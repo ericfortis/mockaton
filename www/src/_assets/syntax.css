@@ -18,7 +18,7 @@
 		--syntaxNum: #894eff;
 		--syntaxPunctionation: #999;
 		--syntaxRegex: #f0a;
-		--syntaxString: #ff0fb3;
+		--syntaxString: #ff1ce4;
 		--syntaxVar: #21cd3e;
 	}
 }
@@ -34,6 +34,14 @@
 .syntax_cdata {
 	color: var(--syntaxComment);
 }
+.syntax_comment {
+	font-family: "Avenir Next", system-ui, sans-serif;
+}
+.syntax_type {
+	opacity: 0.6;
+	font-weight: normal;
+}
+
 
 .syntax_property,
 .syntax_tag,

@@ -9,7 +9,10 @@ switch (process.argv[2]) {
 		break
 
 	case 'production':
-		Packaton({ mode: 'production' })
+		Packaton({
+			mode: 'production',
+			sitemapDomain: 'mockaton.com'
+		})
 		break
 
 	default:

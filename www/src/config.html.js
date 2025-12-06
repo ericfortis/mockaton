@@ -3,7 +3,10 @@ const { js, shell, raw } = await import(`./_syntaxHighlight.js?${Date.now()}`)
 
 // language=html
 export default () => htmlTemplate({
-	head: `<title>Config</title>`,
+	head: `
+		<title>Config</title>
+		<link rel="stylesheet" href="config.css" />
+	`,
 	body: `
 		<h1>Config</h1>
 
@@ -86,18 +89,20 @@ export default defineConfig({
 
 		<h2>Config Documentation</h3>
 
-			<h3><code>mocksDir?: string</code></h3>
+			<h3><code>mocksDir<span class="syntax_type"><span class="syntax_type">?: string</span></span></code></h3>
 			<p>
-				Defaults to <code>mockaton-mocks</code>.
+				Defaults to <code>mockaton-mocks</code> in the current working directory.
 			</p>
 
-			<h3><code>staticDir?: string</code></h3>
+			<h3><code>staticDir<span class="syntax_type">?: string</span></code></h3>
 			<p>
-				Defaults to <code>mockaton-static-mocks</code>. This option is not needed
-				besides serving partial content (e.g., videos). But it’s convenient
-				for serving 200 GET requests without having to add the filename
-				extension convention. For example, for using Mockaton as a standalone
-				demo server, as explained above in the <em>Use Cases</em> section.
+				Defaults to <code>mockaton-static-mocks</code> in the current working directory.
+			</p>
+			<p>
+				This option is not needed besides serving partial content (e.g.,
+				videos). But it’s convenient for serving 200 GET requests
+				without having to add the filename extension convention. For
+				example, for using Mockaton as a <a href="/motivation#standalone-demo-server-docker-">standalone demo server</a>.
 			</p>
 			<p>
 				Files under <code>config.staticDir</code> take precedence over
@@ -112,7 +117,7 @@ my-static-dir<strong>/foo/bar.jpg</strong> <span class="green"> // Wins</span>
 			`)}
 
 
-			<h3><code>ignore?: RegExp</code></h3>
+			<h3><code>ignore<span class="syntax_type">?: RegExp</span></code></h3>
 			<p>
 				Defaults to <code>/(\\.DS_Store|~)$/</code>
 			</p>
@@ -121,7 +126,7 @@ my-static-dir<strong>/foo/bar.jpg</strong> <span class="green"> // Wins</span>
 			</p>
 
 
-			<h3><code>watcherEnabled?: boolean</code></h3>
+			<h3><code>watcherEnabled<span class="syntax_type">?: boolean</span></code></h3>
 			<p>
 				Defaults to <code>true</code>
 			</p>
@@ -137,26 +142,26 @@ my-static-dir<strong>/foo/bar.jpg</strong> <span class="green"> // Wins</span>
 			<br />
 
 
-			<h3><code>host?: string</code></h3>
+			<h3><code>host<span class="syntax_type">?: string</span></code></h3>
 			<p>
 				Defaults to <code>127.0.0.1</code>
 			</p>
 
-			<h3><code>port?: number</code></h3>
+			<h3><code>port<span class="syntax_type">?: number</span></code></h3>
 			<p>
 				Defaults to <code>0</code>, which means auto-assigned
 			</p>
 
 			<br />
 
-			<h3><code>delay?: number</code></h3>
+			<h3><code>delay<span class="syntax_type">?: number</span></code></h3>
 			<p>
 				Defaults to <code>1200</code> milliseconds. Although
 				routes can individually be delayed with the 🕓 Checkbox,
 				the amount is globally configurable with this option.
 			</p>
 
-			<h3><code>delayJitter?: number</code></h3>
+			<h3><code>delayJitter<span class="syntax_type">?: number</span></code></h3>
 			<p>
 				Defaults to <code>0</code>. Range: <code>[0.0, 3.0]</code>. Maximum
 				percentage of the delay to add. For example, <code>0.5</code>
@@ -165,7 +170,7 @@ my-static-dir<strong>/foo/bar.jpg</strong> <span class="green"> // Wins</span>
 
 			<br />
 
-			<h3><code>proxyFallback?: string</code></h3>
+			<h3><code>proxyFallback<span class="syntax_type">?: string</span></code></h3>
 			<p>
 				For example, <code>config.proxyFallback = &#39;http://example.com&#39;</code>
 			</p>
@@ -175,7 +180,7 @@ my-static-dir<strong>/foo/bar.jpg</strong> <span class="green"> // Wins</span>
 			</p>
 
 
-			<h3><code>collectProxied?: boolean</code></h3>
+			<h3><code>collectProxied<span class="syntax_type">?: boolean</span></code></h3>
 			<p>
 				Defaults to <code>false</code>. With this flag you can save mocks that hit
 				your proxy fallback to <code>config.mocksDir</code>. If the URL has v4 UUIDs,
@@ -203,7 +208,7 @@ my-static-dir<strong>/foo/bar.jpg</strong> <span class="green"> // Wins</span>
 
 
 			<h3 id="-formatcollectedjson-boolean-">
-				<code>formatCollectedJSON?: boolean</code>
+				<code>formatCollectedJSON<span class="syntax_type">?: boolean</span></code>
 			</h3>
 			<p>
 				Defaults to <code>true</code>. Saves the mock with two spaces indentation —
@@ -211,7 +216,7 @@ my-static-dir<strong>/foo/bar.jpg</strong> <span class="green"> // Wins</span>
 			</p>
 
 			<h3 id="-cookies-label-string-string-">
-				<code>cookies?: { [label: string]: string }</code>
+				<code>cookies<span class="syntax_type">?: { [label: string]: string }</span></code>
 			</h3>
 
 			${js`
@@ -245,7 +250,7 @@ config.cookies = {
 			</p>
 
 			<h3 id="-extraheaders-string-">
-				<code>extraHeaders?: string[]</code>
+				<code>extraHeaders<span class="syntax_type">?: string[]</span></code>
 			</h3>
 			<p>
 				Note: it’s a one-dimensional array. The header name goes at even indices.
@@ -261,7 +266,7 @@ config.extraHeaders = [
 
 
 			<h3 id="-extramimes-fileext-string-string-">
-				<code>extraMimes?: { [fileExt: string]: string }</code>
+				<code>extraMimes<span class="syntax_type">?: { [fileExt: string]: string }</span></code>
 			</h3>
 
 			${js`
@@ -272,18 +277,19 @@ config.extraMimes = {
 `}
 			<p>
 				Those extra media types take precedence over the built-in <a
-				href="src/server/utils/mime.js">utils/mime.js</a>, so you can override them.
+				href="https://github.com/ericfortis/mockaton/blob/main/src/server/utils/mime.js"
+				target="_blank">utils/mime.js</a>, so you can override them.
 			</p>
 
 			<h3 id="-plugins-filenametester-regexp-plugin-plugin-">
-				<code>plugins?: [filenameTester: RegExp, plugin: Plugin][]</code>
+				<code>plugins<span class="syntax_type">?: [filenameTester: RegExp, plugin: Plugin][]</span></code>
 			</h3>
 
-			<a href="/plugins">See Plugins -></a>
+			<a href="/plugins">See Plugins Page</a>
 
 
-			<h3 id="-corsallowed-boolean-">
-				<code>corsAllowed?: boolean</code>
+			<h3 id="-corsallowed-">
+				<code>corsAllowed<span class="syntax_type">?: boolean</span></code>
 			</h3>
 			<p>
 				Defaults to <code>true</code>. When <code>true</code>, these are the default options:
@@ -300,14 +306,14 @@ config.corsExposedHeaders = [] // headers you need to access in client-side JS
 `}
 
 
-			<h3 id="-onready-dashboardurl-string-void-">
-				<code>onReady?: (dashboardUrl: string) =&gt; void</code>
+			<h3 id="-onready-">
+				<code>onReady<span class="syntax_type">?: (dashboardUrl: string) =&gt; void</span></code>
 			</h3>
 
 			<p>
 				By default, it will open the dashboard in your default browser on macOS and
-				Windows. But for a more cross-platform utility you could 
-				<code>npm install open</code> 
+				Windows. But for a more cross-platform utility you could
+				<code>npm install open</code>
 				and that implementation will be automatically used instead.
 			</p>
 			<p>If you don’t want to open a browser, pass a noop:</p>
@@ -318,9 +324,9 @@ config.onReady = () => {}
 			<p>At any rate, you can trigger any command besides opening a browser.</p>
 
 			<h3 id="-loglevel-quiet-normal-verbose-">
-				<code>logLevel?: &#39;quiet&#39; | &#39;normal&#39; | &#39;verbose&#39;</code>
+				<code>logLevel<span class="syntax_type">?: 'quiet' | 'normal' | 'verbose'</span></code>
 			</h3>
-			<p>Defaults to <code>&#39;normal&#39;</code>.</p>
+			<p>Defaults to <code>'normal'</code></p>
 			<ul>
 				<li><code>quiet</code>: only errors (stderr)</li>
 				<li><code>normal</code>: info, mock access, warnings, and errors</li>

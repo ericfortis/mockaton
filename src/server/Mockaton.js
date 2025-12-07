@@ -4,8 +4,9 @@ import pkgJSON from '../../package.json' with { type: 'json' }
 
 import { logger } from './utils/logger.js'
 import { ServerResponse } from './utils/ServerResponse.js'
+import { IncomingMessage } from './utils/IncomingMessage.js'
 import { setCorsHeaders, isPreflight } from './utils/http-cors.js'
-import { BodyReaderError, hasControlChars } from './utils/http-request.js'
+import { BodyReaderError, hasControlChars } from './utils/IncomingMessage.js'
 
 import { API } from './ApiConstants.js'
 import { config, setup } from './config.js'
@@ -35,7 +36,7 @@ export function Mockaton(options) {
 		if (config.hotReload)
 			watchDevSPA()
 
-		const server = createServer({ ServerResponse }, onRequest)
+		const server = createServer({ IncomingMessage, ServerResponse }, onRequest)
 		server.on('error', reject)
 		server.listen(config.port, config.host, () => {
 			const url = `http://${server.address().address}:${server.address().port}`

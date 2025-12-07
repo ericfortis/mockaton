@@ -1,4 +1,4 @@
-import { METHODS } from 'node:http'
+import http, { METHODS } from 'node:http'
 
 
 export const SUPPORTED_METHODS = METHODS
@@ -9,6 +9,12 @@ export class BodyReaderError extends Error {
 	constructor(msg) {
 		super()
 		this.message = msg
+	}
+}
+
+export class IncomingMessage extends http.IncomingMessage {
+	json() {
+		return readBody(this, JSON.parse)
 	}
 }
 

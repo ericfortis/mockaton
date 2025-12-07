@@ -3,7 +3,7 @@ import { randomUUID } from 'node:crypto'
 
 import { extFor } from './utils/mime.js'
 import { write, isFile } from './utils/fs.js'
-import { readBody, BodyReaderError } from './utils/http-request.js'
+import { readBody, BodyReaderError } from './utils/IncomingMessage.js'
 
 import { config } from './config.js'
 import { makeMockFilename } from './Filename.js'

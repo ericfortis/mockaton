@@ -11,7 +11,7 @@ import { writeFile, unlink, mkdir, readFile, rename } from 'node:fs/promises'
 
 import { logger } from './utils/logger.js'
 import { mimeFor } from './utils/mime.js'
-import { readBody } from './utils/http-request.js'
+import { readBody } from './utils/IncomingMessage.js'
 import { CorsHeader } from './utils/http-cors.js'
 
 import { API } from './ApiConstants.js'
@@ -370,7 +370,7 @@ describe('Proxy Fallback', () => {
 					'content-type': mimeFor('.txt'),
 					'set-cookie': CUSTOM_COOKIES
 				})
-				response.end(await readBody(req)) // echoes they req body payload
+				response.end(await readBody(req)) // echoes the req body payload
 			})
 			await promisify(fallbackServer.listen).bind(fallbackServer, 0, '127.0.0.1')()
 			await api.setProxyFallback(`http://localhost:${fallbackServer.address().port}`)

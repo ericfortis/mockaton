@@ -21,8 +21,6 @@ import { config, ConfigValidator } from './config.js'
 import * as staticCollection from './staticCollection.js'
 import * as mockBrokersCollection from './mockBrokersCollection.js'
 
-import { parseJSON } from './utils/http-request.js'
-
 
 export const apiGetReqs = new Map([
 	[API.dashboard, serveDashboard],
@@ -97,7 +95,7 @@ function reinitialize(_, response) {
 
 
 async function setCorsAllowed(req, response) {
-	const corsAllowed = await parseJSON(req)
+	const corsAllowed = await req.json()
 
 	if (!ConfigValidator.corsAllowed(corsAllowed))
 		response.sendUnprocessable(`Expected boolean for "corsAllowed"`)
@@ -109,7 +107,7 @@ async function setCorsAllowed(req, response) {
 
 
 async function setGlobalDelay(req, response) {
-	const delay = await parseJSON(req)
+	const delay = await req.json()
 
 	if (!ConfigValidator.delay(delay))
 		response.sendUnprocessable(`Expected non-negative integer for "delay"`)
@@ -121,7 +119,7 @@ async function setGlobalDelay(req, response) {
 
 
 async function selectCookie(req, response) {
-	const cookieKey = await parseJSON(req)
+	const cookieKey = await req.json()
 
 	const error = cookie.setCurrent(cookieKey)
 	if (error)
@@ -132,7 +130,7 @@ async function selectCookie(req, response) {
 
 
 async function setProxyFallback(req, response) {
-	const fallback = await parseJSON(req)
+	const fallback = await req.json()
 
 	if (!ConfigValidator.proxyFallback(fallback))
 		response.sendUnprocessable(`Invalid Proxy Fallback URL`)
@@ -143,7 +141,7 @@ async function setProxyFallback(req, response) {
 }
 
 async function setCollectProxied(req, response) {
-	const collectProxied = await parseJSON(req)
+	const collectProxied = await req.json()
 
 	if (!ConfigValidator.collectProxied(collectProxied))
 		response.sendUnprocessable(`Expected a boolean for "collectProxied"`)
@@ -156,7 +154,7 @@ async function setCollectProxied(req, response) {
 
 
 async function bulkUpdateBrokersByCommentTag(req, response) {
-	const comment = await parseJSON(req)
+	const comment = await req.json()
 
 	mockBrokersCollection.setMocksMatchingComment(comment)
 	response.sendOK()
@@ -164,7 +162,7 @@ async function bulkUpdateBrokersByCommentTag(req, response) {
 
 
 async function selectMock(req, response) {
-	const file = await parseJSON(req)
+	const file = await req.json()
 
 	const broker = mockBrokersCollection.brokerByFilename(file)
 	if (!broker || !broker.hasMock(file))
@@ -177,7 +175,7 @@ async function selectMock(req, response) {
 
 
 async function toggleRoute500(req, response) {
-	const [method, urlMask] = await parseJSON(req)
+	const [method, urlMask] = await req.json()
 
 	const broker = mockBrokersCollection.brokerByRoute(method, urlMask)
 	if (!broker)
@@ -190,7 +188,7 @@ async function toggleRoute500(req, response) {
 
 
 async function setRouteIsDelayed(req, response) {
-	const [method, urlMask, delayed] = await parseJSON(req)
+	const [method, urlMask, delayed] = await req.json()
 
 	const broker = mockBrokersCollection.brokerByRoute(method, urlMask)
 	if (!broker)
@@ -205,7 +203,7 @@ async function setRouteIsDelayed(req, response) {
 
 
 async function setRouteIsProxied(req, response) {
-	const [method, urlMask, proxied] = await parseJSON(req)
+	const [method, urlMask, proxied] = await req.json()
 
 	const broker = mockBrokersCollection.brokerByRoute(method, urlMask)
 	if (!broker)
@@ -223,7 +221,7 @@ async function setRouteIsProxied(req, response) {
 
 
 async function setStaticRouteStatusCode(req, response) {
-	const [route, status] = await parseJSON(req)
+	const [route, status] = await req.json()
 
 	const broker = staticCollection.brokerByRoute(route)
 	if (!broker)
@@ -238,7 +236,7 @@ async function setStaticRouteStatusCode(req, response) {
 
 
 async function setStaticRouteIsDelayed(req, response) {
-	const [route, delayed] = await parseJSON(req)
+	const [route, delayed] = await req.json()
 
 	const broker = staticCollection.brokerByRoute(route)
 	if (!broker)

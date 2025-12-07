@@ -4,7 +4,7 @@ import { logger } from './utils/logger.js'
 import { isDirectory } from './utils/fs.js'
 import { openInBrowser } from './utils/openInBrowser.js'
 import { optional, is, validate } from './utils/validate.js'
-import { SUPPORTED_METHODS } from './utils/http-request.js'
+import { SUPPORTED_METHODS } from './utils/IncomingMessage.js'
 import { validateCorsAllowedMethods, validateCorsAllowedOrigins } from './utils/http-cors.js'
 
 import { jsToJsonPlugin } from './MockDispatcher.js'

@@ -8,7 +8,6 @@ import {
 } from './ApiConstants.js'
 
 import { config } from './config.js'
-import { sendJSON } from './utils/http-response.js'
 import { isFile, isDirectory } from './utils/fs.js'
 
 import * as staticCollection from './staticCollection.js'
@@ -101,12 +100,12 @@ export function longPollClientSyncVersion(req, response) {
 	const clientVersion = req.headers[HEADER_SYNC_VERSION]
 	if (clientVersion !== undefined && uiSyncVersion.version !== Number(clientVersion)) {
 		// e.g., tab was hidden while new mocks were added or removed
-		sendJSON(response, uiSyncVersion.version)
+		response.sendJSON(uiSyncVersion.version)
 		return
 	}
 	function onARR() {
 		uiSyncVersion.unsubscribe(onARR)
-		sendJSON(response, uiSyncVersion.version)
+		response.sendJSON(uiSyncVersion.version)
 	}
 	response.setTimeout(LONG_POLL_SERVER_TIMEOUT, onARR)
 	req.on('error', () => {

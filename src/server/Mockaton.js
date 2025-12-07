@@ -3,12 +3,9 @@ import { createServer } from 'node:http'
 import pkgJSON from '../../package.json' with { type: 'json' }
 
 import { logger } from './utils/logger.js'
+import { ServerResponse } from './utils/ServerResponse.js'
 import { setCorsHeaders, isPreflight } from './utils/http-cors.js'
 import { BodyReaderError, hasControlChars } from './utils/http-request.js'
-import {
-	setHeaders, sendNoContent, sendInternalServerError,
-	sendUnprocessable, sendTooLongURI, sendBadRequest
-} from './utils/http-response.js'
 
 import { API } from './ApiConstants.js'
 import { config, setup } from './config.js'
@@ -38,7 +35,7 @@ export function Mockaton(options) {
 		if (config.hotReload)
 			watchDevSPA()
 
-		const server = createServer(onRequest)
+		const server = createServer({ ServerResponse }, onRequest)
 		server.on('error', reject)
 		server.listen(config.port, config.host, () => {
 			const url = `http://${server.address().address}:${server.address().port}`
@@ -54,17 +51,17 @@ export function Mockaton(options) {
 async function onRequest(req, response) {
 	response.on('error', logger.warn)
 
-	setHeaders(response, ['Server', `Mockaton ${pkgJSON.version}`])
-	setHeaders(response, config.extraHeaders)
+	response.setHeader('Server', `Mockaton ${pkgJSON.version}`)
+	response.setHeaderList(config.extraHeaders)
 
 	const url = req.url || ''
 
 	if (url.length > 2048) {
-		sendTooLongURI(response)
+		response.sendTooLongURI()
 		return
 	}
 	if (hasControlChars(url)) {
-		sendBadRequest(response)
+		response.sendBadRequest()
 		return
 	}
 
@@ -76,7 +73,7 @@ async function onRequest(req, response) {
 		const { pathname } = new URL(url, 'http://_')
 
 		if (isPreflight(req))
-			sendNoContent(response)
+			response.sendNoContent()
 
 		else if (method === 'PATCH' && apiPatchReqs.has(pathname))
 			await apiPatchReqs.get(pathname)(req, response)
@@ -92,8 +89,8 @@ async function onRequest(req, response) {
 	}
 	catch (error) {
 		if (error instanceof BodyReaderError)
-			sendUnprocessable(response, `${error.name}: ${error.message}`)
+			response.sendUnprocessable(`${error.name}: ${error.message}`)
 		else
-			sendInternalServerError(response, error)
+			response.sendInternalServerError(error)
 	}
 }

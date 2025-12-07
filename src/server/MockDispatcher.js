@@ -4,7 +4,6 @@ import { pathToFileURL } from 'node:url'
 
 import { logger } from './utils/logger.js'
 import { mimeFor } from './utils/mime.js'
-import { sendInternalServerError, sendMockNotFound } from './utils/http-response.js'
 
 import { proxy } from './ProxyRelay.js'
 import { cookie } from './cookie.js'
@@ -25,7 +24,7 @@ export async function dispatchMock(req, response) {
 			return
 		}
 		if (!broker) {
-			sendMockNotFound(response)
+			response.sendMockNotFound()
 			return
 		}
 
@@ -52,9 +51,9 @@ export async function dispatchMock(req, response) {
 	}
 	catch (error) { // TESTME
 		if (error?.code === 'ENOENT') // mock-file has been deleted
-			sendMockNotFound(response)
+			response.sendMockNotFound()
 		else
-			sendInternalServerError(response, error)
+			response.sendInternalServerError(error)
 	}
 }
 

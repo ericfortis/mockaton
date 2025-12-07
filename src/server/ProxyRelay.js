@@ -4,7 +4,6 @@ import { randomUUID } from 'node:crypto'
 import { extFor } from './utils/mime.js'
 import { write, isFile } from './utils/fs.js'
 import { readBody, BodyReaderError } from './utils/http-request.js'
-import { sendUnprocessable, sendBadGateway } from './utils/http-response.js'
 
 import { config } from './config.js'
 import { makeMockFilename } from './Filename.js'
@@ -23,9 +22,9 @@ export async function proxy(req, response, delay) {
 	}
 	catch (error) { // TESTME
 		if (error instanceof BodyReaderError)
-			sendUnprocessable(response, error.name)
+			response.sendUnprocessable(error.name)
 		else
-			sendBadGateway(response, error)
+			response.sendBadGateway(error)
 		return
 	}
 

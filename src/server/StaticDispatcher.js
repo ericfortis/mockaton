@@ -4,7 +4,6 @@ import { readFileSync } from 'node:fs'
 import { isFile } from './utils/fs.js'
 import { logger } from './utils/logger.js'
 import { mimeFor } from './utils/mime.js'
-import { sendMockNotFound, sendPartialContent } from './utils/http-response.js'
 
 import { brokerByRoute } from './staticCollection.js'
 import { config, calcDelay } from './config.js'
@@ -16,19 +15,19 @@ export async function dispatchStatic(req, response) {
 
 	setTimeout(async () => {
 		if (!broker || broker.status === 404) {
-			sendMockNotFound(response)
+			response.sendMockNotFound()
 			return
 		}
 
 		const file = join(config.staticDir, broker.route)
 		if (!isFile(file)) {
-			sendMockNotFound(response)
+			response.sendMockNotFound()
 			return
 		}
 		
 		logger.accessMock(req.url, 'static200')
 		if (req.headers.range)
-			await sendPartialContent(response, req.headers.range, file)
+			await response.sendPartialContent(req.headers.range, file)
 		else {
 			response.setHeader('Content-Type', mimeFor(file))
 			response.end(readFileSync(file))

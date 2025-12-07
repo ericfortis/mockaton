@@ -1,7 +1,6 @@
 import { join } from 'node:path'
 import { EventEmitter } from 'node:events'
 import { watch, readdirSync } from 'node:fs'
-import { sendJSON, sendNotFound } from './utils/http-response.js'
 import { LONG_POLL_SERVER_TIMEOUT } from './ApiConstants.js'
 
 
@@ -30,17 +29,17 @@ export function watchDevSPA() {
 /** Realtime notify Dev UI changes */
 export function longPollDevClientHotReload(req, response) {
 	if (!DEV) {
-		sendNotFound(response)
+		response.sendNotFound()
 		return
 	}
 	
 	function onDevChange(file) {
 		devClientWatcher.unsubscribe(onDevChange)
-		sendJSON(response, file)
+		response.sendJSON(file)
 	}
 	response.setTimeout(LONG_POLL_SERVER_TIMEOUT, () => {
 		devClientWatcher.unsubscribe(onDevChange)
-		sendJSON(response, '')
+		response.sendJSON('')
 	})
 	req.on('error', () => {
 		devClientWatcher.unsubscribe(onDevChange)

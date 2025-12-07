@@ -7,39 +7,43 @@ export default () => htmlTemplate({
 	body: `
 		<h1>Functional Mocks</h1>
 
-		<h2 id="you-can-write-json-mocks-in-javascript-or-typescript">
+		<p>
 			You can write JSON mocks in JavaScript or TypeScript
-		</h2>
-		<p><em>TypeScript needs <strong>Node 22.18+ or 23.6+</strong></em></p>
+		</p>
+		<p><em>
+			Node 22.18+ or 23.6+ support TypeScript by default.
+		</em></p>
 
-		<p>For example, <code>api/foo.GET.200.js</code></p>
 
-		
-		<h3 id="option-a-an-object-array-or-string-is-sent-as-json">
+		<h2 id="option-a-an-object-array-or-string-is-sent-as-json">
 			Option A: An Object, Array, or String is sent as JSON
-		</h3>
+		</h2>
 
+		<p><code>api/foo.GET.200.js</code></p>
 		${js`
 export default { foo: 'bar' }
 `}
 
-		
-		<h3 id="option-b-function-mocks-async-or-sync-">
-			Option B: Function Mocks (async or sync)
-		</h3>
+
+		<h2 id="option-b-function-mocks-async-or-sync-">
+			Option B: Function Mocks
+		</h2>
 		<p>
-			<strong>Return</strong> a <code>string | Buffer | Uint8Array</code>,
-			but <strong>don’t call</strong> <code>response.end()</code>
+			Return a <code>string | Buffer | Uint8Array</code>,
+			but <strong>don’t call</strong> <code>response.end()</code>.
 		</p>
 
 		${js`
 export default (request, response) =>
   JSON.stringify({ foo: 'bar' })
 `}
+		<p>
+			<code>async</code> functions are supported.
+		</p>
 
-		<h4 id="about-custom-http-handlers">
-			About Custom HTTP Handlers
-		</h4>
+		<h3 id="custom-http-handlers">
+			Custom HTTP Handlers
+		</h3>
 		<p>
 			For example, you can intercept requests to write to a database. Or act based on
 			some query string value, etc. In summary, you get Node’s <code>request</code>,
@@ -47,7 +51,7 @@ export default (request, response) =>
 			router, but in the handlers you return, instead of ending the response.
 		</p>
 
-		<h5>Examples</h5>
+		<h4>Examples</h4>
 
 		<p>
 			Imagine you have an initial list of colors, and
@@ -86,9 +90,9 @@ export default function listColors() {
 }
 `}
 
-		<p>
-			<strong>What if I need to serve a static .js or .ts?</strong>
-		</p>
+		<h4>
+			What if I need to serve a static .js or .ts?
+		</h4>
 		<p>
 			<strong>Option A:</strong> Put it in your <code>config.staticDir</code> without the <code>.GET.200.js</code> extension.
 			Mocks in <code>staticDir</code> take precedence over <code>mocksDir/*</code>.

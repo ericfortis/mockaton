@@ -1,3 +1,5 @@
+import { METHODS } from 'node:http'
+
 const { htmlTemplate } = await import(`./_htmlTemplate.js?${Date.now()}`)
 const { raw } = await import(`./_syntaxHighlight.js?${Date.now()}`)
 
@@ -23,18 +25,12 @@ export default () => htmlTemplate({
 		</p>
 		<details>
 			<summary>Supported Methods</summary>
-			<p>
-				ACL, BIND, CHECKOUT, CONNECT, COPY, DELETE, GET, HEAD, LINK,
-				LOCK, M-SEARCH, MERGE, MKACTIVITY, MKCALENDAR, MKCOL,
-				MOVE, NOTIFY, OPTIONS, PATCH, POST, PROPFIND, PROPPATCH, 
-				PURGE, PUT, QUERY, REBIND, REPORT, SEARCH, SOURCE, SUBSCRIBE,
-				TRACE, UNBIND, UNLINK, UNLOCK, UNSUBSCRIBE
-			</p>
+			<p>${METHODS.join(', ')}</p>
 		</details>
 		
 
-		<h2 id="dynamic-parameters">
-			Dynamic Parameters
+		<h2 id="splats">
+			Splats
 		</h2>
 		<p>
 			Anything within square brackets is always matched.

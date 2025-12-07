@@ -15,6 +15,12 @@
 	--zIndexNav: 40;
 }
 
+@media (max-width: 800px) {
+	:root {
+		--sectionPad: 16px;
+	}
+}
+
 @media (prefers-color-scheme: light) {
 	:root {
 		--bgHeader: #272727;
@@ -113,7 +119,7 @@ a {
 	&:focus-visible {
 		text-decoration: underline;
 	}
-	
+
 	&:active {
 		cursor: grabbing;
 	}
@@ -296,6 +302,16 @@ dl {
 		display: inline-block;
 		margin: 0;
 	}
+}
+
+hr {
+	display: block;
+	width: 80%;
+	border: 0;
+	border-top: 1px solid var(--faintBorder);
+	margin-top: 40px;
+	margin-bottom: 50px;
+	outline: 0;
 }
 
 footer {

@@ -29,7 +29,7 @@ export default () => htmlTemplate({
 		
 
 		<h2 id="client-side">
-			Client Side (Service Worker)
+			Client Side <span class="normalWeight">(Service Worker)</span>
 		</h2>
 		<p>
 			In contrast to Mockaton, which is an HTTP Server, these

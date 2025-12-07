@@ -87,9 +87,9 @@ export default defineConfig({
 		`}
 
 
-		<h2>Config Documentation</h3>
+		<h2>Config Documentation</h2>
 
-			<h3><code>mocksDir<span class="syntax_type"><span class="syntax_type">?: string</span></span></code></h3>
+			<h3><code>mocksDir<span class="syntax_type">?: string</span></code></h3>
 			<p>
 				Defaults to <code>mockaton-mocks</code> in the current working directory.
 			</p>
@@ -172,7 +172,7 @@ my-static-dir<strong>/foo/bar.jpg</strong> <span class="green"> // Wins</span>
 
 			<h3><code>proxyFallback<span class="syntax_type">?: string</span></code></h3>
 			<p>
-				For example, <code>config.proxyFallback = &#39;http://example.com&#39;</code>
+				For example, <code>config.proxyFallback = ’http://example.com’</code>
 			</p>
 			<p>
 				Lets you specify a target server for serving routes you don’t have mocks for,
@@ -212,7 +212,7 @@ my-static-dir<strong>/foo/bar.jpg</strong> <span class="green"> // Wins</span>
 			</h3>
 			<p>
 				Defaults to <code>true</code>. Saves the mock with two spaces indentation —
-				the formatting output of <code>JSON.stringify(data, null, &#39; &#39;)</code>
+				the formatting output of <code>JSON.stringify(data, null, ’ ’)</code>
 			</p>
 
 			<h3 id="-cookies-label-string-string-">
@@ -323,14 +323,16 @@ config.onReady = () => {}
 `}
 			<p>At any rate, you can trigger any command besides opening a browser.</p>
 
+			<br/>
+			
 			<h3 id="-loglevel-quiet-normal-verbose-">
 				<code>logLevel<span class="syntax_type">?: 'quiet' | 'normal' | 'verbose'</span></code>
 			</h3>
 			<p>Defaults to <code>'normal'</code></p>
 			<ul>
-				<li><code>quiet</code>: only errors (stderr)</li>
-				<li><code>normal</code>: info, mock access, warnings, and errors</li>
-				<li><code>verbose</code>: normal + API access</li>
+				<li><code>quiet</code> only errors (stderr)</li>
+				<li><code>normal</code> info, mock access, warnings, and errors</li>
+				<li><code>verbose</code> normal + API access</li>
 			</ul>
 	`
 })

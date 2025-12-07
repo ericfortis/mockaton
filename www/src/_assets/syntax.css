@@ -1,12 +1,13 @@
 @media (prefers-color-scheme: light) {
 	:root {
-		--syntaxCmd: dodgerblue;
+		--syntaxCmd: #1184f4;
 		--syntaxComment: #777;
-		--syntaxKeyword: #ff9100;
-		--syntaxNum: #f44ef4;
+		--syntaxKeyword: #5a5e88;
+		--syntaxNum: #9e009e;
+		--syntaxProperty: #321385;
 		--syntaxPunctionation: #999;
 		--syntaxRegex: #f0a;
-		--syntaxString: #ff0aad;
+		--syntaxString: #ec009f;
 		--syntaxVar: green;
 	}
 }
@@ -15,7 +16,8 @@
 		--syntaxCmd: #359dff;
 		--syntaxComment: #8c8c8c;
 		--syntaxKeyword: #8aa19b;
-		--syntaxNum: #894eff;
+		--syntaxNum: #925cff;
+		--syntaxProperty: #b067ff;
 		--syntaxPunctionation: #999;
 		--syntaxRegex: #f0a;
 		--syntaxString: #ff1ce4;
@@ -43,7 +45,11 @@
 }
 
 
-.syntax_property,
+
+.syntax_property {
+	color: var(--syntaxProperty);
+}
+
 .syntax_tag,
 .syntax_boolean,
 .syntax_number,

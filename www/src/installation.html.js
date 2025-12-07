@@ -17,13 +17,14 @@ echo "[1,2,3]" > mockaton-mocks/api/foo.GET.200.json
 `}
 
 
-		<h2>Option 1: Standalone CLI</h2>
+		<h2>Option 1: CLI</h2>
 
-		<p><em>
-			Requires Node.js <strong>v22.18+</strong>, which supports TypeScript mocks.
-		</em></p>
+		<p>
+			<em>Requires Node.js <strong>v22.18+</strong>.
+			Node includes <code>npx</code>, which installs and runs Mockaton.
+			</em>
+		</p>
 
-		<p>Run Mockaton (<code>npx</code> comes with Node, and installs Mockaton if needed)</p>
 		${shell`
 npx mockaton --port 4040
 `}
@@ -37,8 +38,7 @@ curl localhost:4040/api/foo
 		<h2 id="quick-start-docker-">Option 2: Docker</h2>
 		<p>
 			This will spin up Mockaton with the sample directories included in
-			the repo
-			mounted on the container.
+			the repository mounted on the container.
 		</p>
 
 		${shell`
@@ -73,8 +73,5 @@ import config from './mockaton.config.js'
 
 const server = await Mockaton(config)
 `}
-		<p>
-			Passing <code>config</code> is not required, but it’s not read by default.
-		</p>
 	`
 })

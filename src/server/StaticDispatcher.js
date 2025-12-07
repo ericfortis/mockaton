@@ -15,19 +15,19 @@ export async function dispatchStatic(req, response) {
 
 	setTimeout(async () => {
 		if (!broker || broker.status === 404) {
-			response.sendMockNotFound()
+			response.mockNotFound()
 			return
 		}
 
 		const file = join(config.staticDir, broker.route)
 		if (!isFile(file)) {
-			response.sendMockNotFound()
+			response.mockNotFound()
 			return
 		}
 		
 		logger.accessMock(req.url, 'static200')
 		if (req.headers.range)
-			await response.sendPartialContent(req.headers.range, file)
+			await response.partialContent(req.headers.range, file)
 		else {
 			response.setHeader('Content-Type', mimeFor(file))
 			response.end(readFileSync(file))

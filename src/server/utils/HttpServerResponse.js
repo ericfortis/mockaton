@@ -12,75 +12,75 @@ export class ServerResponse extends http.ServerResponse {
 			this.setHeader(headers[i], headers[i + 1])
 	}
 
-	sendOK() {
+	ok() {
 		logger.access(this)
 		this.end()
 	}
 
-	sendHTML(html, csp) {
+	html(html, csp) {
 		logger.access(this)
 		this.setHeader('Content-Type', mimeFor('html'))
 		this.setHeader('Content-Security-Policy', csp)
 		this.end(html)
 	}
 
-	sendJSON(payload) {
+	json(payload) {
 		logger.access(this)
 		this.setHeader('Content-Type', 'application/json')
 		this.end(JSON.stringify(payload))
 	}
 
-	sendFile(file) {
+	file(file) {
 		logger.access(this)
 		this.setHeader('Content-Type', mimeFor(file))
 		this.end(readFileSync(file, 'utf8'))
 	}
 
-	sendNoContent() {
+	noContent() {
 		this.statusCode = 204
 		logger.access(this)
 		this.end()
 	}
 
 
-	sendBadRequest() {
+	badRequest() {
 		this.statusCode = 400
 		logger.access(this)
 		this.end()
 	}
 
-	sendNotFound() {
+	notFound() {
 		this.statusCode = 404
 		logger.access(this)
 		this.end()
 	}
 
-	sendMockNotFound() {
+	mockNotFound() {
 		this.statusCode = 404
 		logger.accessMock(this.req.url, '404')
 		this.end()
 	}
 
-	sendTooLongURI() {
+	uriTooLong() {
 		this.statusCode = 414
 		logger.access(this)
 		this.end()
 	}
 
-	sendUnprocessable(error) {
+	unprocessable(error) {
 		logger.access(this, error)
 		this.statusCode = 422
 		this.end(error)
 	}
 
 
-	sendInternalServerError(error) {
+	internalServerError(error) {
 		logger.error(500, this.req.url, error?.message || error, error?.stack || '')
 		this.statusCode = 500
 		this.end()
 	}
 
-	sendBadGateway(error) {
+	badGateway(error) {
 		logger.warn('Fallback Proxy Error:', error.cause.message)
 		this.statusCode = 502
 		this.setHeader(HEADER_502, 1)
@@ -88,7 +88,7 @@ export class ServerResponse extends http.ServerResponse {
 	}
 
 
-	async sendPartialContent(range, file) {
+	async partialContent(range, file) {
 		const { size } = await fs.promises.lstat(file)
 		let [start, end] = range.replace(/bytes=/, '').split('-').map(n => parseInt(n, 10))
 		if (isNaN(end)) end = size - 1
@@ -110,7 +110,7 @@ export class ServerResponse extends http.ServerResponse {
 				this.pipe(response)
 			})
 			reader.on('error', error => {
-				this.sendInternalServerError(error)
+				this.internalServerError(error)
 			})
 		}
 	}

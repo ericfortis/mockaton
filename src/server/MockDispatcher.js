@@ -24,7 +24,7 @@ export async function dispatchMock(req, response) {
 			return
 		}
 		if (!broker) {
-			response.sendMockNotFound()
+			response.mockNotFound()
 			return
 		}
 
@@ -51,9 +51,9 @@ export async function dispatchMock(req, response) {
 	}
 	catch (error) { // TESTME
 		if (error?.code === 'ENOENT') // mock-file has been deleted
-			response.sendMockNotFound()
+			response.mockNotFound()
 		else
-			response.sendInternalServerError(error)
+			response.internalServerError(error)
 	}
 }
 

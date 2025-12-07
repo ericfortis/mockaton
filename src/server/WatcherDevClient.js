@@ -29,17 +29,17 @@ export function watchDevSPA() {
 /** Realtime notify Dev UI changes */
 export function longPollDevClientHotReload(req, response) {
 	if (!DEV) {
-		response.sendNotFound()
+		response.notFound()
 		return
 	}
 	
 	function onDevChange(file) {
 		devClientWatcher.unsubscribe(onDevChange)
-		response.sendJSON(file)
+		response.json(file)
 	}
 	response.setTimeout(LONG_POLL_SERVER_TIMEOUT, () => {
 		devClientWatcher.unsubscribe(onDevChange)
-		response.sendJSON('')
+		response.json('')
 	})
 	req.on('error', () => {
 		devClientWatcher.unsubscribe(onDevChange)

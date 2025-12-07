@@ -100,12 +100,12 @@ export function longPollClientSyncVersion(req, response) {
 	const clientVersion = req.headers[HEADER_SYNC_VERSION]
 	if (clientVersion !== undefined && uiSyncVersion.version !== Number(clientVersion)) {
 		// e.g., tab was hidden while new mocks were added or removed
-		response.sendJSON(uiSyncVersion.version)
+		response.json(uiSyncVersion.version)
 		return
 	}
 	function onARR() {
 		uiSyncVersion.unsubscribe(onARR)
-		response.sendJSON(uiSyncVersion.version)
+		response.json(uiSyncVersion.version)
 	}
 	response.setTimeout(LONG_POLL_SERVER_TIMEOUT, onARR)
 	req.on('error', () => {

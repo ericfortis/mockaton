@@ -58,11 +58,11 @@ async function onRequest(req, response) {
 	const url = req.url || ''
 
 	if (url.length > 2048) {
-		response.sendTooLongURI()
+		response.uriTooLong()
 		return
 	}
 	if (hasControlChars(url)) {
-		response.sendBadRequest()
+		response.badRequest()
 		return
 	}
 
@@ -74,7 +74,7 @@ async function onRequest(req, response) {
 		const { pathname } = new URL(url, 'http://_')
 
 		if (isPreflight(req))
-			response.sendNoContent()
+			response.noContent()
 
 		else if (method === 'PATCH' && apiPatchReqs.has(pathname))
 			await apiPatchReqs.get(pathname)(req, response)
@@ -90,8 +90,8 @@ async function onRequest(req, response) {
 	}
 	catch (error) {
 		if (error instanceof BodyReaderError)
-			response.sendUnprocessable(`${error.name}: ${error.message}`)
+			response.unprocessable(`${error.name}: ${error.message}`)
 		else
-			response.sendInternalServerError(error)
+			response.internalServerError(error)
 	}
 }

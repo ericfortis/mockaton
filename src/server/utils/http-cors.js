@@ -1,4 +1,4 @@
-import { methodIsSupported } from './IncomingMessage.js'
+import { methodIsSupported } from './HttpIncomingMessage.js'
 
 /* https://www.w3.org/TR/2020/SPSD-cors-20200602/#resource-processing-model */
 

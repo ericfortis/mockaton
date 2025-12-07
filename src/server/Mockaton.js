@@ -3,10 +3,10 @@ import { createServer } from 'node:http'
 import pkgJSON from '../../package.json' with { type: 'json' }
 
 import { logger } from './utils/logger.js'
-import { ServerResponse } from './utils/ServerResponse.js'
-import { IncomingMessage } from './utils/IncomingMessage.js'
+import { ServerResponse } from './utils/HttpServerResponse.js'
+import { IncomingMessage } from './utils/HttpIncomingMessage.js'
 import { setCorsHeaders, isPreflight } from './utils/http-cors.js'
-import { BodyReaderError, hasControlChars } from './utils/IncomingMessage.js'
+import { BodyReaderError, hasControlChars } from './utils/HttpIncomingMessage.js'
 
 import { API } from './ApiConstants.js'
 import { config, setup } from './config.js'

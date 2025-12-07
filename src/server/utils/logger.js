@@ -1,4 +1,4 @@
-import { decode, reControlAndDelChars } from './IncomingMessage.js'
+import { decode, reControlAndDelChars } from './HttpIncomingMessage.js'
 
 
 export const logger = new class {

@@ -1,0 +1,10 @@
+@media (prefers-color-scheme: light) {
+	strong {
+		background: var(--colorHighlight);
+	}
+}
+@media (prefers-color-scheme: dark) {
+	strong {
+		color: var(--colorHighlight);
+	}
+}

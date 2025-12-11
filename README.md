@@ -7,7 +7,7 @@
 An HTTP mock server for simulating APIs with minimal setup &mdash; ideal
 for testing difficult to reproduce backend states. 
 
-https://mockaton.com
+## https://mockaton.com ↗
 
 ## Overview
 With Mockaton, you don’t need to write code for wiring up your
@@ -63,6 +63,8 @@ On the dashboard you can:
 Nonetheless, there’s a programmatic API, which is handy for
 setting up tests (see **Commander&nbsp;API** section below).
 
+
+## [Changelog ↗](https://mockaton.com/changelog)
 
 ## License
 MIT

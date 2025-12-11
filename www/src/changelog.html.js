@@ -3,7 +3,10 @@ const { js } = await import(`./_syntaxHighlight.js?${Date.now()}`)
 
 // language=html
 export default () => htmlTemplate({
-	head: `<title>Changelog</title>`,
+	head: `
+		<title>Changelog</title>
+		<link href="changelog.css" rel="stylesheet" />
+	`,
 	body: `
 		<h1 id="changelog">Changelog</h1>
 		<p>11.2.0 dashboard: show Mockaton’s version</p>
@@ -15,9 +18,8 @@ export default () => htmlTemplate({
 		<p><strong>11.0.0 breaking change</strong>, but of undocumented APIs.
 		<ul>
 			<li>
-				If you use the Mockaton’s API directly (if you use the <a
-				href="src/client/ApiCommander.js">Commander</a> client, there’s no
-				breaking change) update the request payloads from JSON objects to
+				If you use the Mockaton’s API directly (without the <a href="/api">Commander
+				API</a> client), update the request payloads from JSON objects to
 				positional JSON arrays, see the mentioned client for the updated contracts.
 			</li>
 			<li>

@@ -90,7 +90,7 @@ api/login<strong>(invalid login attempt)</strong>.POST.401.json
 
 		<h3 id="different-response-status-code">Different Response Status Code</h3>
 		<p>
-			For instance, you can use a <code>4xx</code> or <code>5xx</code>
+			For example, use a <code>4xx</code> or <code>5xx</code>
 			status code for triggering error responses, or a <code>2xx</code>
 			such as <code>204</code> for testing empty collections.
 		</p>

@@ -38,11 +38,11 @@ header {
 		gap: 16px;
 
 		.Github {
-			width: 24px;
-			height: 24px;
+			width: 28px;
+			height: 28px;
 
 			&:hover {
-				fill: var(--accentLight);
+				fill: var(--accent);
 			}
 		}
 

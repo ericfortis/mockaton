@@ -33,6 +33,7 @@ form {
 			border-right: 0;
 			border-left: 0;
 			cursor: pointer;
+			color: var(--fg);
 
 			&:active {
 				cursor: grabbing;
@@ -54,11 +55,15 @@ form {
 				font-size: 12px;
 				background: var(--bgFaint);
 				border-radius: 4px;
+				color: var(--fg2);
 			}
 			.Path {
 				margin-right: 16px;
+				color: var(--accent);
 			}
 			.Summary {
+				display: block;
+				margin-left: 96px;
 			}
 		}
 
@@ -82,7 +87,7 @@ form {
 				margin-top: 8px;
 				fill: var(--fg);
 				cursor: pointer;
-				&:hover  {
+				&:hover {
 					fill: var(--accent);
 				}
 			}

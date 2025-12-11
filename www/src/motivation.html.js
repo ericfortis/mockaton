@@ -17,17 +17,20 @@ export default () => htmlTemplate({
 			difficult to reproduce from the actual backend.
 		</p>
 		<ul>
-			<li>Demo edge cases to PMs, Design, and clients</li>
-			<li>Set up screenshot tests (see <a href="https://github.com/ericfortis/mockaton/tree/main/pixaton-tests" target="_blank">pixaton-tests/</a> in the repo)</li>
+			<li>Demo edge cases to PMs, Design, and Clients</li>
 			<li>
-				Spot inadvertent regressions during development. For example, the
-				demo app in this repo has a list of colors containing all of their
-				possible states. This way you’ll indirectly notice if something broke.
+				Set up screenshot tests (see <a
+				href="https://github.com/ericfortis/mockaton/tree/main/pixaton-tests"
+				target="_blank">pixaton-tests/</a> in the repo)
+			</li>
+			<li>
+				Spot inadvertent regressions. For example, by having
+				a mock response will all of its possible permutations.
 			</li>
 		</ul>
 
 		<div class="RegionImg" data-max-width="740">
-			<img src="static/media/demo-app.png" alt="Mockaton Demo App Screenshot" />
+			<img src="assets/media/demo-app.png" alt="Mockaton Demo App Screenshot" />
 		</div>
 
 

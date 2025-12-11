@@ -11,7 +11,7 @@ export default () => htmlTemplate({
 		<h1 id="changelog">Changelog</h1>
 		<p>11.2.0 dashboard: show Mockaton’s version</p>
 		<div class="RegionImg" data-max-width="200">
-			<img src="static/media/11.2.0-version.png" alt="">
+			<img src="assets/media/11.2.0-version.png" alt="">
 		</div>
 
 		<p>11.1.0 new <code>config.watcherEnabled</code></p>
@@ -33,12 +33,12 @@ export default () => htmlTemplate({
 
 		<p>10.7.0 dashboard: newly added mocks are animated in</p>
 		<div class="RegionImg">
-			<img src="static/media/10.7.0-newly-added-anim.gif" alt="">
+			<img src="assets/media/10.7.0-newly-added-anim.gif" alt="">
 		</div>
 
 		<p>10.6.0 dashboard: arrow navigation</p>
 		<div class="RegionImg">
-			<img src="static/media/10.6.0-arrow-nav.gif" alt="">
+			<img src="assets/media/10.6.0-arrow-nav.gif" alt="">
 		</div>
 
 		<p>10.5.0 dashboard: qs option <code>?groupByMethod=false</code></p>
@@ -48,7 +48,7 @@ export default () => htmlTemplate({
 		<p>10.2.0 Reject malicious URLs</p>
 		<p>10.1.0 dashboard: toggle delay with click-drag</p>
 		<div class="RegionImg" data-max-width="400">
-			<img src="static/media/10.1.0-click-drag-toggle.gif" alt="">
+			<img src="assets/media/10.1.0-click-drag-toggle.gif" alt="">
 		</div>
 
 		<p><strong>10.0.0 breaking change</strong>: <code>Mockaton</code> constructor is now async.
@@ -67,7 +67,7 @@ await Mockaton()
 		<p>9.5.0 cli: new <code>config.logLevel=verbose</code></p>
 		<p>9.4.0 dashboard: users can resize panels</p>
 		<div class="RegionImg">
-			<img src="static/media/9.4.0-resize-panels.gif" alt="">
+			<img src="assets/media/9.4.0-resize-panels.gif" alt="">
 		</div>
 
 		<p>9.3.0 Handle head requests for get mocks</p>
@@ -83,7 +83,7 @@ await Mockaton()
 
 		<p>8.27.0 dashboard: group by method checkbox</p>
 		<div class="RegionImg">
-			<img src="static/media/8.27.0-group-by-method.gif" alt="">
+			<img src="assets/media/8.27.0-group-by-method.gif" alt="">
 		</div>
 
 		<p>8.26.0 UI simplify mock-selector label text</p>
@@ -100,7 +100,7 @@ await Mockaton()
 		<p>8.14.0 Static files controls</p>
 		<p>8.13.0 dashboard: dim repeated dirs</p>
 		<div class="RegionImg" data-max-width="460">
-			<img src="static/media/8.13.0-ditto-dirs.png" alt="">
+			<img src="assets/media/8.13.0-ditto-dirs.png" alt="">
 		</div>
 
 		<p>8.12.0 Add <code>config.formatCollectedJSON</code></p>
@@ -177,10 +177,10 @@ await commander.setMockIsDelayed('api/foo.200.GET.json', true)
 		<hr>
 
 		<p><strong>5.0.0 breaking change</strong>: .md files no longer use status code in the extension</p>
-		
+
 		<hr>
 		<p><strong>4.0.0 breaking change</strong>: rename <code>config.open</code> to <code>config.onReady</code></p>
-		
+
 		<hr>
 		<p><strong>3.0.0 breaking change</strong>: <code>config.skipOpen</code> boolean to <code>config.open</code> function</p>
 

@@ -8,15 +8,25 @@ const { raw } = await import(`./_syntaxHighlight.js?${Date.now()}`)
 export default () => htmlTemplate({
 	head: `<title>Convention</title>`,
 	body: `
-		<h1>Mock Filename Convention</h1>
+		<h1>Filename Convention</h1>
+		<p>
+			The convention is for mocks within your <code class="green">config.mocksDir</code>.
+			On the other hand, mocks in your <code class="red">config.staticDir</code> should
+			have no custom extension. Those are always <code>GET</code> and return
+			<code>200</code> or partial content <code>206</code>.
+		</p>
 
 		<h2 id="extension">
-			Extension
+			Extension <span class="normalWeight">(three dots)</span>
 		</h2>
 		<p>
-			The last three dots are reserved for the HTTP
-			Method, Response Status Code, and File Extension.
+			The last three dots are reserved for the:
 		</p>
+		<ul>
+			<li>HTTP Method</li>
+			<li>Response Status Code</li>
+			<li>File Extension</li>
+		</ul>
 		<pre><code>api/user<span class="hljs-selector-class">.GET</span>.<span class="hljs-number">200</span>.json
 </code></pre>
 		<p>

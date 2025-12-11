@@ -1,10 +1,10 @@
 @media (prefers-color-scheme: light) {
-	strong {
+	p > strong {
 		background: var(--colorHighlight);
 	}
 }
 @media (prefers-color-scheme: dark) {
-	strong {
+	p > strong {
 		color: var(--colorHighlight);
 	}
 }

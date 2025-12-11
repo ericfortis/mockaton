@@ -4,7 +4,7 @@
 	"type": "module",
 	"dependencies": {
 		"mediasnacks": "0.8.0",
-		"packaton": "0.0.8",
+		"packaton": "0.0.9",
 		"prismjs": "1.30.0"
 	},
 	"devDependencies": {

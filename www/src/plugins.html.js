@@ -28,10 +28,8 @@ type Plugin = (
 
 		<h2>Examples</h2>
 
-		<code>npm install yaml</code>
-
 		${js`
-import { parse } from 'yaml'
+import { parse } from 'yaml' // npm install yaml
 import { readFileSync } from 'node:js'
 import { jsToJsonPlugin } from 'mockaton'
 

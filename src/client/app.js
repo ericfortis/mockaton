@@ -19,6 +19,7 @@ const CSS = {
 	GlobalDelayField: null,
 	GroupByMethod: null,
 	InternalServerErrorToggler: null,
+	Logo: null,
 	MenuTrigger: null,
 	Method: null,
 	MockList: null,
@@ -107,12 +108,16 @@ function App() {
 function Header() {
 	return (
 		r('header', null,
-			r('object', {
-				data: 'logo.svg',
-				type: 'image/svg+xml',
-				width: 120,
-				height: 22
-			}),
+			r('a', {
+					className: CSS.Logo,
+					href: 'https://mockaton.com',
+				},
+				r('object', {
+					data: 'logo.svg',
+					type: 'image/svg+xml',
+					width: 120,
+					height: 22
+				})),
 			r('div', null,
 				GlobalDelayField(),
 				BulkSelector(),
@@ -272,10 +277,16 @@ function SettingsMenu(id) {
 					r('span', className(CSS.checkboxBody), t`Group by Method`)),
 
 				r('a', {
+					href: 'https://mockaton.com',
+					target: '_blank',
+					rel: 'noopener noreferrer'
+				}, t`Website`),
+				
+				r('a', {
 					href: 'https://github.com/ericfortis/mockaton',
 					target: '_blank',
 					rel: 'noopener noreferrer'
-				}, t`Documentation`),
+				}, t`Source Code`),
 
 				r('p', null, `v${store.mockatonVersion}`)
 			)))

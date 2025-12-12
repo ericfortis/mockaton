@@ -49,9 +49,9 @@ curl localhost:2020/api/user
 
 
 <picture>
-  <source media="(prefers-color-scheme: light)" srcset="pixaton-tests/tests/macos/pic-for-readme.vp761x740.light.gold.png">
-  <source media="(prefers-color-scheme: dark)" srcset="pixaton-tests/tests/macos/pic-for-readme.vp761x740.dark.gold.png">
-  <img alt="Mockaton Dashboard" src="pixaton-tests/tests/macos/pic-for-readme.vp761x740.light.gold.png">
+  <source media="(prefers-color-scheme: light)" srcset="https://raw.githubusercontent.com/ericfortis/mockaton/refs/heads/main/pixaton-tests/tests/macos/pic-for-readme.vp761x740.light.gold.png">
+  <source media="(prefers-color-scheme: dark)" srcset="https://raw.githubusercontent.com/ericfortis/mockaton/refs/heads/main/pixaton-tests/tests/macos/pic-for-readme.vp761x740.dark.gold.png">
+  <img alt="Mockaton Dashboard" src="https://raw.githubusercontent.com/ericfortis/mockaton/refs/heads/main/pixaton-tests/tests/macos/pic-for-readme.vp761x740.dark.gold.png">
 </picture>
 
 On the dashboard you can:

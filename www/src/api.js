@@ -1,6 +1,6 @@
 ;(function () {
 	const CSS = {
-		Server: 'Server',
+		ServerAddr: 'ServerAddr',
 		CopyButton: 'CopyButton',
 	}
 
@@ -8,7 +8,7 @@
 	document.querySelector('#ServerInput').addEventListener('change', function () {
 		this.reportValidity()
 		if (this.validity.valid)
-			for (const s of document.getElementsByClassName(CSS.Server))
+			for (const s of document.getElementsByClassName(CSS.ServerAddr))
 				s.innerText = this.value.trim()
 	})
 	document.querySelector('form').addEventListener('submit', function (event) {

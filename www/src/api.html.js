@@ -1,4 +1,3 @@
-// TODO rename .Server (more unique)
 // TODO https://www.rfc-editor.org/rfc/rfc9457.html
 
 import { join } from 'node:path'
@@ -34,7 +33,7 @@ export default () => htmlTemplate({
 		${js(`
 import { Commander } from 'mockaton'
 const mockaton = new Commander('${SERVER}')
-`).replace(SERVER, `<span class="Server">${SERVER}</span>`)}
+`).replace(SERVER, `<span class="ServerAddr">${SERVER}</span>`)}
 
 		<section class="Apis">${AllApis()}</section>
 		<script src="api.js"></script>
@@ -71,7 +70,7 @@ function Api(method, url, obj) {
 
 function Curl(method, url, requestBody) {
 	return [
-		`<span class="syntax_function">curl</span> <span class="Server">${SERVER}</span>${url}`,
+		`<span class="syntax_function">curl</span> <span class="ServerAddr">${SERVER}</span>${url}`,
 		method !== 'get' && `  --request ${method.toUpperCase()}`,
 		requestBody && dataForReqBody(requestBody)
 	].filter(Boolean).join(' \\\n')

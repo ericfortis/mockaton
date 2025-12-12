@@ -18,7 +18,7 @@ form {
 	}
 }
 
-.Server {
+.ServerAddr {
 	font-style: italic;
 }
 
@@ -83,7 +83,7 @@ form {
 				gap: 4px;
 
 				.Curl {
-					.Server {
+					.ServerAddr {
 						opacity: 0.6;
 					}
 				}

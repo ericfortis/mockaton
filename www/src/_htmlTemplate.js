@@ -16,7 +16,7 @@ const pages = [
 
 // language=html
 export const htmlTemplate = ({ head = '', body }) => `
-	<!DOCTYPE html>
+	<!doctype html>
 	<html lang="en">
 	<head>
 		<meta charset="utf-8" />

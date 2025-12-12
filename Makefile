@@ -3,7 +3,7 @@
 docker: docker-build docker-run
 
 docker-build:
-	@docker build --no-cache --tag mockaton $(PWD)
+	@tar cf - Dockerfile | docker build --no-cache --tag mockaton -
 
 docker-run: docker-stop
 	@docker run --name mockaton \

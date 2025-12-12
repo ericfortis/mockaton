@@ -9,7 +9,13 @@
 			"types": "./index.d.ts"
 		}
 	},
+	"files": [
+		"src",
+		"index.js",
+		"index.d.ts"
+	],
 	"license": "MIT",
+	"homepage": "https://mockaton.com",
 	"repository": "https://github.com/ericfortis/mockaton",
 	"keywords": [
 		"mock-server",

@@ -1,8 +1,4 @@
-export NODE_ENV = development
-
-start:
-	@node --watch-path=src/server src/server/cli.js
-
+.PHONY: *
 
 docker: docker-build docker-run
 
@@ -21,7 +17,18 @@ docker-stop:
 	@docker stop mockaton >/dev/null 2>&1 || true
 	@docker rm mockaton >/dev/null 2>&1 || true
 	
+# End of Docker for End-Users
 
+
+
+#
+# Dev Stuff
+#
+
+export NODE_ENV = development
+
+start:
+	@node --watch-path=src/server src/server/cli.js
 
 TEST_CMD = MOCKATON_WATCHER_DEBOUNCE_MS=0 \
 	node --test 'src/**/*.test.js'
@@ -48,4 +55,3 @@ coverage:
 pixaton:
 	cd pixaton-tests && npm t
 
-.PHONY: *

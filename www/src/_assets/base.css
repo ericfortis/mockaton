@@ -92,7 +92,7 @@ html {
 
 body {
 	position: relative;
-	font-family: "Avenir Next", system-ui, sans-serif;
+	font-family: Avenir, system-ui, sans-serif;
 	color: var(--fg);
 	background: var(--bg);
 	font-size: 18px;
@@ -372,6 +372,10 @@ video {
 	position: relative;
 	left: -12px;
 	padding-bottom: 4px; /* Not perfect, but to show a some of the boxShadow  */
+
+	@media (max-width: 800px) {
+		left: 0;
+	}
 	img {
 		max-width: 100%;
 		border-radius: 16px;

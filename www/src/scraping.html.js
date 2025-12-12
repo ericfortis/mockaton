@@ -19,7 +19,7 @@ export default () => htmlTemplate({
 		</div>
 		
 		<a href="https://github.com/ericfortis/mockaton/tree/main/browser-extension" target="_blank">
-			Source Code (Github)
+			Source Code ↗
 		</a>
 
 		<h2 id="option-2-fallback-to-your-backend">

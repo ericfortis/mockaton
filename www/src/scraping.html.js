@@ -15,8 +15,12 @@ export default () => htmlTemplate({
 		</p>
 
 		<div class="RegionImg" data-max-width="1000">
-			<img src="assets/media/browser-extension-overview.png" alt="">
+			<img src="assets/media/browser-extension-overview.avif" alt="">
 		</div>
+		
+		<a href="https://github.com/ericfortis/mockaton/tree/main/browser-extension" target="_blank">
+			Source Code (Github)
+		</a>
 
 		<h2 id="option-2-fallback-to-your-backend">
 			Option 2: Fallback to your Backend

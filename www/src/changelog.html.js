@@ -11,7 +11,7 @@ export default () => htmlTemplate({
 		<h1 id="changelog">Changelog</h1>
 		<p>11.2.0 dashboard: show Mockaton’s version</p>
 		<div class="RegionImg" data-max-width="200">
-			<img src="assets/media/11.2.0-version.png" alt="">
+			<img src="assets/media/11.2.0-version.avif" alt="">
 		</div>
 
 		<p>11.1.0 new <code>config.watcherEnabled</code></p>
@@ -24,7 +24,7 @@ export default () => htmlTemplate({
 			</li>
 			<li>
 				If you use the <code>GET /mockaton/state</code> API, broker objects are
-				now flat. IOW, there’s no <code>currentMock</code> object wrapper in them.
+				now flat. There’s no <code>currentMock</code> object wrapping them.
 			</li>
 		</ul>
 		</p>
@@ -100,7 +100,7 @@ await Mockaton()
 		<p>8.14.0 Static files controls</p>
 		<p>8.13.0 dashboard: dim repeated dirs</p>
 		<div class="RegionImg" data-max-width="460">
-			<img src="assets/media/8.13.0-ditto-dirs.png" alt="">
+			<img src="assets/media/8.13.0-ditto-dirs.avif" alt="">
 		</div>
 
 		<p>8.12.0 Add <code>config.formatCollectedJSON</code></p>

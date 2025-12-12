@@ -10,7 +10,6 @@ export default () => htmlTemplate({
 	body: `
 		<h1>Config</h1>
 
-
 		<h2 id="cli-options">CLI Options</h2>
 		<p>The CLI options override their counterparts in <code>mockaton.config.js</code></p>
 

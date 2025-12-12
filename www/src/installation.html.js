@@ -8,8 +8,6 @@ export default () => htmlTemplate({
 		<h1>Installation</h1>
 
 
-		<br />
-
 		<p>Create a sample mock in the default directory (<code>./mockaton-mocks</code>)</p>
 		${shell`
 mkdir -p         mockaton-mocks/api

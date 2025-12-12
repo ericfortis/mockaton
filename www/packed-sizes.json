@@ -1,57 +1,67 @@
 {
 	"/alternatives.html": {
-		"hash": "0VCe_Nk02XDeC2lvce4JgjWwpWk",
-		"delta": 0,
-		"size": 20022
+		"hash": "mbcJdPLQkAMfx5lsQpn8pOfq5yI",
+		"delta": 114,
+		"size": 20168
 	},
 	"/api.html": {
-		"hash": "kIg-oc56DsUBcuKM3x0SL8jJMWo",
-		"delta": 0,
-		"size": 38126
+		"hash": "6RmW98kDTDNKhFmprl61P9dQrgU",
+		"delta": 114,
+		"size": 38272
 	},
 	"/changelog.html": {
-		"hash": "IpJywHfE2-P3-94Wh_wgvGr2G8Q",
-		"delta": 0,
-		"size": 27631
+		"hash": "btbRj3Fq7E2Uzf2uzHK2T20HKxo",
+		"delta": 114,
+		"size": 27785
 	},
 	"/config.html": {
-		"hash": "h4IvdN-fg6RTWmCXoeVo_Mm5dMA",
-		"delta": 0,
-		"size": 38329
+		"hash": "5Uh5XImHNQJR0sSVjLFxPji8SWw",
+		"delta": 114,
+		"size": 38475
 	},
 	"/convention.html": {
-		"hash": "BPRJMKm4ZrXJptEnEIHErn3lmgs",
-		"delta": 0,
-		"size": 21372
+		"hash": "3mPtsSjY4gGPoCrMBDtZphwnxyA",
+		"delta": 114,
+		"size": 21518
+	},
+	"/demo-server.html": {
+		"hash": "boKV-hNk3tVgO0YY41TeCoP0kow",
+		"delta": 19254,
+		"size": 19254
 	},
 	"/functional-mocks.html": {
-		"hash": "Oo3Rl72VfSwk32jnDAUpnJnI11I",
-		"delta": 0,
-		"size": 25989
+		"hash": "9AH3dAlovw5kG1fXCMXg75fZzbU",
+		"delta": 114,
+		"size": 26135
 	},
 	"/index.html": {
-		"hash": "KtnzVZ_yDaxtMLX6e-_4fQOC_gc",
-		"delta": 0,
-		"size": 25112
+		"hash": "3i7airdGzYUtsE8qudtX_H2Us8g",
+		"delta": 114,
+		"size": 24446
 	},
 	"/installation.html": {
-		"hash": "yvFGfOryN0GJD5oFTMVJ1gtrB0M",
-		"delta": 0,
-		"size": 21028
+		"hash": "SfIuCQVPAAS2oBpot_pPFqzbtYI",
+		"delta": 114,
+		"size": 21174
 	},
 	"/motivation.html": {
-		"hash": "0tJDhdb054y1TB0ayVDpkP39r_A",
-		"delta": 0,
-		"size": 21762
+		"hash": "UaZhQw-2GTfVG9Vqwzbs21LcXpA",
+		"delta": -1157,
+		"size": 20720
 	},
 	"/plugins.html": {
-		"hash": "vEQ0j3QXw5ZOLJ5UfVnc0FHedQI",
-		"delta": 0,
-		"size": 24483
+		"hash": "YYYBzZLupJXttISKnth77ErsKNE",
+		"delta": 114,
+		"size": 24629
+	},
+	"/privacy-and-security.html": {
+		"hash": "i97CjIZVKfpF3qF05IYT0_cZSNM",
+		"delta": 19089,
+		"size": 19089
 	},
 	"/scraping.html": {
-		"hash": "5tXrlWu-TN3jvhvTmiZY7cAsKYk",
-		"delta": 0,
-		"size": 19695
+		"hash": "oXyiJ1u15nN42YVIvCTjXcYvwR0",
+		"delta": 114,
+		"size": 19964
 	}
 }

@@ -28,12 +28,25 @@ export default () => htmlTemplate({
 		</ul>
 		
 
+		<h2 id="server-side">
+			Server Side
+		</h2>
+		<ul>
+			<li><a href="https://github.com/wiremock/wiremock" target="_blank">Wire Mock</a></li>
+			<li><a href="https://github.com/typicode/json-server" target="_blank">JSON Server</a></li>
+			<li><a href="https://swagger.io" target="_blank">Swagger</a></li>
+			<li><a href="https://mockoon.com" target="_blank">Mockoon</a></li>
+			<li><a href="https://github.com/dhuan/mock" target="_blank">Mock</a></li>
+		</ul>
+		
+
 		<h2 id="client-side">
 			Client Side <span class="normalWeight">(Service Worker)</span>
 		</h2>
 		<p>
-			In contrast to Mockaton, which is an HTTP Server, these
-			programs intercept your browser’s HTTP client (or Node’s).
+			In contrast to Mockaton, which is an HTTP Server, these programs
+			intercept your browser’s requests (or Node’s). Since they use a
+			Service Worker, by design, they inherit their limitations.
 		</p>
 		<ul>
 			<li><a href="https://mswjs.io" target="_blank">MSW</a></li>
@@ -41,18 +54,6 @@ export default () => htmlTemplate({
 			<li><a href="https://github.com/wheresrhys/fetch-mock" target="_blank">Fetch Mock</a></li>
 			<li><a href="https://github.com/humanwhocodes/mentoss" target="_blank">Mentoss</a></li>
 			<li><a href="https://github.com/miragejs/miragejs" target="_blank">MirageJS</a></li>
-		</ul>
-		
-		
-		<h2 id="server-side">
-			Server Side
-		</h2>
-		<ul>
-			<li><a href="https://github.com/wiremock/wiremock" target="_blank">Wire Mock</a></li>
-			<li><a href="https://github.com/dhuan/mock" target="_blank">Mock</a></li>
-			<li><a href="https://swagger.io" target="_blank">Swagger</a></li>
-			<li><a href="https://mockoon.com" target="_blank">Mockoon</a></li>
-			<li><a href="https://github.com/typicode/json-server" target="_blank">JSON Server</a></li>
 		</ul>
 	`
 })

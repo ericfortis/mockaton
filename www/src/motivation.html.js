@@ -1,5 +1,4 @@
 const { htmlTemplate } = await import(`./_htmlTemplate.js?${Date.now()}`)
-const { shell } = await import(`./_syntaxHighlight.js?${Date.now()}`)
 
 // language=html
 export default () => htmlTemplate({
@@ -8,24 +7,27 @@ export default () => htmlTemplate({
 		<h1 id="motivation-">
 			Motivation
 		</h1>
+		<p>
+			Sometimes the flow you need is too difficult to reproduce from the actual backend.
+		</p>
 
 		<h2 id="deterministic-and-comprehensive-states">
 			Deterministic and Comprehensive States
 		</h2>
-		<p>
-			Sometimes the flow you need to test is too
-			difficult to reproduce from the actual backend.
-		</p>
 		<ul>
 			<li>Demo edge cases to PMs, Design, and Clients</li>
+			<li>
+				Trigger state transitions on an API. For
+				example, from empty or from error, to ok.
+			</li>
 			<li>
 				Set up screenshot tests (see <a
 				href="https://github.com/ericfortis/mockaton/tree/main/pixaton-tests"
 				target="_blank">pixaton-tests/</a> in the repo)
 			</li>
 			<li>
-				Spot inadvertent regressions. For example, by having
-				a mock response will all of its possible permutations.
+				Spot inadvertent regressions by developing against
+				all possible permutations. See the color cards below.
 			</li>
 		</ul>
 
@@ -34,33 +36,9 @@ export default () => htmlTemplate({
 		</div>
 
 
-		<h2 id="benefits">
-			Benefits
-		</h2>
-
-		<h3 id="standalone-demo-server-docker-">
-			Standalone Demo Server (Docker)
-		</h3>
-		<p>
-			You can demo your app by compiling the frontend and putting
-			its built assets in <code>config.staticDir</code>. For example, this
-			repo includes a demo which builds and runs a docker container.
-		</p>
-
-		${shell`
-git clone https://github.com/ericfortis/mockaton.git --depth 1
-cd mockaton/demo-app-vite
-make run-standalone-demo
-`}
-
-		<ul>
-			<li>App: <a href="http://localhost:4040">http://localhost:4040</a></li>
-			<li>Dashboard: <a href="http://localhost:4040/mockaton">http://localhost:4040/mockaton</a></li>
-		</ul>
-
-		<h3 id="testing-scenarios-that-would-otherwise-be-skipped">
+		<h2 id="testing-scenarios-that-would-otherwise-be-skipped">
 			Testing Scenarios that Would Otherwise be Skipped
-		</h3>
+		</h2>
 		<ul>
 			<li>Trigger dynamic states on an API. For example, for polled alerts or notifications.</li>
 			<li>Testing retries, you can change an endpoint from a 500 to a 200 on the fly.</li>
@@ -75,20 +53,7 @@ make run-standalone-demo
 			</li>
 		</ul>
 
-		<h3 id="privacy-and-security">
-			Privacy and Security
-		</h3>
-		<ul>
-			<li>Does not write to disk. Except when you select ✅ <strong>Save Mocks</strong> for scraping mocks from a backend</li>
-			<li>Does not initiate network connections (no logs, no telemetry)</li>
-			<li>Does not hijack your HTTP client</li>
-			<li>Auditable
-				<ul>
-					<li>Organized and small. 4 KLoC (half is UI and tests)</li>
-					<li>Zero dependencies. No runtime and no build packages.</li>
-				</ul>
-			</li>
-		</ul>
+
 
 		<h2 id="benefits-of-mocking-apis-in-general">
 			Benefits of Mocking APIs in General

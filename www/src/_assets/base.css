@@ -2,8 +2,8 @@
 	--headerHeight: 48px;
 	--footerHeight: 36px;
 
-	--navWidth: 117px;
-	--pMaxWidth: 540px;
+	--navWidth: 122px;
+	--pMaxWidth: 560px;
 	--sectionPad: 40px;
 
 	--boxShadow2: 0 3px 1px -2px rgb(0, 0, 0, .2), 0 2px 2px 0 rgb(0, 0, 0, .14), 0 1px 5px 0 rgb(0, 0, 0, .12);
@@ -24,11 +24,11 @@
 @media (prefers-color-scheme: light) {
 	:root {
 		--bgHeader: #272727;
-		--bg: #fff;
+		--bg: #fdfdfd;
 		--fgHigh: #000;
 		--fg: #000;
 		--fg2: #444;
-		--bgFaint: #fafafa;
+		--bgFaint: #f5f5f5;
 		--faintBorder: #e6e6e6;
 
 		--videoTrackHoverBG: #6b93fd;
@@ -93,9 +93,9 @@ html {
 body {
 	position: relative;
 	font-family: "Avenir Next", system-ui, sans-serif;
-	background: var(--bg);
 	color: var(--fg);
-	font-size: 17px;
+	background: var(--bg);
+	font-size: 18px;
 	line-height: 1.5;
 
 	@media (max-width: 480px) {
@@ -228,7 +228,7 @@ main {
 	article {
 		min-height: calc(100vh - var(--headerHeight) - var(--footerHeight) - 48px);
 		padding: 0 var(--sectionPad);
-		padding-bottom: 48px;
+		padding-bottom: 60px;
 	}
 }
 
@@ -251,7 +251,7 @@ h1 {
 	line-height: 100%;
 }
 h2 {
-	margin-top: 42px;
+	margin-top: 48px;
 	font-size: 30px;
 	line-height: 120%;
 }
@@ -369,6 +369,8 @@ video {
 }
 
 .RegionImg {
+	position: relative;
+	left: -12px;
 	padding-bottom: 4px; /* Not perfect, but to show a some of the boxShadow  */
 	img {
 		max-width: 100%;

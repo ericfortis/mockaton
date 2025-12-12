@@ -8,7 +8,7 @@ nav {
 
 	ul {
 		padding-bottom: calc(var(--footerHeight) + 20px);
-		margin-top: 24px;
+		margin-top: 16px;
 		margin-bottom: 20px;
 
 		li {
@@ -27,7 +27,7 @@ nav {
 				box-sizing: border-box;
 				padding: 10px 16px;
 				cursor: pointer;
-				font-size: 13px;
+				font-size: 14px;
 				line-height: 16px;
 				outline: 0;
 				-webkit-user-drag: none;

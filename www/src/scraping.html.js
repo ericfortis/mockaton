@@ -15,7 +15,7 @@ export default () => htmlTemplate({
 		</p>
 
 		<div class="RegionImg" data-max-width="1000">
-			<img src="assets/media/browser-extension-overview.avif" alt="">
+			<img src="/assets/media/browser-extension-overview.avif" alt="">
 		</div>
 		
 		<a href="https://github.com/ericfortis/mockaton/tree/main/browser-extension" target="_blank">
@@ -32,7 +32,7 @@ export default () => htmlTemplate({
 		</p>
 		<p>
 			On the other hand, proxying to your backend is straightforward if your backend
-			handles the session cookie, or if you can develop without auth.
+			handles the session cookie or if you can develop without auth.
 		</p>
 		<p>
 			Either way you can forward requests to your backend for routes you don’t

@@ -6,7 +6,7 @@ build:
 
 preview: build
 	open http://localhost
-	nginx -p '' -c nginx-simulate-prod.conf
+	nginx -p '' -c nginx-preview.conf
 
 zip: build
 	open https://dash.cloudflare.com/217e3cb321d535a2b5a4cddb3b4439fc/pages/view/mockaton/deployments/new

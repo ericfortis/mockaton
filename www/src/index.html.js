@@ -5,7 +5,7 @@ const { shell, raw } = await import(`./_syntaxHighlight.js?${Date.now()}`)
 export default () => htmlTemplate({
 	head: `
 		<title>Mockaton</title>
-		<link rel="stylesheet" href="index.css" />
+		<link rel="stylesheet" href="/index.css" />
 	`,
 	body: `
 		<h1>${MockatonLogo()}</h1>
@@ -59,9 +59,9 @@ make docker
 		<h2 id="dashboard">Dashboard</h2>
 		<div class="RegionImg" data-max-width="761">
 			<picture>
-				<source media="(prefers-color-scheme: light)" srcset="assets/media/pic-for-readme.vp761x740.light.gold.png">
-				<source media="(prefers-color-scheme: dark)" srcset="assets/media/pic-for-readme.vp761x740.dark.gold.png">
-				<img alt="Mockaton Dashboard" src="assets/media/pic-for-readme.vp761x740.light.gold.png">
+				<source media="(prefers-color-scheme: light)" srcset="/assets/media/pic-for-readme.vp761x740.light.gold.png">
+				<source media="(prefers-color-scheme: dark)" srcset="/assets/media/pic-for-readme.vp761x740.dark.gold.png">
+				<img alt="Mockaton Dashboard" src="/assets/media/pic-for-readme.vp761x740.light.gold.png">
 			</picture>
 		</div>
 
@@ -79,7 +79,7 @@ make docker
 				<strong>Bulk Select</strong> mocks by comments
 				to simulate the complete states you need.
 				<div class="RegionImg" data-max-width="200">
-					<img src="assets/media/bulk-select.avif" alt="">
+					<img src="/assets/media/bulk-select.avif" alt="">
 				</div>
 			</li>
 		</ul>

@@ -14,13 +14,13 @@ const SERVER = OpenAPI.servers[0].url
 // language=html
 export default () => htmlTemplate({
 	head: `
-		<link rel="stylesheet" href="api.css" />
+		<link rel="stylesheet" href="/api.css" />
 		<title>Control API</title>
 	`,
 	body: `
 		<h1>
 			Control API
-			<a href="assets/openapi.json" target="_blank">OpenAPI Spec ↗</a>
+			<a href="/assets/openapi.json" target="_blank">OpenAPI Spec ↗</a>
 		</h1>
 
 		<form>

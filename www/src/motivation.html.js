@@ -63,7 +63,7 @@ export default () => htmlTemplate({
 		</p>
 
 		<div class="RegionImg" data-max-width="740">
-			<img src="assets/media/demo-app.png" alt="Mockaton Demo App Screenshot" />
+			<img src="/assets/media/demo-app.png" alt="Mockaton Demo App Screenshot" />
 		</div>
 
 

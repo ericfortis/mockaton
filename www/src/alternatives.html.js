@@ -25,6 +25,10 @@ export default () => htmlTemplate({
 				Reverse Proxies such as <a href="https://portswigger.net/burp" target="_blank">Burp</a>
 				are also handy for overriding responses. Not easy but very powerful.
 			</li>
+			<li><a href="https://www.mitmproxy.org/" target="_blank">mimtproxy</a></li>
+			<li><a href="https://httptoolkit.com/" target="_blank">HTTP Toolkit</a></li>
+			<li><a href="https://proxyman.com/">Proxyman</a></li>
+			<li><a href="https://www.charlesproxy.com/" target="_blank">Charles Proxy</a></li>
 		</ul>
 		
 
@@ -33,6 +37,7 @@ export default () => htmlTemplate({
 		</h2>
 		<ul>
 			<li><a href="https://github.com/wiremock/wiremock" target="_blank">Wire Mock</a></li>
+			<li><a href="https://www.telerik.com/fiddler" target="_blank">Fiddler</a></li>
 			<li><a href="https://github.com/typicode/json-server" target="_blank">JSON Server</a></li>
 			<li><a href="https://swagger.io" target="_blank">Swagger</a></li>
 			<li><a href="https://mockoon.com" target="_blank">Mockoon</a></li>

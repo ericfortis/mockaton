@@ -5,8 +5,12 @@ build:
 	./packaton.js production
 
 preview: build
-	open http://localhost
-	nginx -p '' -c nginx-preview.conf
+	open http://localhost:8989
+	docker run --rm \
+		-p 8989:80 \
+		-v $(PWD)/nginx-preview.conf:/etc/nginx/nginx.conf:ro \
+		-v $(PWD)/dist:/dist/:ro \
+		nginx:alpine
 
 zip: build
 	open https://dash.cloudflare.com/217e3cb321d535a2b5a4cddb3b4439fc/pages/view/mockaton/deployments/new

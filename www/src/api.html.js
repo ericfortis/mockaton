@@ -1,13 +1,8 @@
 // TODO https://www.rfc-editor.org/rfc/rfc9457.html
 
-import { join } from 'node:path'
-import { readFileSync } from 'node:fs'
-
-
 const { htmlTemplate } = await import(`./_htmlTemplate.js?${Date.now()}`)
 const { js, json } = await import(`./_syntaxHighlight.js?${Date.now()}`)
-const OpenAPI = JSON.parse(readFileSync(join(import.meta.dirname, './assets/openapi.json'), 'utf8'))
-// Not importing so it's not cached on hot-reload
+const OpenAPI = (await import(`./assets/openapi.json?${Date.now()}`, { with: { type: 'json' } })).default
 
 const SERVER = OpenAPI.servers[0].url
 
@@ -36,7 +31,7 @@ const mockaton = new Commander('${SERVER}')
 `).replace(SERVER, `<span class="ServerAddr">${SERVER}</span>`)}
 
 		<section class="Apis">${AllApis()}</section>
-		<script src="api.js"></script>
+		<script src="api.js" type="module"></script>
 	`
 })
 

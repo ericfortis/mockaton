@@ -4,9 +4,7 @@ const { htmlTemplate } = await import(`./_htmlTemplate.js?${Date.now()}`)
 export default () => htmlTemplate({
 	head: `<title>Motivation</title>`,
 	body: `
-		<h1 id="motivation-">
-			Motivation
-		</h1>
+		<h1>Motivation</h1>
 		<p>
 			Sometimes the flow we need is too difficult to reproduce from the actual backend.
 		</p>
@@ -34,10 +32,10 @@ export default () => htmlTemplate({
 		<h2>Generating Dynamic Responses</h2>
 		<p>
 			Sometimes I need to mock out filesystem resources I’m not allowed to
-			see (for instance, sensitive <abbr title="Personally Identifiable Information">PII</abbr> documents). In those cases, I put a
-			bunch of documents on <code>config.staticDir</code> and I read that
-			file structure with a <a href="/functional-mocks">Functional Mock</a>
-			and generate links to them.
+			see (for instance, sensitive <abbr title="Personally Identifiable
+			Information">PII</abbr> documents). In those cases, I put a bunch of documents
+			on <code>config.staticDir</code> and I read that file structure with a <a
+			href="/functional-mocks">Functional Mock</a> and generate links to them.
 		</p>
 
 		<p>

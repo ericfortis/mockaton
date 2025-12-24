@@ -24,7 +24,6 @@
 }())
 
 
-
 ;(function MaxRegionImageSize() {
 	for (const el of document.querySelectorAll('.RegionImg')) {
 		const width = el.getAttribute('data-max-width')

@@ -67,5 +67,5 @@ for (const k of Object.keys(expected))
 	expected[k] = k
 
 
-test('extracts', () => deepEqual(extractClassNames(cssRules), expected))
+test('extracts', () => deepEqual(extractClassNames({ cssRules }), expected))
 

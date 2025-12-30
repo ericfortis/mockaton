@@ -1,17 +1,17 @@
 import {
 	createElement as r,
 	createSvgElement as s,
-	className, restoreFocus, Defer, Fragment, adoptCSS
+	className, restoreFocus, Defer, Fragment, extractClassNames
 } from './dom-utils.js'
 
 import { store } from './app-store.js'
 import { parseFilename } from './Filename.js'
 import { HEADER_502 } from './ApiConstants.js'
 
-import CSS from './styles.css' with { type: 'css' }
+// Only used for IDE autocomplete
+import CSS from './styles.css' with { type: 'css' } 
+Object.assign(CSS, extractClassNames(CSS))
 
-
-adoptCSS(CSS)
 
 const FocusGroup = {
 	ProxyToggler: 0,
@@ -63,7 +63,7 @@ function Header() {
 		r('header', null,
 			r('a', {
 					className: CSS.Logo,
-					href: 'https://mockaton.com',
+					href: 'https://mockaton.com'
 				},
 				r('object', {
 					data: 'logo.svg',

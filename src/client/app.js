@@ -8,7 +8,8 @@ import { store } from './app-store.js'
 import { parseFilename } from './Filename.js'
 import { HEADER_502 } from './ApiConstants.js'
 
-// Only used for IDE autocomplete
+// CSS is injected in the HTML, not here.
+// It’s in an HTML link because it’s simpler to hot-reload
 import CSS from './styles.css' with { type: 'css' } 
 Object.assign(CSS, extractClassNames(CSS))
 

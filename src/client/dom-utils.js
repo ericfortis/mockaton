@@ -86,7 +86,7 @@ function selectorFor(elem) {
 //  - should the ensure there's a unique top-level classname on each file
 // TODO ignore rules in comments?
 export function adoptCSS(sheet) {
-	document.adoptedStyleSheets = [...document.adoptedStyleSheets, sheet]
+	document.adoptedStyleSheets.push(sheet)
 	Object.assign(sheet, extractClassNames(sheet.cssRules))
 }
 

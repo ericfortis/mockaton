@@ -1,67 +1,67 @@
 {
 	"/alternatives.html": {
-		"hash": "9GCWTqt66zSLE1x5KZWJlAZhbAc",
+		"hash": "af4202biYPkMKt79XBO2n8UNRlA",
 		"delta": 0,
-		"size": 20636
+		"size": 20995
 	},
 	"/api.html": {
-		"hash": "fsYbQU4FdoOnsvJ5smy0j-8bf6Y",
+		"hash": "yizcs2izb0w805DV1jLMx8u2JVM",
 		"delta": 0,
-		"size": 38443
+		"size": 38802
 	},
 	"/changelog.html": {
-		"hash": "r9h7iUbjs2dU2MG_aZp1Lr37GCI",
+		"hash": "li7-xerwZsjeWFJVnxG9f3ZbaJ8",
 		"delta": 0,
-		"size": 27830
+		"size": 28189
 	},
 	"/config.html": {
-		"hash": "rnsua7vm5HWi8mVl3qmVNutfisc",
+		"hash": "wop7qSiW5yRaq9aOKDsxXPyQQ24",
 		"delta": 0,
-		"size": 38501
+		"size": 38860
 	},
 	"/convention.html": {
-		"hash": "heR1ZWYVbyjD0Gm7yXPNNtPGiMQ",
+		"hash": "Gq5lmHHtjh_GlZ2D8ZPVd_HUjHE",
 		"delta": 0,
-		"size": 21544
+		"size": 21903
 	},
 	"/demo-server.html": {
-		"hash": "fjWJS0KewKhcutKX2EDByciYKWM",
+		"hash": "wrQRZmjCgJqHIVu3d06TBbSCgpc",
 		"delta": 0,
-		"size": 19311
+		"size": 19670
 	},
 	"/functional-mocks.html": {
-		"hash": "u2QtPjJEAybmFSGkzHBs6Fqyc1U",
+		"hash": "-vLd_VQhhdmJCI5icjE8GmbRw0U",
 		"delta": 0,
-		"size": 26161
+		"size": 26520
 	},
 	"/index.html": {
-		"hash": "P-wkcDyUMALeijqwbd_r6mqQubo",
+		"hash": "l4H8BDJY1ZGFOnSP0-z2wP_xNn8",
 		"delta": 0,
-		"size": 24669
+		"size": 25028
 	},
 	"/installation.html": {
-		"hash": "QKUdxc3g9dil7KP_75r0bbQUYvE",
+		"hash": "XJ6ewGtFuY8_Qq91iWykyVQBscU",
 		"delta": 0,
-		"size": 21171
+		"size": 21530
 	},
 	"/motivation.html": {
-		"hash": "nd1iY5EYpDiK37IBJOE1ejc4YQA",
+		"hash": "SYcAxV2Y5yXUN1yDG8I4zcYlbZQ",
 		"delta": 0,
-		"size": 20921
+		"size": 21280
 	},
 	"/plugins.html": {
-		"hash": "LYK8yxqzXu08j9j5O338R_U82r0",
+		"hash": "q_ckMncF2A04f2fMFxzexS1xi7c",
 		"delta": 0,
-		"size": 24655
+		"size": 25014
 	},
 	"/privacy-and-security.html": {
-		"hash": "Ob5cZZG62kaxVMmaTsIxYzW6JYA",
+		"hash": "9nNY_WJYi5fsRFk_3KaG4fiIGco",
 		"delta": 0,
-		"size": 19107
+		"size": 19466
 	},
 	"/scraping.html": {
-		"hash": "4-JBHcHUkdsM2SHa1wsdN5Hdhgk",
+		"hash": "IuTYPIcKo6czGaRxuuW5E4jt7zY",
 		"delta": 0,
-		"size": 19986
+		"size": 20345
 	}
 }

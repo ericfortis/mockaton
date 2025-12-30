@@ -11,7 +11,6 @@ import { Commander, Mockaton } from '../index.js'
 const testsDir = join(import.meta.dirname, 'tests')
 export const outputDir = join(import.meta.dirname, 'tests', 'macos')
 
-
 const mServer = await Mockaton({
 	...devConfig,
 	port: 0,

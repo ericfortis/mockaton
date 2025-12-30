@@ -11,13 +11,22 @@ export function testPixels(testFileName, options = {}) {
 		height: 800
 	}]
 	options.colorSchemes ??= ['light']
+	options.selector ??= 'body'
 	options.outputDir = outputDir
-	_testPixels(page, testFileName, mockaton.addr + '/mockaton', 'body', options)
+	_testPixels(page, testFileName, mockaton.addr + '/mockaton', options.selector, options)
 }
 
 
 export async function clickLinkByText(linkText) {
-	const selector = `a ::-p-text(${linkText})`
+	await clickBySelector(`a ::-p-text(${linkText})`)
+}
+
+export async function clickBySelector(selector) {
 	await page.waitForSelector(selector)
 	await page.locator(selector).click()
+}
+
+export async function getBySelector(selector) {
+	await page.waitForSelector(selector)
+	return page.$(selector)
 }

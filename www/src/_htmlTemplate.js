@@ -68,7 +68,7 @@ export const htmlTemplate = ({ head = '', body }) => `
 		<article>${body}</article>
 	</main>
 
-	<footer>&copy; 2025 Eric Fortis</footer>
+	<footer>&copy; 2026 Eric Fortis</footer>
 
 	<script src="/_assets/base.js"></script>
 	<script src="/_assets/nav.js"></script>

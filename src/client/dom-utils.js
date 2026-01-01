@@ -85,7 +85,11 @@ function selectorFor(elem) {
 //  - should the user pass a prefix?, or
 //  - should the ensure there's a unique top-level classname on each file
 // TODO ignore rules in comments?
-// TODO think about how to reload when a new class is added after referencing in js
+
+export function adoptCSS(sheet) {
+	document.adoptedStyleSheets.push(sheet)
+	Object.assign(sheet, extractClassNames(sheet))
+}
 
 export function extractClassNames({ cssRules }) {
 	// Class names must begin with _ or a letter, then it can have numbers and hyphens

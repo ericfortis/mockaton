@@ -1,18 +1,15 @@
 import {
 	createElement as r,
 	createSvgElement as s,
-	className, restoreFocus, Defer, Fragment, extractClassNames
+	className, restoreFocus, Defer, Fragment, adoptCSS
 } from './dom-utils.js'
 
 import { store } from './app-store.js'
 import { parseFilename } from './Filename.js'
 import { HEADER_502 } from './ApiConstants.js'
 
-// CSS is injected in the HTML, not here.
-// It’s in an HTML link because it’s simpler to hot-reload.
-// IOW, this is mainly for IDE autocomplete.
 import CSS from './styles.css' with { type: 'css' } 
-Object.assign(CSS, extractClassNames(CSS))
+adoptCSS(CSS)
 
 
 const FocusGroup = {

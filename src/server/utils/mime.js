@@ -11,9 +11,13 @@ import { UNKNOWN_MIME_EXT } from '../ApiConstants.js'
 const extToMime = {
 	'3g2': 'video/3gpp2',
 	'3gp': 'video/3gpp',
+	'3mf': 'model/3mf',
 	'7z': 'application/x-7z-compressed',
 	aac: 'audio/aac',
 	abw: 'application/x-abiword',
+	aif:  'audio/aiff',
+	aifc: 'audio/aiff',
+	aiff: 'audio/aiff',
 	apng: 'image/apng',
 	arc: 'application/x-freearc',
 	avi: 'video/x-msvideo',
@@ -28,12 +32,22 @@ const extToMime = {
 	csh: 'application/x-csh',
 	css: 'text/css',
 	csv: 'text/csv',
+	dae: 'model/vnd.collada+xml',
 	doc: 'application/msword',
 	docx: 'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+	drc: 'model/vnd.draco',
+	eml: 'message/rfc822',
 	eot: 'application/vnd.ms-fontobject',
 	epub: 'application/epub+zip',
+	exe: 'application/vnd.microsoft.portable-executable',
+	fbx: 'application/octet-stream',
+	flac: 'audio/flac',
 	gif: 'image/gif',
+	glb: 'model/gltf-binary',
+	gltf: 'model/gltf+json',
 	gz: 'application/gzip',
+	heic: 'image/heic',
+	heif: 'image/heif',
 	htm: 'text/html',
 	html: 'text/html',
 	ico: 'image/vnd.microsoft.icon',
@@ -44,13 +58,21 @@ const extToMime = {
 	js: 'application/javascript',
 	json: 'application/json',
 	jsonld: 'application/ld+json',
+	lz:   'application/x-lzip',
+	m4a: 'audio/mp4',
+	map: 'application/json',
+	md:  'text/markdown',
 	mid: 'audio/midi',
 	midi: 'audio/midi',
 	mjs: 'text/javascript',
+	mkv: 'video/x-matroska',
+	mov: 'video/quicktime',
 	mp3: 'audio/mpeg',
 	mp4: 'video/mp4',
 	mpeg: 'video/mpeg',
 	mpkg: 'application/vnd.apple.installer+xml',
+	mtl: 'text/plain',
+	obj: 'text/plain',
 	odp: 'application/vnd.oasis.opendocument.presentation',
 	ods: 'application/vnd.oasis.opendocument.spreadsheet',
 	odt: 'application/vnd.oasis.opendocument.text',
@@ -61,19 +83,24 @@ const extToMime = {
 	otf: 'font/otf',
 	pdf: 'application/pdf',
 	php: 'application/x-httpd-php',
+	ply: 'application/octet-stream',
 	png: 'image/png',
 	ppt: 'application/vnd.ms-powerpoint',
 	pptx: 'application/vnd.openxmlformats-officedocument.presentationml.presentation',
 	rar: 'application/vnd.rar',
 	rtf: 'application/rtf',
 	sh: 'application/x-sh',
+	stl: 'model/stl',
 	svg: 'image/svg+xml',
 	tar: 'application/x-tar',
 	tif: 'image/tiff',
 	ts: 'video/mp2t',
 	ttf: 'font/ttf',
 	txt: 'text/plain',
+	usd: 'model/vnd.usd',
+	usdz: 'model/vnd.usdz+zip',
 	vsd: 'application/vnd.visio',
+	wasm: 'application/wasm',
 	wav: 'audio/wav',
 	weba: 'audio/webm',
 	webm: 'video/webm',
@@ -85,9 +112,11 @@ const extToMime = {
 	xlsx: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
 	xml: 'application/xml',
 	xul: 'application/vnd.mozilla.xul+xml',
+	xz:   'application/x-xz',
 	yaml: 'application/yaml',
 	yml: 'application/yaml',
-	zip: 'application/zip'
+	zip: 'application/zip',
+	zst:  'application/zstd'
 }
 
 const mimeToExt = mapMimeToExt(extToMime)
@@ -105,8 +134,8 @@ export function mimeFor(filename) {
 }
 function extname(filename) {
 	const i = filename.lastIndexOf('.')
-	return i === -1 
-		? '' 
+	return i === -1
+		? ''
 		: filename.slice(i + 1)
 }
 

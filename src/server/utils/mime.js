@@ -15,7 +15,7 @@ const extToMime = {
 	'7z': 'application/x-7z-compressed',
 	aac: 'audio/aac',
 	abw: 'application/x-abiword',
-	aif:  'audio/aiff',
+	aif: 'audio/aiff',
 	aifc: 'audio/aiff',
 	aiff: 'audio/aiff',
 	apng: 'image/apng',
@@ -58,10 +58,10 @@ const extToMime = {
 	js: 'application/javascript',
 	json: 'application/json',
 	jsonld: 'application/ld+json',
-	lz:   'application/x-lzip',
+	lz: 'application/x-lzip',
 	m4a: 'audio/mp4',
 	map: 'application/json',
-	md:  'text/markdown',
+	md: 'text/markdown',
 	mid: 'audio/midi',
 	midi: 'audio/midi',
 	mjs: 'text/javascript',
@@ -112,11 +112,11 @@ const extToMime = {
 	xlsx: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
 	xml: 'application/xml',
 	xul: 'application/vnd.mozilla.xul+xml',
-	xz:   'application/x-xz',
+	xz: 'application/x-xz',
 	yaml: 'application/yaml',
 	yml: 'application/yaml',
 	zip: 'application/zip',
-	zst:  'application/zstd'
+	zst: 'application/zstd'
 }
 
 const mimeToExt = mapMimeToExt(extToMime)

@@ -1,62 +1,15 @@
 import {
 	createElement as r,
 	createSvgElement as s,
-	className, restoreFocus, Defer, Fragment
+	className, restoreFocus, Defer, Fragment, adoptCSS
 } from './dom-utils.js'
 
 import { store } from './app-store.js'
 import { parseFilename } from './Filename.js'
 import { HEADER_502 } from './ApiConstants.js'
 
-
-const CSS = {
-	BulkSelector: null,
-	CookieSelector: null,
-	DelayToggler: null,
-	ErrorToast: null,
-	FallbackBackend: null,
-	Field: null,
-	GlobalDelayField: null,
-	GroupByMethod: null,
-	InternalServerErrorToggler: null,
-	Logo: null,
-	MenuTrigger: null,
-	Method: null,
-	MockSelector: null,
-	NotFoundToggler: null,
-	PayloadViewer: null,
-	PreviewLink: null,
-	ProgressBar: null,
-	ProxyToggler: null,
-	ResetButton: null,
-	Resizer: null,
-	SaveProxiedCheckbox: null,
-	SettingsMenu: null,
-	Table: null,
-	TableHeading: null,
-	TableRow: null,
-
-	animIn: null,
-	canProxy: null,
-	checkboxBody: null,
-	chosen: null,
-	dittoDir: null,
-	leftSide: null,
-	nonDefault: null,
-	nonGroupedByMethod: null,
-	rightSide: null,
-	status4xx: null,
-
-	syntaxAttr: null,
-	syntaxAttrVal: null,
-	syntaxKey: null,
-	syntaxPunc: null,
-	syntaxStr: null,
-	syntaxTag: null,
-	syntaxVal: null
-}
-for (const k of Object.keys(CSS))
-	CSS[k] = k
+import CSS from './styles.css' with { type: 'css' }
+adoptCSS(CSS)
 
 
 const FocusGroup = {

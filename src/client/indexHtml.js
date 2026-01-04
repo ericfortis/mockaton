@@ -15,7 +15,6 @@ export const IndexHtml = hotReloadEnabled => `
   <meta charset="UTF-8">
   <base href="${API.dashboard}/">
   
-  <link rel="stylesheet" href="styles.css">
   <script type="module" src="app.js"></script>
   
   <link rel="preload" href="${API.state}" as="fetch" crossorigin>

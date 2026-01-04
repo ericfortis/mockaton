@@ -78,3 +78,28 @@ function selectorFor(elem) {
 	return path.reverse().join('>')
 }
 
+
+
+// Minimal implementation of CSS Modules in the browser
+// TODO think about avoiding clashes when using multiple files. e.g.:
+//  - should the user pass a prefix?, or
+//  - should the ensure there's a unique top-level classname on each file
+// TODO ignore rules in comments?
+
+export function adoptCSS(sheet) {
+	document.adoptedStyleSheets.push(sheet)
+	Object.assign(sheet, extractClassNames(sheet))
+}
+
+export function extractClassNames({ cssRules }) {
+	// Class names must begin with _ or a letter, then it can have numbers and hyphens
+	const reClassName = /(?:^|[\s,{>])&?\s*\.([a-zA-Z_][\w-]*)/g
+
+	const cNames = {}
+	let match
+	for (const rule of cssRules)
+		while (match = reClassName.exec(rule.cssText))
+			cNames[match[1]] = match[1]
+	return cNames
+}
+

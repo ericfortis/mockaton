@@ -1,10 +1,9 @@
 import { join } from 'node:path'
 import { EventEmitter } from 'node:events'
 import { watch, readdirSync } from 'node:fs'
+import { config } from './config.js'
 import { LONG_POLL_SERVER_TIMEOUT } from './ApiConstants.js'
 
-
-const DEV = process.env.NODE_ENV === 'development'
 
 export const CLIENT_DIR = join(import.meta.dirname, '../client')
 export const DASHBOARD_ASSETS = readdirSync(CLIENT_DIR)
@@ -28,7 +27,7 @@ export function watchDevSPA() {
 
 /** Realtime notify Dev UI changes */
 export function longPollDevClientHotReload(req, response) {
-	if (!DEV) {
+	if (!config.hotReload) {
 		response.notFound()
 		return
 	}

@@ -25,8 +25,6 @@ docker-stop:
 # Dev Stuff
 #
 
-export NODE_ENV = development
-
 start:
 	@node --watch-path=src/server src/server/cli.js
 
@@ -35,7 +33,6 @@ test:
 
 test-docker:
 	@docker run --rm --interactive --tty \
-		--env NODE_ENV=$$NODE_ENV \
 		--volume $(PWD):/app \
 		--workdir /app \
 		node:24-slim \

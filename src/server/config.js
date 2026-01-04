@@ -74,9 +74,6 @@ export const ConfigValidator = Object.freeze(validators)
 
 /** @param {Partial<Config>} opts */
 export function setup(opts) {
-	if (process.env.NODE_ENV !== 'development')
-		opts.hotReload = false
-	
 	if (opts.mocksDir)
 		opts.mocksDir = resolve(opts.mocksDir)
 

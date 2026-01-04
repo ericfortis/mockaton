@@ -9,9 +9,9 @@ function headerIs(response, header, value) {
 	equal(response.headers.get(header), value)
 }
 
-const FooDotCom = 'http://foo.com'
-const AllowedDotCom = 'http://allowed.com'
-const NotAllowedDotCom = 'http://not-allowed.com'
+const FooDotTest = 'https://foo.test'
+const AllowedDotTest = 'https://allowed.test'
+const NotAllowedDotTest = 'https://not-allowed.test'
 
 await describe('CORS', async () => {
 	let corsConfig = {}
@@ -87,7 +87,7 @@ await describe('CORS', async () => {
 				corsMethods: ['GET']
 			}
 			const p = await preflight({
-				[CH.Origin]: FooDotCom,
+				[CH.Origin]: FooDotTest,
 				[CH.AcRequestMethod]: 'GET'
 			})
 			headerIs(p, CH.AcAllowOrigin, null)
@@ -99,11 +99,11 @@ await describe('CORS', async () => {
 
 		await test('not in allowed origins', async () => {
 			corsConfig = {
-				corsOrigins: [AllowedDotCom],
+				corsOrigins: [AllowedDotTest],
 				corsMethods: ['GET']
 			}
 			const p = await preflight({
-				[CH.Origin]: NotAllowedDotCom,
+				[CH.Origin]: NotAllowedDotTest,
 				[CH.AcRequestMethod]: 'GET'
 			})
 			headerIs(p, CH.AcAllowOrigin, null)
@@ -114,14 +114,14 @@ await describe('CORS', async () => {
 
 		await test('origin and method match', async () => {
 			corsConfig = {
-				corsOrigins: [AllowedDotCom],
+				corsOrigins: [AllowedDotTest],
 				corsMethods: ['GET']
 			}
 			const p = await preflight({
-				[CH.Origin]: AllowedDotCom,
+				[CH.Origin]: AllowedDotTest,
 				[CH.AcRequestMethod]: 'GET'
 			})
-			headerIs(p, CH.AcAllowOrigin, AllowedDotCom)
+			headerIs(p, CH.AcAllowOrigin, AllowedDotTest)
 			headerIs(p, CH.AcAllowMethods, 'GET')
 			headerIs(p, CH.AcAllowCredentials, null)
 			headerIs(p, CH.AcAllowHeaders, null)
@@ -129,14 +129,14 @@ await describe('CORS', async () => {
 
 		await test('origin matches from multiple', async () => {
 			corsConfig = {
-				corsOrigins: [AllowedDotCom, FooDotCom],
+				corsOrigins: [AllowedDotTest, FooDotTest],
 				corsMethods: ['GET']
 			}
 			const p = await preflight({
-				[CH.Origin]: AllowedDotCom,
+				[CH.Origin]: AllowedDotTest,
 				[CH.AcRequestMethod]: 'GET'
 			})
-			headerIs(p, CH.AcAllowOrigin, AllowedDotCom)
+			headerIs(p, CH.AcAllowOrigin, AllowedDotTest)
 			headerIs(p, CH.AcAllowMethods, 'GET')
 			headerIs(p, CH.AcAllowCredentials, null)
 			headerIs(p, CH.AcAllowHeaders, null)
@@ -148,10 +148,10 @@ await describe('CORS', async () => {
 				corsMethods: ['GET']
 			}
 			const p = await preflight({
-				[CH.Origin]: FooDotCom,
+				[CH.Origin]: FooDotTest,
 				[CH.AcRequestMethod]: 'GET'
 			})
-			headerIs(p, CH.AcAllowOrigin, FooDotCom)
+			headerIs(p, CH.AcAllowOrigin, FooDotTest)
 			headerIs(p, CH.AcAllowMethods, 'GET')
 			headerIs(p, CH.AcAllowCredentials, null)
 			headerIs(p, CH.AcAllowHeaders, null)
@@ -164,10 +164,10 @@ await describe('CORS', async () => {
 				corsCredentials: true
 			}
 			const p = await preflight({
-				[CH.Origin]: FooDotCom,
+				[CH.Origin]: FooDotTest,
 				[CH.AcRequestMethod]: 'GET'
 			})
-			headerIs(p, CH.AcAllowOrigin, FooDotCom)
+			headerIs(p, CH.AcAllowOrigin, FooDotTest)
 			headerIs(p, CH.AcAllowMethods, 'GET')
 			headerIs(p, CH.AcAllowCredentials, 'true')
 			headerIs(p, CH.AcAllowHeaders, null)
@@ -181,10 +181,10 @@ await describe('CORS', async () => {
 				corsHeaders: ['content-type', 'my-header']
 			}
 			const p = await preflight({
-				[CH.Origin]: FooDotCom,
+				[CH.Origin]: FooDotTest,
 				[CH.AcRequestMethod]: 'GET'
 			})
-			headerIs(p, CH.AcAllowOrigin, FooDotCom)
+			headerIs(p, CH.AcAllowOrigin, FooDotTest)
 			headerIs(p, CH.AcAllowMethods, 'GET')
 			headerIs(p, CH.AcAllowCredentials, 'true')
 			headerIs(p, CH.AcAllowHeaders, 'content-type,my-header')
@@ -198,7 +198,7 @@ await describe('CORS', async () => {
 				corsMethods: ['GET']
 			}
 			const p = await request({
-				[CH.Origin]: NotAllowedDotCom
+				[CH.Origin]: NotAllowedDotTest
 			})
 			equal(p.status, 200)
 			headerIs(p, CH.AcAllowOrigin, null)
@@ -208,16 +208,16 @@ await describe('CORS', async () => {
 
 		await test('origin allowed', async () => {
 			corsConfig = {
-				corsOrigins: [AllowedDotCom],
+				corsOrigins: [AllowedDotTest],
 				corsMethods: ['GET'],
 				corsCredentials: true,
 				corsExposedHeaders: ['x-h1', 'x-h2']
 			}
 			const p = await request({
-				[CH.Origin]: AllowedDotCom
+				[CH.Origin]: AllowedDotTest
 			})
 			equal(p.status, 200)
-			headerIs(p, CH.AcAllowOrigin, AllowedDotCom)
+			headerIs(p, CH.AcAllowOrigin, AllowedDotTest)
 			headerIs(p, CH.AcAllowCredentials, 'true')
 			headerIs(p, CH.AcExposeHeaders, 'x-h1,x-h2')
 		})

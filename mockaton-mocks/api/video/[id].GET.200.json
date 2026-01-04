@@ -1,4 +1,4 @@
 {
 	"_": "This route has a dynamic param `[id]`",
-	"url": "https://example.com/api/user/123"
+	"url": "https://example.test/api/user/123"
 }

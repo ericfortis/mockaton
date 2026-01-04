@@ -10,13 +10,13 @@ export default function () {
 	let i = 0
 	for (; i <= MAX_HIGHLIGHTED_KVs; i++)
 		linksList[i] = [ // 7 syntax nodes 
-			'http://example.com/a',
-			'http://example.com/b'
+			'http://example.test/a',
+			'http://example.test/b'
 		]
 	for (; i <= MAX_HIGHLIGHTED_KVs + 100; i++)
 		linksList[i] = [
-			'http://example.com/should_not_syntax_highlight_a',
-			'http://example.com/should_not_syntax_highlight_b'
+			'http://example.test/should_not_syntax_highlight_a',
+			'http://example.test/should_not_syntax_highlight_b'
 		]
 	return JSON.stringify(linksList, null, 2)
 }

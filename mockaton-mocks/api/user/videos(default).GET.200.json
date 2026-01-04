@@ -1,11 +1,11 @@
 {
 	"videos": [
 		{
-			"url": "https://example.com/1",
+			"url": "https://example.test/1",
 			"verified": false
 		},
 		{
-			"url": "https://example.com/2",
+			"url": "https://example.test/2",
 			"verified": false
 		}
 	]

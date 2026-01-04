@@ -347,7 +347,7 @@
 		"/mockaton/fallback": {
 			"patch": {
 				"summary": "Set proxy fallback address",
-				"x-js-client-example": "await mockaton.setProxyFallback('http://example.com')",
+				"x-js-client-example": "await mockaton.setProxyFallback('http://example.test')",
 				"requestBody": {
 					"required": true,
 					"content": {
@@ -355,7 +355,7 @@
 							"schema": {
 								"type": "string",
 								"description": "URL",
-								"example": "https://example.com"
+								"example": "https://example.test"
 							}
 						}
 					}

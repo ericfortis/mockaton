@@ -39,7 +39,7 @@ const CUSTOM_EXT = 'custom_extension'
 const CUSTOM_MIME = 'custom_mime'
 const CUSTOM_HEADER_NAME = 'custom_header_name'
 const CUSTOM_HEADER_VAL = 'custom_header_val'
-const ALLOWED_ORIGIN = 'http://example.com'
+const ALLOWED_ORIGIN = 'https://example.test'
 
 const server = await Mockaton({
 	mocksDir,
@@ -405,9 +405,9 @@ describe('Proxy Fallback', () => {
 		})
 
 		test('sets fallback', async () => {
-			const r = await api.setProxyFallback('http://example.com')
+			const r = await api.setProxyFallback('https://example.test')
 			equal(r.status, 200)
-			equal((await fetchState()).proxyFallback, 'http://example.com')
+			equal((await fetchState()).proxyFallback, 'https://example.test')
 		})
 
 		test('unsets fallback', async () => {
@@ -462,7 +462,7 @@ describe('Proxy Fallback', () => {
 		})
 
 		test('200 when setting', async () => {
-			await api.setProxyFallback('https://example.com')
+			await api.setProxyFallback('https://example.test')
 			const r0 = await api.setRouteIsProxied(fx.method, fx.urlMask, true)
 			equal(r0.status, 200)
 			equal((await r0.json()).proxied, true)
@@ -481,7 +481,7 @@ describe('Proxy Fallback', () => {
 		test('unsets auto500', async () => {
 			const fx = new Fixture('unset-500-on-proxy.GET.200.txt')
 			await fx.sync()
-			await api.setProxyFallback('https://example.com')
+			await api.setProxyFallback('https://example.test')
 
 			const r0 = await api.toggle500(fx.method, fx.urlMask)
 			const b0 = await r0.json()
@@ -501,7 +501,7 @@ describe('Proxy Fallback', () => {
 	test('updating selected mock resets proxied flag', async () => {
 		const fx = new Fixture('select-resets-proxied.GET.200.txt')
 		await fx.sync()
-		await api.setProxyFallback('http://example.com')
+		await api.setProxyFallback('https://example.test')
 		const r0 = await api.setRouteIsProxied(fx.method, fx.urlMask, true)
 		equal((await r0.json()).proxied, true)
 
@@ -790,7 +790,7 @@ describe('500', () => {
 	test('toggling ON 500 unsets `proxied` flag', async () => {
 		const fx = new Fixture('proxied-to-500.GET.200.txt')
 		await fx.sync()
-		await api.setProxyFallback('http://example.com')
+		await api.setProxyFallback('https://example.test')
 		await api.setRouteIsProxied(fx.method, fx.urlMask, true)
 		await api.toggle500(fx.method, fx.urlMask)
 		equal((await fx.fetchBroker()).proxied, false)

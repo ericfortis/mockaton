@@ -181,7 +181,7 @@ my-static-dir<strong>/foo/bar.jpg</strong> <span class="green"> // Wins</span>
 
 		<h3><code>proxyFallback<span class="syntax_type">?: string</span></code></h3>
 		<p>
-			For example, <code>config.proxyFallback = ’http://example.com’</code>
+			For example, <code>config.proxyFallback = ’http://example.test</code>
 		</p>
 		<p>
 			Lets you specify a target server for serving routes you don’t have mocks for,

@@ -51,7 +51,8 @@ const server = await Mockaton({
 	logLevel: 'verbose',
 	corsOrigins: [ALLOWED_ORIGIN],
 	corsExposedHeaders: ['Content-Encoding'],
-	watcherEnabled: false,
+	watcherEnabled: false, // But we enable it at run-time
+	watcherDebounceMs: 0
 })
 after(() => server?.close())
 

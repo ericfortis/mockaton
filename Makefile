@@ -30,11 +30,8 @@ export NODE_ENV = development
 start:
 	@node --watch-path=src/server src/server/cli.js
 
-TEST_CMD = MOCKATON_WATCHER_DEBOUNCE_MS=0 \
-	node --test 'src/**/*.test.js'
-
 test:
-	$(TEST_CMD)
+	@node --test 'src/**/*.test.js'
 
 test-docker:
 	@docker run --rm --interactive --tty \
@@ -42,11 +39,10 @@ test-docker:
 		--volume $(PWD):/app \
 		--workdir /app \
 		node:24-slim \
-		sh -c "$(TEST_CMD)"
+		node --test 'src/**/*.test.js'
 
 coverage:
-	@MOCKATON_WATCHER_DEBOUNCE_MS=0 node \
-		--test --experimental-test-coverage \
+	@node --test --experimental-test-coverage \
 		--test-reporter=spec --test-reporter-destination=stdout \
 		--test-reporter=lcov --test-reporter-destination=lcov.info \
 		'src/server/**/*.test.js'

@@ -7,6 +7,7 @@ export const CSP = [
 ].join(';')
 
 
+// language=html
 export const IndexHtml = hotReloadEnabled => `
 <!DOCTYPE html>
 <html lang="en-US">

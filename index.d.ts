@@ -14,6 +14,7 @@ export interface Config {
 	staticDir?: string
 	ignore?: RegExp
 	watcherEnabled?: boolean
+	watcherDebounceMs?: number
 
 	host?: string,
 	port?: number

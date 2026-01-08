@@ -39,6 +39,7 @@ export const apiPatchReqs = new Map([
 	[API.reset, reinitialize],
 	[API.cookies, selectCookie],
 	[API.globalDelay, setGlobalDelay],
+	[API.globalDelayJitter, setGlobalDelayJitter],
 	
 	[API.fallback, setProxyFallback],
 	[API.collectProxied, setCollectProxied],
@@ -113,6 +114,17 @@ async function setGlobalDelay(req, response) {
 		response.unprocessable(`Expected non-negative integer for "delay"`)
 	else {
 		config.delay = delay
+		response.ok()
+	}
+}
+
+async function setGlobalDelayJitter(req, response) {
+	const jitter = await req.json()
+
+	if (!ConfigValidator.delayJitter(jitter))
+		response.unprocessable(`Expected 0 to 3 float for "delayJitter"`)
+	else {
+		config.delayJitter = jitter
 		response.ok()
 	}
 }

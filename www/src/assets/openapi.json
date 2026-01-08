@@ -319,6 +319,32 @@
 				}
 			}
 		},
+		"/mockaton/global-delay-jitter": {
+			"patch": {
+				"summary": "Set global delay jitter for all responses",
+				"x-js-client-example": "await mockaton.setGlobalDelayJitter(0.5)",
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"type": "float",
+								"description": "0 to 3 float percent",
+								"example": 0.5
+							}
+						}
+					}
+				},
+				"responses": {
+					"200": {
+						"description": "OK"
+					},
+					"422": {
+						"description": "Expected 0 to 3 float"
+					}
+				}
+			}
+		},
 		"/mockaton/cors": {
 			"patch": {
 				"summary": "Enable or disable CORS",

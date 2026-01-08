@@ -16,6 +16,7 @@ export const store = {
 	cookies: [],
 	comments: [],
 	delay: 0,
+	delayJitter: 0,
 
 	collectProxied: false,
 	proxyFallback: '',
@@ -81,6 +82,15 @@ export const store = {
 			const response = await api.setGlobalDelay(value)
 			if (!response.ok) throw response
 			store.delay = value
+		}
+		catch (error) { store.onError(error) }
+	},
+	
+	async setGlobalDelayJitter(value) {
+		try {
+			const response = await api.setGlobalDelayJitter(value)
+			if (!response.ok) throw response
+			store.delayJitter = value
 		}
 		catch (error) { store.onError(error) }
 	},

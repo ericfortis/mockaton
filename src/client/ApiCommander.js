@@ -23,6 +23,9 @@ export class Commander {
 
 	/** @returns {Promise<Response>} */
 	setGlobalDelay = delay => this.#patch(API.globalDelay, delay)
+	
+	/** @returns {Promise<Response>} */
+	setGlobalDelayJitter = jitterPct => this.#patch(API.globalDelayJitter, jitterPct)
 
 	/** @returns {Promise<Response>} */
 	setCorsAllowed = value => this.#patch(API.cors, value)

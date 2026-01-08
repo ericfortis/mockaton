@@ -51,17 +51,14 @@ export default () => htmlTemplate({
 
 		<h2>Seeing all Permutations</h2>
 		<p>
-			Comprehensive states help to spot inadvertent
-			regressions. See the color cards example below.
-		</p>
-		<p>
-			Also, these deterministic states simplify setting up screenshot tests (see <a
-			href="https://github.com/ericfortis/mockaton/tree/main/pixaton-tests"
+			Comprehensive states help to spot inadvertent regressions. See the color cards
+			example below. Also, these deterministic states simplify setting up screenshot
+			tests (see <a href="https://github.com/ericfortis/mockaton/tree/main/pixaton-tests"
 			target="_blank">pixaton-tests/</a> in the repo).
 		</p>
 
 		<div class="RegionImg" data-max-width="740">
-			<img src="/assets/media/demo-app.png" alt="Mockaton Demo App Screenshot" />
+			<img src="/assets/media/demo-app.avif" alt="Mockaton Demo App Screenshot" />
 		</div>
 
 

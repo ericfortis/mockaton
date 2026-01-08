@@ -44,10 +44,6 @@ There’s an implicit question mark on each sentence.
   files and changes from another client (Browser, or Commander).
 
 
-## Delay jitter in dashboard header?
-- perhaps in Menu (settings)
-- spinner should be non-deterministic when enabled
-
 ## 500 click-drag
 - Debounce preview
 - Only update the previewer if that route was being previewed

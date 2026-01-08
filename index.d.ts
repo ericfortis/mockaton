@@ -99,6 +99,7 @@ export interface State {
 	comments: string[]
 
 	delay: number
+	delayJitter: number
 
 	collectProxied: boolean
 	proxyFallback: string

@@ -309,7 +309,7 @@ describe('Cookie', () => {
 
 describe('Delay', () => {
 	describe('Set Global Delay', () => {
-		test('422 for invalid global delay value', async () => {
+		test('422 for invalid value', async () => {
 			const r = await api.setGlobalDelay('not-a-number')
 			equal(r.status, 422)
 			equal(await r.text(), 'Expected non-negative integer for "delay"')
@@ -318,6 +318,19 @@ describe('Delay', () => {
 			const r = await api.setGlobalDelay(150)
 			equal(r.status, 200)
 			equal((await fetchState()).delay, 150)
+		})
+	})
+
+	describe('Set Global Delay Jitter', () => {
+		test('422 for invalid value', async () => {
+			const r = await api.setGlobalDelayJitter('not-a-number')
+			equal(r.status, 422)
+			equal(await r.text(), 'Expected 0 to 3 float for "delayJitter"')
+		})
+		test('200 for valid value', async () => {
+			const r = await api.setGlobalDelayJitter(0.1)
+			equal(r.status, 200)
+			equal((await fetchState()).delayJitter, 0.1)
 		})
 	})
 

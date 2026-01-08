@@ -17,6 +17,8 @@ const CSS = {
 	FallbackBackend: null,
 	Field: null,
 	GlobalDelayField: null,
+	GlobalDelayJitterField: null,
+	GlobalDelayWrap: null,
 	GroupByMethod: null,
 	InternalServerErrorToggler: null,
 	Logo: null,
@@ -118,13 +120,17 @@ function Header() {
 					height: 22
 				})),
 			r('div', null,
-				GlobalDelayField(),
+				r('div', className(CSS.GlobalDelayWrap),
+					GlobalDelayField(),
+					GlobalDelayJitterField()),
 				BulkSelector(),
 				CookieSelector(),
 				ProxyFallbackField(),
 				ResetButton(),
-				SettingsMenuTrigger())))
+				SettingsMenuTrigger()
+			)))
 }
+
 
 function GlobalDelayField() {
 	function onChange() {
@@ -142,6 +148,7 @@ function GlobalDelayField() {
 		r('label', className(CSS.Field, CSS.GlobalDelayField),
 			r('span', null, t`Delay (ms)`),
 			r('input', {
+				name: 'delay',
 				type: 'number',
 				min: 0,
 				step: 100,
@@ -151,6 +158,38 @@ function GlobalDelayField() {
 				onWheel: [onWheel, { passive: true }]
 			})))
 }
+
+function GlobalDelayJitterField() {
+	function onChange() {
+		this.value = this.valueAsNumber.toFixed(0)
+		this.value = Math.max(0, this.valueAsNumber)
+		this.value = Math.min(300, this.valueAsNumber)
+		store.setGlobalDelayJitter(this.valueAsNumber / 100)
+	}
+	function onWheel(event) {
+		if (event.deltaY > 0)
+			this.stepUp()
+		else
+			this.stepDown()
+		clearTimeout(onWheel.timer)
+		onWheel.timer = setTimeout(onChange.bind(this), 300)
+	}
+	return (
+		r('label', className(CSS.Field, CSS.GlobalDelayJitterField),
+			r('span', null, t`Max Jitter %`),
+			r('input', {
+				name: 'delay-jitter',
+				type: 'number',
+				min: 0,
+				max: 300,
+				step: 10,
+				autocomplete: 'none',
+				value: (store.delayJitter * 100).toFixed(0),
+				onChange,
+				onWheel: [onWheel, { passive: true }]
+			})))
+}
+
 
 function BulkSelector() {
 	const { comments } = store
@@ -208,6 +247,7 @@ function ProxyFallbackField() {
 			r('label', null,
 				r('span', null, t`Fallback`),
 				r('input', {
+					name: 'fallback',
 					type: 'url',
 					autocomplete: 'none',
 					placeholder: t`Type backend address`,
@@ -221,6 +261,7 @@ function SaveProxiedCheckbox(ref) {
 	return (
 		r('label', className(CSS.SaveProxiedCheckbox),
 			r('input', {
+				name: 'save-proxied',
 				ref,
 				type: 'checkbox',
 				disabled: !store.canProxy,
@@ -268,6 +309,7 @@ function SettingsMenu(id) {
 			r('div', null,
 				r('label', className(CSS.GroupByMethod),
 					r('input', {
+						name: 'group-by-method',
 						ref: firstInputRef,
 						type: 'checkbox',
 						checked: store.groupByMethod,

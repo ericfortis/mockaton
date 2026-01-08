@@ -60,7 +60,7 @@ export default defineConfig({
   logLevel: 'normal',
 
   delay: 1200, // ms. Applies to routes with the Delay Checkbox "ON"
-  delayJitter: 0,
+  delayJitter: 0, // 0 to 3 float percent
 
   proxyFallback: '',
   collectProxied: false,

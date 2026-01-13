@@ -25,26 +25,6 @@ For example, for [/api/company/123](#), the filename could be:
 <br/>
 
 
-## Quick Start (Docker)
-This will spin up Mockaton with the sample directories
-included in this repo mounted on the container.
-
-_[mockaton-mocks/](./mockaton-mocks) and [mockaton-static-mocks/](./mockaton-static-mocks)_
-
-```sh
-git clone https://github.com/ericfortis/mockaton.git --depth 1
-cd mockaton
-make docker
-```
-Dashboard: http://localhost:2020/mockaton
-
-
-Test it:
-```shell
-curl localhost:2020/api/user
-```
-
-
 <br/>
 
 ## Dashboard
@@ -64,6 +44,28 @@ On the dashboard you can:
 
 Nonetheless, there’s a programmatic API, which is handy for
 setting up tests (see **Commander&nbsp;API** section below).
+
+
+
+## Quick Start (Docker)
+This will spin up Mockaton with the sample directories
+included in this repo mounted on the container.
+
+_[mockaton-mocks/](./mockaton-mocks) and [mockaton-static-mocks/](./mockaton-static-mocks)_
+
+```sh
+git clone https://github.com/ericfortis/mockaton.git --depth 1
+cd mockaton
+make docker
+```
+Dashboard: http://localhost:2020/mockaton
+
+
+Test it:
+```shell
+curl localhost:2020/api/user
+```
+
 
 
 ## License

@@ -8,7 +8,7 @@ for testing difficult to reproduce backend states.
 [![codecov](https://codecov.io/github/ericfortis/mockaton/graph/badge.svg?token=90NYLMMG1J)](https://codecov.io/github/ericfortis/mockaton)
 
 
-## [mockaton.com ↗](https://mockaton.com) 
+## [Documentation ↗](https://mockaton.com) 
 ## [Changelog ↗](https://mockaton.com/changelog)
 
 ## Overview

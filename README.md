@@ -1,11 +1,12 @@
 # Mockaton
 
+An HTTP mock server for simulating APIs with minimal setup &mdash; ideal
+for testing difficult to reproduce backend states.
+
 ![NPM Version](https://img.shields.io/npm/v/mockaton)
 [![Test](https://github.com/ericfortis/mockaton/actions/workflows/test.yml/badge.svg)](https://github.com/ericfortis/mockaton/actions/workflows/test.yml)
 [![codecov](https://codecov.io/github/ericfortis/mockaton/graph/badge.svg?token=90NYLMMG1J)](https://codecov.io/github/ericfortis/mockaton)
 
-An HTTP mock server for simulating APIs with minimal setup &mdash; ideal
-for testing difficult to reproduce backend states. 
 
 ## [mockaton.com ↗](https://mockaton.com) 
 ## [Changelog ↗](https://mockaton.com/changelog)

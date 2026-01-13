@@ -24,11 +24,7 @@ For example, for [/api/company/123](#), the filename could be:
 
 <br/>
 
-
-<br/>
-
 ## Dashboard
-
 
 <picture>
   <source media="(prefers-color-scheme: light)" srcset="https://raw.githubusercontent.com/ericfortis/mockaton/refs/heads/main/pixaton-tests/tests/macos/pic-for-readme.vp832x740.light.gold.png">
@@ -45,6 +41,7 @@ On the dashboard you can:
 Nonetheless, there’s a programmatic API, which is handy for
 setting up tests (see **Commander&nbsp;API** section below).
 
+<br/>
 
 
 ## Quick Start (Docker)

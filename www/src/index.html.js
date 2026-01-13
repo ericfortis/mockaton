@@ -60,9 +60,9 @@ make docker
 		<h2 id="dashboard">Dashboard</h2>
 		<div class="RegionImg" data-max-width="761">
 			<picture>
-				<source media="(prefers-color-scheme: light)" srcset="/assets/media/pic-for-readme.vp822x740.light.gold.avif">
-				<source media="(prefers-color-scheme: dark)" srcset="/assets/media/pic-for-readme.vp822x740.dark.gold.avif">
-				<img alt="Mockaton Dashboard" src="/assets/media/pic-for-readme.vp822x740.light.gold.avif">
+				<source media="(prefers-color-scheme: light)" srcset="/assets/media/pic-for-readme.vp832x740.light.gold.avif">
+				<source media="(prefers-color-scheme: dark)" srcset="/assets/media/pic-for-readme.vp832x740.dark.gold.avif">
+				<img alt="Mockaton Dashboard" src="/assets/media/pic-for-readme.vp832x740.light.gold.avif">
 			</picture>
 		</div>
 

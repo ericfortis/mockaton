@@ -6,7 +6,7 @@
 	},
 	"/api.html": {
 		"hash": "ta1KS7fuRRIYMD6fa2YUf7eKr6M",
-		"delta": 1054,
+		"delta": 0,
 		"size": 39858
 	},
 	"/changelog.html": {
@@ -15,9 +15,9 @@
 		"size": 28255
 	},
 	"/config.html": {
-		"hash": "Pt0Ty2b1Iz_qbU3b1gI1aKZ9V7E",
+		"hash": "I0wkpF4USK622QhEtbgfO0WYqVI",
 		"delta": 0,
-		"size": 39314
+		"size": 39374
 	},
 	"/convention.html": {
 		"hash": "jcQQLfsfvqzyHw8YkXkhAUMckbs",
@@ -35,7 +35,7 @@
 		"size": 26520
 	},
 	"/index.html": {
-		"hash": "0BBHDqaaSYc6Gi_jtfasFBMLL-8",
+		"hash": "FwIGI1TNZwsBcQQ-82E62OVGU-k",
 		"delta": 0,
 		"size": 25131
 	},

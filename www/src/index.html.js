@@ -16,7 +16,8 @@ export default () => htmlTemplate({
 
 		<h2>Convention</h2>
 		<p>
-			A given directory is scanned for filenames following a
+			With Mockaton there’s no need to write code for wiring up your mocks.
+			Instead, a given directory is scanned for filenames following a
 			convention similar to the URLs. For example, for <span
 			class="NullLink">/api/company/123</span>, the filename could be:
 		</p>
@@ -25,8 +26,9 @@ export default () => htmlTemplate({
 my-mocks-dir<strong>/api/company/[id]</strong>.GET.200.json
 `)}
 
+		<h2>Multiple Mock Variants</h2>
 		<p>
-			Each route can have multiple mock variants. You
+			Each route can have multiple mock files. You
 			can do that by adding comments in parentheses:
 		</p>
 		<pre>
@@ -35,8 +37,7 @@ api/user<strong>(at step 1.1)</strong>.GET.200.json
 </pre>
 
 		<p>
-			Similarly, you can use different response status
-			codes. Comments are optional in these cases:
+			Or, based on the response status code &mdash; comments are optional in these cases:
 		</p>
 		<pre>
 api/login(invalid attempt).POST.<strong>401</strong>.json
@@ -59,9 +60,9 @@ make docker
 		<h2 id="dashboard">Dashboard</h2>
 		<div class="RegionImg" data-max-width="761">
 			<picture>
-				<source media="(prefers-color-scheme: light)" srcset="/assets/media/pic-for-readme.vp761x740.light.gold.png">
-				<source media="(prefers-color-scheme: dark)" srcset="/assets/media/pic-for-readme.vp761x740.dark.gold.png">
-				<img alt="Mockaton Dashboard" src="/assets/media/pic-for-readme.vp761x740.light.gold.png">
+				<source media="(prefers-color-scheme: light)" srcset="/assets/media/pic-for-readme.vp832x740.light.gold.avif">
+				<source media="(prefers-color-scheme: dark)" srcset="/assets/media/pic-for-readme.vp832x740.dark.gold.avif">
+				<img alt="Mockaton Dashboard" src="/assets/media/pic-for-readme.vp832x740.light.gold.avif">
 			</picture>
 		</div>
 

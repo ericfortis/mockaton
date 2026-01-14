@@ -23,14 +23,14 @@ testPixels(import.meta.filename, {
 			if (el) el.style.width = '505px'
 		})
 		
-		// Avoid hover styles. Moving twice, because there two tests, so we
+		// Avoid hover styles. Moving twice, because there are two tests, so we
 		// need to move the pointer to a new location. Otherwise, it’s a noop.
 		await page.mouse.move(0, 0)
 		await page.mouse.move(1, 0)
 	},
 
 	viewports: [{
-		width: 761,
+		width: 832,
 		height: 740,
 		deviceScaleFactor: 1.5
 	}],

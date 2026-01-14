@@ -137,9 +137,11 @@ header {
 		align-self: end;
 		margin-right: 22px;
 		margin-bottom: 3px;
-		
-		object {
+
+		svg {
+			width: 120px;
 			pointer-events: none;
+			fill: var(--colorText);
 		}
 	}
 
@@ -151,23 +153,19 @@ header {
 		gap: 16px 8px;
 	}
 
-	@media (max-width: 760px) {
-		> img {
-			width: 100px;
-			align-self: center;
-		}
-
-		> div {
-			width: 400px;
-			.MenuTrigger {
-				margin-left: unset;
-			}
-		}
-	}
-	@media (max-width: 424px) {
-		> img {
+	@media (max-width: 830px) {
+		.Logo {
 			display: none;
 		}
+	}
+	@media (max-width: 690px) {
+		> div .MenuTrigger {
+			margin-left: unset;
+		}
+	}
+
+	.GlobalDelayWrap {
+		display: flex;
 	}
 
 	.Field {
@@ -202,10 +200,13 @@ header {
 		}
 
 		&.GlobalDelayField {
+			position: relative;
 			width: 76px;
 
-			input[type=number] {
+			input {
 				padding-right: 6px;
+				border-bottom-right-radius: 0;
+				border-top-right-radius: 0;
 			}
 
 			svg {
@@ -215,6 +216,25 @@ header {
 				stroke-width: 3px;
 				border-radius: 50%;
 			}
+
+			&:focus-within {
+				z-index: 100;
+			}
+		}
+
+		&.GlobalDelayJitterField {
+			width: 80px;
+			span {
+				margin-left: 4px;
+			}
+			input {
+				border-left: 2px solid transparent;
+				border-bottom-left-radius: 0;
+				border-top-left-radius: 0;
+			}
+			&:focus-within {
+				z-index: 100;
+			}
 		}
 
 		&.CookieSelector {
@@ -223,7 +243,7 @@ header {
 
 		&.FallbackBackend {
 			position: relative;
-			width: 160px;
+			width: 150px;
 
 			.SaveProxiedCheckbox {
 				position: absolute;

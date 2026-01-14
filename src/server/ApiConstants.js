@@ -12,6 +12,7 @@ export const API = {
 	delayStatic: MOUNT + '/delay-static',
 	fallback: MOUNT + '/fallback',
 	globalDelay: MOUNT + '/global-delay',
+	globalDelayJitter: MOUNT + '/global-delay-jitter',
 	proxied: MOUNT + '/proxied',
 	reset: MOUNT + '/reset',
 	select: MOUNT + '/select',

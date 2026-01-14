@@ -319,6 +319,32 @@
 				}
 			}
 		},
+		"/mockaton/global-delay-jitter": {
+			"patch": {
+				"summary": "Set global delay jitter for all responses",
+				"x-js-client-example": "await mockaton.setGlobalDelayJitter(0.5)",
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"type": "float",
+								"description": "0 to 3 float percent",
+								"example": 0.5
+							}
+						}
+					}
+				},
+				"responses": {
+					"200": {
+						"description": "OK"
+					},
+					"422": {
+						"description": "Expected 0 to 3 float"
+					}
+				}
+			}
+		},
 		"/mockaton/cors": {
 			"patch": {
 				"summary": "Enable or disable CORS",
@@ -347,7 +373,7 @@
 		"/mockaton/fallback": {
 			"patch": {
 				"summary": "Set proxy fallback address",
-				"x-js-client-example": "await mockaton.setProxyFallback('http://example.com')",
+				"x-js-client-example": "await mockaton.setProxyFallback('http://example.test')",
 				"requestBody": {
 					"required": true,
 					"content": {
@@ -355,7 +381,7 @@
 							"schema": {
 								"type": "string",
 								"description": "URL",
-								"example": "https://example.com"
+								"example": "https://example.test"
 							}
 						}
 					}

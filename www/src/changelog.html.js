@@ -9,6 +9,8 @@ export default () => htmlTemplate({
 	`,
 	body: `
 		<h1 id="changelog">Changelog</h1>
+		<p>11.4.0 dashboard: delay jitter field</p>
+		<p>11.3.0 website</p>
 		<p>11.2.0 dashboard: show Mockaton’s version</p>
 		<div class="RegionImg" data-max-width="200">
 			<img src="/assets/media/11.2.0-version.avif" alt="">

@@ -14,6 +14,7 @@ export interface Config {
 	staticDir?: string
 	ignore?: RegExp
 	watcherEnabled?: boolean
+	watcherDebounceMs?: number
 
 	host?: string,
 	port?: number
@@ -98,6 +99,7 @@ export interface State {
 	comments: string[]
 
 	delay: number
+	delayJitter: number
 
 	collectProxied: boolean
 	proxyFallback: string

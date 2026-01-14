@@ -44,10 +44,6 @@ There’s an implicit question mark on each sentence.
   files and changes from another client (Browser, or Commander).
 
 
-## Delay jitter in dashboard header?
-- perhaps in Menu (settings)
-- spinner should be non-deterministic when enabled
-
 ## 500 click-drag
 - Debounce preview
 - Only update the previewer if that route was being previewed
@@ -95,20 +91,6 @@ function hasCommand(cmd) {
 ## Browser Extension
 - Dark mode
 
-## Allow extensionless in `mocksDir` - NO
-- Currently, we have to add .GET.200.json,
-- `staticDir` already supports that ^
-
-## Extension Suffix
-- .headers sends adds to response
-- .openapi
-
-## OpenAPI
-- parsing its examples
-- displaying documentation (.openapi)
-  - perhaps instead using .js functions `export const doc`
-
-
 ## Plugins for `staticMocks`
 - content disposition
 - compression
@@ -118,16 +100,11 @@ function hasCommand(cmd) {
 - mock creator (save)
 - typescript definition creator
 
-
 ## Iframe Preview
 - Iframe to preview rendered HTML
 
 ## Static Demo Deployment Image
 - Lke [demo-app-vite/Dockerfile](demo-app-vite/Dockerfile)
-
-## DevTools
-- Think about what to do for /.well-known/appspecific/com.chrome.devtools.json
-
 
 ## Partial Content
 - 206 (reject, handle, or send in full?)
@@ -138,7 +115,6 @@ function hasCommand(cmd) {
 
 ## In Prod, auth
 - Check permission headers
-
 
 ## Vite
 - Plugin
@@ -186,3 +162,73 @@ location.reload()
 
 ### HTTP-only cookies
 Copy the Set-Cookie response header, or Cookie Header from the Network tab,.
+
+
+
+----
+
+
+# Rejected Ideas
+
+## Allow extensionless in `mocksDir`
+- Currently, we have to add .GET.200.json,
+- `staticDir` already supports that ^
+
+## .headers
+`.headers` extendions add them to the response
+Not needed because it can be done with function mocks
+
+## Linking shared files across server and client
+Currently, `ApiConstants.js` and `Filename.js` are
+duplicated in `/src/server` and `/src/client`.
+
+Problem. NPM ignores symlinks.
+
+Solution A: On npm scripts, `prepack` and `postpack` we could
+copy them over and link them back respectively. But this requires
+`ignore-scripts=false`, which might break installations on security conscious developers.
+
+
+Solution B: Similar to A, but instead of `npm publish` using a `publish.js` as shown below.
+I don’t like it because it’s non-standard (requires muscle memory) and
+it won’t work in rare cases if users want to npm install it from the repo such as:
+```sh
+npm install https://github.com/ericfortis/mockaton.git
+```
+
+Also, it won’t work for manually created tarballs using `npm pack`
+
+
+### publish.js
+```js
+#!/usr/bin/env node
+
+import fs from 'node:fs'
+import { resolve } from 'node:path'
+import { spawnSync } from 'node:child_process'
+
+const SharedFiles = [
+  [resolve('src/server/ApiConstants.js'), resolve('src/client/ApiConstants.js')],
+  [resolve('src/server/Filename.js'), resolve('src/client/Filename.js')]
+]
+
+prepack()
+const result = spawnSync('npm', ['publish'], { stdio: 'inherit' })
+if (result.status !== 0)
+  throw new Error('npm publish failed')
+postpack()
+
+function prepack() {
+  for (const [src, dst] of SharedFiles) {
+    fs.unlinkSync(dst)
+    fs.copyFileSync(src, dst)
+  }
+}
+
+function postpack() {
+  for (const [src, dst] of SharedFiles) {
+    fs.unlinkSync(dst)
+    fs.symlinkSync(src, dst)
+  }
+}
+```

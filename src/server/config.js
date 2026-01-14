@@ -21,6 +21,7 @@ const schema = {
 	staticDir: [resolve('mockaton-static-mocks'), optional(isDirectory)],
 	ignore: [/(\.DS_Store|~)$/, is(RegExp)],
 	watcherEnabled: [true, is(Boolean)],
+	watcherDebounceMs: [80, ms => Number.isInteger(ms) && ms >= 0],
 
 	host: ['127.0.0.1', is(String)],
 	port: [0, port => Number.isInteger(port) && port >= 0 && port < 2 ** 16], // 0 means auto-assigned
@@ -73,9 +74,6 @@ export const ConfigValidator = Object.freeze(validators)
 
 /** @param {Partial<Config>} opts */
 export function setup(opts) {
-	if (process.env.NODE_ENV !== 'development')
-		opts.hotReload = false
-	
 	if (opts.mocksDir)
 		opts.mocksDir = resolve(opts.mocksDir)
 

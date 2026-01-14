@@ -9,6 +9,13 @@ export default () => htmlTemplate({
 	`,
 	body: `
 		<h1 id="changelog">Changelog</h1>
+		<br/>
+		
+		<p><strong>12.0.0 breaking change.</strong> The Dashboard is no longer supported in Safari.
+			It’s supported in Chrome and Firefox 147+.
+		</p>
+		
+		<hr>
 		<p>11.4.0 dashboard: delay jitter field</p>
 		<p>11.3.0 website</p>
 		<p>11.2.0 dashboard: show Mockaton’s version</p>

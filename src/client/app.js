@@ -11,7 +11,6 @@ import { HEADER_502 } from './ApiConstants.js'
 import CSS from './styles.css' with { type: 'css' }
 adoptCSS(CSS)
 
-
 const FocusGroup = {
 	ProxyToggler: 0,
 	DelayToggler: 1,

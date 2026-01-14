@@ -1,4 +1,4 @@
-dev:
+start:
 	./packaton.js development 
 
 build: 

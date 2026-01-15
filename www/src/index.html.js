@@ -37,7 +37,7 @@ api/user<strong>(at step 1.1)</strong>.GET.200.json
 </pre>
 
 		<p>
-			Or, based on the response status code &mdash; comments are optional in these cases:
+			Or, based on the response status code. Comments are optional in these cases:
 		</p>
 		<pre>
 api/login(invalid attempt).POST.<strong>401</strong>.json

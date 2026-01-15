@@ -5,6 +5,7 @@
 
 @media (prefers-color-scheme: light) {
 	:root {
+		color-scheme: light;
 		--color4xxBackground: #ffedd1;
 		--colorAccent: #0b61ec;
 		--colorBackground: #fff;
@@ -27,6 +28,7 @@
 }
 @media (prefers-color-scheme: dark) {
 	:root {
+		color-scheme: dark;
 		--color4xxBackground: #68554a;
 		--colorAccent: #2495ff;
 		--colorBackground: #181818;
@@ -52,9 +54,6 @@ html,
 body {
 	overflow: hidden;
 	height: 100%;
-	padding: 0;
-	margin: 0;
-	background: var(--colorHeaderBackground);
 	font-size: 12px;
 }
 body {
@@ -72,7 +71,6 @@ body {
 	margin: 0;
 	font-family: inherit;
 	font-size: 100%;
-	outline: 0;
 	scrollbar-width: thin;
 }
 
@@ -88,6 +86,7 @@ a,
 select,
 button,
 input[type=checkbox] {
+	outline: 0;
 	cursor: pointer;
 }
 
@@ -100,6 +99,11 @@ input[type=checkbox]:active {
 
 a {
 	text-decoration: none;
+	color: var(--colorAccent);
+}
+
+input[type="number"]:not(:focus) {
+	-moz-appearance: textfield;
 }
 
 select {
@@ -128,7 +132,7 @@ select {
 
 header {
 	display: flex;
-	width: 100vw;
+	flex: 0 0 100%;
 	padding: 16px;
 	border-bottom: 1px solid var(--colorSecondaryActionBorder);
 	background: var(--colorHeaderBackground);
@@ -143,6 +147,10 @@ header {
 			pointer-events: none;
 			fill: var(--colorText);
 		}
+
+		@media (max-width: 830px) {
+			display: none;
+		}
 	}
 
 	> div {
@@ -151,16 +159,11 @@ header {
 		flex-wrap: wrap;
 		align-items: flex-end;
 		gap: 16px 8px;
-	}
 
-	@media (max-width: 830px) {
-		.Logo {
-			display: none;
-		}
-	}
-	@media (max-width: 690px) {
-		> div .MenuTrigger {
-			margin-left: unset;
+		@media (max-width: 690px) {
+			.MenuTrigger {
+				margin-left: unset;
+			}
 		}
 	}
 
@@ -192,11 +195,6 @@ header {
 			font-size: 11px;
 			background-color: var(--colorComboBoxHeaderBackground);
 			border-radius: var(--radius);
-		}
-
-		select:enabled:hover {
-			border-color: var(--colorSecondaryActionBorder);
-			background: var(--colorHover);
 		}
 
 		&.GlobalDelayField {
@@ -263,8 +261,12 @@ header {
 				input:enabled + .checkboxBody {
 					cursor: pointer;
 				}
+				input:disabled {
+					cursor: not-allowed;
+				}
 				input:disabled + .checkboxBody {
 					opacity: 0.8;
+					cursor: not-allowed;
 				}
 			}
 		}
@@ -329,10 +331,6 @@ header {
 		gap: 12px;
 		text-align: left;
 
-		a {
-			color: var(--colorAccent);
-		}
-
 		.GroupByMethod {
 			display: flex;
 			align-items: center;
@@ -356,10 +354,9 @@ main {
 		}
 
 		.leftSide {
-			min-width: 100%;
-			min-height: 50%;
-			max-height: 50%;
-			border: 0;
+			width: 100% !important;
+			height: 50%;
+			border-right: 0;
 		}
 	}
 
@@ -430,7 +427,6 @@ main {
 		}
 	}
 }
-
 @keyframes _kfRowIn {
 	to {
 		opacity: 1;
@@ -459,7 +455,6 @@ main {
 	padding: 6px 8px;
 	margin-left: 4px;
 	border-radius: var(--radius);
-	color: var(--colorAccent);
 	word-break: break-word;
 
 
@@ -651,9 +646,7 @@ main {
 
 
 .PayloadViewer {
-	display: flex;
 	height: 100%;
-	flex-direction: column;
 	padding-top: 16px;
 
 	> h2 {
@@ -750,7 +743,6 @@ main {
 		background: rgba(0, 0, 0, 0.5);
 	}
 }
-
 @keyframes _kfToastIn {
 	to {
 		opacity: 1;

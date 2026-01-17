@@ -10,7 +10,8 @@ export default () => htmlTemplate({
 	body: `
 		<h1 id="changelog">Changelog</h1>
 		<br/>
-		
+
+		<p>12.1.0 dashboard: layout redesign</p>
 		<p><strong>12.0.0 breaking change.</strong> The Dashboard is no longer supported in Safari.
 			It’s supported in Chrome and Firefox 147+.
 		</p>

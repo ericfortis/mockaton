@@ -1,8 +1,4 @@
-import {
-	createElement as r,
-	createSvgElement as s,
-	className, restoreFocus, Defer, Fragment, adoptCSS
-} from './dom-utils.js'
+import { createElement as r, createSvgElement as s, className, restoreFocus, Defer, Fragment, adoptCSS } from './dom-utils.js'
 
 import { store } from './app-store.js'
 import { parseFilename } from './Filename.js'
@@ -47,6 +43,9 @@ function App() {
 					style: { width: leftSideRef.width },
 					className: CSS.leftSide
 				},
+				r('div', className(CSS.SubToolbar),
+					GroupByMethod(),
+					BulkSelector()),
 				r('div', className(CSS.Table),
 					MockList(),
 					StaticFilesList())),
@@ -68,7 +67,6 @@ function Header() {
 				r('div', className(CSS.GlobalDelayWrap),
 					GlobalDelayField(),
 					GlobalDelayJitterField()),
-				BulkSelector(),
 				CookieSelector(),
 				ProxyFallbackField(),
 				ResetButton(),
@@ -136,30 +134,6 @@ function GlobalDelayJitterField() {
 }
 
 
-function BulkSelector() {
-	const { comments } = store
-	const firstOption = t`Pick Comment…`
-	function onChange() {
-		const value = this.value
-		this.value = firstOption // hack so it’s always selected
-		store.bulkSelectByComment(value)
-	}
-	const disabled = !comments.length
-	return (
-		r('label', className(CSS.Field),
-			r('span', null, t`Bulk Select`),
-			r('select', {
-					className: CSS.BulkSelector,
-					autocomplete: 'off',
-					disabled,
-					title: disabled ? t`No mock files have comments which are anything within parentheses on the filename.` : '',
-					onChange
-				},
-				r('option', { value: firstOption }, firstOption),
-				r('hr'),
-				comments.map(value => r('option', { value }, value)))))
-	// TODO For a11y, use `menu` instead of `select`
-}
 
 function CookieSelector() {
 	const { cookies } = store
@@ -234,34 +208,19 @@ function SettingsMenuTrigger() {
 				popovertarget: id,
 				className: CSS.MenuTrigger
 			},
-			SettingsIcon(),
+			InfoIcon(),
 			Defer(() => SettingsMenu(id))))
 }
 
 function SettingsMenu(id) {
-	const firstInputRef = {}
 	return (
 		r('menu', {
 				id,
 				popover: '',
-				className: CSS.SettingsMenu,
-				onToggle(event) {
-					if (event.newState === 'open')
-						firstInputRef.elem.focus()
-				}
+				className: CSS.SettingsMenu
 			},
 
 			r('div', null,
-				r('label', className(CSS.GroupByMethod),
-					r('input', {
-						name: 'group-by-method',
-						ref: firstInputRef,
-						type: 'checkbox',
-						checked: store.groupByMethod,
-						onChange: store.toggleGroupByMethod
-					}),
-					r('span', className(CSS.checkboxBody), t`Group by Method`)),
-
 				r('a', {
 					href: 'https://mockaton.com',
 					target: '_blank',
@@ -278,6 +237,47 @@ function SettingsMenu(id) {
 			)))
 }
 
+
+
+/** # Left Side */
+
+
+function BulkSelector() {
+	const { comments } = store
+	const firstOption = t`Pick Comment…`
+	function onChange() {
+		const value = this.value
+		this.value = firstOption // hack so it’s always selected
+		store.bulkSelectByComment(value)
+	}
+	const disabled = !comments.length
+	return (
+		r('label', className(CSS.BulkSelector),
+			r('span', null, t`Bulk Select`),
+			r('select', {
+					autocomplete: 'off',
+					disabled,
+					title: disabled ? t`No mock files have comments which are anything within parentheses on the filename.` : '',
+					onChange
+				},
+				r('option', { value: firstOption }, firstOption),
+				r('hr'),
+				comments.map(value => r('option', { value }, value)))))
+	// TODO For a11y, use `menu` instead of `select`
+}
+
+
+function GroupByMethod() {
+	return (
+		r('label', className(CSS.GroupByMethod),
+			r('input', {
+				name: 'group-by-method',
+				type: 'checkbox',
+				checked: store.groupByMethod,
+				onChange: store.toggleGroupByMethod
+			}),
+			r('span', className(CSS.checkboxBody), t`Group by Method`)))
+}
 
 
 /** # MockList */
@@ -540,7 +540,7 @@ function Resizer(ref) {
 	}
 
 	function onMove(event) {
-		const MIN_LEFT_WIDTH = 340
+		const MIN_LEFT_WIDTH = 350
 		raf = raf || requestAnimationFrame(() => {
 			ref.width = Math.max(initialWidth - (initialX - event.clientX), MIN_LEFT_WIDTH) + 'px'
 			ref.elem.style.width = ref.width
@@ -575,12 +575,18 @@ const payloadViewerCodeRef = {}
 function PayloadViewer() {
 	return (
 		r('div', className(CSS.PayloadViewer),
-			r('h2', { ref: payloadViewerTitleRef },
-				!store.hasChosenLink && t`Preview`),
+			RightToolbar(),
 			r('pre', null,
 				r('code', { ref: payloadViewerCodeRef },
 					!store.hasChosenLink && t`Click a link to preview it`))))
 }
+
+function RightToolbar() {
+	return r('div', className(CSS.SubToolbar),
+		r('h2', { ref: payloadViewerTitleRef },
+			!store.hasChosenLink && t`Preview`))
+}
+
 
 function PayloadViewerTitle(file, statusText) {
 	const { method, status, ext } = parseFilename(file)
@@ -731,10 +737,10 @@ function CloudIcon() {
 			s('path', { d: 'm6.1 9.1c2.8 0 5 2.3 5 5' })))
 }
 
-function SettingsIcon() {
+function InfoIcon() {
 	return (
 		s('svg', { viewBox: '0 0 24 24' },
-			s('path', { d: 'M19.14 12.94c.04-.3.06-.61.06-.94 0-.32-.02-.64-.07-.94l2.03-1.58c.18-.14.23-.41.12-.61l-1.92-3.32c-.12-.22-.37-.29-.59-.22l-2.39.96c-.5-.38-1.03-.7-1.62-.94l-.36-2.54c-.04-.24-.24-.41-.48-.41h-3.84c-.24 0-.43.17-.47.41l-.36 2.54c-.59.24-1.13.57-1.62.94l-2.39-.96c-.22-.08-.47 0-.59.22L2.74 8.87c-.12.21-.08.47.12.61l2.03 1.58c-.05.3-.09.63-.09.94s.02.64.07.94l-2.03 1.58c-.18.14-.23.41-.12.61l1.92 3.32c.12.22.37.29.59.22l2.39-.96c.5.38 1.03.7 1.62.94l.36 2.54c.05.24.24.41.48.41h3.84c.24 0 .44-.17.47-.41l.36-2.54c.59-.24 1.13-.56 1.62-.94l2.39.96c.22.08.47 0 .59-.22l1.92-3.32c.12-.22.07-.47-.12-.61zM12 15.6c-1.98 0-3.6-1.62-3.6-3.6s1.62-3.6 3.6-3.6 3.6 1.62 3.6 3.6-1.62 3.6-3.6 3.6' })))
+			s('path', { d: 'M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2m1 15h-2v-6h2zm0-8h-2V7h2z' })))
 }
 
 

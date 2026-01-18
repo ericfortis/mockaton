@@ -163,7 +163,7 @@ header {
 		gap: 16px 12px;
 
 		@media (max-width: 590px) {
-			.MenuTrigger {
+			.HelpLink {
 				margin-left: unset;
 			}
 		}
@@ -192,16 +192,13 @@ header {
 		}
 	}
 
-	.MenuTrigger {
+	.HelpLink {
 		width: 24px;
 		height: 24px;
 		flex-shrink: 0;
 		align-self: end;
-		margin-bottom: 2px;
 		margin-left: auto;
 		fill: var(--colorSecondaryAction);
-		background: transparent;
-		border-radius: 50%;
 
 		&:hover {
 			fill: var(--colorAccent);
@@ -310,27 +307,6 @@ header {
 	}
 }
 
-.SettingsMenu {
-	position: absolute;
-	top: 62px;
-	right: 10px;
-	left: auto;
-	border: 1px solid var(--colorSecondaryActionBorder);
-	color: var(--colorText);
-	border-radius: var(--radius);
-	box-shadow: var(--boxShadow1);
-	background: var(--colorHeaderBackground);
-
-	> div {
-		display: inline-flex;
-		flex-direction: column;
-		padding: 20px;
-		cursor: auto;
-		gap: 12px;
-		text-align: left;
-
-	}
-}
 
 main {
 	display: flex;

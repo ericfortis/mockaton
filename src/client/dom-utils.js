@@ -35,19 +35,6 @@ export function Fragment(...args) {
 }
 
 
-export function Defer(cb) {
-	const placeholder = document.createComment('')
-	deferred(() => placeholder.replaceWith(cb()))
-	return placeholder
-}
-
-export function deferred(cb) {
-	return window.requestIdleCallback
-		? requestIdleCallback(cb)
-		: setTimeout(cb, 100) // Safari
-}
-
-
 export function restoreFocus(cb) {
 	const focusQuery = selectorFor(document.activeElement)
 	cb()
@@ -94,7 +81,6 @@ export function adoptCSS(sheet) {
 export function extractClassNames({ cssRules }) {
 	// Class names must begin with _ or a letter, then it can have numbers and hyphens
 	const reClassName = /(?:^|[\s,{>])&?\s*\.([a-zA-Z_][\w-]*)/g
-
 	const cNames = {}
 	let match
 	for (const rule of cssRules)

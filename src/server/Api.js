@@ -12,6 +12,7 @@ import {
 } from './WatcherDevClient.js'
 import { longPollClientSyncVersion } from './Watcher.js'
 
+import pkgJSON from '../../package.json' with { type: 'json' }
 import { IndexHtml, CSP } from '../client/indexHtml.js'
 
 import { API } from './ApiConstants.js'
@@ -59,7 +60,7 @@ export const apiPatchReqs = new Map([
 /** # GET */
 
 function serveDashboard(_, response) {
-	response.html(IndexHtml(config.hotReload), CSP)
+	response.html(IndexHtml(config.hotReload, pkgJSON.version), CSP)
 }
 
 function serveStatic(f) {

@@ -25,8 +25,3 @@ export async function clickBySelector(selector) {
 	await page.waitForSelector(selector)
 	await page.locator(selector).click()
 }
-
-export async function getBySelector(selector) {
-	await page.waitForSelector(selector)
-	return page.$(selector)
-}

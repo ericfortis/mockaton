@@ -225,7 +225,7 @@ function SettingsMenu(id) {
 					href: 'https://mockaton.com',
 					target: '_blank',
 					rel: 'noopener noreferrer'
-				}, t`Website`),
+				}, t`Documentation`),
 
 				r('a', {
 					href: 'https://github.com/ericfortis/mockaton',

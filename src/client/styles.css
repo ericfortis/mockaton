@@ -384,7 +384,8 @@ main {
 	height: 42px;
 	align-items: center;
 	justify-content: space-between;
-	padding: 0 16px;
+	padding-right: 14px;
+	padding-left: 16px;
 	border-bottom: 1px solid var(--colorSecondaryActionBorder);
 	background: var(--colorHeaderBackground);
 }
@@ -414,6 +415,7 @@ main {
 .Table {
 	height: 100%;
 	padding: 16px;
+	padding-left: 12px;
 	user-select: none;
 	overflow-y: auto;
 
@@ -707,8 +709,9 @@ main {
 
 .ProgressBar {
 	position: relative;
-	top: -4px;
-	width: 100%;
+	top: -12px;
+	left: -16px;
+	width: calc(100% + 32px);
 	height: 2px;
 	background: var(--colorComboBoxHeaderBackground);
 

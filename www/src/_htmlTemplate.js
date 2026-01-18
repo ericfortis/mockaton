@@ -1,9 +1,11 @@
+import pkgJson from '../../package.json' with { type: 'json' }
+
 const pages = [
 	['/', 'Overview'],
 	['/motivation', 'Motivation'],
 	['/installation', 'Installation'],
-	['/config', 'Config'],
 	['/scraping', 'Scraping Mocks'],
+	['/config', 'Config'],
 	['/convention', 'Convention'],
 	['/functional-mocks', 'Functional Mocks'],
 	['/demo-server', 'Demo Server'],
@@ -11,7 +13,7 @@ const pages = [
 	['/plugins', 'Plugins'],
 	['/privacy-and-security', 'Privacy and Security'],
 	['/changelog', 'Changelog'],
-	['/alternatives', 'Alternatives'],
+	['/alternatives', 'Alternatives']
 ]
 
 // language=html
@@ -48,6 +50,7 @@ export const htmlTemplate = ({ head = '', body }) => `
 			${MockatonLogo()}
 		</a>
 		<div class="right">
+			<span class="Version">v${pkgJson.version}</span>
 			<a class="Github" href="https://github.com/ericfortis/mockaton" target="_blank" aria-label="Mockaton’s Github Repository">
 				${GithubIcon()}
 			</a>
@@ -59,7 +62,7 @@ export const htmlTemplate = ({ head = '', body }) => `
 
 	<nav>
 		<ul>
-			${pages.map(([url, title]) => 
+			${pages.map(([url, title]) =>
 				`<li><a href="${url}">${title}</a></li>`).join('\n')}
 		</ul>
 	</nav>

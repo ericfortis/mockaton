@@ -26,38 +26,8 @@ export default () => htmlTemplate({
 my-mocks-dir<strong>/api/company/[id]</strong>.GET.200.json
 `)}
 
-		<h2>Multiple Mock Variants</h2>
-		<p>
-			Each route can have multiple mock files. You
-			can do that by adding comments in parentheses:
-		</p>
-		<pre>
-api/user<strong>(at step 1.0)</strong>.GET.200.json
-api/user<strong>(at step 1.1)</strong>.GET.200.json
-</pre>
 
-		<p>
-			Or, based on the response status code. Comments are optional in these cases:
-		</p>
-		<pre>
-api/login(invalid attempt).POST.<strong>401</strong>.json
-api/login(locked out user).POST.<strong>423</strong>.json
-</pre>
-
-		<h2 id="quick-start-docker-">Quick Start <span class="normalWeight">(Docker)</span></h2>
-		<p>
-			This will spin up Mockaton with the sample directories
-			included in the repo mounted on the container.
-		</p>
-
-		${shell`
-git clone https://github.com/ericfortis/mockaton.git --depth 1
-cd mockaton
-make docker
-`}
-
-
-		<h2 id="dashboard">Dashboard</h2>
+		<h2>Dashboard</h2>
 		<div class="RegionImg" data-max-width="761">
 			<picture>
 				<source media="(prefers-color-scheme: light)" srcset="/assets/media/pic-for-readme.vp762x762.light.gold.avif">
@@ -88,6 +58,25 @@ make docker
 			On the other hand, there’s a <a href="/api">Programmatic
 			HTTP API</a>, which is useful for setting up automated tests.
 		</p>
+
+		<h2>Multiple Mock Variants</h2>
+		<p>
+			Each route can have multiple mock files. You
+			can do that by adding comments in parentheses:
+		</p>
+		<pre>
+api/user<strong>(at step 1.0)</strong>.GET.200.json
+api/user<strong>(at step 1.1)</strong>.GET.200.json
+</pre>
+
+		<p>
+			Or, based on the response status code. Comments are optional in these cases:
+		</p>
+		<pre>
+api/login(invalid attempt).POST.<strong>401</strong>.json
+api/login(locked out user).POST.<strong>423</strong>.json
+</pre>
+
 
 		</body>
 		</html>

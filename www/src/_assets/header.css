@@ -18,7 +18,7 @@ header {
 		padding-top: 12px;
 		padding-right: 16px;
 		padding-bottom: 3px;
-		padding-left: 16px;
+		padding-left: 15px;
 
 		&:hover {
 			fill: var(--accentLight);
@@ -35,6 +35,11 @@ header {
 		align-items: center;
 		padding-right: 10px;
 		gap: 16px;
+		
+		.Version {
+			color: #aaa;
+			font-size: 12px;
+		}
 
 		.Github {
 			width: 28px;

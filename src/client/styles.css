@@ -453,13 +453,13 @@ main {
 	position: relative;
 	left: -8px;
 	display: inline-block;
-	width: 100%;
+	width: auto;
 	min-width: 140px;
+	flex-grow: 1;
 	padding: 6px 8px;
 	margin-left: 4px;
 	border-radius: var(--radius);
 	word-break: break-word;
-
 
 	&:hover {
 		background: var(--colorHover);
@@ -476,11 +476,13 @@ main {
 
 
 .MockSelector {
+	min-width: 80px;
 	height: 24px;
 	padding-right: 20px;
 	padding-left: 8px;
 	text-overflow: ellipsis;
 	font-size: 12px;
+	text-align: right;
 
 	&.nonDefault {
 		font-weight: bold;

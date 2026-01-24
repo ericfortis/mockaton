@@ -17,8 +17,15 @@ mkdir -p         mockaton-mocks/api
 echo "[1,2,3]" > mockaton-mocks/api/foo.GET.200.json
 `}
 
+		<h2>Option 1: CLI</h2>
+		${shell`npx mockaton --port 4040`}
 
-		<h2>Option 1: NPM</h2>
+		<p>Test it:</p>
+		${shell`curl localhost:4040/api/foo`}
+
+
+
+		<h2>Option 2: NPM</h2>
 		${shell`npm install mockaton --save-dev`}
 
 		<p>In your <code>package.json</code>:</p>
@@ -28,12 +35,6 @@ echo "[1,2,3]" > mockaton-mocks/api/foo.GET.200.json
 }
 `}
 
-
-		<h2>Option 2: CLI</h2>
-		${shell`npx mockaton --port 4040`}
-
-		<p>Test it:</p>
-		${shell`curl localhost:4040/api/foo`}
 
 
 		<h2>Option 3: Programmatic Launch</h2>

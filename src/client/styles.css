@@ -7,16 +7,16 @@
 	:root {
 		color-scheme: light;
 		--color4xxBackground: #ffedd1;
-		--colorAccent: #0b61ec;
+		--colorAccent: #0059dd;
 		--colorBackground: #fff;
 		--colorComboBoxHeaderBackground: #fff;
 		--colorComboBoxBackground: #eee;
-		--colorHeaderBackground: #f5f5f5;
+		--colorHeaderBackground: #f2f2f3;
 		--colorSecondaryButtonBackground: #fcfcfc;
 		--colorSecondaryActionBorder: #e0e0e0;
 		--colorSecondaryAction: #666;
 		--colorDisabledMockSelector: #444;
-		--colorHover: rgba(119, 193, 255, 0.5);
+		--colorHover: rgba(119, 193, 255, 0.4);
 		--colorLabel: #555;
 		--colorLightRed: #ffe4ee;
 		--colorRed: #da0f00;
@@ -32,9 +32,9 @@
 		--color4xxBackground: #68554a;
 		--colorAccent: #2495ff;
 		--colorBackground: #181818;
-		--colorHeaderBackground: #111;
+		--colorHeaderBackground: #141414;
 		--colorComboBoxBackground: #2a2a2a;
-		--colorSecondaryButtonBackground: #2a2a2a;
+		--colorSecondaryButtonBackground: #2c2c2c;
 		--colorSecondaryActionBorder: #333;
 		--colorSecondaryAction: #aaa;
 		--colorComboBoxHeaderBackground: #222;
@@ -72,6 +72,7 @@ body {
 	font-family: inherit;
 	font-size: 100%;
 	scrollbar-width: thin;
+	corner-shape: squircle
 }
 
 a:focus-visible,
@@ -86,7 +87,6 @@ a,
 select,
 button,
 input[type=checkbox] {
-	outline: 0;
 	cursor: pointer;
 }
 
@@ -198,6 +198,7 @@ header {
 		flex-shrink: 0;
 		align-self: end;
 		margin-left: auto;
+		border-radius: 50%;
 		fill: var(--colorSecondaryAction);
 
 		&:hover {
@@ -457,6 +458,7 @@ main {
 	min-width: 140px;
 	flex-grow: 1;
 	padding: 6px 8px;
+	margin-right: -2px;
 	margin-left: 4px;
 	border-radius: var(--radius);
 	word-break: break-word;
@@ -476,7 +478,7 @@ main {
 
 
 .MockSelector {
-	min-width: 80px;
+	min-width: 58px;
 	height: 24px;
 	padding-right: 20px;
 	padding-left: 8px;
@@ -493,6 +495,7 @@ main {
 	}
 	&:disabled {
 		padding-right: 4px;
+		padding-left: 0;
 		border-color: transparent;
 		appearance: none;
 		background: transparent;

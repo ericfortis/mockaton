@@ -87,6 +87,7 @@ export default defineConfig({
 		`}
 
 
+		<br/>
 		<h2>Config Documentation</h2>
 
 		<h3><code>mocksDir<span class="syntax_type">?: string</span></code></h3>

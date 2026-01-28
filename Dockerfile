@@ -1,8 +1,7 @@
-FROM node:24-slim
+FROM node:24-alpine
 WORKDIR /app
 
-RUN npm init --init-type=module -y
-RUN npm install mockaton@11
+RUN npm install --no-save mockaton@12
 
 EXPOSE 2020
 CMD ["npx", "mockaton",  "--host", "0.0.0.0",  "--port", "2020"]

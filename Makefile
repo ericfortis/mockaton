@@ -6,7 +6,7 @@ docker-build:
 	@tar cf - Dockerfile | docker build --no-cache --tag mockaton -
 
 docker-run: docker-stop
-	@docker run --name mockaton \
+	@docker run -it --rm --name mockaton \
 		--publish 127.0.0.1:2020:2020 \
 		--volume $(PWD)/mockaton.config.js:/app/mockaton.config.js \
     --volume $(PWD)/mockaton-mocks:/app/mockaton-mocks \
@@ -35,7 +35,7 @@ test-docker:
 	@docker run --rm --interactive --tty \
 		--volume $(PWD):/app \
 		--workdir /app \
-		node:24-slim \
+		node:24-alpine \
 		node --test 'src/**/*.test.js'
 
 coverage:

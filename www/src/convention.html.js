@@ -21,16 +21,14 @@ export default () => htmlTemplate({
 		</h2>
 		<p>
 			The last three dots are reserved for the:
+			<span class="noWrap">1) HTTP Method</span>,
+			<span class="noWrap">2) Response Status Code</span>, and 
+			<span class="noWrap">3) File Extension.</span>
 		</p>
-		<ul>
-			<li>HTTP Method</li>
-			<li>Response Status Code</li>
-			<li>File Extension</li>
-		</ul>
 		<pre><code>api/user<span class="hljs-selector-class">.GET</span>.<span class="hljs-number">200</span>.json
 </code></pre>
 		<p>
-			You can also use <code>.empty</code> or <code>.unknown</code> if
+			You can use <code>.empty</code> or <code>.unknown</code> if
 			you don’t want a <code>Content-Type</code> header in the response.
 		</p>
 		<details>
@@ -67,10 +65,9 @@ api/foo.GET.200.json
 
 		<p>A filename can have many comments.</p>
 
-		
-		<h2 id="default-mock-for-a-route">
+		<h3 id="default-mock-for-a-route">
 			Default Mock for a Route
-		</h2>
+		</h3>
 		<p>
 			You can add the comment: <code>(default)</code>.
 			Otherwise, the first file in <strong>alphabetical order</strong> wins.

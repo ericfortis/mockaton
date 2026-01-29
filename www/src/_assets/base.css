@@ -461,3 +461,7 @@ video {
 .normalWeight {
 	font-weight: normal;
 }
+
+.noWrap {
+	white-space: nowrap;
+}

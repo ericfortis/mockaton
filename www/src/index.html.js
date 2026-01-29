@@ -1,5 +1,5 @@
 const { htmlTemplate, MockatonLogo } = await import(`./_htmlTemplate.js?${Date.now()}`)
-const { shell, raw } = await import(`./_syntaxHighlight.js?${Date.now()}`)
+const { js, raw, shell } = await import(`./_syntaxHighlight.js?${Date.now()}`)
 
 // language=html
 export default () => htmlTemplate({
@@ -13,18 +13,30 @@ export default () => htmlTemplate({
 			HTTP mock server for simulating APIs
 			— ideal for triggering difficult to reproduce backend states.
 		</p>
-
-		<h2>Convention</h2>
+		
+		<h2>Overview</h2>
 		<p>
-			With Mockaton there’s no need to write code for wiring up your mocks.
-			Instead, a given directory is scanned for filenames following a
+			A given directory is scanned for filenames following a
 			convention similar to the URLs. For example, for <span
 			class="NullLink">/api/company/123</span>, the filename could be:
 		</p>
-
+		
 		${raw(`
 my-mocks-dir<strong>/api/company/[id]</strong>.GET.200.json
 `)}
+
+
+		<h2>Quick Start (Docker)</h2>
+		<p>
+			This will spin up Mockaton with the sample directories
+			included in the repository mounted on the container.
+		</p>
+
+		${shell`
+git clone https://github.com/ericfortis/mockaton.git --depth 1
+cd mockaton
+make docker
+`}
 
 
 		<h2>Dashboard</h2>
@@ -59,7 +71,7 @@ my-mocks-dir<strong>/api/company/[id]</strong>.GET.200.json
 
 		<h2>Multiple Mock Variants</h2>
 		<p>
-			Each route can have multiple mock files. You can do that 
+			Each route can have multiple mock files. You can do that
 			by adding comments in parentheses to the filename:
 		</p>
 		<pre>
@@ -75,6 +87,21 @@ api/login(invalid attempt).POST.<strong>401</strong>.json
 api/login(locked out user).POST.<strong>423</strong>.json
 </pre>
 
+
+		<h2>
+			You can write JSON mocks in JavaScript or TypeScript
+		</h2>
+		<p>
+			An Object, Array, or String is sent as JSON
+		</p>
+
+		<p><code>api/foo.GET.200.js</code></p>
+		${js`
+export default { foo: 'bar' }
+`}
+		<p>
+			If you need more control, you can use <a href="/functional-mocks">Functional Mocks</a>.
+		</p>
 
 		</body>
 		</html>

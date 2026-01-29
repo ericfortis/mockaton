@@ -7,43 +7,33 @@ export default () => htmlTemplate({
 	body: `
 		<h1>Functional Mocks</h1>
 
-		<p>
-			You can write JSON mocks in JavaScript or TypeScript
-		</p>
 		<p><em>
-			Node 22.18+ or 23.6+ support TypeScript by default.
+			Node 22.18+ and 23.6+ support TypeScript by default.
 		</em></p>
 
 
-		<h2 id="option-a-an-object-array-or-string-is-sent-as-json">
-			Option A: An Object, Array, or String is sent as JSON
+		<h2>
+			You can write mocks in JavaScript or TypeScript
 		</h2>
 
 		<p><code>api/foo.GET.200.js</code></p>
 		${js`
-export default { foo: 'bar' }
+export default (request, response) => {
+  // These two lines are not needed but you can change their values
+  /* response.statusCode = 200 */  // default derived from filename
+  /* response.setHeader('Content-Type', 'application/json') */ // unconditional default
+  return JSON.stringify({ foo: 'bar' })
+}
 `}
-
-
-		<h2 id="option-b-function-mocks-async-or-sync-">
-			Option B: Function Mocks
-		</h2>
 		<p>
 			Return a <code>string | Buffer | Uint8Array</code>,
 			but <strong>don’t call</strong> <code>response.end()</code>.
-		</p>
-
-		${js`
-export default (request, response) =>
-  JSON.stringify({ foo: 'bar' })
-`}
-		<p>
 			<code>async</code> functions are supported.
 		</p>
 
-		<h3 id="custom-http-handlers">
+		<h2 id="custom-http-handlers">
 			Custom HTTP Handlers
-		</h3>
+		</h2>
 		<p>
 			For example, you can intercept requests to write to a database. Or act based on
 			some query string value, etc. In summary, you get Node’s <code>request</code>,
@@ -51,7 +41,7 @@ export default (request, response) =>
 			router, but in the handlers you return, instead of ending the response.
 		</p>
 
-		<h4>Examples</h4>
+		<h3>Examples</h3>
 
 		<p>
 			Imagine you have an initial list of colors, and
@@ -67,11 +57,6 @@ export default async function insertColor(request, response) {
   const color = await parseJSON(request)
   globalThis.newColorsDatabase ??= []
   globalThis.newColorsDatabase.push(color)
-
-  // These two lines are not needed but you can change their values
-  //   response.statusCode = 201 // default derived from filename
-  //   response.setHeader('Content-Type', 'application/json') // unconditional default
-
   return JSON.stringify({ msg: 'CREATED' })
 }
 `}

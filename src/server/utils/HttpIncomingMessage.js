@@ -69,7 +69,7 @@ export function hasControlChars(url) {
 
 export function decode(url) {
 	const candidate = decodeURIComponent(url)
-	return candidate === decodeURIComponent(candidate) 
-		? candidate 
+	return candidate === decodeURIComponent(candidate)
+		? candidate
 		: '' // reject multiple encodings
 }

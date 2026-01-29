@@ -29,7 +29,7 @@ export const apiGetReqs = new Map([
 
 	[API.state, getState],
 	[API.syncVersion, longPollClientSyncVersion],
-	
+
 	[API.watchHotReload, longPollDevClientHotReload],
 	[API.throws, () => { throw new Error('Test500') }]
 ])
@@ -41,17 +41,17 @@ export const apiPatchReqs = new Map([
 	[API.cookies, selectCookie],
 	[API.globalDelay, setGlobalDelay],
 	[API.globalDelayJitter, setGlobalDelayJitter],
-	
+
 	[API.fallback, setProxyFallback],
 	[API.collectProxied, setCollectProxied],
-	
+
 	[API.bulkSelect, bulkUpdateBrokersByCommentTag],
 
 	[API.delay, setRouteIsDelayed],
 	[API.select, selectMock],
 	[API.proxied, setRouteIsProxied],
 	[API.toggle500, toggleRoute500],
-	
+
 	[API.delayStatic, setStaticRouteIsDelayed],
 	[API.staticStatus, setStaticRouteStatusCode]
 ])
@@ -220,7 +220,7 @@ async function setRouteIsProxied(req, response) {
 
 	const broker = mockBrokersCollection.brokerByRoute(method, urlMask)
 	if (!broker)
-		response.unprocessable( `Route does not exist: ${method} ${urlMask}`)
+		response.unprocessable(`Route does not exist: ${method} ${urlMask}`)
 	else if (typeof proxied !== 'boolean')
 		response.unprocessable(`Expected boolean for "proxied"`)
 	else if (proxied && !config.proxyFallback)

@@ -5,13 +5,13 @@ export function removeTrailingSlash(url = '') {
 
 // https://stackoverflow.com/a/19328891
 export function download(filename, blob) {
-  const url = URL.createObjectURL(blob)
-  const a = createElement('a', {
-    href: url,
-    download: filename
-  })
-  a.click()
-  setTimeout(() => URL.revokeObjectURL(url), 2000)
+	const url = URL.createObjectURL(blob)
+	const a = createElement('a', {
+		href: url,
+		download: filename
+	})
+	a.click()
+	setTimeout(() => URL.revokeObjectURL(url), 2000)
 }
 
 

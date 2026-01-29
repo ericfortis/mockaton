@@ -7,7 +7,7 @@ testPixels(import.meta.filename, {
 		await mockaton.reset()
 		await mockaton.select('api/user/friends.GET.204.empty')
 	},
-	
+
 	async setup() {
 		await clickLinkByText('/api/user/friends')
 	}

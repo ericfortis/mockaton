@@ -31,7 +31,7 @@ export function longPollDevClientHotReload(req, response) {
 		response.notFound()
 		return
 	}
-	
+
 	function onDevChange(file) {
 		devClientWatcher.unsubscribe(onDevChange)
 		response.json(file)

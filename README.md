@@ -8,7 +8,7 @@ for testing difficult to reproduce backend states.
 [![codecov](https://codecov.io/github/ericfortis/mockaton/graph/badge.svg?token=90NYLMMG1J)](https://codecov.io/github/ericfortis/mockaton)
 
 
-## [Documentation ↗](https://mockaton.com) 
+## [Documentation ↗](https://mockaton.com)
 ## [Changelog ↗](https://mockaton.com/changelog)
 
 ## Overview
@@ -41,7 +41,8 @@ there’s a [Control API ↗](https://mockaton.com/api), which is handy for sett
 
 ## Quick Start (Docker)
 This will spin up Mockaton with the sample directories
-included in this repo mounted on the container ([mockaton-mocks/](./mockaton-mocks) and [mockaton-static-mocks/](./mockaton-static-mocks))
+included in this repo mounted on the container ([mockaton-mocks/](./mockaton-mocks)
+and [mockaton-static-mocks/](./mockaton-static-mocks))
 
 ```sh
 git clone https://github.com/ericfortis/mockaton.git --depth 1
@@ -50,13 +51,8 @@ make docker
 ```
 Dashboard: http://localhost:2020/mockaton
 
-
 Test it:
 ```shell
 curl localhost:2020/api/user
 ```
 
-
-
-## License
-MIT

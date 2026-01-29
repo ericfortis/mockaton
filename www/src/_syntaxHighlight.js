@@ -22,5 +22,5 @@ export const js = prismFactory('javascript')
 export const json = prismFactory('json')
 export const shell = prismFactory('shell')
 
-export const raw = txt => 
+export const raw = txt =>
 	`<pre><code>${txt.trim()}</code></pre>`

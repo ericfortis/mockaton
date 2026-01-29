@@ -6,7 +6,7 @@ export default () => htmlTemplate({
 	head: `<title>Plugins</title>`,
 	body: `
 		<h1>Plugins</h1>
-		
+
 		<p>
 			Plugins are for processing mocks before sending them. If no
 			regex matches the filename, the fallback plugin will read

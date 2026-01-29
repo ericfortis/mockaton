@@ -7,7 +7,7 @@ import { jwtCookie } from 'mockaton'
 
 export default {
 	port: 2020,
-	
+
 	mocksDir: join(import.meta.dirname, 'mockaton-mocks'),
 	staticDir: join(import.meta.dirname, 'mockaton-static-mocks'),
 
@@ -19,7 +19,7 @@ export default {
 		}),
 		'None': ''
 	},
-	
+
 	logLevel: 'verbose',
 	hotReload: true
 }

@@ -30,8 +30,8 @@
 			?.closest('li')
 			?.nextElementSibling
 			?.querySelector('a')
-		return next 
-			? [next.href, next.textContent] 
+		return next
+			? [next.href, next.textContent]
 			: []
 	}
 }())

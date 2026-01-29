@@ -21,7 +21,7 @@ window.addEventListener('DOMContentLoaded', function () {
 				|| href.startsWith('#')
 				|| href.startsWith('https://'))
 				continue
-			
+
 			anchor.addEventListener('mouseenter', onMouseEnter)
 			function onMouseEnter() {
 				const timer = setTimeout(() => {
@@ -31,7 +31,7 @@ window.addEventListener('DOMContentLoaded', function () {
 					el.href = anchor.href
 					document.head.append(el)
 				}, DELAY)
-				anchor.addEventListener('mouseleave', () => 
+				anchor.addEventListener('mouseleave', () =>
 					clearTimeout(timer), { once: true })
 			}
 		}

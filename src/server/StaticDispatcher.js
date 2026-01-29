@@ -24,7 +24,7 @@ export async function dispatchStatic(req, response) {
 			response.mockNotFound()
 			return
 		}
-		
+
 		logger.accessMock(req.url, 'static200')
 		if (req.headers.range)
 			await response.partialContent(req.headers.range, file)

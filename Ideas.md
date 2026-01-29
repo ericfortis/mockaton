@@ -188,7 +188,6 @@ Solution A: On npm scripts, `prepack` and `postpack` we could
 copy them over and link them back respectively. But this requires
 `ignore-scripts=false`, which might break installations on security conscious developers.
 
-
 Solution B: Similar to A, but instead of `npm publish` using a `publish.js` as shown below.
 I don’t like it because it’s non-standard (requires muscle memory) and
 it won’t work in rare cases if users want to npm install it from the repo such as:

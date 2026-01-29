@@ -79,7 +79,7 @@ nav {
 }
 
 .NextDocLink {
-	position:relative;
+	position: relative;
 	z-index: var(--zIndexNextDoc);
 	width: 100%;
 	padding: 16px;

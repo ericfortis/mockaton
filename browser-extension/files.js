@@ -31,7 +31,7 @@ export const files = new class {
 
 
 	#files = new Map()
-	
+
 	clearList() {
 		this.#files.clear()
 	}

@@ -22,7 +22,7 @@ testPixels(import.meta.filename, {
 			const el = document.querySelector('.leftSide')
 			if (el) el.style.width = '505px'
 		})
-		
+
 		// Avoid hover styles. Moving twice, because there are two tests, so we
 		// need to move the pointer to a new location. Otherwise, it’s a noop.
 		await page.mouse.move(0, 0)

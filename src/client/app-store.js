@@ -82,7 +82,7 @@ export const store = {
 		}
 		catch (error) { store.onError(error) }
 	},
-	
+
 	async setGlobalDelayJitter(value) {
 		try {
 			const response = await api.setGlobalDelayJitter(value)
@@ -160,7 +160,7 @@ export const store = {
 		r.setUrlMaskDittoed(store._dittoCache.get(r.key))
 		return r
 	},
-	
+
 	staticBrokersAsRows() {
 		const rows = Object.values(store.staticBrokers)
 			.map(b => new StaticBrokerRowModel(b))

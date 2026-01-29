@@ -87,7 +87,7 @@ export default defineConfig({
 		`}
 
 
-		<br/>
+		<br />
 		<h2>Config Documentation</h2>
 
 		<h3><code>mocksDir<span class="syntax_type">?: string</span></code></h3>
@@ -145,8 +145,8 @@ my-static-dir<strong>/foo/bar.jpg</strong> <span class="green"> // Wins</span>
 			Defaults to <code>80</code>ms
 		</p>
 		<p>
-			Slight delay for registering and unregistering mocks. For instance, so renaming a mock 
-			emits only once (not twice for "write" and "remove"). 
+			Slight delay for registering and unregistering mocks. For instance, so renaming a mock
+			emits only once (not twice for "write" and "remove").
 		</p>
 
 		<br />

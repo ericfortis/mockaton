@@ -14,10 +14,10 @@ import mockatonConfig from '../mockaton.config.js'
 
 
 const mockatonServer = await Mockaton({
-		...mockatonConfig,
-		port: 0,
-		onReady: () => {}
-	})
+	...mockatonConfig,
+	port: 0,
+	onReady: () => {}
+})
 const mockatonAddr = `http://${mockatonServer.address().address}:${mockatonServer.address().port}`
 export const mockaton = new Commander(mockatonAddr)
 

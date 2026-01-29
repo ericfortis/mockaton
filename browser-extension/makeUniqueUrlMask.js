@@ -36,7 +36,7 @@ const expected = [
 ]
 
 // import { deepEqual } from 'node:assert'
-function deepEqual (a, b) {
+function deepEqual(a, b) {
 	console.assert(JSON.stringify(a) === JSON.stringify(b))
 }
 

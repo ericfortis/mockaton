@@ -1,7 +1,7 @@
 # TODO
 
 - github link
-- images 
+- images
 - record nicer videos (changelog)
 - avif?
 - dark mode

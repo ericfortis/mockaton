@@ -7,13 +7,30 @@
 	<title>Mockaton</title>
 	<style>
 		body {
-			margin: 0;
 			padding: 40px;
+			margin: 0;
 			font-family: system-ui, sans-serif;
 		}
 
 		h2 {
 			margin-top: 60px;
+		}
+
+		p {
+			max-width: 600px;
+		}
+
+		.sideBySide {
+			display: flex;
+			gap: 20px;
+		}
+
+		a {
+			text-decoration: none;
+			color: #0367d6;
+			&:hover {
+				text-decoration: underline;
+			}
 		}
 	</style>
 
@@ -21,28 +38,46 @@
 <body>
 <h1>Welcome to Mockaton!</h1>
 <p>
-	This is a static mock (mockaton-static-mocks/index.html). For
-	example, you can compile your frontend SPA, and copy it to that
-	directory, and deploy Mockaton as a stand-alone demo server you can
-	control its API states on the dashboard.
+	This page is a static mock (<code>mockaton-static-mocks/index.html</code>). For
+	example, you can compile your frontend SPA, copy it to that directory, and deploy
+	Mockaton as a stand-alone demo server you can control its API states on the dashboard.
 </p>
 
 <h2>Dashboard</h2>
 <a href="/mockaton" target="_blank">/mockaton</a>
 
-<h2>/api/user</h2>
-<p>This is the response from a mock (mockaton-mocks/api/user.GET.200.json)</p>
+<h2><a href="/api/user" target="_blank">/api/user</a></h2>
+<p>This is the response from a mock (<code>mockaton-mocks/api/user.GET.200.json</code>)</p>
 <pre></pre>
 
 
 <h2>Static Files</h2>
-<p>This image was served from the static dir</p>
-<img src="media/picture.png" width="300" alt="demo-pic" />
+<div class="sideBySide">
+	<div>
+		<p>
+			This image was served from the static mocks directory.
+			<br />
+			<a href="/media/picture.png" target="_blank">/media/picture.png</a>
+		</p>
+		<img src="/media/picture.png" width="300" alt="demo-pic" />
+	</div>
+
+	<div>
+		<p>And this one from the non-static mocks directory.
+			<br />
+			<a href="/api/user/avatar" target="_blank">/api/user/avatar</a>
+		</p>
+		<img src="/api/user/avatar" width="300" alt="demo-pic" />
+	</div>
+</div>
 
 
 <h2>Partial content</h2>
-<p>Similarly, you can serve Partial Content assets from that static dir, for example for videos.</p>
-<video src="media/video.mp4" width="720" controls></video>
+<p>Similarly, you can serve Partial Content assets from that static dir, for example, for videos.
+	<br />
+	<a href="/media/video.mp4" target="_blank">/media/video.mp4</a>
+</p>
+<video src="/media/video.mp4" width="720" controls></video>
 
 
 <script>

@@ -11,6 +11,7 @@ import { HEADER_502 } from './ApiConstants.js'
 import CSS from './styles.css' with { type: 'css' }
 adoptCSS(CSS)
 
+// For keyboard navigating columns with up/down arrows
 const FocusGroup = {
 	ProxyToggler: 0,
 	DelayToggler: 1,
@@ -64,7 +65,8 @@ function Header() {
 		r('header', null,
 			r('a', {
 					className: CSS.Logo,
-					href: 'https://mockaton.com'
+					href: 'https://mockaton.com',
+					alt: t`Documentation`
 				},
 				Logo()),
 			r('div', null,
@@ -95,7 +97,6 @@ function GlobalDelayField() {
 		r('label', className(CSS.Field, CSS.GlobalDelayField),
 			r('span', null, t`Delay (ms)`),
 			r('input', {
-				name: 'delay',
 				type: 'number',
 				min: 0,
 				step: 100,
@@ -125,7 +126,6 @@ function GlobalDelayJitterField() {
 		r('label', className(CSS.Field, CSS.GlobalDelayJitterField),
 			r('span', null, t`Max Jitter %`),
 			r('input', {
-				name: 'delay-jitter',
 				type: 'number',
 				min: 0,
 				max: 300,
@@ -148,7 +148,9 @@ function CookieSelector() {
 			r('select', {
 				autocomplete: 'off',
 				disabled,
-				title: disabled ? t`No cookies specified in config.cookies` : '',
+				title: disabled 
+					? t`No cookies specified in config.cookies` 
+					: undefined,
 				onChange() { store.selectCookie(this.value) }
 			}, list.map(([value, selected]) =>
 				r('option', { value, selected }, value)))))
@@ -169,7 +171,6 @@ function ProxyFallbackField() {
 			r('label', null,
 				r('span', null, t`Fallback`),
 				r('input', {
-					name: 'fallback',
 					type: 'url',
 					autocomplete: 'none',
 					placeholder: t`Type backend address`,
@@ -183,7 +184,6 @@ function SaveProxiedCheckbox(ref) {
 	return (
 		r('label', className(CSS.SaveProxiedCheckbox),
 			r('input', {
-				name: 'save-proxied',
 				ref,
 				type: 'checkbox',
 				disabled: !store.canProxy,
@@ -232,7 +232,9 @@ function BulkSelector() {
 			r('select', {
 					autocomplete: 'off',
 					disabled,
-					title: disabled ? t`No mock files have comments which are anything within parentheses on the filename.` : '',
+					title: disabled 
+						? t`No mock files have comments which are anything within parentheses on the filename.` 
+						: undefined,
 					onChange
 				},
 				r('option', { value: firstOption }, firstOption),
@@ -246,7 +248,6 @@ function GroupByMethod() {
 	return (
 		r('label', className(CSS.GroupByMethod),
 			r('input', {
-				name: 'group-by-method',
 				type: 'checkbox',
 				checked: store.groupByMethod,
 				onChange: store.toggleGroupByMethod
@@ -284,11 +285,20 @@ function Row(row, i) {
 			},
 			store.canProxy && ProxyToggler(method, urlMask, row.proxied),
 
-			DelayRouteToggler(method, urlMask, row.delayed),
+			DelayToggler({
+				checked: row.delayed,
+				commit(checked) { store.setDelayed(method, urlMask, checked) },
+			}),
 
-			InternalServerErrorToggler(method, urlMask,
-				!row.proxied && row.status === 500, // checked
-				row.opts.length === 1 && row.status === 500), // disabled
+			StatusCodeToggler({
+				title: t`Internal Server Error`,
+				label: t`500`,
+				disabled: row.opts.length === 1 && row.status === 500,
+				checked: !row.proxied && row.status === 500,
+				onChange() {
+					store.toggle500(method, urlMask)
+				}
+			}),
 
 			!store.groupByMethod && r('span', className(CSS.Method), method),
 
@@ -352,30 +362,6 @@ function MockSelector(row) {
 }
 
 
-function DelayRouteToggler(method, urlMask, checked) {
-	return ClickDragToggler({
-		checked,
-		commit(checked) { store.setDelayed(method, urlMask, checked) },
-		focusGroup: FocusGroup.DelayToggler
-	})
-}
-
-function InternalServerErrorToggler(method, urlMask, checked, disabled) {
-	return (
-		r('label', {
-				className: CSS.InternalServerErrorToggler,
-				title: t`Internal Server Error`
-			},
-			r('input', {
-				type: 'checkbox',
-				disabled,
-				checked,
-				onChange() { store.toggle500(method, urlMask) },
-				'data-focus-group': FocusGroup.StatusToggler
-			}),
-			r('span', className(CSS.checkboxBody), t`500`)))
-}
-
 function ProxyToggler(method, urlMask, checked) {
 	return (
 		r('label', {
@@ -418,9 +404,23 @@ function StaticRow(row) {
 				...className(CSS.TableRow,
 					render.count > 1 && row.isNew && CSS.animIn)
 			},
-			DelayStaticRouteToggler(row.urlMask, row.delayed),
 
-			NotFoundToggler(row.urlMask, row.status === 404),
+			DelayToggler({
+				optClassName: store.canProxy && CSS.canProxy,
+				checked: row.delayed,
+				commit(checked) {
+					store.setDelayedStatic(row.urlMask, checked)
+				}
+			}),
+
+			StatusCodeToggler({
+				title: t`Not Found`,
+				label: t`404`,
+				checked: row.status === 404,
+				onChange() {
+					store.setStaticRouteStatus(row.urlMask, this.checked ? 404 : 200)
+				}
+			}),
 
 			!groupByMethod && r('span', className(CSS.Method), 'GET'),
 
@@ -434,36 +434,23 @@ function StaticRow(row) {
 				: tail)))
 }
 
-function DelayStaticRouteToggler(route, checked) {
-	return ClickDragToggler({
-		optClassName: store.canProxy && CSS.canProxy,
-		checked,
-		focusGroup: FocusGroup.DelayToggler,
-		commit(checked) {
-			store.setDelayedStatic(route, checked)
-		}
-	})
-}
-
-function NotFoundToggler(route, checked) {
+function StatusCodeToggler({ title, label, onChange, checked }) {
 	return (
 		r('label', {
-				className: CSS.NotFoundToggler,
-				title: t`Not Found`
+				title,
+				className: CSS.StatusCodeToggler
 			},
 			r('input', {
 				type: 'checkbox',
-				checked,
 				'data-focus-group': FocusGroup.StatusToggler,
-				onChange() {
-					store.setStaticRouteStatus(route, this.checked ? 404 : 200)
-				}
+				checked,
+				onChange
 			}),
-			r('span', className(CSS.checkboxBody), t`404`)))
+			r('span', className(CSS.checkboxBody), label)))
 }
 
 
-function ClickDragToggler({ checked, commit, focusGroup, optClassName }) {
+function DelayToggler({ checked, commit, optClassName }) {
 	function onPointerEnter(event) {
 		if (event.buttons === 1)
 			onPointerDown.call(this)
@@ -487,7 +474,7 @@ function ClickDragToggler({ checked, commit, focusGroup, optClassName }) {
 			},
 			r('input', {
 				type: 'checkbox',
-				'data-focus-group': focusGroup,
+				'data-focus-group': FocusGroup.DelayToggler,
 				checked,
 				onPointerEnter,
 				onPointerDown,

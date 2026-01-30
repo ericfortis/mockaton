@@ -1,4 +1,4 @@
-// @KeepSync src/server/Filename.js
+/** @KeepSync src/server/Filename.js */
 
 const reComments = /\(.*?\)/g // Anything within parentheses
 

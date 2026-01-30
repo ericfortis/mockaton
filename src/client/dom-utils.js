@@ -7,7 +7,8 @@ export function className(...args) {
 export function createElement(tag, props, ...children) {
 	const elem = document.createElement(tag)
 	for (const [k, v] of Object.entries(props || {}))
-		if (k === 'ref') v.elem = elem
+		if (v === undefined) continue
+		else if (k === 'ref') v.elem = elem
 		else if (k === 'style') Object.assign(elem.style, v)
 		else if (k.startsWith('on')) elem.addEventListener(k.slice(2).toLowerCase(), ...[v].flat())
 		else if (k in elem) elem[k] = v

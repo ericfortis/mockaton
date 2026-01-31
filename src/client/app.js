@@ -1,4 +1,8 @@
-import { createElement as r, createSvgElement as s, className, restoreFocus, Fragment, adoptCSS } from './dom-utils.js'
+import {
+	createElement as r,
+	createSvgElement as s,
+	className, restoreFocus, Fragment, adoptCSS
+} from './dom-utils.js'
 
 import { store } from './app-store.js'
 import { parseFilename } from './Filename.js'
@@ -194,13 +198,13 @@ function ResetButton() {
 
 
 function HelpLink() {
-	return r('a', {
+	return (
+		r('a', {
 			target: '_blank',
 			href: 'https://mockaton.com',
 			title: t`Documentation`,
 			className: CSS.HelpLink
-		},
-		HelpIcon())
+		}, HelpIcon()))
 }
 
 
@@ -338,8 +342,15 @@ function PreviewLink(method, urlMask, urlMaskDittoed, autofocus) {
 function MockSelector(row) {
 	return (
 		r('select', {
-			onChange() { store.selectFile(this.value) },
-			autocomplete: 'off',
+			onChange() {
+				store.selectFile(this.value)
+			},
+			onKeyDown(event) {
+				if (event.key === 'ArrowRight' || event.key === 'ArrowLeft')
+					event.preventDefault()
+				// Because in Firefox they change the select.option, and 
+				// we use those keys for spreadsheet-like navigation.
+			},
 			'aria-label': t`Mock Selector`,
 			disabled: row.opts.length < 2,
 			...className(
@@ -378,7 +389,9 @@ function StaticFilesList() {
 				className(CSS.TableHeading,
 					store.canProxy && CSS.canProxy,
 					!store.groupByMethod && CSS.nonGroupedByMethod),
-				store.groupByMethod ? t`Static GET` : t`Static`),
+				store.groupByMethod
+					? t`Static GET`
+					: t`Static`),
 			rows.map(StaticRow))
 }
 
@@ -406,7 +419,9 @@ function StaticRow(row) {
 				label: t`404`,
 				checked: row.status === 404,
 				onChange() {
-					store.setStaticRouteStatus(row.urlMask, this.checked ? 404 : 200)
+					store.setStaticRouteStatus(row.urlMask, this.checked
+						? 404
+						: 200)
 				}
 			}),
 
@@ -529,9 +544,10 @@ function PayloadViewer() {
 }
 
 function RightToolbar() {
-	return r('div', className(CSS.SubToolbar),
-		r('h2', { ref: payloadViewerTitleRef },
-			!store.hasChosenLink && t`Preview`))
+	return (
+		r('div', className(CSS.SubToolbar),
+			r('h2', { ref: payloadViewerTitleRef },
+				!store.hasChosenLink && t`Preview`)))
 }
 
 
@@ -561,7 +577,11 @@ const SPINNER_DELAY = 80
 function PayloadViewerProgressBar() {
 	return (
 		r('div', className(CSS.ProgressBar),
-			r('div', { style: { animationDuration: store.delay - SPINNER_DELAY + 'ms' } })))
+			r('div', {
+				style: {
+					animationDuration: store.delay - SPINNER_DELAY + 'ms'
+				}
+			})))
 }
 
 async function previewMock() {

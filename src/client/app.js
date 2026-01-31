@@ -149,8 +149,8 @@ function CookieSelector() {
 			r('select', {
 				autocomplete: 'off',
 				disabled,
-				title: disabled 
-					? t`No cookies specified in config.cookies` 
+				title: disabled
+					? t`No cookies specified in config.cookies`
 					: undefined,
 				onChange() { store.selectCookie(this.value) }
 			}, list.map(([value, selected]) =>
@@ -233,8 +233,8 @@ function BulkSelector() {
 			r('select', {
 					autocomplete: 'off',
 					disabled,
-					title: disabled 
-						? t`No mock files have comments which are anything within parentheses on the filename.` 
+					title: disabled
+						? t`No mock files have comments which are anything within parentheses on the filename.`
 						: undefined,
 					onChange
 				},

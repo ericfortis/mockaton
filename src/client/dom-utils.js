@@ -6,13 +6,14 @@ export function className(...args) {
 
 export function createElement(tag, props, ...children) {
 	const elem = document.createElement(tag)
-	for (const [k, v] of Object.entries(props || {}))
-		if (v === undefined) continue
-		else if (k === 'ref') v.elem = elem
-		else if (k === 'style') Object.assign(elem.style, v)
-		else if (k.startsWith('on')) elem.addEventListener(k.slice(2).toLowerCase(), ...[v].flat())
-		else if (k in elem) elem[k] = v
-		else elem.setAttribute(k, v)
+	if (props)
+		for (const [k, v] of Object.entries(props))
+			if (v === undefined) continue
+			else if (k === 'ref') v.elem = elem
+			else if (k === 'style') Object.assign(elem.style, v)
+			else if (k.startsWith('on')) elem.addEventListener(k.slice(2).toLowerCase(), ...[v].flat())
+			else if (k in elem) elem[k] = v
+			else elem.setAttribute(k, v)
 	elem.append(...children.flat().filter(Boolean))
 	return elem
 }
@@ -66,13 +67,6 @@ function selectorFor(elem) {
 	return path.reverse().join('>')
 }
 
-
-
-// Minimal implementation of CSS Modules in the browser
-// TODO think about avoiding clashes when using multiple files. e.g.:
-//  - should the user pass a prefix?, or
-//  - should the ensure there's a unique top-level classname on each file
-// TODO ignore rules in comments?
 
 export function adoptCSS(sheet) {
 	document.adoptedStyleSheets.push(sheet)

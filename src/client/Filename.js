@@ -22,14 +22,14 @@ export function includesComment(file, search) {
 
 export function validateFilename(file) {
 	const tokens = file.replace(reComments, '').split('.')
-	if (tokens.length < 4) 
+	if (tokens.length < 4)
 		return 'Invalid Filename Convention'
-	
+
 	const { status, method } = parseFilename(file)
-	if (!responseStatusIsValid(status)) 
+	if (!responseStatusIsValid(status))
 		return `Invalid HTTP Response Status: "${status}"`
-	
-	if (!METHODS.includes(method)) 
+
+	if (!METHODS.includes(method))
 		return `Unrecognized HTTP Method: "${method}"`
 }
 

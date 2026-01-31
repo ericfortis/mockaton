@@ -8,7 +8,8 @@ import { IncomingMessage } from './utils/HttpIncomingMessage.js'
 import { setCorsHeaders, isPreflight } from './utils/http-cors.js'
 import { BodyReaderError, hasControlChars } from './utils/HttpIncomingMessage.js'
 
-import { API } from './ApiConstants.js'
+import { API } from '../client/ApiConstants.js'
+
 import { config, setup } from './config.js'
 import { apiPatchReqs, apiGetReqs } from './Api.js'
 

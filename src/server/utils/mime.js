@@ -1,5 +1,5 @@
 import { config } from '../config.js'
-import { UNKNOWN_MIME_EXT } from '../ApiConstants.js'
+import { UNKNOWN_MIME_EXT } from '../../client/ApiConstants.js'
 
 
 // Generated with:

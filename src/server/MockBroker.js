@@ -1,5 +1,5 @@
-import { DEFAULT_MOCK_COMMENT } from './ApiConstants.js'
-import { includesComment, extractComments, parseFilename } from './Filename.js'
+import { DEFAULT_MOCK_COMMENT } from '../client/ApiConstants.js'
+import { parseFilename, includesComment, extractComments } from '../client/Filename.js'
 
 
 /**

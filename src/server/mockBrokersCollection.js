@@ -6,7 +6,7 @@ import { listFilesRecursively } from './utils/fs.js'
 import { cookie } from './cookie.js'
 import { MockBroker } from './MockBroker.js'
 import { config, isFileAllowed } from './config.js'
-import { parseFilename, validateFilename } from './Filename.js'
+import { parseFilename, validateFilename } from '../client/Filename.js'
 
 
 /**

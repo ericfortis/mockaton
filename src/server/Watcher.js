@@ -5,7 +5,7 @@ import { EventEmitter } from 'node:events'
 import {
 	HEADER_SYNC_VERSION,
 	LONG_POLL_SERVER_TIMEOUT
-} from './ApiConstants.js'
+} from '../client/ApiConstants.js'
 
 import { config } from './config.js'
 import { isFile, isDirectory } from './utils/fs.js'

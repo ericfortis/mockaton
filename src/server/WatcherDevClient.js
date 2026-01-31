@@ -1,8 +1,9 @@
 import { join } from 'node:path'
 import { EventEmitter } from 'node:events'
 import { watch, readdirSync } from 'node:fs'
+
 import { config } from './config.js'
-import { LONG_POLL_SERVER_TIMEOUT } from './ApiConstants.js'
+import { LONG_POLL_SERVER_TIMEOUT } from '../client/ApiConstants.js'
 
 
 export const CLIENT_DIR = join(import.meta.dirname, '../client')

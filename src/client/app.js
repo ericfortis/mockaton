@@ -24,6 +24,7 @@ const t = translation => translation[0]
 store.onError = onError
 store.render = render
 store.renderRow = renderRow
+
 store.fetchState()
 initRealTimeUpdates()
 initKeyboardNavigation()
@@ -172,7 +173,7 @@ function ProxyFallbackField() {
 				r('span', null, t`Fallback`),
 				r('input', {
 					type: 'url',
-					autocomplete: 'none',
+					name: 'fallback',
 					placeholder: t`Type backend address`,
 					value: store.proxyFallback,
 					onChange

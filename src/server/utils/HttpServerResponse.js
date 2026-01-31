@@ -3,7 +3,7 @@ import fs, { readFileSync } from 'node:fs'
 
 import { logger } from './logger.js'
 import { mimeFor } from './mime.js'
-import { HEADER_502 } from '../ApiConstants.js'
+import { HEADER_502 } from '../../client/ApiConstants.js'
 
 
 export class ServerResponse extends http.ServerResponse {

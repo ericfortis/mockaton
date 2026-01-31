@@ -1,6 +1,7 @@
-/** @KeepSync src/server/ApiConstants.js */
+/** # @SharedWithServer */
 
 const MOUNT = '/mockaton'
+
 export const API = {
 	dashboard: MOUNT,
 

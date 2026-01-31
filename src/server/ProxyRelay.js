@@ -6,7 +6,8 @@ import { write, isFile } from './utils/fs.js'
 import { readBody, BodyReaderError } from './utils/HttpIncomingMessage.js'
 
 import { config } from './config.js'
-import { makeMockFilename } from './Filename.js'
+
+import { makeMockFilename } from '../client/Filename.js'
 
 
 export async function proxy(req, response, delay) {

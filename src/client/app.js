@@ -18,17 +18,16 @@ store.onError = onError
 store.render = render
 store.renderRow = renderRow
 
-store.fetchState()
 initRealTimeUpdates()
 initKeyboardNavigation()
 
+let mounted = false
 function render() {
-	render.count++
 	restoreFocus(() => document.body.replaceChildren(...App()))
 	if (store.hasChosenLink)
 		previewMock()
+	mounted = true
 }
-render.count = 0
 
 
 const leftSideRef = {}
@@ -275,7 +274,7 @@ function Row(row, i) {
 		r('div', {
 				key: row.key,
 				...className(CSS.TableRow,
-					render.count > 1 && row.isNew && CSS.animIn)
+					mounted && row.isNew && CSS.animIn)
 			},
 			store.canProxy && ProxyToggler(method, urlMask, row.proxied),
 
@@ -403,7 +402,7 @@ function StaticRow(row) {
 		r('div', {
 				key: row.key,
 				...className(CSS.TableRow,
-					render.count > 1 && row.isNew && CSS.animIn)
+					mounted && row.isNew && CSS.animIn)
 			},
 
 			DelayToggler({
@@ -716,7 +715,7 @@ function HelpIcon() {
  * The version increments when a mock file is added, removed, or renamed.
  */
 function initRealTimeUpdates() {
-	let oldVersion = undefined // undefined so it waits until next event or timeout 
+	let oldVersion = -1
 	let controller = new AbortController()
 
 	longPoll()
@@ -732,21 +731,18 @@ function initRealTimeUpdates() {
 	async function longPoll() {
 		try {
 			const response = await store.getSyncVersion(oldVersion, controller.signal)
-			if (response.ok) {
-				if (ErrorToast.isOffline)
-					ErrorToast.close()
-
-				const version = await response.json()
-				const shouldSkip = oldVersion === undefined
-				if (oldVersion !== version) { // because it could be < or >
-					oldVersion = version
-					if (!shouldSkip)
-						store.fetchState()
-				}
-				longPoll()
-			}
-			else
+			if (!response.ok)
 				throw response.status
+
+			if (ErrorToast.isOffline)
+				ErrorToast.close()
+
+			const version = await response.json()
+			if (oldVersion !== version) { // because it could be < or >
+				oldVersion = version
+				store.fetchState()
+			}
+			longPoll()
 		}
 		catch (error) {
 			if (error !== '_hidden_tab_')

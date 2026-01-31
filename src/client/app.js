@@ -1,8 +1,4 @@
-import {
-	createElement as r,
-	createSvgElement as s,
-	className, restoreFocus, Fragment, adoptCSS
-} from './dom-utils.js'
+import { createElement as r, createSvgElement as s, className, restoreFocus, Fragment, adoptCSS } from './dom-utils.js'
 
 import { store } from './app-store.js'
 import { parseFilename } from './Filename.js'
@@ -11,13 +7,6 @@ import { HEADER_502 } from './ApiConstants.js'
 import CSS from './styles.css' with { type: 'css' }
 adoptCSS(CSS)
 
-// For keyboard navigating columns with up/down arrows
-const FocusGroup = {
-	ProxyToggler: 0,
-	DelayToggler: 1,
-	StatusToggler: 2,
-	PreviewLink: 3
-}
 
 const t = translation => translation[0]
 
@@ -338,7 +327,6 @@ function PreviewLink(method, urlMask, urlMaskDittoed, autofocus) {
 			...className(CSS.PreviewLink, isChosen && CSS.chosen),
 			href: urlMask,
 			autofocus,
-			'data-focus-group': FocusGroup.PreviewLink,
 			onClick
 		}, ditto
 			? [r('span', className(CSS.dittoDir), ditto), tail]
@@ -373,7 +361,6 @@ function ProxyToggler(method, urlMask, checked) {
 				type: 'checkbox',
 				checked,
 				onChange() { store.setProxied(method, urlMask, this.checked) },
-				'data-focus-group': FocusGroup.ProxyToggler
 			}),
 			CloudIcon()))
 }
@@ -429,7 +416,6 @@ function StaticRow(row) {
 				href: row.urlMask,
 				target: '_blank',
 				className: CSS.PreviewLink,
-				'data-focus-group': FocusGroup.PreviewLink
 			}, ditto
 				? [r('span', className(CSS.dittoDir), ditto), tail]
 				: tail)))
@@ -443,7 +429,6 @@ function StatusCodeToggler({ title, label, onChange, checked }) {
 			},
 			r('input', {
 				type: 'checkbox',
-				'data-focus-group': FocusGroup.StatusToggler,
 				checked,
 				onChange
 			}),
@@ -475,7 +460,6 @@ function DelayToggler({ checked, commit, optClassName }) {
 			},
 			r('input', {
 				type: 'checkbox',
-				'data-focus-group': FocusGroup.DelayToggler,
 				checked,
 				onPointerEnter,
 				onPointerDown,
@@ -753,45 +737,48 @@ function initRealTimeUpdates() {
 
 
 function initKeyboardNavigation() {
-	addEventListener('keydown', onKeyDown)
+	const columnSelectors = [
+		`.${CSS.TableRow} .${CSS.ProxyToggler} input`,
+		`.${CSS.TableRow} .${CSS.DelayToggler} input`,
+		`.${CSS.TableRow} .${CSS.StatusCodeToggler} input`,
+		`.${CSS.TableRow} .${CSS.PreviewLink}`,
+		// No .MockSelector because down/up arrows have native behavior on them
+	]
 
-	function onKeyDown(event) {
-		const pivot = document.activeElement
-		switch (event.key) {
+	const rowSelectors = [
+		...columnSelectors,
+		`.${CSS.TableRow} .${CSS.MockSelector}:enabled`,
+	]
+
+	addEventListener('keydown', function ({ key }) {
+		switch (key) {
 			case 'ArrowDown':
 			case 'ArrowUp': {
-				let fg = pivot.getAttribute('data-focus-group')
-				if (fg !== null) {
-					const offset = event.key === 'ArrowDown' ? +1 : -1
-					circularAdjacent(offset, allInFocusGroup(+fg), pivot).focus()
+				const pivot = document.activeElement
+				const sel = columnSelectors.find(s => pivot?.matches(s))
+				if (sel) {
+					const offset = key === 'ArrowDown' ? +1 : -1
+					const siblings = leftSideRef.elem.querySelectorAll(sel)
+					circularAdjacent(offset, siblings, pivot).focus()
 				}
 				break
 			}
 			case 'ArrowRight':
 			case 'ArrowLeft': {
-				if (pivot.hasAttribute('data-focus-group') || pivot.classList.contains(CSS.MockSelector)) {
-					const offset = event.key === 'ArrowRight' ? +1 : -1
-					rowFocusable(pivot, offset).focus()
+				const pivot = document.activeElement
+				const sel = rowSelectors.find(s => pivot?.matches(s))
+				if (sel) {
+					const offset = key === 'ArrowRight' ? +1 : -1
+					const siblings = pivot.closest(`.${CSS.TableRow}`).querySelectorAll(rowSelectors.join(','))
+					circularAdjacent(offset, siblings, pivot).focus()
 				}
 				break
 			}
 		}
-	}
+	})
 
-	function rowFocusable(el, step) {
-		const row = el.closest(`.${CSS.TableRow}`)
-		if (row) {
-			const focusables = Array.from(row.querySelectorAll('a, input, select:not(:disabled)'))
-			return circularAdjacent(step, focusables, el)
-		}
-	}
-
-	function allInFocusGroup(focusGroup) {
-		return Array.from(leftSideRef.elem.querySelectorAll(
-			`.${CSS.TableRow} [data-focus-group="${focusGroup}"]:is(input, a)`))
-	}
-
-	function circularAdjacent(step = 1, arr, pivot) {
+	function circularAdjacent(step, siblings, pivot) {
+		const arr = Array.from(siblings)
 		return arr[(arr.indexOf(pivot) + step + arr.length) % arr.length]
 	}
 }

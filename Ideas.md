@@ -43,11 +43,9 @@ There’s an implicit question mark on each sentence.
 - Currently, it's only for add/remove mock but not for static
   files and changes from another client (Browser, or Commander).
 
-
 ## 500 click-drag
 - Debounce preview
 - Only update the previewer if that route was being previewed
-
 
 ## Virtualized rendering
 Our syntaxJSON highlighter, after X number of nodes, we stop highlighting

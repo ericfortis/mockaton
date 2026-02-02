@@ -1,4 +1,4 @@
-export function className(...args) {
+export function classNames(...args) {
 	return {
 		className: args.filter(Boolean).join(' ')
 	}

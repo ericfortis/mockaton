@@ -44,11 +44,6 @@ There’s an implicit question mark on each sentence.
   files and changes from another client (Browser, or Commander).
 
 
-## 500 click-drag
-- Debounce preview
-- Only update the previewer if that route was being previewed
-
-
 ## Virtualized rendering
 Our syntaxJSON highlighter, after X number of nodes, we stop highlighting
 so it doesn't choke the browser. Think about some virtualized paging, that

@@ -1,7 +1,7 @@
 import {
 	createElement as r,
 	createSvgElement as s,
-	className, restoreFocus, Fragment, adoptCSS
+	classNames, restoreFocus, Fragment, adoptCSS
 } from './dom-utils.js'
 
 import { store } from './app-store.js'
@@ -23,7 +23,9 @@ initKeyboardNavigation()
 
 let mounted = false
 function render() {
-	restoreFocus(() => document.body.replaceChildren(...App()))
+	restoreFocus(() => {
+		document.body.replaceChildren(...App())
+	})
 	if (store.hasChosenLink)
 		previewMock()
 	mounted = true
@@ -41,10 +43,10 @@ function App() {
 					style: { width: leftSideRef.width },
 					className: CSS.leftSide
 				},
-				r('div', className(CSS.SubToolbar),
+				r('div', classNames(CSS.SubToolbar),
 					GroupByMethod(),
 					BulkSelector()),
-				r('div', className(CSS.Table),
+				r('div', classNames(CSS.Table),
 					MockList(),
 					StaticFilesList())),
 			r('div', { className: CSS.rightSide },
@@ -63,7 +65,7 @@ function Header() {
 				},
 				Logo()),
 			r('div', null,
-				r('div', className(CSS.GlobalDelayWrap),
+				r('div', classNames(CSS.GlobalDelayWrap),
 					GlobalDelayField(),
 					GlobalDelayJitterField()),
 				CookieSelector(),
@@ -87,7 +89,7 @@ function GlobalDelayField() {
 		onWheel.timer = setTimeout(onChange.bind(this), 300)
 	}
 	return (
-		r('label', className(CSS.Field, CSS.GlobalDelayField),
+		r('label', classNames(CSS.Field, CSS.GlobalDelayField),
 			r('span', null, t`Delay (ms)`),
 			r('input', {
 				type: 'number',
@@ -116,7 +118,7 @@ function GlobalDelayJitterField() {
 		onWheel.timer = setTimeout(onChange.bind(this), 300)
 	}
 	return (
-		r('label', className(CSS.Field, CSS.GlobalDelayJitterField),
+		r('label', classNames(CSS.Field, CSS.GlobalDelayJitterField),
 			r('span', null, t`Max Jitter %`),
 			r('input', {
 				type: 'number',
@@ -136,7 +138,7 @@ function CookieSelector() {
 	const disabled = cookies.length <= 1
 	const list = cookies.length ? cookies : [[t`None`, true]]
 	return (
-		r('label', className(CSS.Field, CSS.CookieSelector),
+		r('label', classNames(CSS.Field, CSS.CookieSelector),
 			r('span', null, t`Cookie`),
 			r('select', {
 				autocomplete: 'off',
@@ -160,7 +162,7 @@ function ProxyFallbackField() {
 			store.setProxyFallback(this.value.trim())
 	}
 	return (
-		r('div', className(CSS.Field, CSS.FallbackBackend),
+		r('div', classNames(CSS.Field, CSS.FallbackBackend),
 			r('label', null,
 				r('span', null, t`Fallback`),
 				r('input', {
@@ -175,7 +177,7 @@ function ProxyFallbackField() {
 
 function SaveProxiedCheckbox(ref) {
 	return (
-		r('label', className(CSS.SaveProxiedCheckbox),
+		r('label', classNames(CSS.SaveProxiedCheckbox),
 			r('input', {
 				ref,
 				type: 'checkbox',
@@ -183,7 +185,7 @@ function SaveProxiedCheckbox(ref) {
 				checked: store.collectProxied,
 				onChange() { store.setCollectProxied(this.checked) }
 			}),
-			r('span', className(CSS.checkboxBody), t`Save Mocks`)))
+			r('span', classNames(CSS.checkboxBody), t`Save Mocks`)))
 }
 
 
@@ -220,7 +222,7 @@ function BulkSelector() {
 	}
 	const disabled = !comments.length
 	return (
-		r('label', className(CSS.BulkSelector),
+		r('label', classNames(CSS.BulkSelector),
 			r('span', null, t`Bulk Select`),
 			r('select', {
 					autocomplete: 'off',
@@ -239,13 +241,13 @@ function BulkSelector() {
 
 function GroupByMethod() {
 	return (
-		r('label', className(CSS.GroupByMethod),
+		r('label', classNames(CSS.GroupByMethod),
 			r('input', {
 				type: 'checkbox',
 				checked: store.groupByMethod,
 				onChange: store.toggleGroupByMethod
 			}),
-			r('span', className(CSS.checkboxBody), t`Group by Method`)))
+			r('span', classNames(CSS.checkboxBody), t`Group by Method`)))
 }
 
 
@@ -256,10 +258,10 @@ function MockList() {
 		return r('div', null, t`No mocks found`)
 
 	if (store.groupByMethod)
-		return Object.keys(store.brokersByMethod).map(method => Fragment(
-			r('div', className(CSS.TableHeading, store.canProxy && CSS.canProxy),
-				method),
-			store.brokersAsRowsByMethod(method).map(Row)))
+		return Object.keys(store.brokersByMethod).map(method =>
+			Fragment(
+				r('div', classNames(CSS.TableHeading, store.canProxy && CSS.canProxy), method),
+				store.brokersAsRowsByMethod(method).map(Row)))
 
 	return store.brokersAsRowsByMethod('*').map(Row)
 }
@@ -273,27 +275,29 @@ function Row(row, i) {
 	return (
 		r('div', {
 				key: row.key,
-				...className(CSS.TableRow,
+				...classNames(CSS.TableRow,
 					mounted && row.isNew && CSS.animIn)
 			},
 			store.canProxy && ProxyToggler(method, urlMask, row.proxied),
 
 			DelayToggler({
 				checked: row.delayed,
-				commit(checked) { store.setDelayed(method, urlMask, checked) },
+				commit(checked) {
+					store.setDelayed(method, urlMask, checked)
+				},
 			}),
 
 			StatusCodeToggler({
 				title: t`Internal Server Error`,
-				label: t`500`,
+				body: t`500`,
 				disabled: row.opts.length === 1 && row.status === 500,
 				checked: !row.proxied && row.status === 500,
-				onChange() {
+				commit() {
 					store.toggle500(method, urlMask)
 				}
 			}),
 
-			!store.groupByMethod && r('span', className(CSS.Method), method),
+			!store.groupByMethod && r('span', classNames(CSS.Method), method),
 
 			PreviewLink(method, urlMask, row.urlMaskDittoed, i === 0),
 
@@ -301,38 +305,58 @@ function Row(row, i) {
 }
 
 function renderRow(method, urlMask) {
-	restoreFocus(() => {
-		unChooseOld()
-		const row = store.brokerAsRow(method, urlMask)
-		trFor(row.key).replaceWith(Row(row))
-		previewMock()
-	})
+	const row = store.brokerAsRow(method, urlMask)
+	const tr = leftSideRef.elem.querySelector(`.${CSS.TableRow}[key="${row.key}"]`)
+	mergeTableRow(tr, Row(row))
+}
 
-	function trFor(key) {
-		return leftSideRef.elem.querySelector(`.${CSS.TableRow}[key="${key}"]`)
+function mergeTableRow(oldRow, newRow) {
+	for (let i = 0; i < newRow.children.length; i++) {
+		const oldEl = oldRow.children[i]
+		const newEl = newRow.children[i]
+		switch (newEl.tagName) {
+			case 'LABEL': {
+				const oldInput = oldEl.querySelector('[type="checkbox"]')
+				const newInput = newEl.querySelector('[type="checkbox"]')
+				oldInput.checked = newInput.checked
+				oldInput.disabled = newInput.disabled
+				break
+			}
+			case 'A':
+				oldEl.className = newEl.className
+				break
+			case 'SELECT':
+				oldEl.disabled = newEl.disabled
+				oldEl.replaceChildren(...newEl.cloneNode(true).children)
+				break
+		}
+	}
+}
+
+
+
+function PreviewLink(method, urlMask, urlMaskDittoed, autofocus) {
+	function onClick(event) {
+		unChooseOld()
+		event.preventDefault()
+		store.previewLink(method, urlMask)
+		previewMock()
 	}
 	function unChooseOld() {
 		return leftSideRef.elem.querySelector(`a.${CSS.chosen}`)
 			?.classList.remove(CSS.chosen)
 	}
-}
 
-
-function PreviewLink(method, urlMask, urlMaskDittoed, autofocus) {
-	function onClick(event) {
-		event.preventDefault()
-		store.previewLink(method, urlMask)
-	}
 	const isChosen = store.chosenLink.method === method && store.chosenLink.urlMask === urlMask
 	const [ditto, tail] = urlMaskDittoed
 	return (
 		r('a', {
-			...className(CSS.PreviewLink, isChosen && CSS.chosen),
+			...classNames(CSS.PreviewLink, isChosen && CSS.chosen),
 			href: urlMask,
 			autofocus,
 			onClick
 		}, ditto
-			? [r('span', className(CSS.dittoDir), ditto), tail]
+			? [r('span', classNames(CSS.dittoDir), ditto), tail]
 			: tail))
 }
 
@@ -352,7 +376,7 @@ function MockSelector(row) {
 			},
 			'aria-label': t`Mock Selector`,
 			disabled: row.opts.length < 2,
-			...className(
+			...classNames(
 				CSS.MockSelector,
 				row.selectedIdx > 0 && CSS.nonDefault,
 				row.selectedFileIs4xx && CSS.status4xx)
@@ -362,17 +386,15 @@ function MockSelector(row) {
 
 
 function ProxyToggler(method, urlMask, checked) {
-	return (
-		r('label', {
-				className: CSS.ProxyToggler,
-				title: t`Proxy Toggler`
-			},
-			r('input', {
-				type: 'checkbox',
-				checked,
-				onChange() { store.setProxied(method, urlMask, this.checked) },
-			}),
-			CloudIcon()))
+	return ClickDragToggler({
+		className: CSS.ProxyToggler,
+		title: t`Proxy Toggler`,
+		checked,
+		commit(checked) {
+			store.setProxied(method, urlMask, checked)
+		},
+		body: CloudIcon()
+	})
 }
 
 
@@ -385,7 +407,7 @@ function StaticFilesList() {
 		? null
 		: Fragment(
 			r('div',
-				className(CSS.TableHeading,
+				classNames(CSS.TableHeading,
 					store.canProxy && CSS.canProxy,
 					!store.groupByMethod && CSS.nonGroupedByMethod),
 				store.groupByMethod
@@ -401,7 +423,7 @@ function StaticRow(row) {
 	return (
 		r('div', {
 				key: row.key,
-				...className(CSS.TableRow,
+				...classNames(CSS.TableRow,
 					mounted && row.isNew && CSS.animIn)
 			},
 
@@ -415,42 +437,48 @@ function StaticRow(row) {
 
 			StatusCodeToggler({
 				title: t`Not Found`,
-				label: t`404`,
+				body: t`404`,
 				checked: row.status === 404,
-				onChange() {
-					store.setStaticRouteStatus(row.urlMask, this.checked
+				commit(checked) {
+					store.setStaticRouteStatus(row.urlMask, checked
 						? 404
 						: 200)
 				}
 			}),
 
-			!groupByMethod && r('span', className(CSS.Method), 'GET'),
+			!groupByMethod && r('span', classNames(CSS.Method), 'GET'),
 
 			r('a', {
 				href: row.urlMask,
 				target: '_blank',
 				className: CSS.PreviewLink,
 			}, ditto
-				? [r('span', className(CSS.dittoDir), ditto), tail]
+				? [r('span', classNames(CSS.dittoDir), ditto), tail]
 				: tail)))
 }
 
-function StatusCodeToggler({ title, label, onChange, checked }) {
-	return (
-		r('label', {
-				title,
-				className: CSS.StatusCodeToggler
-			},
-			r('input', {
-				type: 'checkbox',
-				checked,
-				onChange
-			}),
-			r('span', className(CSS.checkboxBody), label)))
+function StatusCodeToggler({ title, body, commit, checked, disabled }) {
+	return ClickDragToggler({
+		title,
+		disabled,
+		className: CSS.StatusCodeToggler,
+		commit,
+		checked,
+		body
+	})
 }
 
-
 function DelayToggler({ checked, commit, optClassName }) {
+	return ClickDragToggler({
+		checked,
+		commit,
+		...classNames(CSS.DelayToggler, optClassName),
+		title: t`Delay`,
+		body: TimerIcon()
+	})
+}
+
+function ClickDragToggler({ checked, commit, className, title, body }) {
 	function onPointerEnter(event) {
 		if (event.buttons === 1)
 			onPointerDown.call(this)
@@ -468,10 +496,7 @@ function DelayToggler({ checked, commit, optClassName }) {
 		commit(this.checked)
 	}
 	return (
-		r('label', {
-				...className(CSS.DelayToggler, optClassName),
-				title: t`Delay`
-			},
+		r('label', { ...classNames(CSS.Toggler, className), title },
 			r('input', {
 				type: 'checkbox',
 				checked,
@@ -480,7 +505,7 @@ function DelayToggler({ checked, commit, optClassName }) {
 				onClick,
 				onChange
 			}),
-			TimerIcon()))
+			r('span', classNames(CSS.checkboxBody), body)))
 }
 
 function Resizer(ref) {
@@ -535,7 +560,7 @@ const payloadViewerCodeRef = {}
 
 function PayloadViewer() {
 	return (
-		r('div', className(CSS.PayloadViewer),
+		r('div', classNames(CSS.PayloadViewer),
 			RightToolbar(),
 			r('pre', null,
 				r('code', { ref: payloadViewerCodeRef },
@@ -544,7 +569,7 @@ function PayloadViewer() {
 
 function RightToolbar() {
 	return (
-		r('div', className(CSS.SubToolbar),
+		r('div', classNames(CSS.SubToolbar),
 			r('h2', { ref: payloadViewerTitleRef },
 				!store.hasChosenLink && t`Preview`)))
 }
@@ -575,7 +600,7 @@ function PayloadViewerTitleWhenProxied(response) {
 const SPINNER_DELAY = 80
 function PayloadViewerProgressBar() {
 	return (
-		r('div', className(CSS.ProgressBar),
+		r('div', classNames(CSS.ProgressBar),
 			r('div', {
 				style: {
 					animationDuration: store.delay - SPINNER_DELAY + 'ms'

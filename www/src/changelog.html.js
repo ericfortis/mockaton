@@ -11,6 +11,11 @@ export default () => htmlTemplate({
 		<h1 id="changelog">Changelog</h1>
 		<br />
 
+		<p>12.3.0 dashboard: click drag</p>
+		<div class="RegionImg" data-max-width="440">
+			<video src="/assets/media/12.3.0-click-drag.mp4" autoplay loop controls>
+		</div>
+		
 		<p>12.2.0 dashboard: settings menu to doc link</p>
 		<p>12.1.0 dashboard: layout redesign</p>
 		<p><strong>12.0.0 breaking change.</strong> The Dashboard is no longer supported in Safari.

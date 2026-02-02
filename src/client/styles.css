@@ -400,7 +400,7 @@ main {
 		padding-bottom: 4px;
 		padding-left: 1px;
 		border-top: 24px solid transparent;
-		margin-left: 71px;
+		margin-left: 74px;
 		font-weight: bold;
 		text-align: left;
 
@@ -409,7 +409,7 @@ main {
 		}
 
 		&.canProxy {
-			margin-left: 100px;
+			margin-left: 110px;
 		}
 		&.nonGroupedByMethod {
 			margin-left: 122px;
@@ -505,16 +505,116 @@ main {
 	}
 }
 
-
-.Toggler {
+.DelayToggler,
+.ProxyToggler {
 	display: flex;
 
-	input {
+	> input {
 		/* For click drag target */
 		position: absolute;
 		width: 22px;
 		height: 22px;
 		opacity: 0;
+
+		&:focus-visible {
+			outline: 0;
+			& + svg {
+				outline: 2px solid var(--colorAccent)
+			}
+		}
+	}
+
+	> svg {
+		fill: none;
+		stroke: var(--colorSecondaryAction);
+	}
+}
+
+.DelayToggler {
+	> input {
+		&:checked + svg {
+			border-color: var(--colorAccent);
+			fill: var(--colorAccent);
+			background: var(--colorAccent);
+			stroke: var(--colorBackground);
+		}
+
+		&:enabled:hover:not(:checked) + svg {
+			border-color: var(--colorHover);
+			background: var(--colorHover);
+			stroke: var(--colorText);
+		}
+	}
+
+	> svg {
+		width: 22px;
+		height: 22px;
+		border: 1px solid var(--colorSecondaryActionBorder);
+		stroke-width: 2.5px;
+		border-radius: 50%;
+	}
+
+	&.canProxy {
+		margin-left: 36px;
+	}
+}
+
+.ProxyToggler {
+	border: 1px solid var(--colorSecondaryActionBorder);
+	margin-right: 8px;
+	border-radius: var(--radius);
+
+	&:has(input:checked),
+	&:has(input:disabled) {
+		background: transparent;
+		box-shadow: none;
+	}
+
+	> input {
+		&:checked + svg {
+			fill: var(--colorAccent);
+			stroke: var(--colorAccent);
+
+			path:last-of-type { /* inner cloud curve */
+				stroke: var(--colorBackground);
+			}
+			transform: scale(1.1);
+		}
+
+		&:enabled:hover:not(:checked) + svg {
+			fill: var(--colorHover);
+			stroke: var(--colorText);
+		}
+
+		&:disabled + svg {
+			stroke-opacity: 0.4;
+			cursor: not-allowed;
+			box-shadow: none;
+			fill: transparent;
+
+			path:last-of-type {
+				stroke-opacity: 0;
+				stroke: transparent;
+			}
+		}
+	}
+
+	> svg {
+		width: 26px;
+		padding: 1px 4px;
+		stroke-width: 2px;
+		border-radius: var(--radius);
+	}
+}
+
+.StatusCodeToggler {
+	display: flex;
+	margin-right: 10px;
+	margin-left: 8px;
+	cursor: pointer;
+
+	> input {
+		appearance: none;
 
 		&:focus-visible {
 			outline: 0;
@@ -527,76 +627,27 @@ main {
 			cursor: not-allowed;
 			opacity: 0.7;
 		}
-
-		&:checked + .checkboxBody {
-			border-color: var(--colorAccent);
-			fill: var(--colorAccent);
-			background: var(--colorAccent);
-			stroke: var(--colorBackground);
-		}
-
-		&:enabled:hover:not(:checked) + .checkboxBody {
-			border-color: var(--colorHover);
-			background: var(--colorHover);
-			stroke: var(--colorText);
-		}
-	}
-
-	.checkboxBody {
-		display: flex;
-		width: 22px;
-		height: 22px;
-		align-items: center;
-		justify-content: center;
-		border: 1px solid var(--colorSecondaryActionBorder);
-		fill: none;
-		stroke: var(--colorSecondaryAction);
-		stroke-width: 2.5px;
-		border-radius: 50%;
-	}
-
-	&.canProxy {
-		margin-left: 30px;
-	}
-}
-
-.DelayToggler {
-}
-
-.ProxyToggler {
-	margin-right: 8px;
-
-	.checkboxBody {
-		svg {
-			width: 16px;
-		}
-	}
-}
-
-.StatusCodeToggler {
-	margin-right: 10px;
-	margin-left: 8px;
-
-	input {
-		width: 26px;
-
-		&:not(:checked):enabled:hover + .checkboxBody {
-			border-color: var(--colorRed);
-			color: var(--colorRed);
-		}
 		&:checked + .checkboxBody {
 			border-color: var(--colorRed);
 			color: white;
 			background: var(--colorRed);
 		}
+		&:not(:checked):enabled:hover + .checkboxBody {
+			border-color: var(--colorRed);
+			color: var(--colorRed);
+		}
+		&:enabled:active + .checkboxBody {
+			cursor: grabbing;
+		}
 	}
 
-	.checkboxBody {
-		width: 27px;
+	> .checkboxBody {
 		padding: 4px;
+		border: 1px solid var(--colorSecondaryActionBorder);
 		font-size: 10px;
 		font-weight: bold;
 		color: var(--colorSecondaryAction);
+		border-radius: var(--radius);
 	}
 }
 

@@ -196,6 +196,7 @@ export const store = {
 			const response = await api.toggle500(method, urlMask)
 			if (!response.ok) throw response
 			store.setBroker(await response.json())
+			store.setChosenLink(method, urlMask)
 			store.renderRow(method, urlMask)
 		}
 		catch (error) { store.onError(error) }
@@ -206,6 +207,7 @@ export const store = {
 			const response = await api.setRouteIsProxied(method, urlMask, checked)
 			if (!response.ok) throw response
 			store.setBroker(await response.json())
+			store.setChosenLink(method, urlMask)
 			store.renderRow(method, urlMask)
 		}
 		catch (error) { store.onError(error) }

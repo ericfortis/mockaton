@@ -333,6 +333,7 @@ function renderRow(method, urlMask) {
 					break
 				case 'SELECT':
 					oldEl.replaceChildren(...newEl.cloneNode(true).children)
+					oldEl.className = newEl.className
 					oldEl.disabled = newEl.disabled
 					oldEl.value = newEl.value
 					break

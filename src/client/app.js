@@ -305,21 +305,42 @@ function Row(row, i) {
 }
 
 function renderRow(method, urlMask) {
-	restoreFocus(() => {
-		unChooseOld()
-		const row = store.brokerAsRow(method, urlMask)
-		trFor(row.key).replaceWith(Row(row))
-		previewMock()
-	})
+	unChooseOld()
+	const row = store.brokerAsRow(method, urlMask)
+	const tr = leftSideRef.elem.querySelector(`.${CSS.TableRow}[key="${row.key}"]`)
+	mergeTableRow(tr, Row(row))
+	previewMock()
 
-	function trFor(key) {
-		return leftSideRef.elem.querySelector(`.${CSS.TableRow}[key="${key}"]`)
-	}
 	function unChooseOld() {
 		return leftSideRef.elem.querySelector(`a.${CSS.chosen}`)
 			?.classList.remove(CSS.chosen)
 	}
+
+	function mergeTableRow(oldRow, newRow) {
+		for (let i = 0; i < newRow.children.length; i++) {
+			const oldEl = oldRow.children[i]
+			const newEl = newRow.children[i]
+			switch (newEl.tagName) {
+				case 'LABEL': {
+					const oldInput = oldEl.querySelector('[type="checkbox"]')
+					const newInput = newEl.querySelector('[type="checkbox"]')
+					oldInput.checked = newInput.checked
+					oldInput.disabled = newInput.disabled
+					break
+				}
+				case 'A':
+					oldEl.className = newEl.className
+					break
+				case 'SELECT':
+					oldEl.replaceChildren(...newEl.cloneNode(true).children)
+					oldEl.disabled = newEl.disabled
+					oldEl.value = newEl.value
+					break
+			}
+		}
+	}
 }
+
 
 
 function PreviewLink(method, urlMask, urlMaskDittoed, autofocus) {
@@ -459,8 +480,7 @@ function DelayToggler({ checked, commit, optClassName }) {
 	})
 }
 
-// TODO canClickDrag 500, and Proxy
-function ClickDragToggler({ canClickDrag, checked, commit, className, title, body }) {
+function ClickDragToggler({ checked, commit, className, title, body }) {
 	function onPointerEnter(event) {
 		if (event.buttons === 1)
 			onPointerDown.call(this)
@@ -482,9 +502,9 @@ function ClickDragToggler({ canClickDrag, checked, commit, className, title, bod
 			r('input', {
 				type: 'checkbox',
 				checked,
-				onPointerEnter: canClickDrag ? onPointerEnter : undefined,
-				onPointerDown: canClickDrag ? onPointerDown : undefined,
-				onClick: canClickDrag ? onClick : undefined,
+				onPointerEnter,
+				onPointerDown,
+				onClick,
 				onChange
 			}),
 			r('span', classNames(CSS.checkboxBody), body)))

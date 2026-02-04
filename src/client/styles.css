@@ -111,6 +111,7 @@ select {
 	background: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%23888888'><path d='M16.59 8.59 12 13.17 7.41 8.59 6 10l6 6 6-6z'/></svg>") no-repeat;
 	background-size: 16px;
 	background-position: calc(100% - 3px) center;
+	transition: all 240ms ease-out;
 
 	&:enabled {
 		border-color: var(--colorSecondaryActionBorder);
@@ -217,6 +218,13 @@ header {
 		color: var(--colorLabel);
 		font-size: 11px;
 		gap: 4px;
+		transition: color 200ms ease-out;
+	}
+
+	&:hover {
+		span {
+			color: var(--colorText);
+		}
 	}
 
 	input[type=url],
@@ -412,10 +420,10 @@ main {
 			margin-left: 100px;
 		}
 		&.nonGroupedByMethod {
-			margin-left: 122px;
+			margin-left: 118px;
 
 			&.canProxy {
-				margin-left: 160px;
+				margin-left: 146px;
 			}
 		}
 	}
@@ -583,6 +591,7 @@ main {
 		&:not(:checked):enabled:hover + .checkboxBody {
 			border-color: var(--colorRed);
 			color: var(--colorRed);
+			background: var(--colorLightRed);
 		}
 		&:checked + .checkboxBody {
 			border-color: var(--colorRed);

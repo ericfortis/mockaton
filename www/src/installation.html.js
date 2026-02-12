@@ -1,5 +1,5 @@
-const { htmlTemplate } = await import(`./_htmlTemplate.js?${Date.now()}`)
-const { shell, json, js } = await import(`./_syntaxHighlight.js?${Date.now()}`)
+import { htmlTemplate } from './htmlTemplate.js'
+import { js, shell, json } from './_syntaxHighlight.js'
 
 // language=html
 export default () => htmlTemplate({

@@ -1,4 +1,4 @@
-const { htmlTemplate } = await import(`./_htmlTemplate.js?${Date.now()}`)
+import { htmlTemplate } from './htmlTemplate.js'
 
 // language=html
 export default () => htmlTemplate({

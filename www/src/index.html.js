@@ -1,5 +1,5 @@
-const { htmlTemplate, MockatonLogo } = await import(`./_htmlTemplate.js?${Date.now()}`)
-const { js, raw, shell } = await import(`./_syntaxHighlight.js?${Date.now()}`)
+import { htmlTemplate, MockatonLogo } from './htmlTemplate.js'
+import { js, shell, raw } from './_syntaxHighlight.js'
 
 // language=html
 export default () => htmlTemplate({

@@ -1,8 +1,8 @@
 // TODO https://www.rfc-editor.org/rfc/rfc9457.html
 
-const { htmlTemplate } = await import(`./_htmlTemplate.js?${Date.now()}`)
-const { js, json } = await import(`./_syntaxHighlight.js?${Date.now()}`)
-const OpenAPI = (await import(`./assets/openapi.json?${Date.now()}`, { with: { type: 'json' } })).default
+import { htmlTemplate } from './htmlTemplate.js'
+import { js, json } from './_syntaxHighlight.js'
+import OpenAPI from './assets/openapi.json' with { type: 'json' } 
 
 const SERVER = OpenAPI.servers[0].url
 

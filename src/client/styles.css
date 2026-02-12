@@ -18,7 +18,6 @@
 		--colorDisabledMockSelector: #444;
 		--colorHover: rgba(119, 193, 255, 0.4);
 		--colorLabel: #555;
-		--colorLightRed: #ffe4ee;
 		--colorRed: #da0f00;
 		--colorText: #000;
 		--colorPink: #ed206a;
@@ -41,7 +40,6 @@
 		--colorDisabledMockSelector: #b9b9b9;
 		--colorHover: rgba(0, 63, 115, 0.5);
 		--colorLabel: #aaa;
-		--colorLightRed: #ffe4ee;
 		--colorRed: #f41606;
 		--colorText: #fff;
 		--colorPink: #f92672;
@@ -138,7 +136,7 @@ header {
 		align-self: end;
 		margin-right: 22px;
 		margin-bottom: 3px;
-		opacity: 85%;
+		opacity: 90%;
 		transition: opacity 240ms ease-in-out;
 
 		&:hover {
@@ -183,8 +181,9 @@ header {
 		background: transparent;
 		border-radius: 50px;
 		color: var(--colorRed);
+		
 		@media (prefers-color-scheme: dark) {
-			color: var(--colorLightRed);
+			color: var(--colorText);
 		}
 
 		&:hover {
@@ -591,7 +590,7 @@ main {
 		&:not(:checked):enabled:hover + .checkboxBody {
 			border-color: var(--colorRed);
 			color: var(--colorRed);
-			background: var(--colorLightRed);
+			background: transparent;
 		}
 		&:checked + .checkboxBody {
 			border-color: var(--colorRed);

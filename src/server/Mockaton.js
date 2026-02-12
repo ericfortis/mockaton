@@ -1,3 +1,4 @@
+import { register } from 'node:module'
 import { createServer } from 'node:http'
 
 import pkgJSON from '../../package.json' with { type: 'json' }
@@ -25,6 +26,7 @@ import { watchMocksDir, watchStaticDir } from './Watcher.js'
 
 export function Mockaton(options) {
 	return new Promise((resolve, reject) => {
+		register('./cacheBustResolver.js', import.meta.url)
 		setup(options)
 
 		mockBrokerCollection.init()

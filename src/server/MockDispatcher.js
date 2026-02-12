@@ -68,7 +68,7 @@ async function applyPlugins(filePath, req, response) {
 }
 
 export async function jsToJsonPlugin(filePath, req, response) {
-	const jsExport = (await import(pathToFileURL(filePath) + '?' + Date.now())).default // date for cache busting
+	const jsExport = (await import(pathToFileURL(filePath))).default
 	const body = typeof jsExport === 'function'
 		? await jsExport(req, response)
 		: JSON.stringify(jsExport, null, 2)

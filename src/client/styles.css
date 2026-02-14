@@ -6,45 +6,45 @@
 @media (prefers-color-scheme: light) {
 	:root {
 		color-scheme: light;
-		--color4xxBackground: #ffedd1;
-		--colorAccent: #0059dd;
 		--colorBackground: #fff;
 		--colorComboBoxHeaderBackground: #fff;
-		--colorComboBoxBackground: #eee;
-		--colorHeaderBackground: #f2f2f3;
 		--colorSecondaryButtonBackground: #fcfcfc;
+		--colorHeaderBackground: #f2f2f3;
+		--colorComboBoxBackground: #eee;
 		--colorSecondaryActionBorder: #e0e0e0;
 		--colorSecondaryAction: #666;
-		--colorDisabledMockSelector: #444;
-		--colorHover: rgba(119, 193, 255, 0.4);
 		--colorLabel: #555;
-		--colorRed: #da0f00;
+		--colorDisabledMockSelector: #444;
 		--colorText: #000;
+		--colorAccent: #0059dd;
+		--colorHover: rgba(119, 193, 255, 0.4);
+		--colorRed: #da0f00;
 		--colorPink: #ed206a;
 		--colorPurple: #9b71e8;
 		--colorGreen: #388e3c;
+		--color4xxBackground: #ffedd1;
 	}
 }
 @media (prefers-color-scheme: dark) {
 	:root {
 		color-scheme: dark;
-		--color4xxBackground: #68554a;
-		--colorAccent: #2495ff;
 		--colorBackground: #181818;
+		--colorComboBoxHeaderBackground: #222;
+		--colorSecondaryButtonBackground: #2c2c2c;
 		--colorHeaderBackground: #141414;
 		--colorComboBoxBackground: #2a2a2a;
-		--colorSecondaryButtonBackground: #2c2c2c;
 		--colorSecondaryActionBorder: #333;
 		--colorSecondaryAction: #aaa;
-		--colorComboBoxHeaderBackground: #222;
-		--colorDisabledMockSelector: #b9b9b9;
-		--colorHover: rgba(0, 63, 115, 0.5);
 		--colorLabel: #aaa;
-		--colorRed: #f41606;
+		--colorDisabledMockSelector: #a9b9b9;
 		--colorText: #fff;
+		--colorAccent: #2495ff;
+		--colorHover: rgba(0, 63, 115, 0.5);
+		--colorRed: #f41606;
 		--colorPink: #f92672;
 		--colorPurple: #ae81ff;
 		--colorGreen: #a6e22e;
+		--color4xxBackground: #68554a;
 	}
 }
 
@@ -181,7 +181,7 @@ header {
 		background: transparent;
 		border-radius: 50px;
 		color: var(--colorRed);
-		
+
 		@media (prefers-color-scheme: dark) {
 			color: var(--colorText);
 		}
@@ -663,7 +663,7 @@ main {
 		animation-timing-function: linear;
 		animation-iteration-count: infinite;
 		animation-direction: alternate;
-		/* duration in JavaScript */
+		/* animation-duration is set in JS */
 	}
 }
 @keyframes _kfProgress {

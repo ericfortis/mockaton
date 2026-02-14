@@ -35,15 +35,15 @@ For example, for [/api/company/123](#), the filename could be:
 
 ## Quick Start (Docker)
 This will spin up Mockaton with the sample directories
-included in this repo mounted on the container ([mockaton-mocks/](./mockaton-mocks)
-and [mockaton-static-mocks/](./mockaton-static-mocks))
+included in this repo mounted on the container. Mentioned dirs are: [mockaton-mocks/](./mockaton-mocks)
+and [mockaton-static-mocks/](./mockaton-static-mocks).
 
 ```sh
 git clone https://github.com/ericfortis/mockaton.git --depth 1
 cd mockaton
 make docker
 ```
-Dashboard: http://localhost:2020/mockaton
+Dashboard: [localhost:2020/mockaton](http://localhost:2020/mockaton)
 
 Test it:
 ```shell

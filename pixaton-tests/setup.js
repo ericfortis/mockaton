@@ -16,6 +16,7 @@ const mServer = await Mockaton({
 	port: 0,
 	logLevel: 'quiet',
 	hotReload: false,
+	watcherEnabled: false,
 	onReady() {}
 })
 export const mockaton = new Commander(

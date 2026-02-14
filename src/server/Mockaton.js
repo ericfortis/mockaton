@@ -26,13 +26,12 @@ import { watchMocksDir, watchStaticDir } from './Watcher.js'
 
 export function Mockaton(options) {
 	return new Promise((resolve, reject) => {
-		register('./cacheBustResolver.js', import.meta.url)
 		setup(options)
-
 		mockBrokerCollection.init()
 		staticCollection.init()
 
 		if (config.watcherEnabled) {
+			register('./cacheBustResolver.js', import.meta.url)
 			watchMocksDir()
 			watchStaticDir()
 		}

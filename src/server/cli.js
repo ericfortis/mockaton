@@ -60,9 +60,9 @@ Options:
   -v, --version          Show version
 
 Notes:
-  * mockaton.config.js supports more options, see:
-      https://github.com/ericfortis/mockaton?tab=readme-ov-file#mockatonconfigjs-optional
-  * CLI options override their mockaton.config.js counterparts`)
+  * mockaton.config.js supports more options, see: https://mockaton.com/config
+  * CLI options override their mockaton.config.js counterparts
+`.trim())
 
 else if (args.config && !isFile(args.config)) {
 	console.error(`Invalid config file: ${args.config}`)

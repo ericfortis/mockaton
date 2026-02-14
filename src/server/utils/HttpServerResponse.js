@@ -26,7 +26,7 @@ export class ServerResponse extends http.ServerResponse {
 
 	json(payload) {
 		logger.access(this)
-		this.setHeader('Content-Type', 'application/json')
+		this.setHeader('Content-Type', mimeFor('json'))
 		this.end(JSON.stringify(payload))
 	}
 

@@ -1,4 +1,4 @@
-import { execFileSync } from 'node:child_process'
+import { spawnSync } from 'node:child_process'
 
 
 export const openInBrowser = (async () => {
@@ -11,13 +11,22 @@ export const openInBrowser = (async () => {
 })()
 
 function _openInBrowser(address) {
+	let opener
 	switch (process.platform) {
 		case 'darwin':
-			execFileSync('open', [address])
+			opener = 'open'
 			break
 		case 'win32':
-			execFileSync('start', [address])
+			opener = 'start'
 			break
+		default:
+			opener = ['xdg-open', 'gnome-open', 'kde-open'].find(hasCommand)
 	}
+	if (opener)
+		spawnSync(opener, [address])
 }
 
+function hasCommand(cmd) {
+	const { status } = spawnSync('command', ['-v', cmd], { stdio: 'ignore' })
+	return status === 0
+}

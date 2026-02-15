@@ -55,33 +55,6 @@ doesn’t break selecting across pages, (e.g., for selecting and copying)
 - Large JSON can block interactivity, e.g., a 20,000 syntax highlighted spans take 300ms on an M4 Pro
 - Instead of virtual rendering, a simpler progressive chunk attaching, yielding?
 
-## Linux. Open dashboard in browser
-- Currently, users can `npm install open`, and Mockaton will use it.
-  But it falls back to an implementation that only supports Windows and macOS.
-- How does it play with docker?
-- We could do this, but it needs to be tested on a few Linux distros.
-```js
-function _openInBrowser(address) {
-  let opener
-  switch (process.platform) {
-    case 'darwin':
-      opener = 'open'
-      break
-    case 'win32':
-      opener = 'start'
-      break
-    default:
-      opener = ['xdg-open', 'gnome-open', 'kde-open'].find(hasCommand)
-  }
-  if (opener)
-    execFileSync(opener, [address])
-}
-
-function hasCommand(cmd) {
-  const { status } = spawnSync('command', ['-v', cmd], { stdio: 'ignore' })
-  return status === 0
-}
-```
 
 ## Fetch logs
 - API for streaming logs?

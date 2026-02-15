@@ -1,8 +1,7 @@
 import http, { METHODS } from 'node:http'
 
 
-export const SUPPORTED_METHODS = METHODS
-export const methodIsSupported = method => SUPPORTED_METHODS.includes(method)
+export const methodIsSupported = method => METHODS.includes(method)
 
 export class BodyReaderError extends Error {
 	name = 'BodyReaderError'
@@ -73,3 +72,4 @@ export function decode(url) {
 		? candidate
 		: '' // reject multiple encodings
 }
+

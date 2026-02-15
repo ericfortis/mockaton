@@ -6,7 +6,7 @@ import { write, isFile } from './utils/fs.js'
 import { readBody, BodyReaderError } from './utils/HttpIncomingMessage.js'
 
 import { config } from './config.js'
-
+import { logger } from './utils/logger.js'
 import { makeMockFilename } from '../client/Filename.js'
 
 
@@ -47,6 +47,11 @@ export async function proxy(req, response, delay) {
 				data = JSON.stringify(JSON.parse(body), null, '  ')
 			}
 			catch {}
-		write(join(config.mocksDir, filename), data)
+		try {
+			write(join(config.mocksDir, filename), data)
+		}
+		catch (err) {
+			logger.warn('Write access denied', err)
+		}
 	}
 }

@@ -100,7 +100,9 @@ api/login(locked out user).POST.<strong>423</strong>.json
 export default { foo: 'bar' }
 `}
 		<p>
-			If you need more control, you can use <a href="/functional-mocks">Functional Mocks</a>.
+			If you need more control, you can use <a href="/functional-mocks">Functional Mocks</a>,
+			which are HTTP handlers, so you can handle any complex logic, URL parsing, saving to 
+			a database, etc.
 		</p>
 
 		</body>

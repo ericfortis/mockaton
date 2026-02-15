@@ -61,6 +61,8 @@ export const jsToJsonPlugin: Plugin
 export function jwtCookie(cookieName: string, payload: any, path?: string): string
 
 export function parseJSON(request: IncomingMessage): Promise<any>
+export function parseSplats(reqUrl: string, filename: string): Record<string, string>
+export function parseQueryParams(reqUrl: string): URLSearchParams
 
 export type JsonPromise<T> = Promise<Response & { json(): Promise<T> }>
 

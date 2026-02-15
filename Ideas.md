@@ -18,9 +18,13 @@ There’s an implicit question mark on each sentence.
 
 
 ## Bulk Select UI
-- Instead of the current dropdown, a section with buttons (row in the header)
+- Instead of the current dropdown, a panel with buttons (e.g., in the header)
 - (Default) ‘’ to api sets all defaults
 - maybe an input for partial match
+
+
+## AI.md
+- some ai-friendly doc
 
 ## Chaos
 - Malform response
@@ -88,6 +92,9 @@ doesn’t break selecting across pages, (e.g., for selecting and copying)
 - Check permission headers
 
 ## Vite
+- Plugin
+
+## Storybook
 - Plugin
 
 

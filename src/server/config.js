@@ -1,10 +1,10 @@
 import { resolve } from 'node:path'
+import { METHODS } from 'node:http'
 
 import { logger } from './utils/logger.js'
 import { isDirectory } from './utils/fs.js'
 import { openInBrowser } from './utils/openInBrowser.js'
 import { optional, is, validate } from './utils/validate.js'
-import { SUPPORTED_METHODS } from './utils/HttpIncomingMessage.js'
 import { validateCorsAllowedMethods, validateCorsAllowedOrigins } from './utils/http-cors.js'
 
 import { jsToJsonPlugin } from './MockDispatcher.js'
@@ -41,7 +41,7 @@ const schema = {
 
 	corsAllowed: [true, is(Boolean)],
 	corsOrigins: [['*'], validateCorsAllowedOrigins],
-	corsMethods: [SUPPORTED_METHODS, validateCorsAllowedMethods],
+	corsMethods: [METHODS, validateCorsAllowedMethods],
 	corsHeaders: [['content-type', 'authorization'], Array.isArray],
 	corsExposedHeaders: [[], Array.isArray],
 	corsCredentials: [true, is(Boolean)],

@@ -9,10 +9,9 @@ export default () => htmlTemplate({
 	body: `
 		<h1>Filename Convention</h1>
 		<p>
-			The convention is for mocks within your <code class="green">config.mocksDir</code>.
-			On the other hand, mocks in your <code class="red">config.staticDir</code> should
-			have no custom extension. Those are always <code>GET</code> and return
-			<code>200</code> or partial content <code>206</code>.
+			The convention is for mocks within your <code class="green">config.mocksDir</code>. 
+			In other words, it’s not <code class="red">config.staticDir</code> mocks, which are always 
+			<code>GET</code> and return <code>200</code> or <code>206</code> (partial content, e.g., for videos).
 		</p>
 
 		<h2 id="extension">

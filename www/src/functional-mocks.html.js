@@ -18,7 +18,7 @@ export default () => htmlTemplate({
 
 		<p><code>api/foo.GET.200.js</code></p>
 		${js`
-export default (request, response) => {
+export default (req, response) => {
   // These two lines are not needed but you can change their values
   /* response.statusCode = 200 */  // default derived from filename
   /* response.setHeader('Content-Type', 'application/json') */ // unconditional default
@@ -41,7 +41,7 @@ export default (request, response) => {
 			router, but in the handlers you return, instead of ending the response.
 		</p>
 
-		<h3>Examples</h3>
+		<h3>Example A: JSON body parser and in-memory database</h3>
 
 		<p>
 			Imagine you have an initial list of colors, and
@@ -53,8 +53,8 @@ export default (request, response) => {
 		${js`
 import { parseJSON } from 'mockaton'
 
-export default async function insertColor(request, response) {
-  const color = await parseJSON(request)
+export default async function insertColor(req, response) {
+  const color = await parseJSON(req)
   globalThis.newColorsDatabase ??= []
   globalThis.newColorsDatabase.push(color)
   return JSON.stringify({ msg: 'CREATED' })
@@ -74,6 +74,37 @@ export default function listColors() {
   ])
 }
 `}
+
+		<h3>Example B: Parse query string params</h3>
+
+		<code>api/list?limit=[my-limit].GET.200.js</code>
+
+		${js`
+import { parseQueryParams } from 'mockaton'
+
+export default function (req) {
+  const searchParams = parseQueryParams(req.url)
+  const limit = Number(searchParams.get('limit'))
+  return JSON.stringify({ limit })
+}
+`}
+
+
+		<h3>Example C: Parse splats</h3>
+
+		<code>api/company/[companyId]/user/[userId].GET.200.js</code>
+
+		${js`
+import { parseSplats } from 'mockaton'
+
+export default function (req, response) {
+  const { companyId, userId } = parseSplats(req.url, import.meta.filename)
+  return JSON.stringify({ companyId, userId })
+}
+`}
+
+
+
 
 		<h4>
 			What if I need to serve a static .js or .ts?

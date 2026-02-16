@@ -1,51 +1,25 @@
 :root {
 	--radius: 16px;
 	--boxShadow1: rgba(0, 0, 0, 0.18) 0 2px 1px -1px, rgba(0, 0, 0, 0.12) 0 1px 1px 0, rgba(0, 0, 0, 0.1) 0 1px 3px 0px;
-}
 
-@media (prefers-color-scheme: light) {
-	:root {
-		color-scheme: light;
-		--colorBackground: #fff;
-		--colorComboBoxHeaderBackground: #fff;
-		--colorSecondaryButtonBackground: #fcfcfc;
-		--colorHeaderBackground: #f2f2f3;
-		--colorComboBoxBackground: #eee;
-		--colorSecondaryActionBorder: #e0e0e0;
-		--colorSecondaryAction: #666;
-		--colorLabel: #555;
-		--colorDisabledMockSelector: #444;
-		--colorText: #000;
-		--colorAccent: #0059dd;
-		--colorHover: rgba(119, 193, 255, 0.4);
-		--colorRed: #da0f00;
-		--colorPink: #ed206a;
-		--colorPurple: #9b71e8;
-		--colorGreen: #388e3c;
-		--color4xxBackground: #ffedd1;
-	}
-}
-@media (prefers-color-scheme: dark) {
-	:root {
-		color-scheme: dark;
-		--colorBackground: #181818;
-		--colorComboBoxHeaderBackground: #222;
-		--colorSecondaryButtonBackground: #2c2c2c;
-		--colorHeaderBackground: #141414;
-		--colorComboBoxBackground: #2a2a2a;
-		--colorSecondaryActionBorder: #333;
-		--colorSecondaryAction: #aaa;
-		--colorLabel: #aaa;
-		--colorDisabledMockSelector: #a9b9b9;
-		--colorText: #fff;
-		--colorAccent: #2495ff;
-		--colorHover: rgba(0, 63, 115, 0.5);
-		--colorRed: #f41606;
-		--colorPink: #f92672;
-		--colorPurple: #ae81ff;
-		--colorGreen: #a6e22e;
-		--color4xxBackground: #68554a;
-	}
+	color-scheme: light dark;
+	--colorBackground: light-dark(#fff, #181818);
+	--colorComboBoxHeaderBackground: light-dark(#fff, #222);
+	--colorSecondaryButtonBackground: light-dark(#fcfcfc, #2c2c2c);
+	--colorHeaderBackground: light-dark(#f2f2f3, #141414);
+	--colorComboBoxBackground: light-dark(#eee, #2a2a2a);
+	--colorSecondaryActionBorder: light-dark(#e0e0e0, #333);
+	--colorSecondaryAction: light-dark(#666, #aaa);
+	--colorLabel: light-dark(#555, #aaa);
+	--colorDisabledMockSelector: light-dark(#444, #a9b9b9);
+	--colorText: light-dark(#000, #fff);
+	--colorAccent: light-dark(#0059dd, #2495ff);
+	--colorHover: light-dark(rgba(119, 193, 255, 0.4), rgba(0, 63, 115, 0.5));
+	--colorRed: light-dark(#da0f00, #f41606);
+	--colorPink: light-dark(#ed206a, #f92672);
+	--colorPurple: light-dark(#9b71e8, #ae81ff);
+	--colorGreen: light-dark(#388e3c, #a6e22e);
+	--color4xxBackground: light-dark(#ffedd1, #68554a);
 }
 
 html,

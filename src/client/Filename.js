@@ -9,7 +9,7 @@ const METHODS = [ // @KeepSync node:http.METHODS
 	'TRACE', 'UNBIND', 'UNLINK', 'UNLOCK', 'UNSUBSCRIBE'
 ]
 
-const reComments = /\(.*?\)/g // Anything within parentheses
+const reComments = /\([^)]*\)/g // Anything within parentheses
 
 export function extractComments(file) {
 	return Array.from(file.matchAll(reComments), ([c]) => c)

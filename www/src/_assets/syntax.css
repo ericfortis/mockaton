@@ -1,30 +1,14 @@
-@media (prefers-color-scheme: light) {
-	:root {
-		--syntaxCmd: #1184f4;
-		--syntaxComment: #777;
-		--syntaxKeyword: #5a5e88;
-		--syntaxNum: #9e009e;
-		--syntaxProperty: #321385;
-		--syntaxPunctionation: #999;
-		--syntaxRegex: #f0a;
-		--syntaxString: #ec009f;
-		--syntaxVar: green;
-	}
+:root {
+	--syntaxCmd: light-dark(#1184f4, #359dff);
+	--syntaxComment: light-dark(#777, #8c8c8c);
+	--syntaxKeyword: light-dark(#5a5e88, #8aa19b);
+	--syntaxNum: light-dark(#9e009e, #925cff);
+	--syntaxProperty: light-dark(#321385, #b067ff);
+	--syntaxString: light-dark(#ec009f, #ff1ce4);
+	--syntaxVar: light-dark(green, #21cd3e);
+	--syntaxPunctionation: #999;
+	--syntaxRegex: #f0a;
 }
-@media (prefers-color-scheme: dark) {
-	:root {
-		--syntaxCmd: #359dff;
-		--syntaxComment: #8c8c8c;
-		--syntaxKeyword: #8aa19b;
-		--syntaxNum: #925cff;
-		--syntaxProperty: #b067ff;
-		--syntaxPunctionation: #999;
-		--syntaxRegex: #f0a;
-		--syntaxString: #ff1ce4;
-		--syntaxVar: #21cd3e;
-	}
-}
-
 
 .syntax_punctuation {
 	color: var(--syntaxPunctionation);

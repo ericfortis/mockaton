@@ -44,11 +44,15 @@ export function parseFilename(file) {
 	}
 }
 
-function removeTrailingSlash(url = '') {
+export function removeTrailingSlash(url = '') {
 	return url
 		.replace(/\/$/, '')
 		.replace('/?', '?')
 		.replace('/#', '#')
+}
+
+export function removeQueryStringAndFragment(url = '') {
+	return new URL(url, 'http://_').pathname
 }
 
 function responseStatusIsValid(status) {

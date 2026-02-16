@@ -1,5 +1,5 @@
 import { DEFAULT_MOCK_COMMENT } from '../client/ApiConstants.js'
-import { parseFilename, includesComment, extractComments } from '../client/Filename.js'
+import { parseFilename, includesComment, extractComments, removeQueryStringAndFragment } from '../client/Filename.js'
 
 
 /**
@@ -105,13 +105,9 @@ class UrlMatcher {
 
 	#buildUrlRegex(file) {
 		let { urlMask } = parseFilename(file)
-		urlMask = this.#removeQueryStringAndFragment(urlMask)
+		urlMask = removeQueryStringAndFragment(urlMask)
 		urlMask = this.#disregardVariables(urlMask)
 		return new RegExp('^' + urlMask + '/*$')
-	}
-
-	#removeQueryStringAndFragment(str) {
-		return str.replace(/[?#].*/, '')
 	}
 
 	#disregardVariables(str) { // Stars out all parts that are in square brackets
@@ -127,7 +123,7 @@ class UrlMatcher {
 	// slashes. For instance, for routing api/foo/[id]?qs…
 	urlMaskMatches = (url) => {
 		let u = decodeURIComponent(url)
-		u = this.#removeQueryStringAndFragment(u)
+		u = removeQueryStringAndFragment(u)
 		u += '/'
 		return this.#urlRegex.test(u)
 	}

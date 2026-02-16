@@ -1,4 +1,4 @@
-import { test } from 'node:test'
+import { test, describe } from 'node:test'
 import { deepEqual, equal } from 'node:assert/strict'
 import { parseSplats, parseQueryParams } from './UrlParsers.js'
 import { config } from '../config.js'
@@ -9,14 +9,46 @@ test('parseQueryParams', () => {
 })
 
 
-test('parseSplats', () => {
-	const p = parseSplats(
-		'/api/company/123/user/456',
-		`${config.mocksDir}/api/company/[companyId]/user/[userId](comments).GET.200.js`
-	)
-	deepEqual(p, {
-		companyId: '123',
-		userId: '456',
+describe('parseSplats', () => {
+	test('one splat', () => {
+		const splats = parseSplats(
+			'/api/company/123',
+			`${config.mocksDir}/api/company/[companyId].GET.200.js`
+		)
+		deepEqual(splats, {
+			companyId: '123'
+		})
+	})
+
+	test('one splat with trailing slash', () => {
+		const splats = parseSplats(
+			'/api/company/123/',
+			`${config.mocksDir}/api/company/[companyId].GET.200.js`
+		)
+		deepEqual(splats, {
+			companyId: '123'
+		})
+	})
+
+	test('two splats and comment', () => {
+		const splats = parseSplats(
+			'/api/company/123/user/456',
+			`${config.mocksDir}/api/company/[companyId]/user/[userId](comments).GET.200.js`
+		)
+		deepEqual(splats, {
+			companyId: '123',
+			userId: '456',
+		})
+	})
+
+	test('ignores query string', () => {
+		const splats = parseSplats(
+			'/api/company/123?foo=456',
+			`${config.mocksDir}/api/company/[companyId]?foo=[fooId].GET.200.js`
+		)
+		deepEqual(splats, {
+			companyId: '123'
+		})
 	})
 })
 

@@ -76,7 +76,6 @@ a {
 
 select {
 	border: 1px solid transparent;
-	font-size: 100%;
 	color: var(--colorText);
 	border-radius: var(--radius);
 	appearance: none;
@@ -116,7 +115,7 @@ header {
 			opacity: 1;
 		}
 
-		@media (max-width: 730px) {
+		@media (max-width: 740px) {
 			display: none;
 		}
 
@@ -134,7 +133,7 @@ header {
 		align-items: flex-end;
 		gap: 16px 12px;
 
-		@media (max-width: 590px) {
+		@media (max-width: 600px) {
 			.HelpLink {
 				margin-left: unset;
 			}
@@ -187,6 +186,7 @@ header {
 		display: flex;
 		align-items: center;
 		margin-left: 8px;
+		white-space: nowrap;
 		color: var(--colorLabel);
 		font-size: 11px;
 		gap: 4px;
@@ -257,7 +257,7 @@ header {
 
 	&.FallbackBackend {
 		position: relative;
-		width: 150px;
+		width: 160px;
 
 		.SaveProxiedCheckbox {
 			position: absolute;
@@ -267,7 +267,6 @@ header {
 			width: auto;
 			min-width: unset;
 			align-items: center;
-			font-size: 11px;
 			gap: 4px;
 
 			input + .checkboxBody {
@@ -464,12 +463,11 @@ main {
 	padding-right: 20px;
 	padding-left: 8px;
 	text-overflow: ellipsis;
-	font-size: 12px;
 	text-align: right;
 
 	&.nonDefault {
 		font-weight: bold;
-		font-size: 0.92rem;
+		font-size: 11px;
 	}
 	&.status4xx {
 		background: var(--color4xxBackground);

@@ -1,14 +1,11 @@
 :root {
-	--radius: 16px;
-	--boxShadow1: rgba(0, 0, 0, 0.18) 0 2px 1px -1px, rgba(0, 0, 0, 0.12) 0 1px 1px 0, rgba(0, 0, 0, 0.1) 0 1px 3px 0px;
-
 	color-scheme: light dark;
 	--colorBackground: light-dark(#fff, #181818);
 	--colorComboBoxHeaderBackground: light-dark(#fff, #222);
 	--colorSecondaryButtonBackground: light-dark(#fcfcfc, #2c2c2c);
 	--colorHeaderBackground: light-dark(#f2f2f3, #141414);
 	--colorComboBoxBackground: light-dark(#eee, #2a2a2a);
-	--colorSecondaryActionBorder: light-dark(#e0e0e0, #333);
+	--colorBorder: light-dark(#e0e0e0, #333);
 	--colorSecondaryAction: light-dark(#666, #aaa);
 	--colorLabel: light-dark(#555, #aaa);
 	--colorDisabledMockSelector: light-dark(#444, #a9b9b9);
@@ -20,6 +17,9 @@
 	--colorPurple: light-dark(#9b71e8, #ae81ff);
 	--colorGreen: light-dark(#388e3c, #a6e22e);
 	--color4xxBackground: light-dark(#ffedd1, #68554a);
+	
+	accent-color: var(--colorAccent);
+	--radius: 16px;
 }
 
 html,
@@ -86,7 +86,7 @@ select {
 	transition: all 240ms ease-out;
 
 	&:enabled {
-		border-color: var(--colorSecondaryActionBorder);
+		border-color: var(--colorBorder);
 		background-color: var(--colorSecondaryButtonBackground);
 		&:hover {
 			border-color: var(--colorHover);
@@ -103,7 +103,6 @@ header {
 	display: flex;
 	flex: 0 0 100%;
 	padding: 16px;
-	border-bottom: 1px solid var(--colorSecondaryActionBorder);
 	background: var(--colorHeaderBackground);
 
 	.Logo {
@@ -206,7 +205,7 @@ header {
 		width: 100%;
 		height: 28px;
 		padding: 4px 8px;
-		border: 1px solid var(--colorSecondaryActionBorder);
+		border: 1px solid var(--colorBorder);
 		margin-top: 2px;
 		color: var(--colorText);
 		font-size: 11px;
@@ -311,8 +310,8 @@ main {
 
 	.leftSide {
 		width: 50%; /* resizable in js */
-		border-right: 1px solid var(--colorSecondaryActionBorder);
-		box-shadow: var(--boxShadow1);
+		border-top: 1px solid var(--colorBorder);
+		border-right: 1px solid var(--colorBorder);
 	}
 
 	.rightSide {
@@ -320,6 +319,7 @@ main {
 		min-width: 100px;
 		min-height: 0;
 		flex: 1;
+		border-top: 1px solid var(--colorBorder);
 
 		.Resizer {
 			position: absolute;
@@ -331,7 +331,7 @@ main {
 			cursor: col-resize;
 
 			&:active {
-				border-color: var(--colorSecondaryActionBorder);
+				border-color: var(--colorBorder);
 			}
 		}
 	}
@@ -344,7 +344,7 @@ main {
 	justify-content: space-between;
 	padding-right: 14px;
 	padding-left: 16px;
-	border-bottom: 1px solid var(--colorSecondaryActionBorder);
+	border-bottom: 1px solid var(--colorBorder);
 	background: var(--colorHeaderBackground);
 }
 
@@ -359,7 +359,7 @@ main {
 	select {
 		width: 110px;
 		padding: 6px 8px;
-		border: 1px solid var(--colorSecondaryActionBorder);
+		border: 1px solid var(--colorBorder);
 		margin-left: 4px;
 		background-image: none;
 		text-align-last: center;
@@ -529,7 +529,7 @@ main {
 		height: 22px;
 		align-items: center;
 		justify-content: center;
-		border: 1px solid var(--colorSecondaryActionBorder);
+		border: 1px solid var(--colorBorder);
 		fill: none;
 		stroke: var(--colorSecondaryAction);
 		stroke-width: 2.5px;
@@ -657,7 +657,6 @@ main {
 	background: var(--colorRed);
 	color: white;
 	border-radius: var(--radius);
-	box-shadow: var(--boxShadow1);
 	opacity: 0;
 	transform: translateY(20px);
 	animation: _kfToastIn 240ms forwards;

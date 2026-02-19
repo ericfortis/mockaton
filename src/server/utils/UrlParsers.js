@@ -8,6 +8,7 @@ export function parseQueryParams(url) {
 	return new URL(url, 'http://_').searchParams
 }
 
+
 export function parseSplats(url, filename) {
 	const { urlMask } = parseFilename(relative(config.mocksDir, filename))
 

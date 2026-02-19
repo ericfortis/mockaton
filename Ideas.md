@@ -66,6 +66,9 @@ doesn’t break selecting across pages, (e.g., for selecting and copying)
 ## Browser Extension
 - Dark mode
 
+## Proxy Fallback
+- support static mocks
+
 ## Plugins for `staticMocks`
 - content disposition
 - compression

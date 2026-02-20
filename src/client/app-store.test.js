@@ -1,5 +1,5 @@
 import { test } from 'node:test'
-import { deepEqual } from 'node:assert'
+import { deepEqual } from 'node:assert/strict'
 
 import { dittoSplitPaths, BrokerRowModel, t } from './app-store.js'
 

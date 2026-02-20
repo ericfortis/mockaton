@@ -1,8 +1,8 @@
 # Mockaton Architecture
 
 ## Overview
-Mockaton is a small zero-dependencies program. The server is ~1.7KLoC,
-plus 1K of tests, and the web client is ~2KLoC including tests.
+Mockaton is a small program with no dependencies. Including
+tests, the server is 2.7KLoC, and the web client is 2KLoC.
 
 ### Server
 Mockaton is a Node.js HTTP Server. You can
@@ -55,8 +55,8 @@ Otherwise, it applies the matching plugin and ends the response.
 
 ### Plugins
 There are two plugins by default. One runs for `.js` or `.ts` files
-(`jsToJsonPlugin`) and the other one simply reads from the file-system 
-(no caching) and adds the corresponding `Content-Type` header. 
+(`jsToJsonPlugin`). The other one simply reads from the file-system
+and adds the corresponding `Content-Type` header. 
 
 
 

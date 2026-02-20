@@ -286,20 +286,18 @@ export function dittoSplitPaths(paths) {
 	const pathsInParts = paths.map(p => p.split('/').filter(Boolean))
 
 	for (let i = 1; i < paths.length; i++) {
-		const prevParts = pathsInParts[i - 1]
-		const currParts = pathsInParts[i]
+		const prev = pathsInParts[i - 1]
+		const curr = pathsInParts[i]
 
+		const min = Math.min(curr.length, prev.length)
 		let j = 0
-		while (
-			j < currParts.length &&
-			j < prevParts.length &&
-			currParts[j] === prevParts[j])
+		while (j < min && curr[j] === prev[j])
 			j++
 
 		if (!j) // no common dirs
 			result.push(['', paths[i]])
 		else {
-			const ditto = '/' + currParts.slice(0, j).join('/') + '/'
+			const ditto = '/' + curr.slice(0, j).join('/') + '/'
 			result.push([ditto, paths[i].slice(ditto.length)])
 		}
 	}

@@ -25,17 +25,17 @@ export const store = {
 	},
 
 	getSyncVersion: api.getSyncVersion,
-
-	async fetchState() {
-		try {
-			const response = await api.getState()
-			if (!response.ok) throw response
-			Object.assign(store, await response.json())
-			store.render()
-		}
-		catch (error) { store.onError(error) }
+	
+	_action(action, onSuccess) {
+		Promise.try(action).then(onSuccess).catch(store.onError)
 	},
 
+	async fetchState() {
+		store._action(api.getState, async response => {
+			Object.assign(store, await response.json())
+			store.render()
+		})
+	},
 
 	groupByMethod: initPreference('groupByMethod'),
 	toggleGroupByMethod() {
@@ -53,71 +53,47 @@ export const store = {
 		return store.chosenLink.method && store.chosenLink.urlMask
 	},
 
-
 	async reset() {
-		try {
-			const response = await api.reset()
-			if (!response.ok) throw response
+		store._action(api.reset, () => {
 			store.setChosenLink('', '')
-			await store.fetchState()
-		}
-		catch (error) { store.onError(error) }
+			store.fetchState()
+		})
 	},
 
 	async bulkSelectByComment(value) {
-		try {
-			const response = await api.bulkSelectByComment(value)
-			if (!response.ok) throw response
-			await store.fetchState()
-		}
-		catch (error) { store.onError(error) }
+		store._action(() => api.bulkSelectByComment(value),
+			store.fetchState)
 	},
 
-
 	async setGlobalDelay(value) {
-		try {
-			const response = await api.setGlobalDelay(value)
-			if (!response.ok) throw response
+		store._action(() => api.setGlobalDelay(value), () => {
 			store.delay = value
-		}
-		catch (error) { store.onError(error) }
+		})
 	},
 
 	async setGlobalDelayJitter(value) {
-		try {
-			const response = await api.setGlobalDelayJitter(value)
-			if (!response.ok) throw response
+		store._action(() => api.setGlobalDelayJitter(value), () => {
 			store.delayJitter = value
-		}
-		catch (error) { store.onError(error) }
+		})
 	},
 
 	async selectCookie(name) {
-		try {
-			const response = await api.selectCookie(name)
-			if (!response.ok) throw response
+		store._action(() => api.selectCookie(name), async response => {
 			store.cookies = await response.json()
-		}
-		catch (error) { store.onError(error) }
+		})
 	},
 
 	async setProxyFallback(value) {
-		try {
-			const response = await api.setProxyFallback(value)
-			if (!response.ok) throw response
+		store._action(() => api.setProxyFallback(value), () => {
 			store.proxyFallback = value
 			store.render()
-		}
-		catch (error) { store.onError(error) }
+		})
 	},
 
 	async setCollectProxied(checked) {
-		try {
-			const response = await api.setCollectProxied(checked)
-			if (!response.ok) throw response
+		store._action(() => api.setCollectProxied(checked), () => {
 			store.collectProxied = checked
-		}
-		catch (error) { store.onError(error) }
+		})
 	},
 
 
@@ -180,65 +156,46 @@ export const store = {
 	},
 
 	async selectFile(file) {
-		try {
-			const response = await api.select(file)
-			if (!response.ok) throw response
+		store._action(() => api.select(file), async response => {
 			const { method, urlMask } = parseFilename(file)
 			store.setBroker(await response.json())
 			store.setChosenLink(method, urlMask)
 			store.renderRow(method, urlMask)
-		}
-		catch (error) { store.onError(error) }
+		})
 	},
 
 	async toggle500(method, urlMask) {
-		try {
-			const response = await api.toggle500(method, urlMask)
-			if (!response.ok) throw response
+		store._action(() => api.toggle500(method, urlMask), async response => {
 			store.setBroker(await response.json())
 			store.setChosenLink(method, urlMask)
 			store.renderRow(method, urlMask)
-		}
-		catch (error) { store.onError(error) }
+		})
 	},
 
 	async setProxied(method, urlMask, checked) {
-		try {
-			const response = await api.setRouteIsProxied(method, urlMask, checked)
-			if (!response.ok) throw response
+		store._action(() => api.setRouteIsProxied(method, urlMask, checked), async response => {
 			store.setBroker(await response.json())
 			store.setChosenLink(method, urlMask)
 			store.renderRow(method, urlMask)
-		}
-		catch (error) { store.onError(error) }
+		})
 	},
 
 	async setDelayed(method, urlMask, checked) {
-		try {
-			const response = await api.setRouteIsDelayed(method, urlMask, checked)
-			if (!response.ok) throw response
+		store._action(() => api.setRouteIsDelayed(method, urlMask, checked), async response => {
 			store.setBroker(await response.json())
-		}
-		catch (error) { store.onError(error) }
+		})
 	},
 
-
 	async setDelayedStatic(route, checked) {
-		try {
-			const response = await api.setStaticRouteIsDelayed(route, checked)
-			if (!response.ok) throw response
+		store._action(() => api.setStaticRouteIsDelayed(route, checked), () => {
 			store.staticBrokers[route].delayed = checked
-		}
-		catch (error) { store.onError(error) }
+		})
 	},
 
 	async setStaticRouteStatus(route, status) {
-		try {
-			const response = await api.setStaticRouteStatus(route, status)
-			if (!response.ok) throw response
+		store._action(() => api.setStaticRouteStatus(route, status), () => {
 			store.staticBrokers[route].status = status
-		}
-		catch (error) { store.onError(error) }
+		})
 	}
 }
 

@@ -39,12 +39,11 @@ export const store = {
 
 	async fetchState() {
 		store._action(api.getState, async response => {
-			const data = await response.json()
-			const isFirstCall = store.showProxyField === null
-			if (isFirstCall) {
-				store.showProxyField = Boolean(data.proxyFallback)
-			}
-			Object.assign(store, data)
+			Object.assign(store, await response.json())
+			
+			if (store.showProxyField === null) // isFirstCall
+				store.showProxyField = Boolean(store.proxyFallback)
+			
 			store.render()
 		})
 	},
@@ -96,7 +95,6 @@ export const store = {
 	},
 
 	async setProxyFallback(value) {
-		store.showProxyField = true
 		store._action(() => api.setProxyFallback(value), () => {
 			store.proxyFallback = value
 			store.render()

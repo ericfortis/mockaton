@@ -96,6 +96,7 @@ export const store = {
 	},
 
 	async setProxyFallback(value) {
+		store.showProxyField = true
 		store._action(() => api.setProxyFallback(value), () => {
 			store.proxyFallback = value
 			store.render()

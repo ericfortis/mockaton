@@ -20,6 +20,7 @@ export const store = {
 
 	collectProxied: false,
 	proxyFallback: '',
+	showProxyField: null,
 	get canProxy() {
 		return Boolean(store.proxyFallback)
 	},
@@ -39,6 +40,10 @@ export const store = {
 	async fetchState() {
 		store._action(api.getState, async response => {
 			Object.assign(store, await response.json())
+			
+			if (store.showProxyField === null) // isFirstCall
+				store.showProxyField = Boolean(store.proxyFallback)
+			
 			store.render()
 		})
 	},

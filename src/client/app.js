@@ -65,7 +65,7 @@ function Header() {
 					GlobalDelayField(),
 					GlobalDelayJitterField()),
 				CookieSelector(),
-				ProxyFallbackField(),
+				store.showProxyField && ProxyFallbackField(),
 				ResetButton(),
 				HelpLink()
 			)))

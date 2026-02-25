@@ -1,3 +1,7 @@
+export function t(translation) {
+	return translation[0]
+}
+
 export function classNames(...args) {
 	return {
 		className: args.filter(Boolean).join(' ')

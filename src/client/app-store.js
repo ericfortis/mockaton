@@ -25,9 +25,15 @@ export const store = {
 	},
 
 	getSyncVersion: api.getSyncVersion,
-	
+
 	_action(action, onSuccess) {
-		Promise.try(action).then(onSuccess).catch(store.onError)
+		Promise.try(async () => {
+			const response = await action()
+			if (!response.ok) throw response
+			return response
+		})
+			.then(onSuccess)
+			.catch(store.onError)
 	},
 
 	async fetchState() {

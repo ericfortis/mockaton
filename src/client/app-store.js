@@ -39,7 +39,12 @@ export const store = {
 
 	async fetchState() {
 		store._action(api.getState, async response => {
-			Object.assign(store, await response.json())
+			const data = await response.json()
+			const isFirstCall = store.showProxyField === null
+			if (isFirstCall) {
+				store.showProxyField = Boolean(data.proxyFallback)
+			}
+			Object.assign(store, data)
 			store.render()
 		})
 	},

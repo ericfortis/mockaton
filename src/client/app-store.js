@@ -20,6 +20,7 @@ export const store = {
 
 	collectProxied: false,
 	proxyFallback: '',
+	showProxyField: null,
 	get canProxy() {
 		return Boolean(store.proxyFallback)
 	},

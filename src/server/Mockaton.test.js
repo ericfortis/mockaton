@@ -17,7 +17,6 @@ import { readBody } from './utils/HttpIncomingMessage.js'
 import { CorsHeader } from './utils/http-cors.js'
 
 import { Mockaton } from './Mockaton.js'
-import { watchMocksDir, watchStaticDir } from './Watcher.js'
 
 import { Commander } from '../client/ApiCommander.js'
 import { parseFilename } from '../client/Filename.js'

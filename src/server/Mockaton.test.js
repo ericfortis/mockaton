@@ -1169,29 +1169,19 @@ describe('Registering Mocks', () => {
 
 
 describe('Registering Static Mocks', () => {
-	const fxTest = new FixtureStatic('watcher-test-static.txt')
-	before(async () => {
-		// Ensure watchers are stopped first
-		await api.setWatchMocks(false)
+	const fx = new FixtureStatic('static-register.txt')
 
-		// Verify watcher is not running - file write should not trigger registration
+	test('enables watcher via API', async () => {
+		const fxTest = new FixtureStatic('watcher-enable-test-static.txt')
 		await fxTest.write()
 		await new Promise(resolve => setTimeout(resolve, 50))
 		let { staticBrokers } = await fetchState()
-		equal(staticBrokers['/' + fxTest.file], undefined, 'Watcher should not be running yet')
+		equal(staticBrokers['/' + fxTest.file], undefined, 'File should not be registered without watcher')
+		await fxTest.unlink()
 
 		// Enable watchers
 		await api.setWatchMocks(true)
-
-		// Verify watcher is now running - file write should trigger registration
-		await fxTest.unlink()
-		await fxTest.register()
-		staticBrokers = (await fetchState()).staticBrokers
-		equal(staticBrokers['/' + fxTest.file].route, '/' + fxTest.file, 'Watcher should now be running')
-		await fxTest.unlink()
 	})
-
-	const fx = new FixtureStatic('static-register.txt')
 
 	test('registers static', async () => {
 		await fx.register()

@@ -84,7 +84,9 @@ export async function previewMock() {
 		if (proxied || file)
 			await updatePayloadViewer(proxied, file, response)
 	}
-	catch {
+	catch (error) {
+		clearTimeout(spinnerTimer)
+		store.onError(error)
 		payloadViewerCodeRef.elem.replaceChildren()
 	}
 }

@@ -76,11 +76,14 @@ export function watchMocksDir() {
 
 
 export function watchStaticDir() {
+	if (staticWatcher)
+		return
+
 	const dir = config.staticDir
 	if (!dir)
 		return
 
-	watch(dir, { recursive: true, persistent: false }, (_, file) => {
+	staticWatcher = watch(dir, { recursive: true, persistent: false }, (_, file) => {
 		if (!file)
 			return
 

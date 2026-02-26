@@ -1172,6 +1172,9 @@ describe('Registering Static Mocks', () => {
 	const fx = new FixtureStatic('static-register.txt')
 
 	test('enables watcher via API', async () => {
+		// Disable watchers first
+		await api.setWatchMocks(false)
+
 		const fxTest = new FixtureStatic('watcher-enable-test-static.txt')
 		await fxTest.write()
 		await new Promise(resolve => setTimeout(resolve, 50))

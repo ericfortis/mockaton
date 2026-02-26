@@ -17,7 +17,7 @@
 	--colorPurple: light-dark(#9b71e8, #ae81ff);
 	--colorGreen: light-dark(#388e3c, #a6e22e);
 	--color4xxBackground: light-dark(#ffedd1, #68554a);
-	
+
 	accent-color: var(--colorAccent);
 	--radius: 16px;
 }
@@ -115,14 +115,24 @@ header {
 			opacity: 1;
 		}
 
-		@media (max-width: 740px) {
-			display: none;
-		}
-
 		svg {
 			width: 120px;
 			pointer-events: none;
 			fill: var(--colorText);
+		}
+	}
+	
+	@media (max-width: 570px) {
+		.Logo {
+			display: none;
+		}
+	}
+
+	&:has(.FallbackBackend) {
+		@media (max-width: 740px) {
+			.Logo {
+				display: none;
+			}
 		}
 	}
 
@@ -133,9 +143,11 @@ header {
 		align-items: flex-end;
 		gap: 16px 12px;
 
-		@media (max-width: 600px) {
-			.HelpLink {
-				margin-left: unset;
+		&:has(.FallbackBackend) {
+			@media (max-width: 600px) {
+				.HelpLink {
+					margin-left: unset;
+				}
 			}
 		}
 	}

@@ -456,6 +456,32 @@
 				}
 			}
 		},
+		"/mockaton/watch-mocks": {
+			"patch": {
+				"summary": "Enable or disable mock file watching",
+				"description": "Controls file watchers for both mocksDir and staticDir. Pass true to start watching, false to stop. Used primarily in testing when watchers are disabled at startup.",
+				"x-js-client-example": "await mockaton.setWatchMocks(true)",
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"type": "boolean",
+								"description": "true to start watchers, false to stop them"
+							}
+						}
+					}
+				},
+				"responses": {
+					"200": {
+						"description": "OK"
+					},
+					"422": {
+						"description": "Invalid input - expected boolean"
+					}
+				}
+			}
+		},
 		"/mockaton/state": {
 			"get": {
 				"summary": "Get complete Mockaton state",

@@ -23,6 +23,7 @@ export const API = {
 	throws: MOUNT + '/throws',
 	toggle500: MOUNT + '/toggle500',
 	watchHotReload: MOUNT + '/watch-hot-reload',
+	watchMocks: MOUNT + '/watch-mocks',
 }
 
 export const HEADER_502 = 'Mockaton502'

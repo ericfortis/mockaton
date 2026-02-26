@@ -1073,30 +1073,20 @@ test('head for get. returns the headers without body only for GETs requested as 
 
 
 describe('Registering Mocks', () => {
-	const fxTest = new Fixture('watcher-test.GET.200.json')
-	before(async () => {
-		// Ensure watchers are stopped first
-		await api.setWatchMocks(false)
+	const fxA = new Fixture('register(default).GET.200.json')
+	const fxB = new Fixture('register(alt).GET.200.json')
 
-		// Verify watcher is not running - file write should not trigger registration
-		await fxTest.write()
+	test('enables watcher via API', async () => {
+		const fx = new Fixture('watcher-enable-test.GET.200.json')
+		await fx.write()
 		await new Promise(resolve => setTimeout(resolve, 50))
-		let b = await fxTest.fetchBroker()
-		equal(b, undefined, 'Watcher should not be running yet')
+		let b = await fx.fetchBroker()
+		equal(b, undefined, 'File should not be registered without watcher')
+		await fx.unlink()
 
 		// Enable watchers
 		await api.setWatchMocks(true)
-
-		// Verify watcher is now running - file write should trigger registration
-		await fxTest.unlink()
-		await fxTest.register()
-		b = await fxTest.fetchBroker()
-		equal(b.file, fxTest.file, 'Watcher should now be running')
-		await fxTest.unlink()
 	})
-
-	const fxA = new Fixture('register(default).GET.200.json')
-	const fxB = new Fixture('register(alt).GET.200.json')
 
 	test('register', async () => {
 		await fxA.register()

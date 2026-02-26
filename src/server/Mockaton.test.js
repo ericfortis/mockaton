@@ -263,25 +263,6 @@ describe('CORS', () => {
 })
 
 
-describe('Watch Mocks', () => {
-	describe('Set Watch Mocks', () => {
-		test('422 for non boolean', async () => {
-			const r = await api.setWatchMocks('not-a-boolean')
-			equal(r.status, 422)
-			equal(await r.text(), 'Expected boolean for "watchMocks"')
-		})
-
-		test('200', async () => {
-			const r = await api.setWatchMocks(true)
-			equal(r.status, 200)
-
-			const r2 = await api.setWatchMocks(false)
-			equal(r2.status, 200)
-		})
-	})
-})
-
-
 describe('Dashboard', () => {
 	test('renders', async () => {
 		const r = await request(API.dashboard)
@@ -1072,23 +1053,34 @@ test('head for get. returns the headers without body only for GETs requested as 
 })
 
 
+describe('Watch mocks API toggler', () => {
+	test('422 for non boolean', async () => {
+		const r = await api.setWatchMocks('not-a-boolean')
+		equal(r.status, 422)
+		equal(await r.text(), 'Expected boolean for "watchMocks"')
+	})
+
+	test('200', async () => {
+		equal((await api.setWatchMocks(true)).status, 200)
+		equal((await api.setWatchMocks(false)).status, 200)
+	})
+})
+
 describe('Registering Mocks', () => {
 	const fxA = new Fixture('register(default).GET.200.json')
 	const fxB = new Fixture('register(alt).GET.200.json')
 
-	test('enables watcher via API', async () => {
-		const fx = new Fixture('watcher-enable-test.GET.200.json')
+	test('when watcher is off, newly added mocks do not get registered', async () => {
+		await api.setWatchMocks(false)
+		const fx = new Fixture('non-auto-registered-file.GET.200.json')
 		await fx.write()
-		await new Promise(resolve => setTimeout(resolve, 50))
-		let b = await fx.fetchBroker()
-		equal(b, undefined, 'File should not be registered without watcher')
+		await sleep()
+		equal(await fx.fetchBroker(), undefined)
 		await fx.unlink()
-
-		// Enable watchers
-		await api.setWatchMocks(true)
 	})
 
 	test('register', async () => {
+		await api.setWatchMocks(true)
 		await fxA.register()
 		await fxB.register()
 		const b = await fxA.fetchBroker()
@@ -1169,24 +1161,19 @@ describe('Registering Mocks', () => {
 
 
 describe('Registering Static Mocks', () => {
-	const fx = new FixtureStatic('static-register.txt')
-
-	test('enables watcher via API', async () => {
-		// Disable watchers first
+	test('when watcher is off, newly added mocks do not get registered', async () => {
 		await api.setWatchMocks(false)
-
-		const fxTest = new FixtureStatic('watcher-enable-test-static.txt')
-		await fxTest.write()
-		await new Promise(resolve => setTimeout(resolve, 50))
-		let { staticBrokers } = await fetchState()
-		equal(staticBrokers['/' + fxTest.file], undefined, 'File should not be registered without watcher')
-		await fxTest.unlink()
-
-		// Enable watchers
-		await api.setWatchMocks(true)
+		const fx = new FixtureStatic('non-auto-registered-file.txt')
+		await fx.write()
+		await sleep()
+		const { staticBrokers } = await fetchState()
+		equal(staticBrokers['/' + fx.file], undefined)
+		await fx.unlink()
 	})
 
+	const fx = new FixtureStatic('static-register.txt')
 	test('registers static', async () => {
+		await api.setWatchMocks(true)
 		await fx.register()
 		const { staticBrokers } = await fetchState()
 		deepEqual(staticBrokers, {
@@ -1244,3 +1231,8 @@ describe('Registering Static Mocks', () => {
 		})
 	})
 })
+
+
+async function sleep(ms = 100) {
+	await new Promise(resolve => setTimeout(resolve, ms))
+}

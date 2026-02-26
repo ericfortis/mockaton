@@ -459,7 +459,7 @@
 		"/mockaton/watch-mocks": {
 			"patch": {
 				"summary": "Enable or disable mock file watching",
-				"description": "Controls file watchers for both mocksDir and staticDir. Pass true to start watching, false to stop. Used primarily in testing when watchers are disabled at startup.",
+				"description": "Controls file watchers for both mocksDir and staticDir.",
 				"x-js-client-example": "await mockaton.setWatchMocks(true)",
 				"requestBody": {
 					"required": true,

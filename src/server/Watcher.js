@@ -14,6 +14,10 @@ import * as staticCollection from './staticCollection.js'
 import * as mockBrokerCollection from './mockBrokersCollection.js'
 
 
+let mocksWatcher = null
+let staticWatcher = null
+
+
 /**
  * ARR Event = Add, Remove, or Rename Mock
  *

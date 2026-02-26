@@ -1,13 +1,14 @@
 import {
 	createElement as r,
 	createSvgElement as s,
-	t, classNames, restoreFocus, Fragment, adoptCSS
+	t, classNames, restoreFocus, Fragment, defineClassNames
 } from './dom-utils.js'
 import { store } from './app-store.js'
 import { PayloadViewer, previewMock } from './payload-viewer.js'
 
 import CSS from './app.css' with { type: 'css' }
-adoptCSS(CSS)
+document.adoptedStyleSheets.push(CSS)
+defineClassNames(CSS)
 
 
 store.onError = onError

@@ -1,13 +1,13 @@
 import {
 	createElement as r,
-	t, classNames, adoptCSS
+	t, classNames, defineClassNames
 } from './dom-utils.js'
 import { parseFilename } from './Filename.js'
 import { HEADER_502 } from './ApiConstants.js'
 import { store } from './app-store.js'
 
 import CSS from './app.css' with { type: 'css' }
-adoptCSS(CSS)
+defineClassNames(CSS)
 
 
 const payloadViewerTitleRef = {}

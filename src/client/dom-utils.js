@@ -72,8 +72,7 @@ function selectorFor(elem) {
 }
 
 
-export function adoptCSS(sheet) {
-	document.adoptedStyleSheets.push(sheet)
+export function defineClassNames(sheet) {
 	Object.assign(sheet, extractClassNames(sheet))
 }
 

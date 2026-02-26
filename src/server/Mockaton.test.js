@@ -1140,7 +1140,7 @@ describe('Registering Mocks', () => {
 
 
 describe('Registering Static Mocks', () => {
-	before(watchStaticDir)
+	before(async () => await api.setWatchMocks(true))
 
 	const fx = new FixtureStatic('static-register.txt')
 

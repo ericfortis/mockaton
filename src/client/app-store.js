@@ -25,36 +25,12 @@ export const store = {
 		return Boolean(store.proxyFallback)
 	},
 
-	getSyncVersion: api.getSyncVersion,
-
-	_action(action, onSuccess) {
-		Promise.try(async () => {
-			const response = await action()
-			if (!response.ok) throw response
-			return response
-		})
-			.then(onSuccess)
-			.catch(store.onError)
-	},
-
-	fetchState() {
-		store._action(api.getState, async response => {
-			Object.assign(store, await response.json())
-			
-			if (store.showProxyField === null) // isFirstCall
-				store.showProxyField = Boolean(store.proxyFallback)
-			
-			store.render()
-		})
-	},
-
 	groupByMethod: initPreference('groupByMethod'),
 	toggleGroupByMethod() {
 		store.groupByMethod = !store.groupByMethod
 		togglePreference('groupByMethod', store.groupByMethod)
 		store.render()
 	},
-
 
 	chosenLink: { method: '', urlMask: '' },
 	setChosenLink(method, urlMask) {
@@ -63,46 +39,70 @@ export const store = {
 	get hasChosenLink() {
 		return store.chosenLink.method && store.chosenLink.urlMask
 	},
+	
+	
+	getSyncVersion: api.getSyncVersion,
+	
+	_request(action, onSuccess) {
+		Promise.try(async () => {
+			const response = await action()
+			if (response.ok) return response
+			throw response
+		})
+			.then(onSuccess)
+			.catch(store.onError)
+	},
 
+	fetchState() {
+		store._request(api.getState, async response => {
+			Object.assign(store, await response.json())
+
+			if (store.showProxyField === null) // isFirstCall
+				store.showProxyField = Boolean(store.proxyFallback)
+
+			store.render()
+		})
+	},
 	reset() {
-		store._action(api.reset, () => {
+		store._request(api.reset, () => {
 			store.setChosenLink('', '')
 			store.fetchState()
 		})
 	},
 
 	bulkSelectByComment(value) {
-		store._action(() => api.bulkSelectByComment(value),
-			store.fetchState)
+		store._request(() => api.bulkSelectByComment(value), () => {
+			store.fetchState()
+		})
 	},
 
 	setGlobalDelay(value) {
-		store._action(() => api.setGlobalDelay(value), () => {
+		store._request(() => api.setGlobalDelay(value), () => {
 			store.delay = value
 		})
 	},
 
 	setGlobalDelayJitter(value) {
-		store._action(() => api.setGlobalDelayJitter(value), () => {
+		store._request(() => api.setGlobalDelayJitter(value), () => {
 			store.delayJitter = value
 		})
 	},
 
 	selectCookie(name) {
-		store._action(() => api.selectCookie(name), async response => {
+		store._request(() => api.selectCookie(name), async response => {
 			store.cookies = await response.json()
 		})
 	},
 
 	setProxyFallback(value) {
-		store._action(() => api.setProxyFallback(value), () => {
+		store._request(() => api.setProxyFallback(value), () => {
 			store.proxyFallback = value
 			store.render()
 		})
 	},
 
 	setCollectProxied(checked) {
-		store._action(() => api.setCollectProxied(checked), () => {
+		store._request(() => api.setCollectProxied(checked), () => {
 			store.collectProxied = checked
 		})
 	},
@@ -167,7 +167,7 @@ export const store = {
 	},
 
 	selectFile(file) {
-		store._action(() => api.select(file), async response => {
+		store._request(() => api.select(file), async response => {
 			const { method, urlMask } = parseFilename(file)
 			store.setBroker(await response.json())
 			store.setChosenLink(method, urlMask)
@@ -176,7 +176,7 @@ export const store = {
 	},
 
 	toggle500(method, urlMask) {
-		store._action(() => api.toggle500(method, urlMask), async response => {
+		store._request(() => api.toggle500(method, urlMask), async response => {
 			store.setBroker(await response.json())
 			store.setChosenLink(method, urlMask)
 			store.renderRow(method, urlMask)
@@ -184,7 +184,7 @@ export const store = {
 	},
 
 	setProxied(method, urlMask, checked) {
-		store._action(() => api.setRouteIsProxied(method, urlMask, checked), async response => {
+		store._request(() => api.setRouteIsProxied(method, urlMask, checked), async response => {
 			store.setBroker(await response.json())
 			store.setChosenLink(method, urlMask)
 			store.renderRow(method, urlMask)
@@ -192,19 +192,19 @@ export const store = {
 	},
 
 	setDelayed(method, urlMask, checked) {
-		store._action(() => api.setRouteIsDelayed(method, urlMask, checked), async response => {
+		store._request(() => api.setRouteIsDelayed(method, urlMask, checked), async response => {
 			store.setBroker(await response.json())
 		})
 	},
 
 	setDelayedStatic(route, checked) {
-		store._action(() => api.setStaticRouteIsDelayed(route, checked), () => {
+		store._request(() => api.setStaticRouteIsDelayed(route, checked), () => {
 			store.staticBrokers[route].delayed = checked
 		})
 	},
 
 	setStaticRouteStatus(route, status) {
-		store._action(() => api.setStaticRouteStatus(route, status), () => {
+		store._request(() => api.setStaticRouteStatus(route, status), () => {
 			store.staticBrokers[route].status = status
 		})
 	}

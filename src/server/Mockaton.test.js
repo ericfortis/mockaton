@@ -1054,7 +1054,7 @@ test('head for get. returns the headers without body only for GETs requested as 
 
 
 describe('Registering Mocks', () => {
-	before(watchMocksDir)
+	before(async () => await api.setWatchMocks(true))
 
 	const fxA = new Fixture('register(default).GET.200.json')
 	const fxB = new Fixture('register(alt).GET.200.json')

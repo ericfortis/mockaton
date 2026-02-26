@@ -31,6 +31,9 @@ export class Commander {
 	setCorsAllowed = value => this.#patch(API.cors, value)
 
 	/** @returns {Promise<Response>} */
+	setWatchMocks = enabled => this.#patch(API.watchMocks, enabled)
+
+	/** @returns {Promise<Response>} */
 	setProxyFallback = proxyAddr => this.#patch(API.fallback, proxyAddr)
 
 	/** @returns {Promise<Response>} */

@@ -1075,6 +1075,9 @@ test('head for get. returns the headers without body only for GETs requested as 
 describe('Registering Mocks', () => {
 	const fxTest = new Fixture('watcher-test.GET.200.json')
 	before(async () => {
+		// Ensure watchers are stopped first
+		await api.setWatchMocks(false)
+
 		// Verify watcher is not running - file write should not trigger registration
 		await fxTest.write()
 		await new Promise(resolve => setTimeout(resolve, 50))

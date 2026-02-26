@@ -10,7 +10,7 @@ import {
 	DASHBOARD_ASSETS,
 	CLIENT_DIR
 } from './WatcherDevClient.js'
-import { longPollClientSyncVersion } from './Watcher.js'
+import { longPollClientSyncVersion, startWatchers, stopWatchers } from './Watcher.js'
 
 import pkgJSON from '../../package.json' with { type: 'json' }
 
@@ -54,7 +54,9 @@ export const apiPatchReqs = new Map([
 	[API.toggle500, toggleRoute500],
 
 	[API.delayStatic, setStaticRouteIsDelayed],
-	[API.staticStatus, setStaticRouteStatusCode]
+	[API.staticStatus, setStaticRouteStatusCode],
+
+	[API.watchMocks, setWatchMocks]
 ])
 
 

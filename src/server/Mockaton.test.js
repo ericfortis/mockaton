@@ -1181,6 +1181,9 @@ describe('Registering Mocks', () => {
 describe('Registering Static Mocks', () => {
 	const fxTest = new FixtureStatic('watcher-test-static.txt')
 	before(async () => {
+		// Ensure watchers are stopped first
+		await api.setWatchMocks(false)
+
 		// Verify watcher is not running - file write should not trigger registration
 		await fxTest.write()
 		await new Promise(resolve => setTimeout(resolve, 50))

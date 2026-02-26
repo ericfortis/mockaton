@@ -25,8 +25,8 @@ and saving their responses following the filename convention.
 
 ### Tests
 - Utilities are unit-tested.
-- Mockaton server is integration tested. Except for file watching, you could 
- write Mockaton in another language and run our test suite against it.
+- Mockaton server is integration tested. You could write Mockaton in another
+ language and run our test suite against it.
 - UI is pixel-diff tested with `pixaton`, which is a sister project of Puppeteer utilities.
 
 

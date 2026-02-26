@@ -14,6 +14,10 @@ import * as staticCollection from './staticCollection.js'
 import * as mockBrokerCollection from './mockBrokersCollection.js'
 
 
+let mocksWatcher = null
+let staticWatcher = null
+
+
 /**
  * ARR Event = Add, Remove, or Rename Mock
  *
@@ -47,7 +51,7 @@ const uiSyncVersion = new class extends EventEmitter {
 
 export function watchMocksDir() {
 	const dir = config.mocksDir
-	watch(dir, { recursive: true, persistent: false }, (_, file) => {
+	mocksWatcher = mocksWatcher || watch(dir, { recursive: true, persistent: false }, (_, file) => {
 		if (!file)
 			return
 
@@ -73,7 +77,7 @@ export function watchStaticDir() {
 	if (!dir)
 		return
 
-	watch(dir, { recursive: true, persistent: false }, (_, file) => {
+	staticWatcher = staticWatcher || watch(dir, { recursive: true, persistent: false }, (_, file) => {
 		if (!file)
 			return
 
@@ -112,4 +116,17 @@ export function longPollClientSyncVersion(req, response) {
 		response.destroy()
 	})
 	uiSyncVersion.subscribe(onARR)
+}
+
+
+export function startWatchers() {
+	watchMocksDir()
+	watchStaticDir()
+}
+
+export function stopWatchers() {
+	mocksWatcher?.close()
+	staticWatcher?.close()
+	mocksWatcher = null
+	staticWatcher = null
 }

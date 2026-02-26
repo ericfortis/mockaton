@@ -17,7 +17,6 @@ import { readBody } from './utils/HttpIncomingMessage.js'
 import { CorsHeader } from './utils/http-cors.js'
 
 import { Mockaton } from './Mockaton.js'
-import { watchMocksDir, watchStaticDir } from './Watcher.js'
 
 import { Commander } from '../client/ApiCommander.js'
 import { parseFilename } from '../client/Filename.js'
@@ -1054,13 +1053,34 @@ test('head for get. returns the headers without body only for GETs requested as 
 })
 
 
-describe('Registering Mocks', () => {
-	before(watchMocksDir)
+describe('Watch mocks API toggler', () => {
+	test('422 for non boolean', async () => {
+		const r = await api.setWatchMocks('not-a-boolean')
+		equal(r.status, 422)
+		equal(await r.text(), 'Expected boolean for "watchMocks"')
+	})
 
+	test('200', async () => {
+		equal((await api.setWatchMocks(true)).status, 200)
+		equal((await api.setWatchMocks(false)).status, 200)
+	})
+})
+
+describe('Registering Mocks', () => {
 	const fxA = new Fixture('register(default).GET.200.json')
 	const fxB = new Fixture('register(alt).GET.200.json')
 
+	test('when watcher is off, newly added mocks do not get registered', async () => {
+		await api.setWatchMocks(false)
+		const fx = new Fixture('non-auto-registered-file.GET.200.json')
+		await fx.write()
+		await sleep()
+		equal(await fx.fetchBroker(), undefined)
+		await fx.unlink()
+	})
+
 	test('register', async () => {
+		await api.setWatchMocks(true)
 		await fxA.register()
 		await fxB.register()
 		const b = await fxA.fetchBroker()
@@ -1141,11 +1161,19 @@ describe('Registering Mocks', () => {
 
 
 describe('Registering Static Mocks', () => {
-	before(watchStaticDir)
+	test('when watcher is off, newly added mocks do not get registered', async () => {
+		await api.setWatchMocks(false)
+		const fx = new FixtureStatic('non-auto-registered-file.txt')
+		await fx.write()
+		await sleep()
+		const { staticBrokers } = await fetchState()
+		equal(staticBrokers['/' + fx.file], undefined)
+		await fx.unlink()
+	})
 
 	const fx = new FixtureStatic('static-register.txt')
-
 	test('registers static', async () => {
+		await api.setWatchMocks(true)
 		await fx.register()
 		const { staticBrokers } = await fetchState()
 		deepEqual(staticBrokers, {
@@ -1203,3 +1231,8 @@ describe('Registering Static Mocks', () => {
 		})
 	})
 })
+
+
+async function sleep(ms = 100) {
+	await new Promise(resolve => setTimeout(resolve, ms))
+}

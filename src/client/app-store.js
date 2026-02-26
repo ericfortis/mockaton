@@ -37,7 +37,7 @@ export const store = {
 			.catch(store.onError)
 	},
 
-	async fetchState() {
+	fetchState() {
 		store._action(api.getState, async response => {
 			Object.assign(store, await response.json())
 			
@@ -64,44 +64,44 @@ export const store = {
 		return store.chosenLink.method && store.chosenLink.urlMask
 	},
 
-	async reset() {
+	reset() {
 		store._action(api.reset, () => {
 			store.setChosenLink('', '')
 			store.fetchState()
 		})
 	},
 
-	async bulkSelectByComment(value) {
+	bulkSelectByComment(value) {
 		store._action(() => api.bulkSelectByComment(value),
 			store.fetchState)
 	},
 
-	async setGlobalDelay(value) {
+	setGlobalDelay(value) {
 		store._action(() => api.setGlobalDelay(value), () => {
 			store.delay = value
 		})
 	},
 
-	async setGlobalDelayJitter(value) {
+	setGlobalDelayJitter(value) {
 		store._action(() => api.setGlobalDelayJitter(value), () => {
 			store.delayJitter = value
 		})
 	},
 
-	async selectCookie(name) {
+	selectCookie(name) {
 		store._action(() => api.selectCookie(name), async response => {
 			store.cookies = await response.json()
 		})
 	},
 
-	async setProxyFallback(value) {
+	setProxyFallback(value) {
 		store._action(() => api.setProxyFallback(value), () => {
 			store.proxyFallback = value
 			store.render()
 		})
 	},
 
-	async setCollectProxied(checked) {
+	setCollectProxied(checked) {
 		store._action(() => api.setCollectProxied(checked), () => {
 			store.collectProxied = checked
 		})
@@ -166,7 +166,7 @@ export const store = {
 		store.renderRow(method, urlMask)
 	},
 
-	async selectFile(file) {
+	selectFile(file) {
 		store._action(() => api.select(file), async response => {
 			const { method, urlMask } = parseFilename(file)
 			store.setBroker(await response.json())
@@ -175,7 +175,7 @@ export const store = {
 		})
 	},
 
-	async toggle500(method, urlMask) {
+	toggle500(method, urlMask) {
 		store._action(() => api.toggle500(method, urlMask), async response => {
 			store.setBroker(await response.json())
 			store.setChosenLink(method, urlMask)
@@ -183,7 +183,7 @@ export const store = {
 		})
 	},
 
-	async setProxied(method, urlMask, checked) {
+	setProxied(method, urlMask, checked) {
 		store._action(() => api.setRouteIsProxied(method, urlMask, checked), async response => {
 			store.setBroker(await response.json())
 			store.setChosenLink(method, urlMask)
@@ -191,19 +191,19 @@ export const store = {
 		})
 	},
 
-	async setDelayed(method, urlMask, checked) {
+	setDelayed(method, urlMask, checked) {
 		store._action(() => api.setRouteIsDelayed(method, urlMask, checked), async response => {
 			store.setBroker(await response.json())
 		})
 	},
 
-	async setDelayedStatic(route, checked) {
+	setDelayedStatic(route, checked) {
 		store._action(() => api.setStaticRouteIsDelayed(route, checked), () => {
 			store.staticBrokers[route].delayed = checked
 		})
 	},
 
-	async setStaticRouteStatus(route, status) {
+	setStaticRouteStatus(route, status) {
 		store._action(() => api.setStaticRouteStatus(route, status), () => {
 			store.staticBrokers[route].status = status
 		})

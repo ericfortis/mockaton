@@ -1073,7 +1073,24 @@ test('head for get. returns the headers without body only for GETs requested as 
 
 
 describe('Registering Mocks', () => {
-	before(async () => await api.setWatchMocks(true))
+	const fxTest = new Fixture('watcher-test.GET.200.json')
+	before(async () => {
+		// Verify watcher is not running - file write should not trigger registration
+		await fxTest.write()
+		await new Promise(resolve => setTimeout(resolve, 50))
+		let b = await fxTest.fetchBroker()
+		equal(b, undefined, 'Watcher should not be running yet')
+
+		// Enable watchers
+		await api.setWatchMocks(true)
+
+		// Verify watcher is now running - file write should trigger registration
+		await fxTest.unlink()
+		await fxTest.register()
+		b = await fxTest.fetchBroker()
+		equal(b.file, fxTest.file, 'Watcher should now be running')
+		await fxTest.unlink()
+	})
 
 	const fxA = new Fixture('register(default).GET.200.json')
 	const fxB = new Fixture('register(alt).GET.200.json')

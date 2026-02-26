@@ -263,6 +263,25 @@ describe('CORS', () => {
 })
 
 
+describe('Watch Mocks', () => {
+	describe('Set Watch Mocks', () => {
+		test('422 for non boolean', async () => {
+			const r = await api.setWatchMocks('not-a-boolean')
+			equal(r.status, 422)
+			equal(await r.text(), 'Expected boolean for "watchMocks"')
+		})
+
+		test('200', async () => {
+			const r = await api.setWatchMocks(true)
+			equal(r.status, 200)
+
+			const r2 = await api.setWatchMocks(false)
+			equal(r2.status, 200)
+		})
+	})
+})
+
+
 describe('Dashboard', () => {
 	test('renders', async () => {
 		const r = await request(API.dashboard)

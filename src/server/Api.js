@@ -111,6 +111,21 @@ async function setCorsAllowed(req, response) {
 }
 
 
+async function setWatchMocks(req, response) {
+	const enabled = await req.json()
+
+	if (typeof enabled !== 'boolean')
+		response.unprocessable(`Expected boolean for "watchMocks"`)
+	else {
+		if (enabled)
+			startWatchers()
+		else
+			stopWatchers()
+		response.ok()
+	}
+}
+
+
 async function setGlobalDelay(req, response) {
 	const delay = await req.json()
 

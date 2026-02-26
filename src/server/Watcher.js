@@ -123,3 +123,16 @@ export function longPollClientSyncVersion(req, response) {
 	})
 	uiSyncVersion.subscribe(onARR)
 }
+
+
+export function startWatchers() {
+	watchMocksDir()
+	watchStaticDir()
+}
+
+export function stopWatchers() {
+	mocksWatcher?.close()
+	staticWatcher?.close()
+	mocksWatcher = null
+	staticWatcher = null
+}

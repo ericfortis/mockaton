@@ -1,10 +1,4 @@
-import { join } from 'node:path'
-import { tmpdir } from 'node:os'
-import { mkdtempSync } from 'node:fs'
-
 export default {
-	mocksDir: mkdtempSync(join(tmpdir(), 'mocks')),
-	staticDir: mkdtempSync(join(tmpdir(), 'static')),
 	onReady() {},
 	cookies: {
 		userA: 'CookieA',

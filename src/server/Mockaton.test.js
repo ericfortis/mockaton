@@ -1,11 +1,13 @@
 import { join } from 'node:path'
+import { spawn } from 'node:child_process'
+import { tmpdir } from 'node:os'
 import { promisify } from 'node:util'
 import { createServer } from 'node:http'
+import { mkdtempSync } from 'node:fs'
 import { randomUUID } from 'node:crypto'
 import { equal, deepEqual, match } from 'node:assert/strict'
 import { describe, test, before, beforeEach, after } from 'node:test'
 import { writeFile, unlink, mkdir, readFile, rename } from 'node:fs/promises'
-import { spawn } from 'node:child_process'
 
 import { mimeFor } from './utils/mime.js'
 import { readBody } from './utils/HttpIncomingMessage.js'
@@ -17,8 +19,11 @@ import { parseFilename } from '../client/Filename.js'
 
 import CONFIG from './Mockaton.test.config.js'
 
-const inMocksDir = f => join(CONFIG.mocksDir, f)
-const inStaticMocksDir = f => join(CONFIG.staticDir, f)
+const mocksDir = mkdtempSync(join(tmpdir(), 'mocks'))
+const staticDir = mkdtempSync(join(tmpdir(), 'static'))
+
+const inMocksDir = f => join(mocksDir, f)
+const inStaticMocksDir = f => join(staticDir, f)
 const readFromMocksDir = f => readFile(inMocksDir(f), 'utf8')
 const makeDirInMocks = dir => mkdir(inMocksDir(dir), { recursive: true })
 const makeDirInStaticMocks = dir => mkdir(inStaticMocksDir(dir), { recursive: true })
@@ -30,46 +35,25 @@ const stderr = []
 const proc = spawn(process.execPath, [
 	join(import.meta.dirname, 'cli.js'),
 	'--config', join(import.meta.dirname, 'Mockaton.test.config.js'),
-	'--mocks-dir', CONFIG.mocksDir,
-	'--static-dir', CONFIG.staticDir
-], {
-	stdio: ['ignore', 'pipe', 'pipe']
-})
+	'--mocks-dir', mocksDir,
+	'--static-dir', staticDir
+])
 
 proc.stdout.on('data', data => { stdout.push(data.toString()) })
 proc.stderr.on('data', data => { stderr.push(data.toString()) })
 
-await new Promise((resolve, reject) => {
-	const timeout = setTimeout(() => {
-		proc.kill()
-		reject(new Error(`Timeout waiting for server to start. stdout: ${stdout.join('')}, stderr: ${stderr.join('')}`))
-	}, 5000)
-
-	const checkReady = () => {
-		if (stdout.join('').includes('Listening')) {
-			clearTimeout(timeout)
-			resolve()
-		}
-	}
-
-	proc.stdout.on('data', checkReady)
-	proc.on('error', err => {
-		clearTimeout(timeout)
-		reject(err)
+const serverAddr = await new Promise((resolve, reject) => {
+	proc.stdout.on('data', () => {
+		const addr = stdout[0].match(/Listening::(http:\/\/[^\s\n]+)/)[1]
+		if (addr)
+			resolve(addr)
 	})
+	proc.on('error', reject)
 })
 
-const urlMatch = stdout.join('').match(/Listening::(http:\/\/[^\s\n]+)/)
-if (!urlMatch) {
-	throw new Error('Could not extract server URL from output')
-}
-const serverUrl = urlMatch[1]
+after(() => proc.kill())
 
-after(() => {
-	proc.kill()
-})
-
-const api = new Commander(serverUrl)
+const api = new Commander(serverAddr)
 
 /** @returns {Promise<State>} */
 async function fetchState() {
@@ -128,7 +112,7 @@ class BaseFixture {
 class Fixture extends BaseFixture {
 	constructor(file, body = '') {
 		super(file, body)
-		this.dir = CONFIG.mocksDir
+		this.dir = mocksDir
 		const t = parseFilename(file)
 		this.urlMask = t.urlMask
 		this.method = t.method
@@ -143,7 +127,7 @@ class Fixture extends BaseFixture {
 class FixtureStatic extends BaseFixture {
 	constructor(file, body = '') {
 		super(file, body)
-		this.dir = CONFIG.staticDir
+		this.dir = staticDir
 		this.urlMask = '/' + file
 		this.method = 'GET'
 	}
@@ -192,8 +176,8 @@ describe('Warnings', () => {
 		await fx2.write()
 		await api.reset()
 
-		match(stderr.at(-1), /Invalid HTTP Response Status: "NaN"/)
-		match(stderr.at(-1), /Unrecognized HTTP Method: "_INVALID_METHOD_"/)
+		match(stderr.at(-3), /Invalid HTTP Response Status: "NaN"/)
+		match(stderr.at(-2), /Unrecognized HTTP Method: "_INVALID_METHOD_"/)
 		match(stderr.at(-1), /Invalid Filename Convention/)
 
 		await fx0.unlink()

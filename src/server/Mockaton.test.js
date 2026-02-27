@@ -1,4 +1,4 @@
-import { join, dirname } from 'node:path'
+import { join } from 'node:path'
 import { promisify } from 'node:util'
 import { createServer } from 'node:http'
 import { randomUUID } from 'node:crypto'
@@ -6,7 +6,6 @@ import { equal, deepEqual, match } from 'node:assert/strict'
 import { describe, test, before, beforeEach, after } from 'node:test'
 import { writeFile, unlink, mkdir, readFile, rename } from 'node:fs/promises'
 import { spawn } from 'node:child_process'
-import { fileURLToPath } from 'node:url'
 
 import { mimeFor } from './utils/mime.js'
 import { readBody } from './utils/HttpIncomingMessage.js'
@@ -18,10 +17,8 @@ import { parseFilename } from '../client/Filename.js'
 
 import CONFIG from './Mockaton.test.config.js'
 
-const __filename = fileURLToPath(import.meta.url)
-const __dirname = dirname(__filename)
-const CLI_PATH = join(__dirname, 'cli.js')
-const CONFIG_PATH = join(__dirname, 'Mockaton.test.config.js')
+const CLI_PATH = join(import.meta.dirname, 'cli.js')
+const CONFIG_PATH = join(import.meta.dirname, 'Mockaton.test.config.js')
 
 const inMocksDir = f => join(CONFIG.mocksDir, f)
 const inStaticMocksDir = f => join(CONFIG.staticDir, f)

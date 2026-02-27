@@ -2,7 +2,7 @@ import { join } from 'node:path'
 import { tmpdir } from 'node:os'
 import { mkdtempSync } from 'node:fs'
 
-const CONFIG = {
+export default {
 	mocksDir: mkdtempSync(join(tmpdir(), 'mocks')),
 	staticDir: mkdtempSync(join(tmpdir(), 'static')),
 	onReady() {},
@@ -20,6 +20,3 @@ const CONFIG = {
 	watcherEnabled: false, // But we enable it at run-time
 	watcherDebounceMs: 0
 }
-
-export { CONFIG }
-export default CONFIG

@@ -242,7 +242,7 @@ describe('Warnings', () => {
 			})
 			equal(r.status, 422)
 
-			await new Promise(resolve => setTimeout(resolve, 100))
+			await new Promise(resolve => setTimeout(resolve, 200))
 			const { stdout } = getOutput()
 
 			match(stdout, /BodyReaderError: Could not parse/)

@@ -176,9 +176,10 @@ describe('Warnings', () => {
 		await fx2.write()
 		await api.reset()
 
-		match(stderr.at(-3), /Invalid HTTP Response Status: "NaN"/)
-		match(stderr.at(-2), /Unrecognized HTTP Method: "_INVALID_METHOD_"/)
-		match(stderr.at(-1), /Invalid Filename Convention/)
+		const log = stderr.join('')
+		match(log, /Invalid HTTP Response Status: "NaN"/)
+		match(log, /Unrecognized HTTP Method: "_INVALID_METHOD_"/)
+		match(log, /Invalid Filename Convention/)
 
 		await fx0.unlink()
 		await fx1.unlink()

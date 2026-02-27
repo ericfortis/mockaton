@@ -1,6 +1,8 @@
 import { join } from 'node:path'
+import { tmpdir } from 'node:os'
 import { promisify } from 'node:util'
 import { createServer } from 'node:http'
+import { mkdtempSync } from 'node:fs'
 import { randomUUID } from 'node:crypto'
 import { equal, deepEqual, match } from 'node:assert/strict'
 import { describe, test, before, beforeEach, after } from 'node:test'
@@ -16,8 +18,26 @@ import { Commander } from '../client/ApiCommander.js'
 import { parseFilename } from '../client/Filename.js'
 
 import { Mockaton } from './Mockaton.js'
-import { CONFIG } from './Mockaton.test.config.js'
 
+
+const CONFIG = {
+	mocksDir: mkdtempSync(join(tmpdir(), 'mocks')),
+	staticDir: mkdtempSync(join(tmpdir(), 'static')),
+	onReady() {},
+	cookies: {
+		userA: 'CookieA',
+		userB: 'CookieB'
+	},
+	extraHeaders: ['custom_header_name', 'custom_header_val'],
+	extraMimes: {
+		['custom_extension']: 'custom_mime'
+	},
+	logLevel: 'verbose',
+	corsOrigins: ['https://example.test'],
+	corsExposedHeaders: ['Content-Encoding'],
+	watcherEnabled: false, // But we enable it at run-time
+	watcherDebounceMs: 0
+}
 
 const inMocksDir = f => join(CONFIG.mocksDir, f)
 const inStaticMocksDir = f => join(CONFIG.staticDir, f)

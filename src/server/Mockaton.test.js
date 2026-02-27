@@ -271,6 +271,11 @@ describe('Dashboard', () => {
 		const r = await request(API.dashboard + '?foo=bar')
 		match(await r.text(), new RegExp('<!DOCTYPE html>'))
 	})
+	
+	test('serves assets', async () => {
+		const r = await request(API.dashboard + '/app.css')
+		match(await r.text(), new RegExp(':root {'))
+	})
 })
 
 
@@ -1170,7 +1175,7 @@ describe('Registering Static Mocks', () => {
 		await fx.unlink()
 	})
 
-	const fx = new FixtureStatic('static-register.txt')
+	const fx = new FixtureStatic('static-register.txt', 'static-body')
 	test('registers static', async () => {
 		await api.setWatchMocks(true)
 		await fx.register()
@@ -1182,6 +1187,9 @@ describe('Registering Static Mocks', () => {
 				delayed: false
 			}
 		})
+		const response = await fx.request()
+		equal(response.status, 200)
+		equal(await response.text(), fx.body)
 	})
 
 	test('unregisters static', async () => {

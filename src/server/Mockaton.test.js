@@ -31,7 +31,6 @@ const makeDirInStaticMocks = dir => mkdir(inStaticMocksDir(dir), { recursive: tr
 const renameInMocksDir = (src, target) => rename(inMocksDir(src), inMocksDir(target))
 const renameInStaticMocksDir = (src, target) => rename(inStaticMocksDir(src), inStaticMocksDir(target))
 
-// Spawn Mockaton as a subprocess
 const stdout = []
 const stderr = []
 const proc = spawn(process.execPath, [
@@ -46,7 +45,6 @@ const proc = spawn(process.execPath, [
 proc.stdout.on('data', data => { stdout.push(data.toString()) })
 proc.stderr.on('data', data => { stderr.push(data.toString()) })
 
-// Wait for server to be ready
 await new Promise((resolve, reject) => {
 	const timeout = setTimeout(() => {
 		proc.kill()
@@ -67,7 +65,6 @@ await new Promise((resolve, reject) => {
 	})
 })
 
-// Extract server URL from log output (format: "Listening::http://127.0.0.1:PORT")
 const urlMatch = stdout.join('').match(/Listening::(http:\/\/[^\s\n]+)/)
 if (!urlMatch) {
 	throw new Error('Could not extract server URL from output')

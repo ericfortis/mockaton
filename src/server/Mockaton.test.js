@@ -199,10 +199,7 @@ describe('Warnings', () => {
 		await fx0.write()
 		await fx1.write()
 		await fx2.write()
-
-		// Reset to trigger file scanning
 		await api.reset()
-		await new Promise(resolve => setTimeout(resolve, 100))
 
 		match(stderr, /Invalid HTTP Response Status: "NaN"/)
 		match(stderr, /Unrecognized HTTP Method: "_INVALID_METHOD_"/)
@@ -214,23 +211,17 @@ describe('Warnings', () => {
 	})
 
 	test('body parser rejects invalid JSON in API requests', async t => {
-		const r = await fetch(api.addr + API.cookies, {
+		const r = await request(API.cookies, {
 			method: 'PATCH',
 			body: '[invalid_json]'
 		})
 		equal(r.status, 422)
-
-		await new Promise(resolve => setTimeout(resolve, 100))
-
 		match(stdout, /BodyReaderError: Could not parse/)
 	})
 
 	test('returns 500 when a handler throws', async t => {
-		const r = await fetch(api.addr + API.throws)
+		const r = await request(API.throws)
 		equal(r.status, 500)
-
-		await new Promise(resolve => setTimeout(resolve, 100))
-
 		match(stderr, /Test500/)
 	})
 })

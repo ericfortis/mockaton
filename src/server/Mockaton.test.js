@@ -194,71 +194,6 @@ describe('Rejects malicious URLs', () => {
 
 
 describe('Warnings', () => {
-	/**
-	 * Spawns Mockaton as a subprocess and captures its stdio output
-	 * @param {Function} testFn - Async test function that receives { port, getOutput }
-	 */
-	async function withSubprocess(testFn) {
-		const __filename = fileURLToPath(import.meta.url)
-		const __dirname = dirname(__filename)
-		const cliPath = join(__dirname, 'cli.js')
-		const configPath = join(__dirname, 'Mockaton.test.config.js')
-
-		let stdout = ''
-		let stderr = ''
-
-		// Spawn the process with CLI args to override the directories
-		// so the subprocess uses the same directories as the test
-		const proc = spawn(process.execPath, [
-			cliPath,
-			'--config', configPath,
-			'--mocks-dir', CONFIG.mocksDir,
-			'--static-dir', CONFIG.staticDir
-		], {
-			stdio: ['ignore', 'pipe', 'pipe']
-		})
-
-		proc.stdout.on('data', data => { stdout += data.toString() })
-		proc.stderr.on('data', data => { stderr += data.toString() })
-
-		// Wait for server to be ready by watching for the "Listening" log
-		await new Promise((resolve, reject) => {
-			const timeout = setTimeout(() => {
-				proc.kill()
-				reject(new Error(`Timeout waiting for server to start. stdout: ${stdout}, stderr: ${stderr}`))
-			}, 5000)
-
-			const checkReady = () => {
-				if (stdout.includes('Listening')) {
-					clearTimeout(timeout)
-					resolve()
-				}
-			}
-
-			proc.stdout.on('data', checkReady)
-
-			proc.on('error', err => {
-				clearTimeout(timeout)
-				reject(err)
-			})
-		})
-
-		// Extract port from output (format: "Listening::http://127.0.0.1:PORT")
-		const portMatch = stdout.match(/Listening::http:\/\/[^:]+:(\d+)/)
-		const port = portMatch ? parseInt(portMatch[1]) : null
-
-		const cleanup = async () => {
-			proc.kill()
-			await new Promise(resolve => proc.on('exit', resolve))
-		}
-
-		try {
-			await testFn({ port, getOutput: () => ({ stdout, stderr }) })
-		} finally {
-			await cleanup()
-		}
-	}
-
 	test('rejects invalid filenames', async t => {
 		const fx0 = new Fixture('bar.GET._INVALID_STATUS_.json')
 		const fx1 = new Fixture('foo._INVALID_METHOD_.202.json')
@@ -267,14 +202,13 @@ describe('Warnings', () => {
 		await fx1.write()
 		await fx2.write()
 
-		await withSubprocess(async ({ getOutput }) => {
-			await new Promise(resolve => setTimeout(resolve, 100))
-			const { stderr } = getOutput()
+		// Reset to trigger file scanning
+		await api.reset()
+		await new Promise(resolve => setTimeout(resolve, 100))
 
-			match(stderr, /Invalid HTTP Response Status: "NaN"/)
-			match(stderr, /Unrecognized HTTP Method: "_INVALID_METHOD_"/)
-			match(stderr, /Invalid Filename Convention/)
-		})
+		match(stderr, /Invalid HTTP Response Status: "NaN"/)
+		match(stderr, /Unrecognized HTTP Method: "_INVALID_METHOD_"/)
+		match(stderr, /Invalid Filename Convention/)
 
 		await fx0.unlink()
 		await fx1.unlink()
@@ -282,32 +216,24 @@ describe('Warnings', () => {
 	})
 
 	test('body parser rejects invalid JSON in API requests', async t => {
-		await withSubprocess(async ({ port, getOutput }) => {
-			const api = new Commander(`http://127.0.0.1:${port}`)
-			const r = await fetch(api.addr + API.cookies, {
-				method: 'PATCH',
-				body: '[invalid_json]'
-			})
-			equal(r.status, 422)
-
-			await new Promise(resolve => setTimeout(resolve, 200))
-			const { stdout } = getOutput()
-
-			match(stdout, /BodyReaderError: Could not parse/)
+		const r = await fetch(api.addr + API.cookies, {
+			method: 'PATCH',
+			body: '[invalid_json]'
 		})
+		equal(r.status, 422)
+
+		await new Promise(resolve => setTimeout(resolve, 100))
+
+		match(stdout, /BodyReaderError: Could not parse/)
 	})
 
 	test('returns 500 when a handler throws', async t => {
-		await withSubprocess(async ({ port, getOutput }) => {
-			const api = new Commander(`http://127.0.0.1:${port}`)
-			const r = await fetch(api.addr + API.throws)
-			equal(r.status, 500)
+		const r = await fetch(api.addr + API.throws)
+		equal(r.status, 500)
 
-			await new Promise(resolve => setTimeout(resolve, 100))
-			const { stderr } = getOutput()
+		await new Promise(resolve => setTimeout(resolve, 100))
 
-			match(stderr, /Test500/)
-		})
+		match(stderr, /Test500/)
 	})
 })
 

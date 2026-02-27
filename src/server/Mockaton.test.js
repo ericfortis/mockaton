@@ -19,11 +19,13 @@ import { Mockaton } from './Mockaton.js'
 import { CONFIG } from './Mockaton.test.config.js'
 
 
-const readFromMocksDir = f => readFile(join(CONFIG.mocksDir, f), 'utf8')
-const makeDirInMocks = dir => mkdir(join(CONFIG.mocksDir, dir), { recursive: true })
-const makeDirInStaticMocks = dir => mkdir(join(CONFIG.staticDir, dir), { recursive: true })
-const renameInMocksDir = (src, target) => rename(join(CONFIG.mocksDir, src), join(CONFIG.mocksDir, target))
-const renameInStaticMocksDir = (src, target) => rename(join(CONFIG.staticDir, src), join(CONFIG.staticDir, target))
+const inMocksDir = f => join(CONFIG.mocksDir, f)
+const inStaticMocksDir = f => join(CONFIG.staticDir, f)
+const readFromMocksDir = f => readFile(inMocksDir(f), 'utf8')
+const makeDirInMocks = dir => mkdir(inMocksDir(dir), { recursive: true })
+const makeDirInStaticMocks = dir => mkdir(inStaticMocksDir(dir), { recursive: true })
+const renameInMocksDir = (src, target) => rename(inMocksDir(src), inMocksDir(target))
+const renameInStaticMocksDir = (src, target) => rename(inStaticMocksDir(src), inStaticMocksDir(target))
 
 const server = await Mockaton(CONFIG)
 after(() => server?.close())

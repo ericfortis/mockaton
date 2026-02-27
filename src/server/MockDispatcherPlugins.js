@@ -16,7 +16,7 @@ export async function jsToJsonPlugin(filePath, req, response) {
 		? await jsExport(req, response)
 		: JSON.stringify(jsExport, null, 2)
 	return {
-		mime: response.getHeader('Content-Type') || mimeFor('.json'), // jsFunc are allowed to set it
+		mime: response.getHeader('Content-Type') || mimeFor('.json'), // js functions are allowed to set it
 		body
 	}
 }

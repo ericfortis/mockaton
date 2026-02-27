@@ -159,8 +159,14 @@ describe('Warnings', () => {
 		let stdout = ''
 		let stderr = ''
 
-		// Spawn the process
-		const proc = spawn(process.execPath, [cliPath, '--config', configPath], {
+		// Spawn the process with CLI args to override the directories
+		// so the subprocess uses the same directories as the test
+		const proc = spawn(process.execPath, [
+			cliPath,
+			'--config', configPath,
+			'--mocks-dir', CONFIG.mocksDir,
+			'--static-dir', CONFIG.staticDir
+		], {
 			stdio: ['ignore', 'pipe', 'pipe']
 		})
 

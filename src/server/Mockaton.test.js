@@ -1,8 +1,6 @@
 import { join } from 'node:path'
-import { tmpdir } from 'node:os'
 import { promisify } from 'node:util'
 import { createServer } from 'node:http'
-import { mkdtempSync } from 'node:fs'
 import { randomUUID } from 'node:crypto'
 import { equal, deepEqual, match } from 'node:assert/strict'
 import { describe, test, before, beforeEach, after } from 'node:test'
@@ -18,44 +16,19 @@ import { Commander } from '../client/ApiCommander.js'
 import { parseFilename } from '../client/Filename.js'
 
 import { Mockaton } from './Mockaton.js'
+import { CONFIG } from './Mockaton.test.config.js'
 
 
-const mocksDir = mkdtempSync(join(tmpdir(), 'mocks'))
-const staticDir = mkdtempSync(join(tmpdir(), 'static'))
+const readFromMocksDir = f => readFile(join(CONFIG.mocksDir, f), 'utf8')
+const makeDirInMocks = dir => mkdir(join(CONFIG.mocksDir, dir), { recursive: true })
+const makeDirInStaticMocks = dir => mkdir(join(CONFIG.staticDir, dir), { recursive: true })
+const renameInMocksDir = (src, target) => rename(join(CONFIG.mocksDir, src), join(CONFIG.mocksDir, target))
+const renameInStaticMocksDir = (src, target) => rename(join(CONFIG.staticDir, src), join(CONFIG.staticDir, target))
 
-const makeDirInMocks = dir => mkdir(join(mocksDir, dir), { recursive: true })
-const makeDirInStaticMocks = dir => mkdir(join(staticDir, dir), { recursive: true })
-
-const renameInMocksDir = (src, target) => rename(join(mocksDir, src), join(mocksDir, target))
-const renameInStaticMocksDir = (src, target) => rename(join(staticDir, src), join(staticDir, target))
-
-const readFromMocksDir = f => readFile(join(mocksDir, f), 'utf8')
-
-
-const COOKIES = { userA: 'CookieA', userB: 'CookieB' }
-const CUSTOM_EXT = 'custom_extension'
-const CUSTOM_MIME = 'custom_mime'
-const CUSTOM_HEADER_NAME = 'custom_header_name'
-const CUSTOM_HEADER_VAL = 'custom_header_val'
-const ALLOWED_ORIGIN = 'https://example.test'
-
-const server = await Mockaton({
-	mocksDir,
-	staticDir,
-	onReady() {},
-	cookies: COOKIES,
-	extraHeaders: [CUSTOM_HEADER_NAME, CUSTOM_HEADER_VAL],
-	extraMimes: { [CUSTOM_EXT]: CUSTOM_MIME },
-	logLevel: 'verbose',
-	corsOrigins: [ALLOWED_ORIGIN],
-	corsExposedHeaders: ['Content-Encoding'],
-	watcherEnabled: false, // But we enable it at run-time
-	watcherDebounceMs: 0
-})
+const server = await Mockaton(CONFIG)
 after(() => server?.close())
 
-const api = new Commander(
-	`http://${server.address().address}:${server.address().port}`)
+const api = new Commander(`http://${server.address().address}:${server.address().port}`)
 
 /** @returns {Promise<State>} */
 async function fetchState() {
@@ -114,7 +87,7 @@ class BaseFixture {
 class Fixture extends BaseFixture {
 	constructor(file, body = '') {
 		super(file, body)
-		this.dir = mocksDir
+		this.dir = CONFIG.mocksDir
 		const t = parseFilename(file)
 		this.urlMask = t.urlMask
 		this.method = t.method
@@ -129,7 +102,7 @@ class Fixture extends BaseFixture {
 class FixtureStatic extends BaseFixture {
 	constructor(file, body = '') {
 		super(file, body)
-		this.dir = staticDir
+		this.dir = CONFIG.staticDir
 		this.urlMask = '/' + file
 		this.method = 'GET'
 	}
@@ -236,12 +209,12 @@ describe('CORS', () => {
 		const r = await request('/does-not-matter', {
 			method: 'OPTIONS',
 			headers: {
-				[CorsHeader.Origin]: ALLOWED_ORIGIN,
+				[CorsHeader.Origin]: CONFIG.corsOrigins[0],
 				[CorsHeader.AcRequestMethod]: 'GET'
 			}
 		})
 		equal(r.status, 204)
-		equal(r.headers.get(CorsHeader.AcAllowOrigin), ALLOWED_ORIGIN)
+		equal(r.headers.get(CorsHeader.AcAllowOrigin), CONFIG.corsOrigins[0])
 		equal(r.headers.get(CorsHeader.AcAllowMethods), 'GET')
 	})
 
@@ -250,11 +223,11 @@ describe('CORS', () => {
 		await fx.sync()
 		const r = await fx.request({
 			headers: {
-				[CorsHeader.Origin]: ALLOWED_ORIGIN
+				[CorsHeader.Origin]: CONFIG.corsOrigins[0]
 			}
 		})
 		equal(r.status, 200)
-		equal(r.headers.get(CorsHeader.AcAllowOrigin), ALLOWED_ORIGIN)
+		equal(r.headers.get(CorsHeader.AcAllowOrigin), CONFIG.corsOrigins[0])
 		equal(r.headers.get(CorsHeader.AcExposeHeaders), 'Content-Encoding')
 		await fx.unlink()
 	})
@@ -271,7 +244,7 @@ describe('Dashboard', () => {
 		const r = await request(API.dashboard + '?foo=bar')
 		match(await r.text(), new RegExp('<!DOCTYPE html>'))
 	})
-	
+
 	test('serves assets', async () => {
 		const r = await request(API.dashboard + '/app.css')
 		match(await r.text(), new RegExp(':root {'))
@@ -295,7 +268,7 @@ describe('Cookie', () => {
 		const fx = new Fixture('update-cookie.GET.200.json')
 		await fx.sync()
 		const resA = await fx.request()
-		equal(resA.headers.get('set-cookie'), COOKIES.userA)
+		equal(resA.headers.get('set-cookie'), CONFIG.cookies.userA)
 
 		const response = await api.selectCookie('userB')
 		deepEqual(await response.json(), [
@@ -304,7 +277,7 @@ describe('Cookie', () => {
 		])
 
 		const resB = await fx.request()
-		equal(resB.headers.get('set-cookie'), COOKIES.userB)
+		equal(resB.headers.get('set-cookie'), CONFIG.cookies.userB)
 		await fx.unlink()
 	})
 })
@@ -625,7 +598,7 @@ describe('Dynamic Function Mocks', () => {
 		equal(r.status, 200)
 		equal(r.headers.get('content-length'), '1')
 		equal(r.headers.get('content-type'), mimeFor('.json'))
-		equal(r.headers.get('set-cookie'), COOKIES.userA)
+		equal(r.headers.get('set-cookie'), CONFIG.cookies.userA)
 		equal(await r.text(), 'A')
 		await fx.unlink()
 	})
@@ -837,10 +810,12 @@ describe('MIME', () => {
 	})
 
 	test('derives content-type from custom mime', async () => {
-		const fx = new Fixture(`tmp.GET.200.${CUSTOM_EXT}`)
+		const ext = Object.keys(CONFIG.extraMimes)[0]
+		const mime = Object.values(CONFIG.extraMimes)[0]
+		const fx = new Fixture(`tmp.GET.200.${ext}`)
 		await fx.sync()
 		const r = await fx.request()
-		equal(r.headers.get('content-type'), CUSTOM_MIME)
+		equal(r.headers.get('content-type'), mime)
 		await fx.unlink()
 	})
 })
@@ -854,9 +829,8 @@ describe('Headers', () => {
 	})
 
 	test('custom headers are included', async () => {
-		const r = await api.getState()
-		const val = r.headers.get(CUSTOM_HEADER_NAME)
-		equal(val, CUSTOM_HEADER_VAL)
+		const { headers } = await api.getState()
+		equal(headers.get(CONFIG.extraHeaders[0]), CONFIG.extraHeaders[1])
 	})
 })
 

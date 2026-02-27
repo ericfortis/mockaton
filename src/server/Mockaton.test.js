@@ -1,10 +1,12 @@
-import { join } from 'node:path'
+import { join, dirname } from 'node:path'
 import { promisify } from 'node:util'
 import { createServer } from 'node:http'
 import { randomUUID } from 'node:crypto'
 import { equal, deepEqual, match } from 'node:assert/strict'
 import { describe, test, before, beforeEach, after } from 'node:test'
 import { writeFile, unlink, mkdir, readFile, rename } from 'node:fs/promises'
+import { spawn } from 'node:child_process'
+import { fileURLToPath } from 'node:url'
 
 import { logger } from './utils/logger.js'
 import { mimeFor } from './utils/mime.js'

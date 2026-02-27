@@ -15,7 +15,7 @@ import { longPollClientSyncVersion, startWatchers, stopWatchers } from './Watche
 import pkgJSON from '../../package.json' with { type: 'json' }
 
 import { API } from '../client/ApiConstants.js'
-import { IndexHtml, CSP } from '../client/indexHtml.js'
+import { IndexHtml, CSP } from '../client/IndexHtml.js'
 
 import { cookie } from './cookie.js'
 import { config, ConfigValidator } from './config.js'

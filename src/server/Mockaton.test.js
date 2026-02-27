@@ -1064,6 +1064,7 @@ describe('Watch mocks API toggler', () => {
 	})
 })
 
+
 describe('Registering Mocks', () => {
 	const fxA = new Fixture('register(default).GET.200.json')
 	const fxB = new Fixture('register(alt).GET.200.json')

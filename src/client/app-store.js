@@ -63,6 +63,7 @@ export const store = {
 			store.render()
 		})
 	},
+	
 	reset() {
 		store._request(api.reset, () => {
 			store.setChosenLink('', '')

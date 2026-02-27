@@ -201,9 +201,9 @@ describe('Warnings', () => {
 		await fx2.write()
 		await api.reset()
 
-		match(stderr, /Invalid HTTP Response Status: "NaN"/)
-		match(stderr, /Unrecognized HTTP Method: "_INVALID_METHOD_"/)
-		match(stderr, /Invalid Filename Convention/)
+		match(stderr.at(-1), /Invalid HTTP Response Status: "NaN"/)
+		match(stderr.at(-1), /Unrecognized HTTP Method: "_INVALID_METHOD_"/)
+		match(stderr.at(-1), /Invalid Filename Convention/)
 
 		await fx0.unlink()
 		await fx1.unlink()
@@ -216,13 +216,13 @@ describe('Warnings', () => {
 			body: '[invalid_json]'
 		})
 		equal(r.status, 422)
-		match(stdout, /BodyReaderError: Could not parse/)
+		match(stdout.at(-1), /BodyReaderError: Could not parse/)
 	})
 
 	test('returns 500 when a handler throws', async t => {
 		const r = await request(API.throws)
 		equal(r.status, 500)
-		match(stderr, /Test500/)
+		match(stderr.at(-1), /Test500/)
 	})
 })
 

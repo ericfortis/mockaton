@@ -171,19 +171,21 @@ describe('Warnings', () => {
 		proc.stdout.on('data', data => { stdout += data.toString() })
 		proc.stderr.on('data', data => { stderr += data.toString() })
 
-		// Wait for server to be ready by watching for the "listening" log
+		// Wait for server to be ready by watching for the "Listening" log
 		await new Promise((resolve, reject) => {
 			const timeout = setTimeout(() => {
 				proc.kill()
-				reject(new Error('Timeout waiting for server to start'))
+				reject(new Error(`Timeout waiting for server to start. stdout: ${stdout}, stderr: ${stderr}`))
 			}, 5000)
 
-			proc.stdout.on('data', data => {
-				if (data.toString().includes('listening')) {
+			const checkReady = () => {
+				if (stdout.includes('Listening')) {
 					clearTimeout(timeout)
 					resolve()
 				}
-			})
+			}
+
+			proc.stdout.on('data', checkReady)
 
 			proc.on('error', err => {
 				clearTimeout(timeout)
@@ -191,8 +193,8 @@ describe('Warnings', () => {
 			})
 		})
 
-		// Extract port from output (format: "listening :: http://127.0.0.1:PORT")
-		const portMatch = stdout.match(/listening :: http:\/\/[^:]+:(\d+)/)
+		// Extract port from output (format: "Listening::http://127.0.0.1:PORT")
+		const portMatch = stdout.match(/Listening::http:\/\/[^:]+:(\d+)/)
 		const port = portMatch ? parseInt(portMatch[1]) : null
 
 		const cleanup = async () => {

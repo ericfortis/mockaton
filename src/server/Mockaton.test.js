@@ -16,7 +16,7 @@ import { API } from '../client/ApiConstants.js'
 import { Commander } from '../client/ApiCommander.js'
 import { parseFilename } from '../client/Filename.js'
 
-import { CONFIG } from './Mockaton.test.config.js'
+import CONFIG from './Mockaton.test.config.js'
 
 const __filename = fileURLToPath(import.meta.url)
 const __dirname = dirname(__filename)

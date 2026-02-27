@@ -32,8 +32,7 @@ const renameInStaticMocksDir = (src, target) => rename(inStaticMocksDir(src), in
 
 const stdout = []
 const stderr = []
-const proc = spawn(process.execPath, [
-	join(import.meta.dirname, 'cli.js'),
+const proc = spawn(join(import.meta.dirname, 'cli.js'), [
 	'--config', join(import.meta.dirname, 'Mockaton.test.config.js'),
 	'--mocks-dir', mocksDir,
 	'--static-dir', staticDir

@@ -17,9 +17,6 @@ import { parseFilename } from '../client/Filename.js'
 
 import CONFIG from './Mockaton.test.config.js'
 
-const CLI_PATH = join(import.meta.dirname, 'cli.js')
-const CONFIG_PATH = join(import.meta.dirname, 'Mockaton.test.config.js')
-
 const inMocksDir = f => join(CONFIG.mocksDir, f)
 const inStaticMocksDir = f => join(CONFIG.staticDir, f)
 const readFromMocksDir = f => readFile(inMocksDir(f), 'utf8')
@@ -31,8 +28,8 @@ const renameInStaticMocksDir = (src, target) => rename(inStaticMocksDir(src), in
 const stdout = []
 const stderr = []
 const proc = spawn(process.execPath, [
-	CLI_PATH,
-	'--config', CONFIG_PATH,
+	join(import.meta.dirname, 'cli.js'),
+	'--config', join(import.meta.dirname, 'Mockaton.test.config.js'),
 	'--mocks-dir', CONFIG.mocksDir,
 	'--static-dir', CONFIG.staticDir
 ], {

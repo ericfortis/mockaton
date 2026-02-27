@@ -67,19 +67,18 @@ await new Promise((resolve, reject) => {
 	})
 })
 
-// Extract server address and port
-const portMatch = stdout.match(/Listening::http:\/\/([^:]+):(\d+)/)
-if (!portMatch) {
-	throw new Error('Could not extract server address from output')
+// Extract server URL from log output (format: "Listening::http://127.0.0.1:PORT")
+const urlMatch = stdout.match(/Listening::(http:\/\/[^\s\n]+)/)
+if (!urlMatch) {
+	throw new Error('Could not extract server URL from output')
 }
-const serverAddress = portMatch[1]
-const serverPort = parseInt(portMatch[2])
+const serverUrl = urlMatch[1]
 
 after(() => {
 	proc.kill()
 })
 
-const api = new Commander(`http://${serverAddress}:${serverPort}`)
+const api = new Commander(serverUrl)
 
 /** @returns {Promise<State>} */
 async function fetchState() {

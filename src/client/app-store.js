@@ -1,5 +1,6 @@
 import { Commander } from './ApiCommander.js'
 import { parseFilename, extractComments } from './Filename.js'
+import { EXT_UNKNOWN_MIME, EXT_EMPTY } from './ApiConstants.js'
 
 
 export const t = translation => translation[0]
@@ -39,10 +40,10 @@ export const store = {
 	get hasChosenLink() {
 		return store.chosenLink.method && store.chosenLink.urlMask
 	},
-	
-	
+
+
 	getSyncVersion: api.getSyncVersion,
-	
+
 	_request(action, onSuccess) {
 		Promise.try(async () => {
 			const response = await action()
@@ -63,7 +64,7 @@ export const store = {
 			store.render()
 		})
 	},
-	
+
 	reset() {
 		store._request(api.reset, () => {
 			store.setChosenLink('', '')
@@ -344,7 +345,7 @@ export class BrokerRowModel {
 		const { status, ext } = parseFilename(file)
 		return [
 			status,
-			ext === 'empty' || ext === 'unknown' ? '' : ext,
+			ext === EXT_EMPTY || ext === EXT_UNKNOWN_MIME ? '' : ext,
 			extractComments(file).join(' ')
 		].filter(Boolean).join(' ')
 	}

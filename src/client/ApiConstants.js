@@ -30,5 +30,7 @@ export const HEADER_502 = 'Mockaton502'
 export const HEADER_SYNC_VERSION = 'sync_version'
 
 export const DEFAULT_MOCK_COMMENT = '(default)'
-export const UNKNOWN_MIME_EXT = 'unknown'
 export const LONG_POLL_SERVER_TIMEOUT = 8_000
+
+export const EXT_UNKNOWN_MIME = 'unknown'
+export const EXT_EMPTY = 'empty'

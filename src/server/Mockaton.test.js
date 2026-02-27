@@ -8,7 +8,6 @@ import { writeFile, unlink, mkdir, readFile, rename } from 'node:fs/promises'
 import { spawn } from 'node:child_process'
 import { fileURLToPath } from 'node:url'
 
-import { logger } from './utils/logger.js'
 import { mimeFor } from './utils/mime.js'
 import { readBody } from './utils/HttpIncomingMessage.js'
 import { CorsHeader } from './utils/http-cors.js'

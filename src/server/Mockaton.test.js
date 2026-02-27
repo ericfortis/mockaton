@@ -29,9 +29,7 @@ const stdout = []
 const stderr = []
 const proc = spawn(process.execPath, [
 	join(import.meta.dirname, 'cli.js'),
-	'--config', join(import.meta.dirname, 'Mockaton.test.config.js'),
-	'--mocks-dir', CONFIG.mocksDir,
-	'--static-dir', CONFIG.staticDir
+	'--config', join(import.meta.dirname, 'Mockaton.test.config.js')
 ], {
 	stdio: ['ignore', 'pipe', 'pipe']
 })

@@ -146,25 +146,84 @@ describe('Rejects malicious URLs', () => {
 
 
 describe('Warnings', () => {
-	function spyLogger(t, method) {
-		const spy = t.mock.method(logger, method)
-		spy.mock.mockImplementation(() => null)
-		return spy.mock
+	/**
+	 * Spawns Mockaton as a subprocess and captures its stdio output
+	 * @param {Object} config - Configuration object to pass via config file
+	 * @param {Function} testFn - Async test function that receives { port, output, cleanup }
+	 */
+	async function withSubprocess(config, testFn) {
+		const __filename = fileURLToPath(import.meta.url)
+		const __dirname = dirname(__filename)
+		const cliPath = join(__dirname, 'cli.js')
+		const configPath = join(CONFIG.mocksDir, `config-${randomUUID()}.js`)
+
+		// Write config to temp file
+		await writeFile(configPath, `export default ${JSON.stringify(config)}`)
+
+		let stdout = ''
+		let stderr = ''
+
+		// Spawn the process
+		const proc = spawn(process.execPath, [cliPath, '--config', configPath], {
+			stdio: ['ignore', 'pipe', 'pipe']
+		})
+
+		proc.stdout.on('data', data => { stdout += data.toString() })
+		proc.stderr.on('data', data => { stderr += data.toString() })
+
+		// Wait for server to be ready by watching for the "listening" log
+		await new Promise((resolve, reject) => {
+			const timeout = setTimeout(() => {
+				proc.kill()
+				reject(new Error('Timeout waiting for server to start'))
+			}, 5000)
+
+			proc.stdout.on('data', data => {
+				if (data.toString().includes('listening')) {
+					clearTimeout(timeout)
+					resolve()
+				}
+			})
+
+			proc.on('error', err => {
+				clearTimeout(timeout)
+				reject(err)
+			})
+		})
+
+		// Extract port from output (format: "listening :: http://127.0.0.1:PORT")
+		const portMatch = stdout.match(/listening :: http:\/\/[^:]+:(\d+)/)
+		const port = portMatch ? parseInt(portMatch[1]) : null
+
+		const cleanup = async () => {
+			proc.kill()
+			await new Promise(resolve => proc.on('exit', resolve))
+			await unlink(configPath).catch(() => {})
+		}
+
+		try {
+			await testFn({ port, getOutput: () => ({ stdout, stderr }), cleanup })
+		} finally {
+			await cleanup()
+		}
 	}
 
 	test('rejects invalid filenames', async t => {
-		const spy = spyLogger(t, 'warn')
 		const fx0 = new Fixture('bar.GET._INVALID_STATUS_.json')
 		const fx1 = new Fixture('foo._INVALID_METHOD_.202.json')
 		const fx2 = new Fixture('missing-method-and-status.json')
 		await fx0.write()
 		await fx1.write()
 		await fx2.write()
-		await api.reset()
 
-		equal(spy.calls[0].arguments[0], 'Invalid HTTP Response Status: "NaN"')
-		equal(spy.calls[1].arguments[0], 'Unrecognized HTTP Method: "_INVALID_METHOD_"')
-		equal(spy.calls[2].arguments[0], 'Invalid Filename Convention')
+		await withSubprocess(CONFIG, async ({ getOutput }) => {
+			await new Promise(resolve => setTimeout(resolve, 100))
+			const { stderr } = getOutput()
+
+			match(stderr, /Invalid HTTP Response Status: "NaN"/)
+			match(stderr, /Unrecognized HTTP Method: "_INVALID_METHOD_"/)
+			match(stderr, /Invalid Filename Convention/)
+		})
 
 		await fx0.unlink()
 		await fx1.unlink()
@@ -172,20 +231,32 @@ describe('Warnings', () => {
 	})
 
 	test('body parser rejects invalid JSON in API requests', async t => {
-		const spy = spyLogger(t, 'access')
-		const r = await request(API.cookies, {
-			method: 'PATCH',
-			body: '[invalid_json]'
+		await withSubprocess(CONFIG, async ({ port, getOutput }) => {
+			const api = new Commander(`http://127.0.0.1:${port}`)
+			const r = await fetch(api.addr + API.cookies, {
+				method: 'PATCH',
+				body: '[invalid_json]'
+			})
+			equal(r.status, 422)
+
+			await new Promise(resolve => setTimeout(resolve, 100))
+			const { stdout } = getOutput()
+
+			match(stdout, /BodyReaderError: Could not parse/)
 		})
-		equal(r.status, 422)
-		equal(spy.calls[0].arguments[1], 'BodyReaderError: Could not parse')
 	})
 
 	test('returns 500 when a handler throws', async t => {
-		const spy = spyLogger(t, 'error')
-		const r = await request(API.throws)
-		equal(r.status, 500)
-		equal(spy.calls[0].arguments[2], 'Test500')
+		await withSubprocess(CONFIG, async ({ port, getOutput }) => {
+			const api = new Commander(`http://127.0.0.1:${port}`)
+			const r = await fetch(api.addr + API.throws)
+			equal(r.status, 500)
+
+			await new Promise(resolve => setTimeout(resolve, 100))
+			const { stderr } = getOutput()
+
+			match(stderr, /Test500/)
+		})
 	})
 })
 

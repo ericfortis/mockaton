@@ -7,7 +7,8 @@ import { openInBrowser } from './utils/openInBrowser.js'
 import { optional, is, validate } from './utils/validate.js'
 import { validateCorsAllowedMethods, validateCorsAllowedOrigins } from './utils/http-cors.js'
 
-import { jsToJsonPlugin } from './MockDispatcher.js'
+
+import { jsToJsonPlugin } from './MockDispatcherPlugins.js'
 
 
 /** @type {{

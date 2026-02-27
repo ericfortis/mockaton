@@ -60,6 +60,9 @@ doesn’t break selecting across pages, (e.g., for selecting and copying)
 - Instead of virtual rendering, a simpler progressive chunk attaching, yielding?
 
 
+## Fetch logs
+- API for streaming logs?
+
 ## Browser Extension
 - Dark mode
 

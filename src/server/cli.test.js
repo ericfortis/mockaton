@@ -64,38 +64,47 @@ await describe('CLI', async () => {
 		await test('outputs listening address', async () => {
 			serverProcess = spawnCliServer([
 				'--mocks-dir', tempMocksDir,
-				'--no-open',
-				'--quiet'
+				'--no-open'
 			])
 
-			// Collect stdout until we find the Listening line
-			const stdout = await new Promise((resolve, reject) => {
-				let output = ''
+			// Collect stdout and stderr until we find the Listening line
+			const output = await new Promise((resolve, reject) => {
+				let stdout = ''
+				let stderr = ''
 				const timeout = setTimeout(() => {
-					reject(new Error('Timeout waiting for server to start'))
+					reject(new Error(`Timeout waiting for server to start\nstdout: ${stdout}\nstderr: ${stderr}`))
 				}, 5000)
 
 				serverProcess.stdout.on('data', (data) => {
-					output += data.toString()
-					if (output.includes('Listening::')) {
+					stdout += data.toString()
+					if (stdout.includes('Listening::')) {
 						clearTimeout(timeout)
-						resolve(output)
+						resolve(stdout)
 					}
 				})
 
 				serverProcess.stderr.on('data', (data) => {
-					console.error('Server stderr:', data.toString())
+					stderr += data.toString()
+					if (stderr.includes('Listening::')) {
+						clearTimeout(timeout)
+						resolve(stderr)
+					}
 				})
 
 				serverProcess.on('error', (err) => {
 					clearTimeout(timeout)
 					reject(err)
 				})
+
+				serverProcess.on('exit', (code) => {
+					clearTimeout(timeout)
+					reject(new Error(`Server exited with code ${code}\nstdout: ${stdout}\nstderr: ${stderr}`))
+				})
 			})
 
-			const addrMatch = stdout.match(/Listening::(http:\/\/[^\s\n]+)/)
+			const addrMatch = output.match(/Listening::(http:\/\/[^\s\n]+)/)
 			if (!addrMatch) {
-				throw new Error(`Expected to find "Listening::" in stdout, got:\n${stdout}`)
+				throw new Error(`Expected to find "Listening::" in output, got:\n${output}`)
 			}
 
 			const addr = addrMatch[1]

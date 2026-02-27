@@ -32,8 +32,8 @@ const renameInMocksDir = (src, target) => rename(inMocksDir(src), inMocksDir(tar
 const renameInStaticMocksDir = (src, target) => rename(inStaticMocksDir(src), inStaticMocksDir(target))
 
 // Spawn Mockaton as a subprocess
-let stdout = ''
-let stderr = ''
+const stdout = []
+const stderr = []
 const proc = spawn(process.execPath, [
 	CLI_PATH,
 	'--config', CONFIG_PATH,
@@ -43,18 +43,18 @@ const proc = spawn(process.execPath, [
 	stdio: ['ignore', 'pipe', 'pipe']
 })
 
-proc.stdout.on('data', data => { stdout += data.toString() })
-proc.stderr.on('data', data => { stderr += data.toString() })
+proc.stdout.on('data', data => { stdout.push(data.toString()) })
+proc.stderr.on('data', data => { stderr.push(data.toString()) })
 
 // Wait for server to be ready
 await new Promise((resolve, reject) => {
 	const timeout = setTimeout(() => {
 		proc.kill()
-		reject(new Error(`Timeout waiting for server to start. stdout: ${stdout}, stderr: ${stderr}`))
+		reject(new Error(`Timeout waiting for server to start. stdout: ${stdout.join('')}, stderr: ${stderr.join('')}`))
 	}, 5000)
 
 	const checkReady = () => {
-		if (stdout.includes('Listening')) {
+		if (stdout.join('').includes('Listening')) {
 			clearTimeout(timeout)
 			resolve()
 		}
@@ -68,7 +68,7 @@ await new Promise((resolve, reject) => {
 })
 
 // Extract server URL from log output (format: "Listening::http://127.0.0.1:PORT")
-const urlMatch = stdout.match(/Listening::(http:\/\/[^\s\n]+)/)
+const urlMatch = stdout.join('').match(/Listening::(http:\/\/[^\s\n]+)/)
 if (!urlMatch) {
 	throw new Error('Could not extract server URL from output')
 }

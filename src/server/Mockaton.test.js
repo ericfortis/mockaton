@@ -1,12 +1,14 @@
 import { join } from 'node:path'
+import { spawn } from 'node:child_process'
+import { tmpdir } from 'node:os'
 import { promisify } from 'node:util'
 import { createServer } from 'node:http'
+import { mkdtempSync } from 'node:fs'
 import { randomUUID } from 'node:crypto'
 import { equal, deepEqual, match } from 'node:assert/strict'
 import { describe, test, before, beforeEach, after } from 'node:test'
 import { writeFile, unlink, mkdir, readFile, rename } from 'node:fs/promises'
 
-import { logger } from './utils/logger.js'
 import { mimeFor } from './utils/mime.js'
 import { readBody } from './utils/HttpIncomingMessage.js'
 import { CorsHeader } from './utils/http-cors.js'
@@ -15,22 +17,42 @@ import { API } from '../client/ApiConstants.js'
 import { Commander } from '../client/ApiCommander.js'
 import { parseFilename } from '../client/Filename.js'
 
-import { Mockaton } from './Mockaton.js'
-import { CONFIG } from './Mockaton.test.config.js'
+import CONFIG from './Mockaton.test.config.js'
 
+const mocksDir = mkdtempSync(join(tmpdir(), 'mocks'))
+const staticDir = mkdtempSync(join(tmpdir(), 'static'))
 
-const inMocksDir = f => join(CONFIG.mocksDir, f)
-const inStaticMocksDir = f => join(CONFIG.staticDir, f)
+const inMocksDir = f => join(mocksDir, f)
+const inStaticMocksDir = f => join(staticDir, f)
 const readFromMocksDir = f => readFile(inMocksDir(f), 'utf8')
 const makeDirInMocks = dir => mkdir(inMocksDir(dir), { recursive: true })
 const makeDirInStaticMocks = dir => mkdir(inStaticMocksDir(dir), { recursive: true })
 const renameInMocksDir = (src, target) => rename(inMocksDir(src), inMocksDir(target))
 const renameInStaticMocksDir = (src, target) => rename(inStaticMocksDir(src), inStaticMocksDir(target))
 
-const server = await Mockaton(CONFIG)
-after(() => server?.close())
+const stdout = []
+const stderr = []
+const proc = spawn(join(import.meta.dirname, 'cli.js'), [
+	'--config', join(import.meta.dirname, 'Mockaton.test.config.js'),
+	'--mocks-dir', mocksDir,
+	'--static-dir', staticDir
+])
 
-const api = new Commander(`http://${server.address().address}:${server.address().port}`)
+proc.stdout.on('data', data => { stdout.push(data.toString()) })
+proc.stderr.on('data', data => { stderr.push(data.toString()) })
+
+const serverAddr = await new Promise((resolve, reject) => {
+	proc.stdout.on('data', () => {
+		const addr = stdout[0].match(/Listening::(http:\/\/[^\s\n]+)/)[1]
+		if (addr)
+			resolve(addr)
+	})
+	proc.on('error', reject)
+})
+
+after(() => proc.kill())
+
+const api = new Commander(serverAddr)
 
 /** @returns {Promise<State>} */
 async function fetchState() {
@@ -89,7 +111,7 @@ class BaseFixture {
 class Fixture extends BaseFixture {
 	constructor(file, body = '') {
 		super(file, body)
-		this.dir = CONFIG.mocksDir
+		this.dir = mocksDir
 		const t = parseFilename(file)
 		this.urlMask = t.urlMask
 		this.method = t.method
@@ -104,7 +126,7 @@ class Fixture extends BaseFixture {
 class FixtureStatic extends BaseFixture {
 	constructor(file, body = '') {
 		super(file, body)
-		this.dir = CONFIG.staticDir
+		this.dir = staticDir
 		this.urlMask = '/' + file
 		this.method = 'GET'
 	}
@@ -144,14 +166,7 @@ describe('Rejects malicious URLs', () => {
 
 
 describe('Warnings', () => {
-	function spyLogger(t, method) {
-		const spy = t.mock.method(logger, method)
-		spy.mock.mockImplementation(() => null)
-		return spy.mock
-	}
-
 	test('rejects invalid filenames', async t => {
-		const spy = spyLogger(t, 'warn')
 		const fx0 = new Fixture('bar.GET._INVALID_STATUS_.json')
 		const fx1 = new Fixture('foo._INVALID_METHOD_.202.json')
 		const fx2 = new Fixture('missing-method-and-status.json')
@@ -160,9 +175,10 @@ describe('Warnings', () => {
 		await fx2.write()
 		await api.reset()
 
-		equal(spy.calls[0].arguments[0], 'Invalid HTTP Response Status: "NaN"')
-		equal(spy.calls[1].arguments[0], 'Unrecognized HTTP Method: "_INVALID_METHOD_"')
-		equal(spy.calls[2].arguments[0], 'Invalid Filename Convention')
+		const log = stderr.join('')
+		match(log, /Invalid HTTP Response Status: "NaN"/)
+		match(log, /Unrecognized HTTP Method: "_INVALID_METHOD_"/)
+		match(log, /Invalid Filename Convention/)
 
 		await fx0.unlink()
 		await fx1.unlink()
@@ -170,20 +186,18 @@ describe('Warnings', () => {
 	})
 
 	test('body parser rejects invalid JSON in API requests', async t => {
-		const spy = spyLogger(t, 'access')
 		const r = await request(API.cookies, {
 			method: 'PATCH',
 			body: '[invalid_json]'
 		})
 		equal(r.status, 422)
-		equal(spy.calls[0].arguments[1], 'BodyReaderError: Could not parse')
+		match(stdout.at(-1), /BodyReaderError: Could not parse/)
 	})
 
 	test('returns 500 when a handler throws', async t => {
-		const spy = spyLogger(t, 'error')
 		const r = await request(API.throws)
 		equal(r.status, 500)
-		equal(spy.calls[0].arguments[2], 'Test500')
+		match(stderr.at(-1), /Test500/)
 	})
 })
 

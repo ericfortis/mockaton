@@ -148,17 +148,13 @@ describe('Rejects malicious URLs', () => {
 describe('Warnings', () => {
 	/**
 	 * Spawns Mockaton as a subprocess and captures its stdio output
-	 * @param {Object} config - Configuration object to pass via config file
-	 * @param {Function} testFn - Async test function that receives { port, output, cleanup }
+	 * @param {Function} testFn - Async test function that receives { port, getOutput }
 	 */
-	async function withSubprocess(config, testFn) {
+	async function withSubprocess(testFn) {
 		const __filename = fileURLToPath(import.meta.url)
 		const __dirname = dirname(__filename)
 		const cliPath = join(__dirname, 'cli.js')
-		const configPath = join(CONFIG.mocksDir, `config-${randomUUID()}.js`)
-
-		// Write config to temp file
-		await writeFile(configPath, `export default ${JSON.stringify(config)}`)
+		const configPath = join(__dirname, 'Mockaton.test.config.js')
 
 		let stdout = ''
 		let stderr = ''
@@ -200,11 +196,10 @@ describe('Warnings', () => {
 		const cleanup = async () => {
 			proc.kill()
 			await new Promise(resolve => proc.on('exit', resolve))
-			await unlink(configPath).catch(() => {})
 		}
 
 		try {
-			await testFn({ port, getOutput: () => ({ stdout, stderr }), cleanup })
+			await testFn({ port, getOutput: () => ({ stdout, stderr }) })
 		} finally {
 			await cleanup()
 		}
@@ -218,7 +213,7 @@ describe('Warnings', () => {
 		await fx1.write()
 		await fx2.write()
 
-		await withSubprocess(CONFIG, async ({ getOutput }) => {
+		await withSubprocess(async ({ getOutput }) => {
 			await new Promise(resolve => setTimeout(resolve, 100))
 			const { stderr } = getOutput()
 
@@ -233,7 +228,7 @@ describe('Warnings', () => {
 	})
 
 	test('body parser rejects invalid JSON in API requests', async t => {
-		await withSubprocess(CONFIG, async ({ port, getOutput }) => {
+		await withSubprocess(async ({ port, getOutput }) => {
 			const api = new Commander(`http://127.0.0.1:${port}`)
 			const r = await fetch(api.addr + API.cookies, {
 				method: 'PATCH',
@@ -249,7 +244,7 @@ describe('Warnings', () => {
 	})
 
 	test('returns 500 when a handler throws', async t => {
-		await withSubprocess(CONFIG, async ({ port, getOutput }) => {
+		await withSubprocess(async ({ port, getOutput }) => {
 			const api = new Commander(`http://127.0.0.1:${port}`)
 			const r = await fetch(api.addr + API.throws)
 			equal(r.status, 500)

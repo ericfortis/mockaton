@@ -17,9 +17,12 @@ import { API } from '../client/ApiConstants.js'
 import { Commander } from '../client/ApiCommander.js'
 import { parseFilename } from '../client/Filename.js'
 
-import { Mockaton } from './Mockaton.js'
 import { CONFIG } from './Mockaton.test.config.js'
 
+const __filename = fileURLToPath(import.meta.url)
+const __dirname = dirname(__filename)
+const CLI_PATH = join(__dirname, 'cli.js')
+const CONFIG_PATH = join(__dirname, 'Mockaton.test.config.js')
 
 const inMocksDir = f => join(CONFIG.mocksDir, f)
 const inStaticMocksDir = f => join(CONFIG.staticDir, f)
@@ -29,10 +32,55 @@ const makeDirInStaticMocks = dir => mkdir(inStaticMocksDir(dir), { recursive: tr
 const renameInMocksDir = (src, target) => rename(inMocksDir(src), inMocksDir(target))
 const renameInStaticMocksDir = (src, target) => rename(inStaticMocksDir(src), inStaticMocksDir(target))
 
-const server = await Mockaton(CONFIG)
-after(() => server?.close())
+// Spawn Mockaton as a subprocess
+let stdout = ''
+let stderr = ''
+const proc = spawn(process.execPath, [
+	CLI_PATH,
+	'--config', CONFIG_PATH,
+	'--mocks-dir', CONFIG.mocksDir,
+	'--static-dir', CONFIG.staticDir
+], {
+	stdio: ['ignore', 'pipe', 'pipe']
+})
 
-const api = new Commander(`http://${server.address().address}:${server.address().port}`)
+proc.stdout.on('data', data => { stdout += data.toString() })
+proc.stderr.on('data', data => { stderr += data.toString() })
+
+// Wait for server to be ready
+await new Promise((resolve, reject) => {
+	const timeout = setTimeout(() => {
+		proc.kill()
+		reject(new Error(`Timeout waiting for server to start. stdout: ${stdout}, stderr: ${stderr}`))
+	}, 5000)
+
+	const checkReady = () => {
+		if (stdout.includes('Listening')) {
+			clearTimeout(timeout)
+			resolve()
+		}
+	}
+
+	proc.stdout.on('data', checkReady)
+	proc.on('error', err => {
+		clearTimeout(timeout)
+		reject(err)
+	})
+})
+
+// Extract server address and port
+const portMatch = stdout.match(/Listening::http:\/\/([^:]+):(\d+)/)
+if (!portMatch) {
+	throw new Error('Could not extract server address from output')
+}
+const serverAddress = portMatch[1]
+const serverPort = parseInt(portMatch[2])
+
+after(() => {
+	proc.kill()
+})
+
+const api = new Commander(`http://${serverAddress}:${serverPort}`)
 
 /** @returns {Promise<State>} */
 async function fetchState() {

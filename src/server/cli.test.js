@@ -9,25 +9,19 @@ import pkgJSON from '../../package.json' with { type: 'json' }
 
 
 const CLI_PATH = join(import.meta.dirname, 'cli.js')
-
-function spawnCli(args) {
-	return spawnSync(CLI_PATH, args, { encoding: 'utf8' })
-}
-
-function spawnCliServer(args) {
-	return spawn(CLI_PATH, args)
-}
+const cli = args => spawnSync(CLI_PATH, args, { encoding: 'utf8' })
+const cliAsync = args => spawn(CLI_PATH, args)
 
 
 describe('CLI', () => {
 	test('-v outputs version from package.json', () => {
-		const { stdout, status } = spawnCli(['-v'])
+		const { stdout, status } = cli(['-v'])
 		equal(stdout.trim(), pkgJSON.version)
 		equal(status, 0)
 	})
 
 	test('-h outputs usage message', () => {
-		const { stdout, status } = spawnCli(['-h'])
+		const { stdout, status } = cli(['-h'])
 		equal(stdout.split('\n')[0], 'Usage: mockaton [options]')
 		equal(status, 0)
 	})
@@ -39,22 +33,21 @@ describe('CLI', () => {
 		after(() => proc?.kill())
 
 		test('outputs listening address', async () => {
-			proc = spawnCliServer([
+			proc = cliAsync([
 				'--mocks-dir', mocksDir,
 				'--no-open'
 			])
 
-			const output = await new Promise((resolve, reject) => {
+			let stdout = ''
+			await new Promise((resolve, reject) => {
 				proc.on('error', reject)
-				
 				proc.stdout.on('data', data => {
-					const stdout = data.toString()
-					if (stdout.includes('Listening::')) 
-						resolve(stdout)
+					stdout = data.toString()
+					resolve()
 				})
 			})
 
-			const addr = output.match(/Listening::(http:\/\/[^\s\n]+)/)[1]
+			const addr = stdout.match(/Listening::(http:\/\/[^\s\n]+)/)[1]
 			equal(addr.startsWith('http://'), true, `Expected address to start with http://, got: ${addr}`)
 		})
 	})

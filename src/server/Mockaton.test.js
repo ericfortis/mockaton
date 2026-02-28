@@ -33,7 +33,8 @@ const stderr = []
 const proc = spawn(join(import.meta.dirname, 'cli.js'), [
 	'--config', join(import.meta.dirname, 'Mockaton.test.config.js'),
 	'--mocks-dir', mocksDir,
-	'--static-dir', staticDir
+	'--static-dir', staticDir,
+	'--no-open'
 ])
 
 proc.stdout.on('data', data => { stdout.push(data.toString()) })
@@ -164,7 +165,7 @@ describe('Rejects malicious URLs', () => {
 
 
 describe('Warnings', () => {
-	test('rejects invalid filenames', async t => {
+	test('rejects invalid filenames', async () => {
 		const fx0 = new Fixture('bar.GET._INVALID_STATUS_.json')
 		const fx1 = new Fixture('foo._INVALID_METHOD_.202.json')
 		const fx2 = new Fixture('missing-method-and-status.json')
@@ -183,7 +184,7 @@ describe('Warnings', () => {
 		await fx2.unlink()
 	})
 
-	test('body parser rejects invalid JSON in API requests', async t => {
+	test('body parser rejects invalid JSON in API requests', async () => {
 		const r = await request(API.cookies, {
 			method: 'PATCH',
 			body: '[invalid_json]'
@@ -192,7 +193,7 @@ describe('Warnings', () => {
 		match(stdout.at(-1), /BodyReaderError: Could not parse/)
 	})
 
-	test('returns 500 when a handler throws', async t => {
+	test('returns 500 when a handler throws', async () => {
 		const r = await request(API.throws)
 		equal(r.status, 500)
 		match(stderr.at(-1), /Test500/)

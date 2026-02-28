@@ -1,7 +1,6 @@
 import { jwtCookie } from '../../index.js'
 
 export default {
-	onReady() {},
 	cookies: {
 		userA: 'CookieA',
 		userB: jwtCookie('my-cookie', {

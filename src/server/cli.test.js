@@ -14,6 +14,12 @@ const cliAsync = args => spawn(CLI_PATH, args)
 
 
 describe('CLI', () => {
+	test('--invalid-flag', () => {
+		const { stderr, status } = cli(['--invalid-flag'])
+		equal(stderr.trim(), `Unknown option '--invalid-flag'`)
+		equal(status, 1)
+	})
+	
 	test('-v outputs version from package.json', () => {
 		const { stdout, status } = cli(['-v'])
 		equal(stdout.trim(), pkgJSON.version)

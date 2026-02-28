@@ -5,7 +5,8 @@
 	--colorSecondaryButtonBackground: light-dark(#fcfcfc, #2c2c2c);
 	--colorHeaderBackground: light-dark(#f2f2f3, #141414);
 	--colorComboBoxBackground: light-dark(#eee, #2a2a2a);
-	--colorBorder: light-dark(#e0e0e0, #333);
+	--colorBorder: light-dark(#e0e0e0, #323232);
+	--colorBorderActive: light-dark(#c8c8c8, #3c3c3c);
 	--colorSecondaryAction: light-dark(#666, #aaa);
 	--colorLabel: light-dark(#555, #aaa);
 	--colorDisabledMockSelector: light-dark(#444, #a9b9b9);
@@ -313,14 +314,14 @@ main {
 		}
 
 		.leftSide {
-			width: 100% !important;
+			width: 100% !important; /* because it's resizable in js */
 			height: 50%;
 			border-right: 0;
 		}
 	}
 
 	.leftSide {
-		width: 50%; /* resizable in js */
+		width: 50%;
 		border-top: 1px solid var(--colorBorder);
 		border-right: 1px solid var(--colorBorder);
 	}
@@ -335,22 +336,31 @@ main {
 		.Resizer {
 			position: absolute;
 			top: 0;
-			left: 0;
+			left: -1px;
 			width: 8px;
 			height: 100%;
-			border-left: 3px solid transparent;
+			border-left: 1px solid transparent;
 			cursor: col-resize;
 
+			&:hover,
 			&:active {
-				border-color: var(--colorBorder);
+				border-color: var(--colorBorderActive);
 			}
-			&:not(:active)::after {
+			&::before,
+			&::after {
 				position: absolute;
-				top: 50%;
-				left: -6px;
-				height: 20px;
-				border-left: 5px dotted var(--colorBorder);
+				left: -2px;
 				content: '';
+			}
+			&::before {
+				top: calc(50% + 6px);
+				height: 22px;
+				border-left: 3px solid var(--colorBackground);
+			}
+			&::after {
+				top: calc(50% + 10px);
+				height: 14px;
+				border-left: 3px dotted var(--colorBorder);
 			}
 		}
 	}

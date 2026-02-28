@@ -19,7 +19,13 @@ describe('CLI', () => {
 		equal(stderr.trim(), `Unknown option '--invalid-flag'`)
 		equal(status, 1)
 	})
-	
+
+	test('invalid config file', () => {
+		const { stderr, status } = cli(['--config', 'non-existing-file.js'])
+		equal(stderr.trim(), `Invalid config file: non-existing-file.js`)
+		equal(status, 1)
+	})
+
 	test('-v outputs version from package.json', () => {
 		const { stdout, status } = cli(['-v'])
 		equal(stdout.trim(), pkgJSON.version)

@@ -344,6 +344,14 @@ main {
 			&:active {
 				border-color: var(--colorBorder);
 			}
+			&:not(:active)::after {
+				position: absolute;
+				top: 50%;
+				left: -6px;
+				height: 20px;
+				border-left: 5px dotted var(--colorBorder);
+				content: '';
+			}
 		}
 	}
 }

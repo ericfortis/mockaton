@@ -10,7 +10,6 @@ import { describe, test, before, beforeEach, after } from 'node:test'
 import { writeFile, unlink, mkdir, readFile, rename } from 'node:fs/promises'
 
 import { mimeFor } from './utils/mime.js'
-import { readBody } from './utils/HttpIncomingMessage.js'
 import { CorsHeader } from './utils/http-cors.js'
 import { parseFilename } from '../client/Filename.js'
 
@@ -368,6 +367,7 @@ describe('Proxy Fallback', () => {
 	describe('Fallback', () => {
 		let fallbackServer
 		const CUSTOM_COOKIES = ['cookieX=x', 'cookieY=y']
+		const BODY_PAYLOAD = 'text_req_body'
 		before(async () => {
 			fallbackServer = createServer(async (req, response) => {
 				response.writeHead(423, {
@@ -375,7 +375,7 @@ describe('Proxy Fallback', () => {
 					'content-type': mimeFor('.txt'),
 					'set-cookie': CUSTOM_COOKIES
 				})
-				response.end(await readBody(req)) // echoes the req body payload
+				response.end(BODY_PAYLOAD)
 			})
 			await promisify(fallbackServer.listen).bind(fallbackServer, 0, '127.0.0.1')()
 			await api.setProxyFallback(`http://localhost:${fallbackServer.address().port}`)
@@ -385,19 +385,15 @@ describe('Proxy Fallback', () => {
 		after(() => fallbackServer.close())
 
 		test('Relays to fallback server and saves the mock', async () => {
-			const reqBodyPayload = 'text_req_body'
 
-			const r = await request(`/non-existing-mock/${randomUUID()}`, {
-				method: 'POST',
-				body: reqBodyPayload
-			})
+			const r = await request(`/non-existing-mock/${randomUUID()}`, { method: 'POST' })
 			equal(r.status, 423)
 			equal(r.headers.get('custom_header'), 'my_custom_header')
 			equal(r.headers.get('set-cookie'), CUSTOM_COOKIES.join(', '))
-			equal(await r.text(), reqBodyPayload)
+			equal(await r.text(), BODY_PAYLOAD)
 
 			const savedBody = await readFromMocksDir('non-existing-mock/[id].POST.423.txt')
-			equal(savedBody, reqBodyPayload)
+			equal(savedBody, BODY_PAYLOAD)
 		})
 	})
 

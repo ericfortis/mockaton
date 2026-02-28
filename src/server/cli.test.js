@@ -1,9 +1,9 @@
 import { join } from 'node:path'
 import { equal } from 'node:assert/strict'
 import { tmpdir } from 'node:os'
+import { spawnSync } from 'node:child_process'
 import { mkdtempSync } from 'node:fs'
 import { describe, test } from 'node:test'
-import { spawnSync } from 'node:child_process'
 
 import pkgJSON from '../../package.json' with { type: 'json' }
 
@@ -11,7 +11,7 @@ import pkgJSON from '../../package.json' with { type: 'json' }
 function cli(args, timeout) {
 	return spawnSync(join(import.meta.dirname, 'cli.js'), args, {
 		timeout,
-		encoding: 'utf8' 
+		encoding: 'utf8'
 	})
 }
 
@@ -40,7 +40,7 @@ describe('CLI', () => {
 		equal(status, 0)
 	})
 
-	test('outputs listening address', async () => {
+	test('outputs listening address', () => {
 		const { stdout } = cli([
 			'--mocks-dir', mkdtempSync(join(tmpdir(), 'mocks')),
 			'--no-open'

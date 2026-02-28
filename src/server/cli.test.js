@@ -33,14 +33,14 @@ describe('CLI', () => {
 	})
 
 	describe('Server startup', () => {
-		const tempMocksDir = mkdtempSync(join(tmpdir(), 'mocks'))
+		const mocksDir = mkdtempSync(join(tmpdir(), 'mocks'))
 		let proc = null
 
 		after(() => proc?.kill())
 
 		test('outputs listening address', async () => {
 			proc = spawnCliServer([
-				'--mocks-dir', tempMocksDir,
+				'--mocks-dir', mocksDir,
 				'--no-open'
 			])
 

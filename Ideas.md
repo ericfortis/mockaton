@@ -63,9 +63,6 @@ doesn’t break selecting across pages, (e.g., for selecting and copying)
 ## Fetch logs
 - API for streaming logs?
 
-## Browser Extension
-- Dark mode
-
 ## Proxy Fallback
 - support static mocks
 

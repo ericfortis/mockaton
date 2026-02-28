@@ -2,7 +2,7 @@
 	"name": "mockaton-downloader",
 	"description": "Browser extension for downloading HTTP request responses",
 	"manifest_version": 3,
-	"version": "1.0",
+	"version": "1.1",
 	"permissions": ["downloads"],
 	"devtools_page": "devtools.html",
 	"background": {

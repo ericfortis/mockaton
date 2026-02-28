@@ -1,7 +1,7 @@
 :root {
 	color-scheme: light dark;
 	--colorBackground: light-dark(#fff, #181818);
-	--colorComboBoxHeaderBackground: light-dark(#fff, #222);
+	--colorInputBackground: light-dark(#fff, #222);
 	--colorSecondaryButtonBackground: light-dark(#fcfcfc, #2c2c2c);
 	--colorHeaderBackground: light-dark(#f2f2f3, #141414);
 	--colorComboBoxBackground: light-dark(#eee, #2a2a2a);
@@ -222,7 +222,7 @@ header {
 		margin-top: 2px;
 		color: var(--colorText);
 		font-size: 11px;
-		background-color: var(--colorComboBoxHeaderBackground);
+		background-color: var(--colorInputBackground);
 		border-radius: var(--radius);
 	}
 
@@ -394,7 +394,7 @@ main {
 		text-align-last: center;
 		color: var(--colorText);
 		font-size: 11px;
-		background-color: var(--colorComboBoxHeaderBackground);
+		background-color: var(--colorInputBackground);
 		border-radius: var(--radius);
 	}
 }
@@ -652,7 +652,7 @@ main {
 	left: -16px;
 	width: calc(100% + 32px);
 	height: 2px;
-	background: var(--colorComboBoxHeaderBackground);
+	background: var(--colorInputBackground);
 
 	> div {
 		position: absolute;

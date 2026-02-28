@@ -3,19 +3,57 @@
 <head>
 	<meta charset="UTF-8" />
 	<style>
-		html, body {
+		:root {
+			color-scheme: light dark;
+			--colorBackground: light-dark(#fff, #181818);
+			--colorInputBackground: light-dark(#fff, #222);
+			--colorHeaderBackground: light-dark(#f2f2f3, #121212);
+			--colorBorder: light-dark(#e0e0e0, #323232);
+			--colorLabel: light-dark(#555, #aaa);
+			--colorText: light-dark(#000, #fff);
+			--colorAccent: light-dark(#0059dd, #2495ff);
+			--colorRed: light-dark(#da0f00, #f41606);
+
+			accent-color: var(--colorAccent);
+			--radius: 16px;
+		}
+
+		html,
+		body {
 			padding: 0;
 			margin: 0;
+			background: var(--colorBackground);
+			color: var(--colorText);
+			font-family: system-ui, sans-serif;
+		}
+
+		* {
+			box-sizing: border-box;
+			padding: 0;
+			border: 0;
+			margin: 0;
+			font-family: inherit;
+			font-size: 100%;
+			scrollbar-width: thin;
+			corner-shape: squircle
+		}
+
+		label {
+			color: var(--colorLabel);
+			transition: color 180ms ease-in-out;
+			&:hover {
+				color: var(--colorText);
+			}
 		}
 
 		menu {
 			position: sticky;
 			z-index: 100;
 			top: 0;
-			padding: 4px 9px;
-			border-bottom: 1px solid #ddd;
+			padding: 4px 8px;
+			border-bottom: 1px solid var(--colorBorder);
 			margin: 0;
-			background: white;
+			background: var(--colorHeaderBackground);
 
 			.Filter {
 				display: inline-flex;
@@ -24,8 +62,12 @@
 
 				input {
 					width: 120px;
-					padding: 0 2px;
+					padding: 2px;
+					border: 1px solid var(--colorBorder);
+					margin-right: 4px;
 					margin-left: 4px;
+					border-radius: var(--radius);
+					background: var(--colorInputBackground);
 				}
 			}
 
@@ -49,20 +91,25 @@
 				padding: 4px 10px;
 				border: 0;
 				margin-left: 20px;
-				background: dodgerblue;
+				background: var(--colorAccent);
 				color: white;
-				border-radius: 4px;
+				border-radius: var(--radius);
 				cursor: pointer;
+				font-size: 11px;
+
+				&:hover {
+					filter: contrast(2);
+				}
 			}
 
 			.ClearList {
 				margin-left: 8px;
-				background: #bd0707;
+				background: var(--colorRed);
 			}
 		}
 
 		.FileList {
-			padding: 0 9px;
+			padding: 4px 8px;
 
 			li {
 				list-style: none;
@@ -71,7 +118,7 @@
 					padding: 2px 0;
 					border: 0;
 					background: transparent;
-					color: dodgerblue;
+					color: var(--colorAccent);
 					cursor: pointer;
 
 					&:hover {

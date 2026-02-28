@@ -1,4 +1,5 @@
 export { Commander } from './src/client/ApiCommander.js'
+export { API } from './src/client/ApiConstants.js'
 
 export { Mockaton } from './src/server/Mockaton.js'
 export { jwtCookie } from './src/server/utils/jwt.js'

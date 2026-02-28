@@ -28,12 +28,9 @@ describe('CLI', () => {
 
 	describe('Server startup', () => {
 		const mocksDir = mkdtempSync(join(tmpdir(), 'mocks'))
-		let proc = null
-
-		after(() => proc?.kill())
 
 		test('outputs listening address', async () => {
-			proc = cliAsync([
+			const proc = cliAsync([
 				'--mocks-dir', mocksDir,
 				'--no-open'
 			])
@@ -49,6 +46,7 @@ describe('CLI', () => {
 
 			const addr = stdout.match(/Listening::(http:\/\/[^\s\n]+)/)[1]
 			equal(addr.startsWith('http://'), true, `Expected address to start with http://, got: ${addr}`)
+			proc.kill()
 		})
 	})
 })

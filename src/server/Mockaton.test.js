@@ -14,10 +14,9 @@ import { readBody } from './utils/HttpIncomingMessage.js'
 import { CorsHeader } from './utils/http-cors.js'
 
 import { API } from '../client/ApiConstants.js'
-import { Commander } from '../client/ApiCommander.js'
 import { parseFilename } from '../client/Filename.js'
 
-import { Mockaton } from './Mockaton.js'
+import { jwtCookie, Mockaton, Commander } from '../../index.js'
 
 
 const CONFIG = {
@@ -26,7 +25,9 @@ const CONFIG = {
 	onReady() {},
 	cookies: {
 		userA: 'CookieA',
-		userB: 'CookieB'
+		userB: jwtCookie('my-cookie', {
+			email: 'john.doe@example.test'
+		}),
 	},
 	extraHeaders: ['custom_header_name', 'custom_header_val'],
 	extraMimes: {

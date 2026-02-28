@@ -2,8 +2,8 @@ import { join } from 'node:path'
 import { equal } from 'node:assert/strict'
 import { tmpdir } from 'node:os'
 import { mkdtempSync } from 'node:fs'
+import { describe, test } from 'node:test'
 import { spawn, spawnSync } from 'node:child_process'
-import { describe, test, after } from 'node:test'
 
 import pkgJSON from '../../package.json' with { type: 'json' }
 

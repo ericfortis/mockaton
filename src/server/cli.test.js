@@ -1,19 +1,15 @@
 import { join } from 'node:path'
 import { equal } from 'node:assert/strict'
 import { tmpdir } from 'node:os'
-import { spawnSync } from 'node:child_process'
 import { mkdtempSync } from 'node:fs'
 import { describe, test } from 'node:test'
+import { spawnSync, spawn } from 'node:child_process'
 
 import pkgJSON from '../../package.json' with { type: 'json' }
 
-
-function cli(args, timeout) {
-	return spawnSync(join(import.meta.dirname, 'cli.js'), args, {
-		timeout,
-		encoding: 'utf8'
-	})
-}
+const CLI_PATH = join(import.meta.dirname, 'cli.js')
+const cli = args => spawnSync(CLI_PATH, args, { encoding: 'utf8' })
+const cliAsync = args => spawn(CLI_PATH, args)
 
 describe('CLI', () => {
 	test('--invalid-flag', () => {
@@ -40,12 +36,23 @@ describe('CLI', () => {
 		equal(status, 0)
 	})
 
-	test('outputs listening address', () => {
-		const { stdout } = cli([
+	test('outputs listening address', async () => {
+		const proc = cliAsync([
 			'--mocks-dir', mkdtempSync(join(tmpdir(), 'mocks')),
 			'--no-open'
-		], 100)
-		const addr = stdout.match(/Listening::(http:\/\/[^\s\n]+)/)?.[1]
+		])
+
+		let stdout = ''
+		await new Promise((resolve, reject) => {
+			proc.on('error', reject)
+			proc.stdout.on('data', data => {
+				stdout = data.toString()
+				resolve()
+			})
+		})
+
+		const addr = stdout.match(/Listening::(http:\/\/[^\s\n]+)/)[1]
 		equal(addr.startsWith('http://'), true, `Expected address to start with http://, got: ${addr}`)
+		proc.kill()
 	})
 })

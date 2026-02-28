@@ -12,21 +12,13 @@ import { writeFile, unlink, mkdir, readFile, rename } from 'node:fs/promises'
 import { mimeFor } from './utils/mime.js'
 import { CorsHeader } from './utils/http-cors.js'
 import { parseFilename } from '../client/Filename.js'
-
 import { API, Commander } from '../../index.js'
+
 import CONFIG from './Mockaton.test.config.js'
 
 
 const mocksDir = mkdtempSync(join(tmpdir(), 'mocks'))
 const staticDir = mkdtempSync(join(tmpdir(), 'static'))
-
-const inMocksDir = f => join(mocksDir, f)
-const inStaticMocksDir = f => join(staticDir, f)
-const readFromMocksDir = f => readFile(inMocksDir(f), 'utf8')
-const makeDirInMocks = dir => mkdir(inMocksDir(dir), { recursive: true })
-const makeDirInStaticMocks = dir => mkdir(inStaticMocksDir(dir), { recursive: true })
-const renameInMocksDir = (src, target) => rename(inMocksDir(src), inMocksDir(target))
-const renameInStaticMocksDir = (src, target) => rename(inStaticMocksDir(src), inStaticMocksDir(target))
 
 const stdout = []
 const stderr = []
@@ -41,15 +33,24 @@ proc.stdout.on('data', data => { stdout.push(data.toString()) })
 proc.stderr.on('data', data => { stderr.push(data.toString()) })
 
 const serverAddr = await new Promise((resolve, reject) => {
-	proc.stdout.on('data', () => {
-		const addr = stdout[0].match(/Listening::(http:\/\/[^\s\n]+)/)[1]
-		if (addr)
-			resolve(addr)
+	proc.stdout.once('data', () => {
+		const addr = stdout[0].match(/Listening::(http:[^\n]+)/)[1]
+		resolve(addr)
 	})
 	proc.on('error', reject)
 })
 
 after(() => proc.kill('SIGUSR2'))
+
+
+const readFromMocksDir = f => readFile(join(mocksDir, f), 'utf8')
+
+const makeDirInMocks = dir => mkdir(join(mocksDir, dir), { recursive: true })
+const makeDirInStaticMocks = dir => mkdir(join(staticDir, dir), { recursive: true })
+
+const renameInMocksDir = (src, target) => rename(join(mocksDir, src), join(mocksDir, target))
+const renameInStaticMocksDir = (src, target) => rename(join(staticDir, src), join(staticDir, target))
+
 
 const api = new Commander(serverAddr)
 

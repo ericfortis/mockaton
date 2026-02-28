@@ -36,6 +36,9 @@ catch (error) {
 	process.exit(1)
 }
 
+// For clean exit on tests, so we can collect code-coverage
+process.on('SIGUSR2', () => process.exit(0))
+
 
 if (args.version)
 	console.log(pkgJSON.version)

@@ -53,6 +53,6 @@ describe('CLI', () => {
 
 		const addr = stdout.match(/Listening::(http:\/\/[^\s\n]+)/)[1]
 		equal(addr.startsWith('http://'), true, `Expected address to start with http://, got: ${addr}`)
-		proc.kill()
+		proc.kill('SIGUSR2')
 	})
 })

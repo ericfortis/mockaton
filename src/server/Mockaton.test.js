@@ -10,7 +10,6 @@ import { describe, test, before, beforeEach, after } from 'node:test'
 import { writeFile, unlink, mkdir, readFile, rename } from 'node:fs/promises'
 
 import { mimeFor } from './utils/mime.js'
-import { CorsHeader } from './utils/http-cors.js'
 import { parseFilename } from '../client/Filename.js'
 import { API, Commander } from '../../index.js'
 
@@ -225,13 +224,13 @@ describe('CORS', () => {
 		const r = await request('/does-not-matter', {
 			method: 'OPTIONS',
 			headers: {
-				[CorsHeader.Origin]: CONFIG.corsOrigins[0],
-				[CorsHeader.AcRequestMethod]: 'GET'
+				'origin': CONFIG.corsOrigins[0],
+				'access-control-request-method': 'GET'
 			}
 		})
 		equal(r.status, 204)
-		equal(r.headers.get(CorsHeader.AcAllowOrigin), CONFIG.corsOrigins[0])
-		equal(r.headers.get(CorsHeader.AcAllowMethods), 'GET')
+		equal(r.headers.get('access-control-allow-origin'), CONFIG.corsOrigins[0])
+		equal(r.headers.get('access-control-allow-methods'), 'GET')
 	})
 
 	test('responds', async () => {
@@ -239,12 +238,12 @@ describe('CORS', () => {
 		await fx.sync()
 		const r = await fx.request({
 			headers: {
-				[CorsHeader.Origin]: CONFIG.corsOrigins[0]
+				'origin': CONFIG.corsOrigins[0]
 			}
 		})
 		equal(r.status, 200)
-		equal(r.headers.get(CorsHeader.AcAllowOrigin), CONFIG.corsOrigins[0])
-		equal(r.headers.get(CorsHeader.AcExposeHeaders), 'Content-Encoding')
+		equal(r.headers.get('access-control-allow-origin'), CONFIG.corsOrigins[0])
+		equal(r.headers.get('access-control-expose-headers'), 'Content-Encoding')
 		await fx.unlink()
 	})
 })
@@ -387,7 +386,6 @@ describe('Proxy Fallback', () => {
 		after(() => fallbackServer.close())
 
 		test('Relays to fallback server and saves the mock', async () => {
-
 			const r = await request(`/non-existing-mock/${randomUUID()}`, { method: 'POST' })
 			equal(r.status, 423)
 			equal(r.headers.get('custom_header'), 'my_custom_header')

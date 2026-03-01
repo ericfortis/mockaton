@@ -3,9 +3,7 @@ import { jwtCookie } from '../../index.js'
 export default {
 	cookies: {
 		userA: 'CookieA',
-		userB: jwtCookie('my-cookie', {
-			email: 'john.doe@example.test'
-		}),
+		userB: jwtCookie('CookieB', { email: 'john@example.test' }),
 	},
 	extraHeaders: ['custom_header_name', 'custom_header_val'],
 	extraMimes: {

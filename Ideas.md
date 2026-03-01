@@ -66,6 +66,11 @@ doesn’t break selecting across pages, (e.g., for selecting and copying)
 ## Proxy Fallback
 - support static mocks
 
+## Plugins
+- think about using a name in the config, instead of the function, So
+we can keep the config JSON safe. The is to have a config file
+js agnostic, so mockaton can be implemented in other languages.
+
 ## Plugins for `staticMocks`
 - content disposition
 - compression

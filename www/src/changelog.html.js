@@ -10,6 +10,9 @@ export default () => htmlTemplate({
 	body: `
 		<h1 id="changelog">Changelog</h1>
 		<br />
+		<p>12.6.0 dashboard: conditionally render fallback backend field. Now it must be initially set in <code>config.proxyFallback</code>, or via API.</p>
+		<p>12.5.0 utils: <code>parseSplats</code> and <code>parseQueryParams</code> helpers are exported so they can be used in funtional mocks.</p>
+		<p>12.4.0 opens dashboard on Linux</p>
 
 		<p>12.3.0 dashboard: click drag</p>
 		<div class="RegionImg" data-max-width="440">

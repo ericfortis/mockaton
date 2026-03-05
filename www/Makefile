@@ -19,13 +19,13 @@ zip: build
 
 
 avif:
-	npx mediasnacks avif -y 'src/assets/media/**/*.png'
+	npx mediasnacks avif -y src/assets/media/**/*.png
 
 moov2front:
-	npx mediasnacks moov2front 'src/assets/media/**/*.mp4'
+	npx mediasnacks moov2front src/assets/media/**/*.mp4
 
 resize-video:
-	npx mediasnacks resize --overwrite --width 1920 'src/assets/media/**/*.mp4'
+	npx mediasnacks resize --overwrite --width 1920 src/assets/media/**/*.mp4
 
 
 .PHONY: *

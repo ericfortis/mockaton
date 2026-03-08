@@ -1,3 +1,4 @@
+import { MIMEType } from 'node:util'
 import { config } from '../config.js'
 import { EXT_UNKNOWN_MIME, EXT_EMPTY } from '../../client/ApiConstants.js'
 
@@ -146,12 +147,8 @@ export function extFor(mime) {
 		: EXT_EMPTY
 }
 function findExt(rawMime) {
-	const m = parseMime(rawMime)
+	const m = new MIMEType(rawMime).essence
 	const extraMimeToExt = mapMimeToExt(config.extraMimes)
 	return extraMimeToExt[m] || mimeToExt[m] || EXT_UNKNOWN_MIME
 }
 
-export function parseMime(mime) {
-	return mime.split(';')[0].toLowerCase()
-	// RFC 9110 §8.3.1
-}

@@ -252,26 +252,24 @@ function togglePreference(param, nextVal) {
  * @param {string[]} paths - sorted
  */
 export function dittoSplitPaths(paths) {
-	const result = [['', paths[0]]]
-	const pathsInParts = paths.map(p => p.split('/').filter(Boolean))
+	const pParts = paths.map(p => p.split('/').filter(Boolean))
+	return paths.map((p, i) => {
+		if (i === 0)
+			return ['', p]
 
-	for (let i = 1; i < paths.length; i++) {
-		const prev = pathsInParts[i - 1]
-		const curr = pathsInParts[i]
-
+		const prev = pParts[i - 1]
+		const curr = pParts[i]
 		const min = Math.min(curr.length, prev.length)
 		let j = 0
 		while (j < min && curr[j] === prev[j])
 			j++
 
 		if (!j) // no common dirs
-			result.push(['', paths[i]])
-		else {
-			const ditto = '/' + curr.slice(0, j).join('/') + '/'
-			result.push([ditto, paths[i].slice(ditto.length)])
-		}
-	}
-	return result
+			return ['', p]
+
+		const ditto = '/' + curr.slice(0, j).join('/') + '/'
+		return [ditto, p.slice(ditto.length)]
+	})
 }
 
 

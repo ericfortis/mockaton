@@ -1,62 +1,62 @@
 {
 	"/alternatives.html": {
-		"hash": "t0I9rVz1Bz7wT3sIKVcfjkx58V0",
-		"delta": 0,
-		"size": 20783
+		"hash": "71-1J0WKGp3qktrs5UmMHO8Uvu8",
+		"delta": -1319,
+		"size": 19464
 	},
 	"/api.html": {
-		"hash": "IJZ_sAuIyyeGiR_MGUNZ36f-tsI",
-		"delta": 0,
-		"size": 40690
+		"hash": "cKyzv_7LyHMXJP3E3zMLFLbyK_c",
+		"delta": -1319,
+		"size": 39371
 	},
 	"/changelog.html": {
-		"hash": "CQm4_5QKDSH4MiW_nHXIqRE55ks",
-		"delta": 329,
-		"size": 28807
+		"hash": "eO1RexTSL9n_NFL-wnLO_UsvDmY",
+		"delta": -1319,
+		"size": 27488
 	},
 	"/config.html": {
-		"hash": "63wR_KAHIK1UJ4SBZ4quwwAQxzE",
-		"delta": 0,
-		"size": 39182
+		"hash": "RCDXl0F_f7xj-RZTCkOMBVak9Wo",
+		"delta": -1319,
+		"size": 37863
 	},
 	"/convention.html": {
-		"hash": "pQOEcquxcmAY78gXlwqc4g44Yt4",
-		"delta": 0,
-		"size": 21739
+		"hash": "9VjnYYBKFv0Q3ovoknWRKao1fSE",
+		"delta": -1319,
+		"size": 20420
 	},
 	"/functional-mocks.html": {
-		"hash": "kDfO2Vc0kQ8mLqbMCy2Qg8gKXCY",
-		"delta": 0,
-		"size": 29465
+		"hash": "y4r2PnFMbXZo8Z3GoFg75eBrrpI",
+		"delta": -1319,
+		"size": 28146
 	},
 	"/index.html": {
-		"hash": "uZIhmGQLyRheISWWd8aCnwvQGm8",
-		"delta": 0,
-		"size": 25410
+		"hash": "t_gIpVHZdSssKLq0B44xp1dS-kA",
+		"delta": -1319,
+		"size": 24091
 	},
 	"/installation.html": {
-		"hash": "OjioLF352GVF4AjErQLkFU38sZI",
-		"delta": 0,
-		"size": 21318
+		"hash": "fZg8XmeNHOkwOuzyGyHeUINgGgw",
+		"delta": -1319,
+		"size": 19999
 	},
 	"/motivation.html": {
-		"hash": "8OE9awUvD5nISBVoxEyxl4yfZAk",
-		"delta": 0,
-		"size": 21825
+		"hash": "lEARjGAGC8uTePG0iwXyqubENJM",
+		"delta": -1319,
+		"size": 20506
 	},
 	"/plugins.html": {
-		"hash": "mG5MfIgJElFx7qLb80rkS2aBzdY",
-		"delta": 0,
-		"size": 24802
+		"hash": "R-h6ppMV0LvEs2exEEfxWy2OufI",
+		"delta": -1319,
+		"size": 23483
 	},
 	"/privacy-and-security.html": {
-		"hash": "wHSJxM0KMMNuRdCKX6iP5YrO25g",
-		"delta": 0,
-		"size": 19254
+		"hash": "GinK3zaZ2Cw9nlGyawNTeQUJjZQ",
+		"delta": -1319,
+		"size": 17935
 	},
 	"/scraping.html": {
-		"hash": "JNN2pXkwjZCdu9S9jEI2_k0FDNQ",
-		"delta": 0,
-		"size": 20133
+		"hash": "8-PITbCuo7RRtvmhmZiv1tgHQ60",
+		"delta": -1319,
+		"size": 18814
 	}
 }

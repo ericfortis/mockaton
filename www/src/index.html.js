@@ -1,4 +1,4 @@
-import { htmlTemplate, MockatonLogo } from './htmlTemplate.js'
+import { htmlTemplate, MockatonLogo } from './_htmlTemplate.js'
 import { js, shell, raw } from './_syntaxHighlight.js'
 
 // language=html

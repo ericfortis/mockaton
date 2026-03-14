@@ -1,6 +1,6 @@
 // TODO https://www.rfc-editor.org/rfc/rfc9457.html
 
-import { htmlTemplate } from './htmlTemplate.js'
+import { htmlTemplate } from './_htmlTemplate.js'
 import { js, json } from './_syntaxHighlight.js'
 import OpenAPI from './assets/openapi.json' with { type: 'json' } 
 

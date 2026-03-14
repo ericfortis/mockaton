@@ -1,4 +1,4 @@
-import { htmlTemplate } from './htmlTemplate.js'
+import { htmlTemplate } from './_htmlTemplate.js'
 import { js } from './_syntaxHighlight.js'
 
 // language=html

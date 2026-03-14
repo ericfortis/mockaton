@@ -1,5 +1,5 @@
 import { METHODS } from 'node:http'
-import { htmlTemplate } from './htmlTemplate.js'
+import { htmlTemplate } from './_htmlTemplate.js'
 import { raw } from './_syntaxHighlight.js'
 
 

@@ -486,6 +486,88 @@ function DelayToggler({ checked, commit, optClassName }) {
 	})
 }
 
+function handleExclusiveSelection(columnType) {
+	// Set this checkbox to checked
+	this.checked = true
+	this.focus()
+
+	// Get the column selector based on columnType
+	const columnSelectors = {
+		proxy: `.${CSS.TableRow} .${CSS.ProxyToggler} input`,
+		delay: `.${CSS.TableRow} .${CSS.DelayToggler} input`,
+		status: `.${CSS.TableRow} .${CSS.StatusCodeToggler} input`
+	}
+
+	const selector = columnSelectors[columnType]
+	if (!selector) return
+
+	// Find all checkboxes in this column
+	const allCheckboxes = leftSideRef.elem.querySelectorAll(selector)
+
+	// Uncheck all others
+	allCheckboxes.forEach(checkbox => {
+		if (checkbox === this) {
+			// This is the clicked checkbox - ensure it's checked
+			if (!checkbox.checked) {
+				checkbox.checked = true
+			}
+			// Trigger its commit to update the store
+			const row = checkbox.closest(`.${CSS.TableRow}`)
+			const rowType = row?.dataset.rowType
+			const method = row?.dataset.method
+			const urlMask = row?.dataset.urlMask
+
+			if (columnType === 'proxy' && rowType === 'dynamic') {
+				store.setProxied(method, urlMask, true)
+			} else if (columnType === 'delay') {
+				if (rowType === 'dynamic') {
+					store.setDelayed(method, urlMask, true)
+				} else if (rowType === 'static') {
+					store.setDelayedStatic(urlMask, true)
+				}
+			} else if (columnType === 'status') {
+				if (rowType === 'dynamic') {
+					// For dynamic rows, toggle500 sets to 500 if not already
+					// We need to check current state
+					const currentlyChecked = checkbox.checked
+					if (!currentlyChecked) {
+						store.toggle500(method, urlMask)
+					}
+				} else if (rowType === 'static') {
+					store.setStaticRouteStatus(urlMask, 404)
+				}
+			}
+		} else if (checkbox.checked) {
+			// Uncheck other checkboxes
+			checkbox.checked = false
+			const row = checkbox.closest(`.${CSS.TableRow}`)
+			const rowType = row?.dataset.rowType
+			const method = row?.dataset.method
+			const urlMask = row?.dataset.urlMask
+
+			if (columnType === 'proxy' && rowType === 'dynamic') {
+				store.setProxied(method, urlMask, false)
+			} else if (columnType === 'delay') {
+				if (rowType === 'dynamic') {
+					store.setDelayed(method, urlMask, false)
+				} else if (rowType === 'static') {
+					store.setDelayedStatic(urlMask, false)
+				}
+			} else if (columnType === 'status') {
+				if (rowType === 'dynamic') {
+					// For dynamic rows, toggle500 toggles the state
+					const currentlyChecked = checkbox.checked
+					if (currentlyChecked) {
+						store.toggle500(method, urlMask)
+					}
+				} else if (rowType === 'static') {
+					store.setStaticRouteStatus(urlMask, 200)
+				}
+			}
+		}
+	})
+}
+
 function ClickDragToggler({ checked, commit, className, title, body, columnType }) {
 	function onPointerEnter(event) {
 		if (event.buttons === 1)

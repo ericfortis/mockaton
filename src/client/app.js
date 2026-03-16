@@ -481,64 +481,32 @@ function DelayToggler({ checked, commit, optClassName }) {
 	})
 }
 
-function handleExclusiveSelection(columnType) {
-	// Get the column selector based on columnType
-	const columnSelectors = {
-		proxy: `.${CSS.TableRow} .${CSS.ProxyToggler} input`,
-		delay: `.${CSS.TableRow} .${CSS.DelayToggler} input`,
-		status: `.${CSS.TableRow} .${CSS.StatusCodeToggler} input`
-	}
+const columnSelectors = [
+	`.${CSS.TableRow} .${CSS.ProxyToggler} input`,
+	`.${CSS.TableRow} .${CSS.DelayToggler} input`,
+	`.${CSS.TableRow} .${CSS.StatusCodeToggler} input`,
+]
 
-	const selector = columnSelectors[columnType]
+function handleExclusiveSelection() {
+	// Find which column selector matches this checkbox (similar to initKeyboardNavigation)
+	const selector = columnSelectors.find(s => this?.matches(s))
 	if (!selector) return
 
 	// Find all checkboxes in this column
 	const allCheckboxes = leftSideRef.elem.querySelectorAll(selector)
 
-	// Process all checkboxes
+	// Set this checkbox to checked and focus it
+	if (!this.checked) {
+		this.checked = true
+		this.dispatchEvent(new Event('change', { bubbles: true }))
+	}
+	this.focus()
+
+	// Uncheck all other checkboxes in the column
 	allCheckboxes.forEach(checkbox => {
-		const row = checkbox.closest(`.${CSS.TableRow}`)
-		const rowType = row?.dataset.rowType
-		const method = row?.dataset.method
-		const urlMask = row?.dataset.urlMask
-		const wasChecked = checkbox.checked
-		const shouldBeChecked = checkbox === this
-
-		// Skip if disabled
-		if (checkbox.disabled) return
-
-		// Skip if already in desired state
-		if (wasChecked === shouldBeChecked) {
-			if (checkbox === this) {
-				this.focus()
-			}
-			return
-		}
-
-		// Update checkbox state
-		checkbox.checked = shouldBeChecked
-
-		// Call appropriate store method
-		if (columnType === 'proxy' && rowType === 'dynamic') {
-			store.setProxied(method, urlMask, shouldBeChecked)
-		} else if (columnType === 'delay') {
-			if (rowType === 'dynamic') {
-				store.setDelayed(method, urlMask, shouldBeChecked)
-			} else if (rowType === 'static') {
-				store.setDelayedStatic(urlMask, shouldBeChecked)
-			}
-		} else if (columnType === 'status') {
-			if (rowType === 'dynamic') {
-				// toggle500 toggles the state, so only call if state needs to change
-				store.toggle500(method, urlMask)
-			} else if (rowType === 'static') {
-				store.setStaticRouteStatus(urlMask, shouldBeChecked ? 404 : 200)
-			}
-		}
-
-		// Focus the clicked checkbox
-		if (checkbox === this) {
-			this.focus()
+		if (checkbox !== this && checkbox.checked && !checkbox.disabled) {
+			checkbox.checked = false
+			checkbox.dispatchEvent(new Event('change', { bubbles: true }))
 		}
 	})
 }

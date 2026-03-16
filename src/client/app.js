@@ -504,19 +504,20 @@ function ClickDragToggler({ checked, commit, className, title, body }) {
 		const selector = checkboxColumnSelectors.find(s => this.matches(s))
 		if (!selector) 
 			return
+		
+		// Uncheck all other in the column. It’s before check=true
+		// because we refetch mocks for previewing on non-delay checkboxes. 
+		for (const elem of leftSideRef.elem.querySelectorAll(selector))
+			if (elem !== this && elem.checked && !elem.disabled) {
+				elem.checked = false
+				elem.dispatchEvent(new Event('change'))
+			}
 
 		if (!this.checked) {
 			this.checked = true
 			this.dispatchEvent(new Event('change'))
 		}
 		this.focus()
-
-		// Uncheck all other in the column
-		for (const elem of leftSideRef.elem.querySelectorAll(selector))
-			if (elem !== this && elem.checked && !elem.disabled) {
-				elem.checked = false
-				elem.dispatchEvent(new Event('change'))
-			}
 	}
 
 	function onClick(event) {

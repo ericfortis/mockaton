@@ -511,15 +511,15 @@ function handleExclusiveSelection() {
 	})
 }
 
-function ClickDragToggler({ checked, commit, className, title, body, columnType }) {
+function ClickDragToggler({ checked, commit, className, title, body }) {
 	function onPointerEnter(event) {
 		if (event.buttons === 1)
 			onPointerDown.call(this, event)
 	}
 	function onPointerDown(event) {
 		// Handle Alt-click for exclusive selection
-		if (event?.altKey && columnType) {
-			handleExclusiveSelection.call(this, columnType)
+		if (event?.altKey) {
+			handleExclusiveSelection.call(this)
 			return
 		}
 

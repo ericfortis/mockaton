@@ -8,10 +8,6 @@
 
 There’s an implicit question mark on each sentence.
 
-## Alt-click on togglers
-Alt-Click sets (or keeps set) a checkbox and unsets all other checkboxes in a column.
-Columns are in src/client/app.js -> `initKeyboardNavigation` -> `columnSelectors`
-
 ## Auto 500 template
 - `config.auto500Template` return { mime, body }
 - https://www.rfc-editor.org/rfc/rfc9457.html by default

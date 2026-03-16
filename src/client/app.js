@@ -478,6 +478,7 @@ function DelayToggler({ checked, commit, optClassName }) {
 	return ClickDragToggler({
 		canClickDrag: true,
 		checked,
+		columnType: 'delay',
 		commit,
 		...classNames(CSS.DelayToggler, optClassName),
 		title: t`Delay`,

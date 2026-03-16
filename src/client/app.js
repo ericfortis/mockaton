@@ -423,8 +423,6 @@ function StaticRow(row) {
 	return (
 		r('div', {
 				key: row.key,
-				'data-url-mask': row.urlMask,
-				'data-row-type': 'static',
 				...classNames(CSS.TableRow,
 					mounted && row.isNew && CSS.animIn)
 			},

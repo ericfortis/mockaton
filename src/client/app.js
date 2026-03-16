@@ -499,8 +499,7 @@ function ClickDragToggler({ checked, commit, className, title, body }) {
 		if (!selector)
 			return
 
-		// Uncheck all other in the column. It’s before check=true
-		// because we refetch mocks for previewing on non-delay checkboxes. 
+		// Uncheck all other in the column. 
 		for (const elem of leftSideRef.elem.querySelectorAll(selector))
 			if (elem !== this && elem.checked && !elem.disabled) {
 				elem.checked = false

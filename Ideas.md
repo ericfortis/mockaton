@@ -1,7 +1,8 @@
 # Bugs
 - Minor UX: Dittocache doesn't get cleared, so deleting and adding a mock again will not animate it
-- Preview mock payload in store? So it stays when re-rendering?
-
+- Preview mock:
+  - payload in store? So it stays when re-rendering?
+  - don't preview when indirectly toggling off a status code, or proxy checkbox when using Alt+Click
 
 # Ideas
 

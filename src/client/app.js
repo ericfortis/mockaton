@@ -478,18 +478,12 @@ function DelayToggler({ checked, commit, optClassName }) {
 	})
 }
 
-const checkboxColumnSelectors = [
-	`.${CSS.TableRow} .${CSS.ProxyToggler} input`,
-	`.${CSS.TableRow} .${CSS.DelayToggler} input`,
-	`.${CSS.TableRow} .${CSS.StatusCodeToggler} input`,
-]
-
 function ClickDragToggler({ checked, commit, className, title, body }) {
 	function onPointerEnter(event) {
 		if (event.buttons === 1)
 			onPointerDown.call(this, event)
 	}
-	
+
 	function onPointerDown(event) {
 		if (event.altKey) {
 			onExclusiveClick.call(this)
@@ -499,12 +493,12 @@ function ClickDragToggler({ checked, commit, className, title, body }) {
 		this.focus()
 		commit(this.checked)
 	}
-	
+
 	function onExclusiveClick() {
-		const selector = checkboxColumnSelectors.find(s => this.matches(s))
-		if (!selector) 
+		const selector = selectorForColumnOf(this)
+		if (!selector)
 			return
-		
+
 		// Uncheck all other in the column. It’s before check=true
 		// because we refetch mocks for previewing on non-delay checkboxes. 
 		for (const elem of leftSideRef.elem.querySelectorAll(selector))
@@ -699,18 +693,24 @@ function initRealTimeUpdates() {
 	}
 }
 
+function selectorForColumnOf(elem) {
+	return columnSelectors().find(s => elem?.matches(s))
+}
 
-function initKeyboardNavigation() {
-	const columnSelectors = [
+function columnSelectors() {
+	return [
 		`.${CSS.TableRow} .${CSS.ProxyToggler} input`,
 		`.${CSS.TableRow} .${CSS.DelayToggler} input`,
 		`.${CSS.TableRow} .${CSS.StatusCodeToggler} input`,
 		`.${CSS.TableRow} .${CSS.PreviewLink}`,
 		// No .MockSelector because down/up arrows have native behavior on them
 	]
+}
 
+
+function initKeyboardNavigation() {
 	const rowSelectors = [
-		...columnSelectors,
+		...columnSelectors(),
 		`.${CSS.TableRow} .${CSS.MockSelector}:enabled`,
 	]
 
@@ -719,7 +719,7 @@ function initKeyboardNavigation() {
 			case 'ArrowDown':
 			case 'ArrowUp': {
 				const pivot = document.activeElement
-				const sel = columnSelectors.find(s => pivot?.matches(s))
+				const sel = selectorForColumnOf(pivot)
 				if (sel) {
 					const offset = key === 'ArrowDown' ? +1 : -1
 					const siblings = leftSideRef.elem.querySelectorAll(sel)

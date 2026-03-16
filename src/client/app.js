@@ -478,52 +478,47 @@ function DelayToggler({ checked, commit, optClassName }) {
 	})
 }
 
-const columnSelectors = [
+const checkboxColumnSelectors = [
 	`.${CSS.TableRow} .${CSS.ProxyToggler} input`,
 	`.${CSS.TableRow} .${CSS.DelayToggler} input`,
 	`.${CSS.TableRow} .${CSS.StatusCodeToggler} input`,
 ]
-
-function handleExclusiveSelection() {
-	// Find which column selector matches this checkbox (similar to initKeyboardNavigation)
-	const selector = columnSelectors.find(s => this?.matches(s))
-	if (!selector) return
-
-	// Find all checkboxes in this column
-	const allCheckboxes = leftSideRef.elem.querySelectorAll(selector)
-
-	// Set this checkbox to checked and focus it
-	if (!this.checked) {
-		this.checked = true
-		this.dispatchEvent(new Event('change', { bubbles: true }))
-	}
-	this.focus()
-
-	// Uncheck all other checkboxes in the column
-	allCheckboxes.forEach(checkbox => {
-		if (checkbox !== this && checkbox.checked && !checkbox.disabled) {
-			checkbox.checked = false
-			checkbox.dispatchEvent(new Event('change', { bubbles: true }))
-		}
-	})
-}
 
 function ClickDragToggler({ checked, commit, className, title, body }) {
 	function onPointerEnter(event) {
 		if (event.buttons === 1)
 			onPointerDown.call(this, event)
 	}
+	
 	function onPointerDown(event) {
-		// Handle Alt-click for exclusive selection
-		if (event?.altKey) {
-			handleExclusiveSelection.call(this)
+		if (event.altKey) {
+			onExclusiveClick.call(this)
 			return
 		}
-
 		this.checked = !this.checked
 		this.focus()
 		commit(this.checked)
 	}
+	
+	function onExclusiveClick() {
+		const selector = checkboxColumnSelectors.find(s => this.matches(s))
+		if (!selector) 
+			return
+
+		if (!this.checked) {
+			this.checked = true
+			this.dispatchEvent(new Event('change'))
+		}
+		this.focus()
+
+		// Uncheck all other in the column
+		for (const elem of leftSideRef.elem.querySelectorAll(selector))
+			if (elem !== this && elem.checked && !elem.disabled) {
+				elem.checked = false
+				elem.dispatchEvent(new Event('change'))
+			}
+	}
+
 	function onClick(event) {
 		if (event.pointerType === 'mouse')
 			event.preventDefault()

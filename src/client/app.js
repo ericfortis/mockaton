@@ -486,12 +486,18 @@ function DelayToggler({ checked, commit, optClassName }) {
 	})
 }
 
-function ClickDragToggler({ checked, commit, className, title, body }) {
+function ClickDragToggler({ checked, commit, className, title, body, columnType }) {
 	function onPointerEnter(event) {
 		if (event.buttons === 1)
-			onPointerDown.call(this)
+			onPointerDown.call(this, event)
 	}
-	function onPointerDown() {
+	function onPointerDown(event) {
+		// Handle Alt-click for exclusive selection
+		if (event?.altKey && columnType) {
+			handleExclusiveSelection.call(this, columnType)
+			return
+		}
+
 		this.checked = !this.checked
 		this.focus()
 		commit(this.checked)

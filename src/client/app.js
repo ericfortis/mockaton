@@ -272,9 +272,6 @@ function Row(row, i) {
 	return (
 		r('div', {
 				key: row.key,
-				'data-method': method,
-				'data-url-mask': urlMask,
-				'data-row-type': 'dynamic',
 				...classNames(CSS.TableRow,
 					mounted && row.isNew && CSS.animIn)
 			},

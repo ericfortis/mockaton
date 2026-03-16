@@ -461,7 +461,6 @@ function StatusCodeToggler({ title, body, commit, checked, disabled }) {
 		title,
 		disabled,
 		className: CSS.StatusCodeToggler,
-		columnType: 'status',
 		commit,
 		checked,
 		body

@@ -392,6 +392,7 @@ function ProxyToggler(method, urlMask, checked) {
 		className: CSS.ProxyToggler,
 		title: t`Proxy Toggler`,
 		checked,
+		columnType: 'proxy',
 		commit(checked) {
 			store.setProxied(method, urlMask, checked)
 		},

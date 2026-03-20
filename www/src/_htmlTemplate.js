@@ -49,7 +49,7 @@ export const htmlTemplate = ({ head = '', body }) => `
 		</a>
 		<div class="right">
 			<span class="Version">v${pkgJson.version}</span>
-			<a class="Github" href="https://github.com/ericfortis/mockaton" target="_blank" aria-label="Mockaton’s Github Repository">
+			<a class="Github" href="https://github.com/ericfortis/mockaton" aria-label="Mockaton’s Github Repository">
 				${GithubIcon()}
 			</a>
 			<button class="Hamburger">

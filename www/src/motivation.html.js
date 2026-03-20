@@ -55,7 +55,7 @@ export default () => htmlTemplate({
 			Comprehensive states help to spot inadvertent regressions. See the color cards
 			example below. Also, these deterministic states simplify setting up screenshot
 			tests (see <a href="https://github.com/ericfortis/mockaton/tree/main/pixaton-tests"
-										target="_blank">pixaton-tests/</a> in the repo).
+		>pixaton-tests/</a> in the repo).
 		</p>
 
 		<div class="RegionImg" data-max-width="740">

@@ -9,8 +9,8 @@ export default () => htmlTemplate({
 	body: `
 		<h1>Filename Convention</h1>
 		<p>
-			The convention is for mocks within your <code class="green">config.mocksDir</code>. 
-			In other words, it’s not <code class="red">config.staticDir</code> mocks, which are always 
+			The convention is for mocks within your <code class="green">config.mocksDir</code>.
+			In other words, it’s not <code class="red">config.staticDir</code> mocks, which are always
 			<code>GET</code> and return <code>200</code> or <code>206</code> (partial content, e.g., for videos).
 		</p>
 
@@ -20,7 +20,7 @@ export default () => htmlTemplate({
 		<p>
 			The last three dots are reserved for the:
 			<span class="noWrap">1) HTTP Method</span>,
-			<span class="noWrap">2) Response Status Code</span>, and 
+			<span class="noWrap">2) Response Status Code</span>, and
 			<span class="noWrap">3) File Extension.</span>
 		</p>
 		<pre><code>api/user<span class="hljs-selector-class">.GET</span>.<span class="hljs-number">200</span>.json
@@ -33,7 +33,7 @@ export default () => htmlTemplate({
 			<summary>Supported Methods</summary>
 			<p>${METHODS.join(', ')}</p>
 		</details>
-		
+
 
 		<h2 id="splats">
 			Splats
@@ -47,7 +47,7 @@ export default () => htmlTemplate({
 		</p>
 		<pre><code>api/company/<strong>[id]</strong>/user/<strong>[uid]</strong>.GET.200.json</code></pre>
 
-		
+
 		<h2 id="comments">
 			Comments
 		</h2>
@@ -88,16 +88,16 @@ api/video<strong>?limit=[limit]</strong>.GET.200.json
 
 		<p>
 			On Windows, filenames containing &quot;?&quot; are <a
-			href="https://learn.microsoft.com/en-us/windows/win32/fileio/naming-a-file" target="_blank">not
+			href="https://learn.microsoft.com/en-us/windows/win32/fileio/naming-a-file">not
 			permitted</a>, but since that’s part of the query string, it’s ignored anyway.
 		</p>
 
-		
+
 		<h2 id="index-like-routes">
 			Index-like Routes
 		</h2>
 		<p>
-			If you have <span class="NullLink">api/foo</span> and 
+			If you have <span class="NullLink">api/foo</span> and
 			<span class="NullLink">api/foo/bar</span>, you have two options:
 		</p>
 		<p><strong>Option A.</strong> Standard naming:</p>
@@ -106,7 +106,7 @@ api/video<strong>?limit=[limit]</strong>.GET.200.json
 api/foo.GET.200.json
 api/foo/bar.GET.200.json
 `)}
-		
+
 		<p><strong>Option B.</strong> Omit the URL on the filename:</p>
 
 		${raw(`

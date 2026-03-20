@@ -24,7 +24,6 @@ echo "[1,2,3]" > mockaton-mocks/api/foo.GET.200.json
 		${shell`curl localhost:4040/api/foo`}
 
 
-
 		<h2>Option 2: NPM</h2>
 		${shell`npm install mockaton --save-dev`}
 
@@ -34,7 +33,6 @@ echo "[1,2,3]" > mockaton-mocks/api/foo.GET.200.json
   "mockaton": "mockaton --port 4040"
 }
 `}
-
 
 
 		<h2>Option 3: Programmatic Launch</h2>
@@ -59,8 +57,8 @@ make docker
 `}
 
 		<p>
-			<a href="https://github.com/ericfortis/mockaton/blob/main/Dockerfile" target="_blank">Dockerfile</a>,
-			<a href="https://github.com/ericfortis/mockaton/blob/main/Makefile" target="_blank">Makefile</a>
+			<a href="https://github.com/ericfortis/mockaton/blob/main/Dockerfile">Dockerfile</a>,
+			<a href="https://github.com/ericfortis/mockaton/blob/main/Makefile">Makefile</a>
 		</p>
 	`
 })

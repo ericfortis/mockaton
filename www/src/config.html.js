@@ -288,7 +288,7 @@ config.extraMimes = {
 		<p>
 			Those extra media types take precedence over the built-in <a
 			href="https://github.com/ericfortis/mockaton/blob/main/src/server/utils/mime.js"
-			target="_blank">utils/mime.js</a>, so you can override them.
+		>utils/mime.js</a>, so you can override them.
 		</p>
 
 		<h3 id="-plugins-filenametester-regexp-plugin-plugin-">

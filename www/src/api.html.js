@@ -15,7 +15,7 @@ export default () => htmlTemplate({
 	body: `
 		<h1>
 			Control API
-			<a href="/assets/openapi.json" target="_blank">OpenAPI Spec ↗</a>
+			<a href="/assets/openapi.json">OpenAPI Spec ↗</a>
 		</h1>
 
 		<form>

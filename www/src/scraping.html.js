@@ -7,7 +7,7 @@ export default () => htmlTemplate({
 		<h1>Scraping Mocks from your Backend</h1>
 
 		<h2 id="option-1-browser-extension">
-			Option 1: <a href="https://chromewebstore.google.com/detail/mockaton-downloader/babjpljmacbefcmlomjedmgmkecnmlaa" target="_blank">Chrome Extension ↗</a>
+			Option 1: <a href="https://chromewebstore.google.com/detail/mockaton-downloader/babjpljmacbefcmlomjedmgmkecnmlaa">Chrome Extension ↗</a>
 		</h2>
 		<p>
 			The companion Chrome DevTools extension lets you download all the HTTP
@@ -17,8 +17,8 @@ export default () => htmlTemplate({
 		<div class="RegionImg" data-max-width="1000">
 			<img src="/assets/media/browser-extension-overview.avif" alt="">
 		</div>
-		
-		<a href="https://github.com/ericfortis/mockaton/tree/main/browser-extension" target="_blank">
+
+		<a href="https://github.com/ericfortis/mockaton/tree/main/browser-extension">
 			Source Code ↗
 		</a>
 

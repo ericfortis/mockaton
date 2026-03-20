@@ -13,37 +13,30 @@ export class Commander {
 		this.addr = addr
 	}
 
+	/** @returns {Promise<Response>} */
 	#patch = (api, body) => fetch(this.addr + api, {
 		method: 'PATCH',
 		body: JSON.stringify(body)
 	})
 
-	/** @returns {Promise<Response>} */
 	reset = () => this.#patch(API.reset)
 
-	/** @returns {Promise<Response>} */
 	setGlobalDelay = delay => this.#patch(API.globalDelay, delay)
 
-	/** @returns {Promise<Response>} */
 	setGlobalDelayJitter = jitterPct => this.#patch(API.globalDelayJitter, jitterPct)
 
-	/** @returns {Promise<Response>} */
 	setCorsAllowed = value => this.#patch(API.cors, value)
 
-	/** @returns {Promise<Response>} */
 	setWatchMocks = enabled => this.#patch(API.watchMocks, enabled)
 
-	/** @returns {Promise<Response>} */
 	setProxyFallback = proxyAddr => this.#patch(API.fallback, proxyAddr)
 
-	/** @returns {Promise<Response>} */
 	setCollectProxied = shouldCollect => this.#patch(API.collectProxied, shouldCollect)
 
 	/** @returns {JsonPromise<State.cookies>} */
 	selectCookie = label => this.#patch(API.cookies, label)
 
 
-	/** @returns {Promise<Response>} */
 	bulkSelectByComment = comment => this.#patch(API.bulkSelect, comment)
 
 	/** @returns {JsonPromise<ClientMockBroker>} */
@@ -60,10 +53,8 @@ export class Commander {
 	setRouteIsDelayed = (method, urlMask, delayed) => this.#patch(API.delay, [method, urlMask, delayed])
 
 
-	/** @returns {Promise<Response>} */
 	setStaticRouteStatus = (urlMask, status) => this.#patch(API.staticStatus, [urlMask, status])
 
-	/** @returns {Promise<Response>} */
 	setStaticRouteIsDelayed = (urlMask, delayed) => this.#patch(API.delayStatic, [urlMask, delayed])
 
 

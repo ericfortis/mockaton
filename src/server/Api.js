@@ -38,7 +38,7 @@ export const apiGetReqs = new Map([
 
 export const apiPatchReqs = new Map([
 	[API.cors, setCorsAllowed],
-	[API.reset, reinitialize],
+	[API.reset, reset],
 	[API.cookies, selectCookie],
 	[API.globalDelay, setGlobalDelay],
 	[API.globalDelayJitter, setGlobalDelayJitter],
@@ -92,7 +92,7 @@ function getState(_, response) {
 
 /** # PATCH */
 
-function reinitialize(_, response) {
+function reset(_, response) {
 	mockBrokersCollection.init()
 	staticCollection.init()
 	response.ok()

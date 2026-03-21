@@ -5,10 +5,8 @@ export const CSP = [
 	`img-src data: blob: 'self'`
 ].join(';')
 
-
 // language=html
-export const IndexHtml = (hotReloadEnabled, version) =>
-	`
+export const IndexHtml = (hotReloadEnabled, version) => `
 <!DOCTYPE html>
 <html lang="en-US">
 <head>
@@ -25,8 +23,8 @@ export const IndexHtml = (hotReloadEnabled, version) =>
 </head>
 <body>
 ${hotReloadEnabled
-		? '<script type="module" src="watcherDev.js"></script>'
-		: ''}
+	? '<script type="module" src="watcherDev.js"></script>'
+	: ''}
 </body>
 </html>
-`.trim()
+`

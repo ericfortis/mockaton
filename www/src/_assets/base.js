@@ -1,7 +1,7 @@
 ;(function AddRelNoOpener() {
 	for (const link of document.querySelectorAll('a')) {
 		link.rel = 'noopener'
-		if (link.href.startsWith('https:'))
+		if (link.getAttribute('href').startsWith('https:'))
 			link.target = '_blank'
 	}
 }())

@@ -11,6 +11,7 @@
 	--colorLabel: light-dark(#555, #aaa);
 	--colorDisabledMockSelector: light-dark(#444, #a9b9b9);
 	--colorText: light-dark(#000, #fff);
+
 	--colorAccent: light-dark(#0059dd, #2495ff);
 	--colorHover: light-dark(rgba(119, 193, 255, 0.4), rgba(0, 63, 115, 0.5));
 	--colorRed: light-dark(#da0f00, #f41606);
@@ -192,7 +193,10 @@ header {
 	}
 }
 
-.Field {
+.GlobalDelay,
+.GlobalDelayJitter,
+.CookieSelector,
+.FallbackBackend {
 	width: 116px;
 
 	span {
@@ -226,7 +230,7 @@ header {
 		border-radius: var(--radius);
 	}
 
-	&.GlobalDelayField {
+	&.GlobalDelay {
 		position: relative;
 		width: 76px;
 
@@ -249,7 +253,7 @@ header {
 		}
 	}
 
-	&.GlobalDelayJitterField {
+	&.GlobalDelayJitter {
 		width: 80px;
 		span {
 			margin-left: 4px;

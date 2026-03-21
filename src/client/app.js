@@ -20,9 +20,7 @@ initKeyboardNavigation()
 
 let mounted = false
 function render() {
-	restoreFocus(() => {
-		document.body.replaceChildren(...App())
-	})
+	restoreFocus(() => document.body.replaceChildren(App()))
 	if (store.hasChosenLink)
 		previewMock()
 	mounted = true
@@ -32,7 +30,7 @@ function render() {
 const leftSideRef = {}
 
 function App() {
-	return [
+	return Fragment(
 		Header(),
 		r('main', null,
 			r('div', {
@@ -40,16 +38,15 @@ function App() {
 					style: { width: leftSideRef.width },
 					className: CSS.leftSide
 				},
-				r('div', classNames(CSS.SubToolbar),
+				r('div', { className: CSS.SubToolbar },
 					GroupByMethod(),
 					BulkSelector()),
-				r('div', classNames(CSS.Table),
+				r('div', { className: CSS.Table },
 					MockList(),
 					StaticFilesList())),
 			r('div', { className: CSS.rightSide },
 				Resizer(leftSideRef),
-				PayloadViewer()))
-	]
+				PayloadViewer())))
 }
 
 function Header() {
@@ -62,14 +59,13 @@ function Header() {
 				},
 				Logo()),
 			r('div', null,
-				r('div', classNames(CSS.GlobalDelayWrap),
+				r('div', { className: CSS.GlobalDelayWrap },
 					GlobalDelayField(),
 					GlobalDelayJitterField()),
 				CookieSelector(),
 				store.showProxyField && ProxyFallbackField(),
 				ResetButton(),
-				HelpLink()
-			)))
+				HelpLink())))
 }
 
 
@@ -86,7 +82,7 @@ function GlobalDelayField() {
 		onWheel.timer = setTimeout(onChange.bind(this), 300)
 	}
 	return (
-		r('label', classNames(CSS.Field, CSS.GlobalDelayField),
+		r('label', { className: CSS.GlobalDelay },
 			r('span', null, t`Delay (ms)`),
 			r('input', {
 				type: 'number',
@@ -115,7 +111,7 @@ function GlobalDelayJitterField() {
 		onWheel.timer = setTimeout(onChange.bind(this), 300)
 	}
 	return (
-		r('label', classNames(CSS.Field, CSS.GlobalDelayJitterField),
+		r('label', { className: CSS.GlobalDelayJitter },
 			r('span', null, t`Max Jitter %`),
 			r('input', {
 				type: 'number',
@@ -135,7 +131,7 @@ function CookieSelector() {
 	const disabled = cookies.length <= 1
 	const list = cookies.length ? cookies : [[t`None`, true]]
 	return (
-		r('label', classNames(CSS.Field, CSS.CookieSelector),
+		r('label', { className: CSS.CookieSelector },
 			r('span', null, t`Cookie`),
 			r('select', {
 				autocomplete: 'off',
@@ -159,7 +155,7 @@ function ProxyFallbackField() {
 			store.setProxyFallback(this.value.trim())
 	}
 	return (
-		r('div', classNames(CSS.Field, CSS.FallbackBackend),
+		r('div', { className: CSS.FallbackBackend },
 			r('label', null,
 				r('span', null, t`Fallback`),
 				r('input', {
@@ -174,7 +170,7 @@ function ProxyFallbackField() {
 
 function SaveProxiedCheckbox(ref) {
 	return (
-		r('label', classNames(CSS.SaveProxiedCheckbox),
+		r('label', { className: CSS.SaveProxiedCheckbox },
 			r('input', {
 				ref,
 				type: 'checkbox',
@@ -182,7 +178,7 @@ function SaveProxiedCheckbox(ref) {
 				checked: store.collectProxied,
 				onChange() { store.setCollectProxied(this.checked) }
 			}),
-			r('span', classNames(CSS.checkboxBody), t`Save Mocks`)))
+			r('span', { className: CSS.checkboxBody }, t`Save Mocks`)))
 }
 
 
@@ -219,7 +215,7 @@ function BulkSelector() {
 	}
 	const disabled = !comments.length
 	return (
-		r('label', classNames(CSS.BulkSelector),
+		r('label', { className: CSS.BulkSelector },
 			r('span', null, t`Bulk Select`),
 			r('select', {
 					autocomplete: 'off',
@@ -238,13 +234,13 @@ function BulkSelector() {
 
 function GroupByMethod() {
 	return (
-		r('label', classNames(CSS.GroupByMethod),
+		r('label', { className: CSS.GroupByMethod },
 			r('input', {
 				type: 'checkbox',
 				checked: store.groupByMethod,
 				onChange: store.toggleGroupByMethod
 			}),
-			r('span', classNames(CSS.checkboxBody), t`Group by Method`)))
+			r('span', { className: CSS.checkboxBody }, t`Group by Method`)))
 }
 
 
@@ -294,7 +290,7 @@ function Row(row, i) {
 				}
 			}),
 
-			!store.groupByMethod && r('span', classNames(CSS.Method), method),
+			!store.groupByMethod && r('span', { className: CSS.Method }, method),
 
 			PreviewLink(method, urlMask, row.urlMaskDittoed, i === 0),
 
@@ -350,12 +346,13 @@ function PreviewLink(method, urlMask, urlMaskDittoed, autofocus) {
 	const [ditto, tail] = urlMaskDittoed
 	return (
 		r('a', {
-			...classNames(CSS.PreviewLink, isChosen && CSS.chosen),
+			...classNames(CSS.PreviewLink,
+				isChosen && CSS.chosen),
 			href: urlMask,
 			autofocus,
 			onClick
 		}, ditto
-			? [r('span', classNames(CSS.dittoDir), ditto), tail]
+			? [r('span', { className: CSS.dittoDir }, ditto), tail]
 			: tail))
 }
 
@@ -445,14 +442,14 @@ function StaticRow(row) {
 				}
 			}),
 
-			!groupByMethod && r('span', classNames(CSS.Method), 'GET'),
+			!groupByMethod && r('span', { className: CSS.Method }, 'GET'),
 
 			r('a', {
 				href: row.urlMask,
 				target: '_blank',
 				className: CSS.PreviewLink,
 			}, ditto
-				? [r('span', classNames(CSS.dittoDir), ditto), tail]
+				? [r('span', { className: CSS.dittoDir }, ditto), tail]
 				: tail)))
 }
 
@@ -530,7 +527,7 @@ function ClickDragToggler({ checked, commit, className, title, body }) {
 				onClick,
 				onChange
 			}),
-			r('span', classNames(CSS.checkboxBody), body)))
+			r('span', { className: CSS.checkboxBody }, body)))
 }
 
 function Resizer(ref) {

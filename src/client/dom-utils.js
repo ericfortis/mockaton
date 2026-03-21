@@ -3,9 +3,7 @@ export function t(translation) {
 }
 
 export function classNames(...args) {
-	return {
-		className: args.filter(Boolean).join(' ')
-	}
+	return args.filter(Boolean).join(' ')
 }
 
 export function createElement(tag, props, ...children) {

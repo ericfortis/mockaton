@@ -1,6 +1,11 @@
 import { test } from 'node:test'
-import { deepEqual } from 'node:assert/strict'
-import { extractClassNames } from './dom-utils.js'
+import { deepEqual, equal } from 'node:assert/strict'
+import { extractClassNames, classNames } from './dom-utils.js'
+
+
+test('classNames', () => {
+	equal(classNames('a', false && 'b'), 'a')
+})
 
 
 const cssRules = [

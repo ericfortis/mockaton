@@ -1,9 +1,6 @@
-import {
-	createElement as r,
-	t, classNames, defineClassNames
-} from './dom-utils.js'
-import { parseFilename } from './Filename.js'
+import { createElement as r, t, defineClassNames } from './dom-utils.js'
 import { HEADER_502 } from './ApiConstants.js'
+import { parseFilename } from './Filename.js'
 import { store } from './app-store.js'
 
 import CSS from './app.css' with { type: 'css' }
@@ -15,18 +12,15 @@ const payloadViewerCodeRef = {}
 
 export function PayloadViewer() {
 	return (
-		r('div', classNames(CSS.PayloadViewer),
-			RightToolbar(),
+		r('div', { className: CSS.PayloadViewer },
+
+			r('div', { className: CSS.SubToolbar },
+				r('h2', { ref: payloadViewerTitleRef },
+					!store.hasChosenLink && t`Preview`)),
+
 			r('pre', null,
 				r('code', { ref: payloadViewerCodeRef },
 					!store.hasChosenLink && t`Click a link to preview it`))))
-}
-
-function RightToolbar() {
-	return (
-		r('div', classNames(CSS.SubToolbar),
-			r('h2', { ref: payloadViewerTitleRef },
-				!store.hasChosenLink && t`Preview`)))
 }
 
 
@@ -39,6 +33,7 @@ function PayloadViewerTitle(file, statusText) {
 			r('abbr', { title: statusText }, status),
 			'.' + ext))
 }
+
 
 function PayloadViewerTitleWhenProxied(response) {
 	const mime = response.headers.get('content-type') || ''
@@ -55,13 +50,14 @@ function PayloadViewerTitleWhenProxied(response) {
 const SPINNER_DELAY = 80
 function PayloadViewerProgressBar() {
 	return (
-		r('div', classNames(CSS.ProgressBar),
+		r('div', { className: CSS.ProgressBar },
 			r('div', {
 				style: {
 					animationDuration: store.delay - SPINNER_DELAY + 'ms'
 				}
 			})))
 }
+
 
 export async function previewMock() {
 	const { method, urlMask } = store.chosenLink
@@ -90,6 +86,7 @@ export async function previewMock() {
 		payloadViewerCodeRef.elem.replaceChildren()
 	}
 }
+
 
 async function updatePayloadViewer(proxied, file, response) {
 	const mime = response.headers.get('content-type') || ''

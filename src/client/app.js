@@ -103,7 +103,11 @@ function MockList() {
 	if (store.groupByMethod)
 		return Object.keys(store.brokersByMethod).map(method =>
 			Fragment(
-				r('div', classNames(CSS.TableHeading, store.canProxy && CSS.canProxy), method),
+				r('div', {
+					className: classNames(
+						CSS.TableHeading,
+						store.canProxy && CSS.canProxy)
+				}, method),
 				store.brokersAsRowsByMethod(method).map(Row)))
 
 	return store.brokersAsRowsByMethod('*').map(Row)
@@ -118,7 +122,8 @@ function Row(row, i) {
 	return (
 		r('div', {
 				key: row.key,
-				...classNames(CSS.TableRow,
+				className: classNames(
+					CSS.TableRow,
 					mounted && row.isNew && CSS.animIn)
 			},
 			store.canProxy && ProxyToggler(method, urlMask, row.proxied),
@@ -196,7 +201,8 @@ function PreviewLink(method, urlMask, urlMaskDittoed, autofocus) {
 	const [ditto, tail] = urlMaskDittoed
 	return (
 		r('a', {
-			...classNames(CSS.PreviewLink,
+			className: classNames(
+				CSS.PreviewLink,
 				isChosen && CSS.chosen),
 			href: urlMask,
 			autofocus,
@@ -222,7 +228,7 @@ function MockSelector(row) {
 			},
 			'aria-label': t`Mock Selector`,
 			disabled: row.opts.length < 2,
-			...classNames(
+			className: classNames(
 				CSS.MockSelector,
 				row.selectedIdx > 0 && CSS.nonDefault,
 				row.selectedFileIs4xx && CSS.status4xx)
@@ -252,10 +258,11 @@ function StaticFilesList() {
 	return !rows.length
 		? null
 		: Fragment(
-			r('div',
-				classNames(CSS.TableHeading,
-					store.canProxy && CSS.canProxy,
-					!store.groupByMethod && CSS.nonGroupedByMethod),
+			r('div', {
+					className: classNames(CSS.TableHeading,
+						store.canProxy && CSS.canProxy,
+						!store.groupByMethod && CSS.nonGroupedByMethod),
+				},
 				store.groupByMethod
 					? t`Static GET`
 					: t`Static`),
@@ -269,7 +276,8 @@ function StaticRow(row) {
 	return (
 		r('div', {
 				key: row.key,
-				...classNames(CSS.TableRow,
+				className: classNames(
+					CSS.TableRow,
 					mounted && row.isNew && CSS.animIn)
 			},
 
@@ -319,7 +327,7 @@ function DelayToggler({ checked, commit, optClassName }) {
 		canClickDrag: true,
 		checked,
 		commit,
-		...classNames(CSS.DelayToggler, optClassName),
+		className: classNames(CSS.DelayToggler, optClassName),
 		title: t`Delay`,
 		body: TimerIcon()
 	})
@@ -368,7 +376,7 @@ function ClickDragToggler({ checked, commit, className, title, body }) {
 		commit(this.checked)
 	}
 	return (
-		r('label', { ...classNames(CSS.Toggler, className), title },
+		r('label', { className: classNames(CSS.Toggler, className), title },
 			r('input', {
 				type: 'checkbox',
 				checked,
@@ -563,4 +571,3 @@ function initKeyboardNavigation() {
 		return arr[(arr.indexOf(pivot) + step + arr.length) % arr.length]
 	}
 }
-

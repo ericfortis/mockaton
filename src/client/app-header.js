@@ -2,8 +2,7 @@ import { createElement as r, t, defineClassNames } from './dom-utils.js'
 import { store } from './app-store.js'
 import { Logo, HelpIcon } from './app-icons.js'
 
-import CSS from './app-header.css' with { type: 'css' }
-document.adoptedStyleSheets.push(CSS)
+import CSS from './app.css' with { type: 'css' }
 defineClassNames(CSS)
 
 

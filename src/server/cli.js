@@ -78,7 +78,7 @@ else {
 		: {}
 
 	if (args.host) opts.host = args.host
-	if (args.port) opts.port = Number(args.port)
+	if (args.port) opts.port = Number.isNaN(Number(args.port)) ? args.port : Number(args.port)
 
 	if (args['mocks-dir']) opts.mocksDir = args['mocks-dir']
 	if (args['static-dir']) opts.staticDir = args['static-dir']

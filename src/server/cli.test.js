@@ -5,12 +5,12 @@ import { describe, test } from 'node:test'
 
 import pkgJSON from '../../package.json' with { type: 'json' }
 
-const cli = (...args) => spawnSync(join(import.meta.dirname, 'cli.js'), args, {
-	encoding: 'utf8'
-})
+
+const rel = f => join(import.meta.dirname, f)
+const cli = (...args) => spawnSync(rel('cli.js'), args, { encoding: 'utf8' })
 
 describe('CLI', () => {
-	test('--invalid-flag', () => {
+	test('invalid flag', () => {
 		const { stderr, status } = cli('--invalid-flag')
 		equal(stderr.trim(), `Unknown option '--invalid-flag'`)
 		equal(status, 1)
@@ -19,6 +19,15 @@ describe('CLI', () => {
 	test('invalid config file', () => {
 		const { stderr, status } = cli('--config', 'non-existing-file.js')
 		equal(stderr.trim(), `Invalid config file: non-existing-file.js`)
+		equal(status, 1)
+	})
+
+	test('invalid port', () => {
+		const { stderr, status } = cli(
+			'--mocks-dir', rel('../../mockaton-mocks'),
+			'--port', 'not-a-number',
+		)
+		equal(stderr.trim(), `port="not-a-number" is invalid`)
 		equal(status, 1)
 	})
 

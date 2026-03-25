@@ -53,7 +53,6 @@ function Main() {
 			r('div', { className: CSS.rightSide },
 				Resizer(leftSideRef),
 				PayloadViewer())))
-
 }
 
 

@@ -1,27 +1,36 @@
 import { API } from './ApiConstants.js'
 
 
-longPollDevChanges()
-async function longPollDevChanges() {
-	try {
-		const response = await fetch(API.watchHotReload)
-		if (!response.ok)
-			throw response.statusText
+let es = null
+let timer = null
 
-		const file = await response.json() || ''
-		if (file.endsWith('.css')) {
-			await hotReloadCSS(file)
-			longPollDevChanges()
-		}
+window.addEventListener('beforeunload', teardown)
+connect()
+function connect() {
+	if (es) return
+
+	clearTimeout(timer)
+	es = new EventSource(API.watchHotReload)
+
+	es.onmessage = function (event) {
+		const file = event.data
+		if (file.endsWith('.css'))
+			hotReloadCSS(file)
 		else if (file)
 			location.reload()
-		else // server timeout
-			longPollDevChanges()
 	}
-	catch (error) {
-		console.error('hot reload', error?.message || error)
-		setTimeout(longPollDevChanges, 3000)
+
+	es.onerror = function () {
+		console.error('hot reload')
+		teardown()
+		timer = setTimeout(connect, 3000)
 	}
+}
+
+function teardown() {
+	clearTimeout(timer)
+	es?.close()
+	es = null
 }
 
 async function hotReloadCSS(file) {

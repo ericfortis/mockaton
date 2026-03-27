@@ -53,6 +53,7 @@ const renameInStaticMocksDir = (src, target) => rename(join(staticDir, src), joi
 
 const api = new Commander(serverAddr)
 
+
 /** @returns {Promise<State>} */
 async function fetchState() {
 	return (await api.getState()).json()
@@ -78,14 +79,14 @@ class BaseFixture {
 	}
 
 	async register() {
-		const nextVerPromise = api.getSyncVersion()
+		const nextVerPromise = resolveOnNextSyncVersion()
 		await this.#nextMacroTask()
 		await this.write()
 		await nextVerPromise
 	}
 
 	async unregister() {
-		const nextVerPromise = api.getSyncVersion()
+		const nextVerPromise = resolveOnNextSyncVersion()
 		await this.#nextMacroTask()
 		await this.unlink()
 		await nextVerPromise
@@ -1109,38 +1110,30 @@ describe('Registering Mocks', () => {
 
 	describe('getSyncVersion', () => {
 		const fx0 = new Fixture('reg0/runtime0.GET.200.txt')
+		let version
 		before(async () => {
 			await makeDirInMocks('reg0')
 			await fx0.sync()
-		})
-
-		let version
-
-		test('getSyncVersion responds immediately when version mismatches', async () => {
-			const r = await api.getSyncVersion(-1)
-			version = await r.json()
+			version = await resolveOnNextSyncVersion(-1)
 		})
 
 		const fx = new Fixture('runtime1.GET.200.txt')
 		test('responds when a file is added', async () => {
-			const prom = api.getSyncVersion(version)
+			const prom = resolveOnNextSyncVersion(version)
 			await fx.write()
-			const r = await prom
-			equal(await r.json(), version + 1)
+			equal(await prom, version + 1)
 		})
 
 		test('responds when a file is deleted', async () => {
-			const prom = api.getSyncVersion(version + 1)
+			const prom = resolveOnNextSyncVersion(version + 1)
 			await fx.unlink()
-			const r = await prom
-			equal(await r.json(), version + 2)
+			equal(await prom, version + 2)
 		})
 
 		test('responds when dir is renamed', async () => {
-			const p0 = api.getSyncVersion(version + 2)
+			const p0 = resolveOnNextSyncVersion(version + 2)
 			await renameInMocksDir('reg0', 'reg1')
-			const r0 = await p0
-			equal(await r0.json(), version + 3)
+			equal(await p0, version + 3)
 
 			const s = await fetchState()
 			equal(s.brokersByMethod.GET['/reg1/runtime0'].file, 'reg1/runtime0.GET.200.txt')
@@ -1185,38 +1178,30 @@ describe('Registering Static Mocks', () => {
 
 	describe('getSyncVersion', () => {
 		const fx0 = new FixtureStatic('reg0/static0.txt')
+		let version
 		before(async () => {
 			await makeDirInStaticMocks('reg0')
 			await fx0.sync()
-		})
-
-		let version
-
-		test('getSyncVersion responds immediately when version mismatches', async () => {
-			const r = await api.getSyncVersion(-1)
-			version = await r.json()
+			version = await resolveOnNextSyncVersion(-1)
 		})
 
 		const fx = new FixtureStatic('static1.txt')
 		test('responds when a file is added', async () => {
-			const prom = api.getSyncVersion(version)
+			const prom = resolveOnNextSyncVersion(version)
 			await fx.write()
-			const r = await prom
-			equal(await r.json(), version + 1)
+			equal(await prom, version + 1)
 		})
 
 		test('responds when a file is deleted', async () => {
-			const prom = api.getSyncVersion(version + 1)
+			const prom = resolveOnNextSyncVersion(version + 1)
 			await fx.unlink()
-			const r = await prom
-			equal(await r.json(), version + 2)
+			equal(await prom, version + 2)
 		})
 
 		test('responds when dir is renamed', async () => {
-			const p0 = api.getSyncVersion(version + 2)
+			const p0 = resolveOnNextSyncVersion(version + 2)
 			await renameInStaticMocksDir('reg0', 'reg1')
-			const r0 = await p0
-			equal(await r0.json(), version + 3)
+			equal(await p0, version + 3)
 
 			const s = await fetchState()
 			equal(s.staticBrokers['/reg1/static0.txt'].route, '/reg1/static0.txt')
@@ -1227,4 +1212,30 @@ describe('Registering Static Mocks', () => {
 
 async function sleep(ms = 100) {
 	await new Promise(resolve => setTimeout(resolve, ms))
+}
+
+
+/** In Node, there's no EventSource, so we work around it like this.
+ * This is for listening to real-time updates. It responds when a new mock is added, deleted, or renamed. */
+async function resolveOnNextSyncVersion(currSyncVer = undefined) {
+	let skipFirst = currSyncVer === undefined
+	const response = await api.getSyncVersion()
+	const stream = response.body.pipeThrough(new TextDecoderStream())
+	let buffer = ''
+
+	for await (const chunk of stream) {
+		buffer += chunk
+		const parts = buffer.split('\n\n')
+		buffer = parts.pop() || ''
+
+		for (const event of parts)
+			for (const line of event.split(/\r?\n/))
+				if (line.startsWith('data:')) {
+					const v = Number(line.slice(5).trim())
+					if (skipFirst || v === currSyncVer)
+						skipFirst = false
+					else
+						return v
+				}
+	}
 }

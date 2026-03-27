@@ -6,11 +6,11 @@
 import { join } from 'node:path'
 
 import {
-	longPollDevClientHotReload,
+	sseClientHotReload,
 	DASHBOARD_ASSETS,
 	CLIENT_DIR
 } from './WatcherDevClient.js'
-import { longPollClientSyncVersion, startWatchers, stopWatchers } from './Watcher.js'
+import { startWatchers, stopWatchers, sseClientSyncVersion } from './Watcher.js'
 
 import pkgJSON from '../../package.json' with { type: 'json' }
 
@@ -29,9 +29,9 @@ export const apiGetReqs = new Map([
 	...DASHBOARD_ASSETS.map(f => [API.dashboard + '/' + f, serveStatic(f)]),
 
 	[API.state, getState],
-	[API.syncVersion, longPollClientSyncVersion],
+	[API.syncVersion, sseClientSyncVersion],
 
-	[API.watchHotReload, longPollDevClientHotReload],
+	[API.watchHotReload, sseClientHotReload],
 	[API.throws, () => { throw new Error('Test500') }]
 ])
 

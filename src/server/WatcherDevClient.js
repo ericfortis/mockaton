@@ -3,7 +3,6 @@ import { EventEmitter } from 'node:events'
 import { watch, readdirSync } from 'node:fs'
 
 import { config } from './config.js'
-import { LONG_POLL_SERVER_TIMEOUT } from '../client/ApiConstants.js'
 
 
 export const CLIENT_DIR = join(import.meta.dirname, '../client')
@@ -12,7 +11,7 @@ export const DASHBOARD_ASSETS = readdirSync(CLIENT_DIR)
 
 const devClientWatcher = new class extends EventEmitter {
 	emit(file) { super.emit('RELOAD', file) }
-	subscribe(listener) { this.once('RELOAD', listener) }
+	subscribe(listener) { this.on('RELOAD', listener) }
 	unsubscribe(listener) { this.removeListener('RELOAD', listener) }
 }
 
@@ -27,23 +26,33 @@ export function watchDevSPA() {
 
 
 /** Realtime notify Dev UI changes */
-export function longPollDevClientHotReload(req, response) {
+export function sseClientHotReload(req, response) {
 	if (!config.hotReload) {
 		response.notFound()
 		return
 	}
 
-	function onDevChange(file) {
-		devClientWatcher.unsubscribe(onDevChange)
-		response.json(file)
+	response.writeHead(200, {
+		'Content-Type': 'text/event-stream',
+		'Cache-Control': 'no-cache',
+		'Connection': 'keep-alive',
+	})
+	response.flushHeaders()
+
+	function onDevChange(file = '') {
+		response.write(`data: ${file}\n\n`)
 	}
-	response.setTimeout(LONG_POLL_SERVER_TIMEOUT, () => {
-		devClientWatcher.unsubscribe(onDevChange)
-		response.json('')
-	})
-	req.on('error', () => {
-		devClientWatcher.unsubscribe(onDevChange)
-		response.destroy()
-	})
+
 	devClientWatcher.subscribe(onDevChange)
+
+	const keepAlive = setInterval(() => {
+		response.write(': ping\n\n')
+	}, 10_000)
+
+	req.on('close', cleanup)
+	req.on('error', cleanup)
+	function cleanup() {
+		clearInterval(keepAlive)
+		devClientWatcher.unsubscribe(onDevChange)
+	}
 }

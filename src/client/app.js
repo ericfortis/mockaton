@@ -4,6 +4,7 @@ import {
 } from './dom-utils.js'
 
 import { store } from './app-store.js'
+import { API } from './ApiConstants.js'
 import { Header } from './app-header.js'
 import { TimerIcon, CloudIcon } from './app-icons.js'
 import { PayloadViewer, previewMock } from './app-payload-viewer.js'
@@ -17,7 +18,7 @@ store.onError = onError
 store.render = render
 store.renderRow = renderRow
 
-initRealTimeUpdates()
+onRealTimeUpdate(store.fetchState)
 initKeyboardNavigation()
 
 let mounted = false
@@ -476,46 +477,52 @@ ErrorToast.close = () => {
 
 
 
-/**
- * # Long polls UI sync version
- * The version increments when a mock file is added, removed, or renamed.
- */
-function initRealTimeUpdates() {
+/** The version increments when a mock file is added, removed, or renamed. */
+function onRealTimeUpdate(onUpdate) {
 	let oldVersion = -1
-	let controller = new AbortController()
+	let es = null
+	let timer = null
 
-	longPoll()
+	connect()
 	document.addEventListener('visibilitychange', () => {
-		if (document.hidden) {
-			controller.abort('_hidden_tab_')
-			controller = new AbortController()
-		}
+		if (document.hidden)
+			teardown()
 		else
-			longPoll()
+			connect()
 	})
+	window.addEventListener('beforeunload', teardown)
 
-	async function longPoll() {
-		try {
-			const response = await store.getSyncVersion(oldVersion, controller.signal)
-			if (!response.ok)
-				throw response.status
+	function connect() {
+		if (es) return
 
+		clearTimeout(timer)
+		es = new EventSource(API.syncVersion)
+
+		es.onmessage = function (event) {
 			if (ErrorToast.isOffline)
 				ErrorToast.close()
 
-			const version = await response.json()
-			if (oldVersion !== version) { // because it could be < or >
+			const version = Number(event.data)
+			if (oldVersion !== version) {
 				oldVersion = version
-				store.fetchState()
+				onUpdate()
 			}
-			longPoll()
 		}
-		catch (error) {
-			if (error !== '_hidden_tab_')
-				setTimeout(longPoll, 3000)
+
+		es.onerror = function () {
+			teardown()
+			timer = setTimeout(connect, 3000)
 		}
 	}
+
+	function teardown() {
+		clearTimeout(timer)
+		es?.close()
+		es = null
+	}
 }
+
+
 
 function selectorForColumnOf(elem) {
 	return columnSelectors().find(s => elem?.matches(s))

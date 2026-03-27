@@ -1,8 +1,4 @@
-import {
-	API,
-	HEADER_SYNC_VERSION,
-	LONG_POLL_SERVER_TIMEOUT
-} from './ApiConstants.js'
+import { API } from './ApiConstants.js'
 
 
 /** Client for controlling Mockaton via its HTTP API */
@@ -61,21 +57,11 @@ export class Commander {
 
 	/** @returns {JsonPromise<State>} */
 	getState = () => fetch(this.addr + API.state)
-
-	/**
-	 * This is for listening to real-time updates. It responds when a new mock is added, deleted, or renamed.
-	 * @param {number?} currSyncVer - On mismatch, it responds immediately. Otherwise, long polls.
-	 * @param {AbortSignal} abortSignal
-	 * @returns {JsonPromise<number>}
+	
+	
+	/** 
+	 * SSE - Streams an incremental version when a mock is added, deleted, or renamed
+	 * @returns {Promise<Response>} 
 	 */
-	getSyncVersion = (currSyncVer = undefined, abortSignal = undefined) =>
-		fetch(this.addr + API.syncVersion, {
-			signal: AbortSignal.any([
-				abortSignal,
-				AbortSignal.timeout(LONG_POLL_SERVER_TIMEOUT + 1000)
-			].filter(Boolean)),
-			headers: currSyncVer !== undefined
-				? { [HEADER_SYNC_VERSION]: currSyncVer }
-				: {}
-		})
+	getSyncVersion = () => fetch(this.addr + API.syncVersion)
 }

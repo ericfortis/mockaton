@@ -2,11 +2,6 @@ import { join } from 'node:path'
 import { watch } from 'node:fs'
 import { EventEmitter } from 'node:events'
 
-import {
-	HEADER_SYNC_VERSION,
-	LONG_POLL_SERVER_TIMEOUT
-} from '../client/ApiConstants.js'
-
 import { config } from './config.js'
 import { isFile, isDirectory } from './utils/fs.js'
 
@@ -33,7 +28,7 @@ const uiSyncVersion = new class extends EventEmitter {
 	})
 
 	subscribe(listener) {
-		this.once('ARR', listener)
+		this.on('ARR', listener)
 	}
 	unsubscribe(listener) {
 		this.removeListener('ARR', listener)
@@ -98,24 +93,33 @@ export function watchStaticDir() {
 }
 
 
+
 /** Realtime notify ARR Events */
-export function longPollClientSyncVersion(req, response) {
-	const clientVersion = req.headers[HEADER_SYNC_VERSION]
-	if (clientVersion !== undefined && uiSyncVersion.version !== Number(clientVersion)) {
-		// e.g., tab was hidden while new mocks were added or removed
-		response.json(uiSyncVersion.version)
-		return
-	}
-	function onARR() {
-		uiSyncVersion.unsubscribe(onARR)
-		response.json(uiSyncVersion.version)
-	}
-	response.setTimeout(LONG_POLL_SERVER_TIMEOUT, onARR)
-	req.on('error', () => {
-		uiSyncVersion.unsubscribe(onARR)
-		response.destroy()
+export function sseClientSyncVersion(req, response) {
+	response.writeHead(200, {
+		'Content-Type': 'text/event-stream',
+		'Cache-Control': 'no-cache',
+		'Connection': 'keep-alive',
 	})
-	uiSyncVersion.subscribe(onARR)
+	response.flushHeaders()
+
+	function sendVersion() {
+		response.write(`data: ${uiSyncVersion.version}\n\n`)
+	}
+
+	sendVersion()
+	uiSyncVersion.subscribe(sendVersion)
+
+	const keepAlive = setInterval(() => {
+		response.write(': ping\n\n')
+	}, 10_000)
+	
+	req.on('close', cleanup)
+	req.on('error', cleanup)
+	function cleanup() {
+		clearInterval(keepAlive)
+		uiSyncVersion.unsubscribe(sendVersion)
+	}
 }
 
 

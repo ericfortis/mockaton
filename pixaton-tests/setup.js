@@ -24,7 +24,16 @@ export const mockaton = new Commander(
 
 
 removeDiffsAndCandidates(testsDir)
-const browser = await launch({ headless: false })
+
+let browser
+try {
+	browser = await launch({ headless: false })
+}
+catch (err) {
+	console.error(err)
+	process.exit(1)
+}
+
 export const page = await browser.newPage()
 
 after(() => {

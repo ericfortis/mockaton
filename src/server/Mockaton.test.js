@@ -1210,8 +1210,8 @@ describe('Registering Static Mocks', () => {
 })
 
 
-async function sleep(ms = 100) {
-	await new Promise(resolve => setTimeout(resolve, ms))
+function sleep(ms = 100) {
+	return new Promise(resolve => setTimeout(resolve, ms))
 }
 
 

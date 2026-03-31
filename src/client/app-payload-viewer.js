@@ -7,19 +7,19 @@ import CSS from './app.css' with { type: 'css' }
 defineClassNames(CSS)
 
 
-const payloadViewerTitleRef = {}
-const payloadViewerCodeRef = {}
+const titleRef = {}
+const codeRef = {}
 
 export function PayloadViewer() {
 	return (
 		r('div', { className: CSS.PayloadViewer },
 
 			r('div', { className: CSS.SubToolbar },
-				r('h2', { ref: payloadViewerTitleRef },
+				r('h2', { ref: titleRef },
 					!store.hasChosenLink && t`Preview`)),
 
 			r('pre', null,
-				r('code', { ref: payloadViewerCodeRef },
+				r('code', { ref: codeRef },
 					!store.hasChosenLink && t`Click a link to preview it`))))
 }
 
@@ -66,8 +66,8 @@ export async function previewMock() {
 	previewMock.controller = new AbortController
 
 	const spinnerTimer = setTimeout(() => {
-		payloadViewerTitleRef.elem.replaceChildren(t`Fetching…`)
-		payloadViewerCodeRef.elem.replaceChildren(PayloadViewerProgressBar())
+		titleRef.elem.replaceChildren(t`Fetching…`)
+		codeRef.elem.replaceChildren(PayloadViewerProgressBar())
 	}, SPINNER_DELAY)
 
 	try {
@@ -83,7 +83,7 @@ export async function previewMock() {
 	catch (error) {
 		clearTimeout(spinnerTimer)
 		store.onError(error)
-		payloadViewerCodeRef.elem.replaceChildren()
+		codeRef.elem.replaceChildren()
 	}
 }
 
@@ -91,22 +91,22 @@ export async function previewMock() {
 async function updatePayloadViewer(proxied, file, response) {
 	const mime = response.headers.get('content-type') || ''
 
-	payloadViewerTitleRef.elem.replaceChildren(proxied
+	titleRef.elem.replaceChildren(proxied
 		? PayloadViewerTitleWhenProxied(response)
 		: PayloadViewerTitle(file, response.statusText))
 
 	if (mime.startsWith('image/')) // Naively assumes GET 200
-		payloadViewerCodeRef.elem.replaceChildren(r('img', {
+		codeRef.elem.replaceChildren(r('img', {
 			src: URL.createObjectURL(await response.blob())
 		}))
 	else {
 		const body = await response.text() || t`/* Empty Response Body */`
 		if (mime === 'application/json')
-			payloadViewerCodeRef.elem.replaceChildren(SyntaxJSON(body))
+			codeRef.elem.replaceChildren(SyntaxJSON(body))
 		else if (isXML(mime))
-			payloadViewerCodeRef.elem.replaceChildren(SyntaxXML(body))
+			codeRef.elem.replaceChildren(SyntaxXML(body))
 		else
-			payloadViewerCodeRef.elem.textContent = body
+			codeRef.elem.textContent = body
 	}
 }
 

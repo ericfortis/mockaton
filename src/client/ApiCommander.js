@@ -57,11 +57,11 @@ export class Commander {
 
 	/** @returns {JsonPromise<State>} */
 	getState = () => fetch(this.addr + API.state)
-	
-	
-	/** 
+
+
+	/**
 	 * SSE - Streams an incremental version when a mock is added, deleted, or renamed
-	 * @returns {Promise<Response>} 
+	 * @returns {Promise<Response>}
 	 */
 	getSyncVersion = () => fetch(this.addr + API.syncVersion)
 }

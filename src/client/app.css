@@ -46,7 +46,7 @@ body {
 	font-family: inherit;
 	font-size: 100%;
 	scrollbar-width: thin;
-	corner-shape: squircle
+	corner-shape: squircle;
 }
 
 a:focus-visible,
@@ -306,9 +306,6 @@ header {
 }
 
 
-
-
-
 main {
 	display: flex;
 	min-width: 0;
@@ -423,7 +420,7 @@ main {
 		text-align: left;
 
 		&:first-of-type {
-			border-top: 0
+			border-top: 0;
 		}
 
 		&.canProxy {
@@ -536,7 +533,7 @@ main {
 		&:focus-visible {
 			outline: 0;
 			& + .checkboxBody {
-				outline: 2px solid var(--colorAccent)
+				outline: 2px solid var(--colorAccent);
 			}
 		}
 

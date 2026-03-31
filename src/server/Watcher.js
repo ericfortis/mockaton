@@ -113,7 +113,7 @@ export function sseClientSyncVersion(req, response) {
 	const keepAlive = setInterval(() => {
 		response.write(': ping\n\n')
 	}, 10_000)
-	
+
 	req.on('close', cleanup)
 	req.on('error', cleanup)
 	function cleanup() {

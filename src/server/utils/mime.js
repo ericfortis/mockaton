@@ -61,7 +61,6 @@ const extToMime = {
 	jsonld: 'application/ld+json',
 	lz: 'application/x-lzip',
 	m4a: 'audio/mp4',
-	map: 'application/json',
 	md: 'text/markdown',
 	mid: 'audio/midi',
 	midi: 'audio/midi',

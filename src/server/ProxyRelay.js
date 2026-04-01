@@ -29,29 +29,40 @@ export async function proxy(req, response, delay) {
 		return
 	}
 
-	const headers = Object.fromEntries(proxyResponse.headers)
-	headers['set-cookie'] = proxyResponse.headers.getSetCookie() // parses multiple into an array
-	response.writeHead(proxyResponse.status, headers)
+	response.writeHead(proxyResponse.status, {
+		...Object.fromEntries(proxyResponse.headers),
+		'Set-Cookie': proxyResponse.headers.getSetCookie() // parses multiple into an array
+	})
 	const body = await proxyResponse.text()
 	setTimeout(() => response.end(body), delay) // TESTME
 
 	if (config.collectProxied) {
 		const ext = extFor(proxyResponse.headers.get('content-type'))
-		let filename = makeMockFilename(req.url, req.method, proxyResponse.status, ext)
-		if (isFile(join(config.mocksDir, filename))) // TESTME
-			filename = makeMockFilename(req.url + `(${randomUUID()})`, req.method, proxyResponse.status, ext)
-
-		let data = body
-		if (config.formatCollectedJSON && ext === 'json') // TESTME
-			try {
-				data = JSON.stringify(JSON.parse(body), null, '  ')
-			}
-			catch {}
-		try {
-			write(join(config.mocksDir, filename), data)
-		}
-		catch (err) {
-			logger.warn('Write access denied', err)
-		}
+		saveMockToDisk(req.url, req.method, proxyResponse.status, ext, body)
 	}
 }
+
+function saveMockToDisk(url, method, status, ext, body) {
+	if (config.formatCollectedJSON && ext === 'json')
+		try {
+			body = JSON.stringify(JSON.parse(body), null, '  ')
+		}
+		catch (err) {
+			logger.warn('Invalid JSON response', err)
+		}
+
+	try {
+		write(makeUniqueMockFilename(url, method, status, ext), body)
+	}
+	catch (err) {
+		logger.warn('Write access denied', err)
+	}
+}
+
+function makeUniqueMockFilename(url, method, status, ext) {
+	let file = makeMockFilename(url, method, status, ext)
+	if (isFile(join(config.mocksDir, file)))
+		file = makeMockFilename(url, method, status, ext, `(${randomUUID()})`)
+	return join(config.mocksDir, file)
+}
+

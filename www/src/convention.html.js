@@ -1,11 +1,11 @@
 import { METHODS } from 'node:http'
-import { htmlTemplate } from './_htmlTemplate.js'
+import { htmlTemplate, socialMetadata } from './_htmlTemplate.js'
 import { raw } from './_syntaxHighlight.js'
 
 
 // language=html
-export default () => htmlTemplate({
-	head: `<title>Convention</title>`,
+export default (url) => htmlTemplate({
+	head: socialMetadata('Convention', '', url),
 	body: `
 		<h1>Filename Convention</h1>
 		<p>

@@ -1,28 +1,48 @@
 # Bugs
-- Minor UX: Dittocache doesn't get cleared, so deleting and adding a mock again will not animate it
-- Preview mock:
+- Minor UX: `dittoCache` doesn't get cleared, so deleting and adding a mock again will not animate it
+- Preview mock. Don't preview when indirectly toggling off a status code, or proxy checkbox when using Alt+Click
   - payload in store? So it stays when re-rendering?
-  - don't preview when indirectly toggling off a status code, or proxy checkbox when using Alt+Click
 
 # Ideas
 
 There’s an implicit question mark on each sentence.
+
+## SSE mocks
+- in the right side of the dashboard, we could let the user inject data: frames
+- the initial payload could be sent with a given interval?
+  - the interval could be by default 4s, and the UI lets the user set it
+  - what about when the data frames end? restart (likely no),
+- ping interval? 10s by default
+- SSE parameters ideas:
+  - in comments?, or
+  - new ext convention?
+  - new root folder?
+
+## WSS mocks
+- similar to SSE, but shows input too
 
 ## Auto 500 template
 - `config.auto500Template` return { mime, body }
 - https://www.rfc-editor.org/rfc/rfc9457.html by default
 
 
+## Static Demo Deployment Image
+- Lke [demo-app-vite/Dockerfile](demo-app-vite/Dockerfile)
+
+## Vite
+- Plugin
+
+## Storybook
+- Plugin
+
 ## Ignored Regex
 - `config.ignore` accepts an Array of regexes too
 - applies to filename or full path
-
 
 ## Bulk Select UI
 - Instead of the current dropdown, a panel with buttons (e.g., in the header)
 - (Default) ‘’ to api sets all defaults
 - maybe an input for partial match
-
 
 ## AI.md
 - some ai-friendly doc
@@ -43,7 +63,6 @@ There’s an implicit question mark on each sentence.
 - Some note or flag on the dashboard, to indicate when someone
   is using, (multiplayer) ideally, it’s one deployment per user
 
-
 ## More realtime updates
 - Currently, it's only for add/remove mock but not for static
   files and changes from another client (Browser, or Commander).
@@ -60,7 +79,6 @@ doesn’t break selecting across pages, (e.g., for selecting and copying)
 - Large JSON can block interactivity, e.g., a 20,000 syntax highlighted spans take 300ms on an M4 Pro
 - Instead of virtual rendering, a simpler progressive chunk attaching, yielding?
 
-
 ## Fetch logs
 - API for streaming logs?
 
@@ -69,8 +87,8 @@ doesn’t break selecting across pages, (e.g., for selecting and copying)
 
 ## Plugins
 - think about using a name in the config, instead of the function, So
-we can keep the config JSON safe. The is to have a config file
-js agnostic, so mockaton can be implemented in other languages.
+  we can keep the config JSON safe. The is to have a config file
+  js agnostic, so mockaton can be implemented in other languages.
 
 ## Plugins for `staticMocks`
 - content disposition
@@ -84,9 +102,6 @@ js agnostic, so mockaton can be implemented in other languages.
 ## Iframe Preview
 - Iframe to preview rendered HTML
 
-## Static Demo Deployment Image
-- Lke [demo-app-vite/Dockerfile](demo-app-vite/Dockerfile)
-
 ## Partial Content
 - 206 (reject, handle, or send in full?)
 
@@ -96,12 +111,6 @@ js agnostic, so mockaton can be implemented in other languages.
 
 ## In Prod, auth
 - Check permission headers
-
-## Vite
-- Plugin
-
-## Storybook
-- Plugin
 
 
 ## Cookies

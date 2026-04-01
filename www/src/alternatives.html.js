@@ -1,8 +1,8 @@
-import { htmlTemplate } from './_htmlTemplate.js'
+import { htmlTemplate, socialMetadata } from './_htmlTemplate.js'
 
 // language=html
-export default () => htmlTemplate({
-	head: `<title>Alternatives</title>`,
+export default (url) => htmlTemplate({
+	head: socialMetadata('Alternatives', '', url),
 	body: `
 		<h1>Alternatives</h1>
 

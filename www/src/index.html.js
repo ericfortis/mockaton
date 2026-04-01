@@ -1,11 +1,11 @@
-import { htmlTemplate, MockatonLogo } from './_htmlTemplate.js'
+import { htmlTemplate, MockatonLogo, socialMetadata } from './_htmlTemplate.js'
 import { js, shell, raw } from './_syntaxHighlight.js'
 
 // language=html
 export default () => htmlTemplate({
 	head: `
-		<title>Mockaton</title>
 		<link rel="stylesheet" href="/index.css" />
+		${socialMetadata('Mockaton', 'HTTP mock server')}
 	`,
 	body: `
 		<h1>${MockatonLogo()}</h1>

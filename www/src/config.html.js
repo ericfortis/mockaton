@@ -1,11 +1,12 @@
-import { htmlTemplate } from './_htmlTemplate.js'
+import { htmlTemplate, socialMetadata } from './_htmlTemplate.js'
 import { js, shell, raw } from './_syntaxHighlight.js'
 
 // language=html
-export default () => htmlTemplate({
+export default (url) => htmlTemplate({
 	head: `
 		<title>Config</title>
 		<link rel="stylesheet" href="config.css" />
+		${socialMetadata('Config', '', url)}
 	`,
 	body: `
 		<h1>Config</h1>

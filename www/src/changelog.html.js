@@ -1,11 +1,11 @@
-import { htmlTemplate } from './_htmlTemplate.js'
+import { htmlTemplate, socialMetadata } from './_htmlTemplate.js'
 import { js } from './_syntaxHighlight.js'
 
 // language=html
-export default () => htmlTemplate({
+export default (url) => htmlTemplate({
 	head: `
-		<title>Changelog</title>
 		<link href="/changelog.css" rel="stylesheet" />
+		${socialMetadata('Changelog', '', url)}
 	`,
 	body: `
 		<h1 id="changelog">Changelog</h1>
@@ -14,7 +14,7 @@ export default () => htmlTemplate({
 		<div class="RegionImg" data-max-width="480">
 			<video src="/assets/media/12.7.0-alt-click.mp4" autoplay loop controls>
 		</div>
-		
+
 		<p>12.6.0 dashboard: conditionally render fallback backend field. Now it must be initially set in <code>config.proxyFallback</code>, or via API.</p>
 		<p>12.5.0 utils: <code>parseSplats</code> and <code>parseQueryParams</code> helpers are exported so they can be used in funtional mocks.</p>
 		<p>12.4.0 opens dashboard on Linux</p>
@@ -23,7 +23,7 @@ export default () => htmlTemplate({
 		<div class="RegionImg" data-max-width="440">
 			<video src="/assets/media/12.3.0-click-drag.mp4" autoplay loop controls>
 		</div>
-		
+
 		<p>12.2.0 dashboard: settings menu to doc link</p>
 		<p>12.1.0 dashboard: layout redesign</p>
 		<p><strong>12.0.0 breaking change.</strong> The Dashboard is no longer supported in Safari.

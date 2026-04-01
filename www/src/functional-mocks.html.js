@@ -1,9 +1,9 @@
-import { htmlTemplate } from './_htmlTemplate.js'
+import { htmlTemplate, socialMetadata } from './_htmlTemplate.js'
 import { js } from './_syntaxHighlight.js'
 
 // language=html
-export default () => htmlTemplate({
-	head: `<title>Functional Mocks</title>`,
+export default (url) => htmlTemplate({
+	head: socialMetadata('Functional Mocks', '', url),
 	body: `
 		<h1>Functional Mocks</h1>
 

@@ -15,6 +15,23 @@ const pages = [
 	['/alternatives', 'Alternatives']
 ]
 
+export function socialMetadata(title, description, route) {
+	return `
+<title>${title}</title>
+
+<meta property="og:title" content="${title}" />
+${description && `<meta property="og:description" content="${description}" />`}
+<meta property="og:image" content="https://mockaton.com/assets/social-preview.jpg" />
+<meta property="og:url" content="https://mockaton.com${route}" />
+<meta property="og:type" content="website" />
+
+<meta name="twitter:card" content="summary_large_image" />
+<meta name="twitter:title" content="${title}" />
+${description && `<meta name="twitter:description" content="${description}" />`}
+<meta name="twitter:image" content="https://mockaton.com/assets/social-preview.jpg" />
+	`
+}
+
 // language=html
 export const htmlTemplate = ({ head = '', body }) => `
 	<!doctype html>

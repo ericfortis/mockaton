@@ -1,9 +1,9 @@
-import { htmlTemplate } from './_htmlTemplate.js'
+import { htmlTemplate, socialMetadata } from './_htmlTemplate.js'
 import { js } from './_syntaxHighlight.js'
 
 // language=html
-export default () => htmlTemplate({
-	head: `<title>Plugins</title>`,
+export default (url) => htmlTemplate({
+	head: socialMetadata('Plugins', '', url),
 	body: `
 		<h1>Plugins</h1>
 

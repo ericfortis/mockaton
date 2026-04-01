@@ -1,16 +1,16 @@
 // TODO https://www.rfc-editor.org/rfc/rfc9457.html
 
-import { htmlTemplate } from './_htmlTemplate.js'
+import { htmlTemplate, socialMetadata } from './_htmlTemplate.js'
 import { js, json } from './_syntaxHighlight.js'
-import OpenAPI from './assets/openapi.json' with { type: 'json' } 
+import OpenAPI from './assets/openapi.json' with { type: 'json' }
 
 const SERVER = OpenAPI.servers[0].url
 
 // language=html
-export default () => htmlTemplate({
+export default (url) => htmlTemplate({
 	head: `
 		<link rel="stylesheet" href="/api.css" />
-		<title>Control API</title>
+		${socialMetadata('Control API', '', url)}
 	`,
 	body: `
 		<h1>

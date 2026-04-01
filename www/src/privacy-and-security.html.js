@@ -1,8 +1,8 @@
-import { htmlTemplate } from './_htmlTemplate.js'
+import { htmlTemplate, socialMetadata } from './_htmlTemplate.js'
 
 // language=html
-export default () => htmlTemplate({
-	head: `<title>Privacy and Security</title>`,
+export default (url) => htmlTemplate({
+	head: socialMetadata('Privacy and Security', '', url),
 	body: `
 		<h1>Privacy and Security</h1>
 		

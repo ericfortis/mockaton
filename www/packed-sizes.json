@@ -1,61 +1,61 @@
 {
 	"/alternatives.html": {
-		"hash": "8EgI9qQoypmhM3pEjJCqwyIAIwQ",
+		"hash": "GRCohFKWg6ZHDt6rbP5wfQ8CV2w",
 		"delta": 0,
 		"size": 19257
 	},
 	"/api.html": {
-		"hash": "89SaV9uOR5Jqqfb-eAE_-vOyARI",
+		"hash": "9QCwfvTLcW5dZGpt4Kp1agQ6CDQ",
 		"delta": 0,
 		"size": 39404
 	},
 	"/changelog.html": {
-		"hash": "BQU1v7ZOyWUl3vamE1ehfqKy6nk",
+		"hash": "ujJgfCuQk-8pt4qSzgq6ToE-n04",
 		"delta": 0,
 		"size": 27772
 	},
 	"/config.html": {
-		"hash": "uL0Ki19F15eYzYRZoh5O1HGYOfs",
+		"hash": "6SNbwIhyjjyi_spt9jKmDO772Vs",
 		"delta": 0,
 		"size": 37897
 	},
 	"/convention.html": {
-		"hash": "5S-2zL6R0j4aT-F189rOinDVqgU",
+		"hash": "-aUzsLpCBc6vgkbOvb8zKxwDaOI",
 		"delta": 0,
 		"size": 20449
 	},
 	"/functional-mocks.html": {
-		"hash": "Of1_ha44hksthsbWu_hzloPTg3U",
+		"hash": "CkzalU0ttHM2M7J4WGs6nczpv7k",
 		"delta": 0,
 		"size": 28195
 	},
 	"/index.html": {
-		"hash": "2mkSN_t0gLF5gZdNEJGRk0Ow8NA",
+		"hash": "dvWgjCJ3L3VHLXPWe69lSXsnvgw",
 		"delta": 0,
 		"size": 24140
 	},
 	"/installation.html": {
-		"hash": "OMhj4q7xFqZUhkGA3fYGqKdUD4Q",
+		"hash": "YujYCV9gRHBNvkADOyTbl30A_FI",
 		"delta": 0,
 		"size": 20016
 	},
 	"/motivation.html": {
-		"hash": "rNZ_YPX0JyLSgD3kNdS14deFST8",
+		"hash": "ymEJ31G-SNu0cbomCf_10a1-5tw",
 		"delta": 0,
 		"size": 20540
 	},
 	"/plugins.html": {
-		"hash": "hSOUYGS3MvDGehldJgZnfaw6XSg",
+		"hash": "oTm02fQLhaHz8uDtKyzEpslwo7E",
 		"delta": 0,
 		"size": 23532
 	},
 	"/privacy-and-security.html": {
-		"hash": "PpBam4vlJEej7GFrBSnOvsFrFOc",
+		"hash": "EYeyAk78mNVXLJ7YOk_KiE1p1MI",
 		"delta": 0,
 		"size": 17984
 	},
 	"/scraping.html": {
-		"hash": "4CiGhaVxCFG-c7KzuB9bm3Nz3e4",
+		"hash": "mL6vUGg1PhSSSnRF25b11AYwTf8",
 		"delta": 0,
 		"size": 18831
 	}

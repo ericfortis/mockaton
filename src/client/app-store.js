@@ -305,14 +305,10 @@ export class BrokerRowModel {
 	get status() { return this.#broker.status }
 	get auto500() { return this.#broker.auto500 }
 	get delayed() { return this.#broker.delayed }
-	get proxied() { return this.#canProxy && this.#broker.proxied }
+	get proxied() { return this.#broker.proxied && this.#canProxy }
 	get selectedFile() { return this.#broker.file }
-	get selectedIdx() {
-		return this.opts.findIndex(([, , selected]) => selected)
-	}
-	get selectedFileIs4xx() {
-		return this.status >= 400 && this.status < 500
-	}
+	get selectedIdx() { return this.opts.findIndex(([, , selected]) => selected) }
+	get selectedFileIs4xx() { return this.status >= 400 && this.status < 500 }
 
 	#makeOptions() {
 		const opts = this.#broker.mocks.map(f => [

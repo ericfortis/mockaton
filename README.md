@@ -10,6 +10,33 @@ for testing difficult to reproduce backend states.
 
 ## [Documentation ↗](https://mockaton.com) | [Changelog ↗](https://mockaton.com/changelog)
 
+<picture>
+  <source media="(prefers-color-scheme: light)" srcset="https://raw.githubusercontent.com/ericfortis/mockaton/refs/heads/main/pixaton-tests/tests/macos/pic-for-readme.vp762x762.light.gold.png">
+  <source media="(prefers-color-scheme: dark)" srcset="https://raw.githubusercontent.com/ericfortis/mockaton/refs/heads/main/pixaton-tests/tests/macos/pic-for-readme.vp762x762.dark.gold.png">
+  <img alt="Mockaton Dashboard" src="https://raw.githubusercontent.com/ericfortis/mockaton/refs/heads/main/pixaton-tests/tests/macos/pic-for-readme.vp762x762.dark.gold.png">
+</picture>
+
+<br/>
+
+
+## Quick Start (Docker)
+This will spin up Mockaton with the sample directories
+included in this repo mounted on the container. Mentioned dirs are: [mockaton-mocks/](./mockaton-mocks)
+and [mockaton-static-mocks/](./mockaton-static-mocks).
+
+```sh
+git clone https://github.com/ericfortis/mockaton.git --depth 1
+cd mockaton
+make docker
+```
+Dashboard: [localhost:2020/mockaton](http://localhost:2020/mockaton)
+
+Test it:
+```shell
+curl localhost:2020/api/user
+```
+
+
 ## Overview
 With Mockaton, you don’t need to write code for wiring up your
 mocks. Instead, a given directory is scanned for filenames
@@ -52,36 +79,10 @@ export default async function (req: IncomingMessage, response: OutgoingMessage) 
 }
 ```
 
-Besides filename routing, Mockaton has:
-- a [Browser Extension](https://mockaton.com/scraping) for scraping responses from your backend,
-- a programmatic [Control API](https://mockaton.com/api), and
-- a UI Dashboard
+## Browser Extension
+[Browser Extension](https://mockaton.com/scraping) for scraping responses from your backend.
 
 
-## Dashboard
+## API
+Programmatic [Control API](https://mockaton.com/api).
 
-<picture>
-  <source media="(prefers-color-scheme: light)" srcset="https://raw.githubusercontent.com/ericfortis/mockaton/refs/heads/main/pixaton-tests/tests/macos/pic-for-readme.vp762x762.light.gold.png">
-  <source media="(prefers-color-scheme: dark)" srcset="https://raw.githubusercontent.com/ericfortis/mockaton/refs/heads/main/pixaton-tests/tests/macos/pic-for-readme.vp762x762.dark.gold.png">
-  <img alt="Mockaton Dashboard" src="https://raw.githubusercontent.com/ericfortis/mockaton/refs/heads/main/pixaton-tests/tests/macos/pic-for-readme.vp762x762.dark.gold.png">
-</picture>
-
-<br/>
-
-
-## Quick Start (Docker)
-This will spin up Mockaton with the sample directories
-included in this repo mounted on the container. Mentioned dirs are: [mockaton-mocks/](./mockaton-mocks)
-and [mockaton-static-mocks/](./mockaton-static-mocks).
-
-```sh
-git clone https://github.com/ericfortis/mockaton.git --depth 1
-cd mockaton
-make docker
-```
-Dashboard: [localhost:2020/mockaton](http://localhost:2020/mockaton)
-
-Test it:
-```shell
-curl localhost:2020/api/user
-```

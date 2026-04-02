@@ -29,7 +29,7 @@ Or, you can write it in TypeScript (it will be sent as JSON).
 <code>my_mocks_dir/<b>api/company/[id]</b>.GET.200.ts</code>
 ```ts
 export default {
-  "name": "Acme, Inc."
+  name: 'Acme, Inc.'
 }
 ```
 
@@ -40,9 +40,11 @@ Similarly, you can handle logic with [Functional Mocks](https://mockaton.com/fun
 import { IncomingMessage, OutgoingMessage } from 'node:http'
 import { parseSplats } from 'mockaton'
 
-export default function (req: IncomingMessage, response: OutgoingMessage) {
+export default async function (req: IncomingMessage, response: OutgoingMessage) {
   const { companyId, userId } = parseSplats(req.url, import.meta.filename)
+  const foo = await getFoo()
   return JSON.stringify({
+    foo,
     companyId,
     userId,
     name: 'Acme, Inc.'
@@ -50,7 +52,10 @@ export default function (req: IncomingMessage, response: OutgoingMessage) {
 }
 ```
 
-Besides filename routing, Mockaton has a programmatic [Control API](https://mockaton.com/api) and a UI Dashboard.
+Besides filename routing, Mockaton has:
+- a [Browser Extension](https://mockaton.com/scraping) for scraping responses from your backend,
+- a programmatic [Control API](https://mockaton.com/api), and
+- a UI Dashboard
 
 
 ## Dashboard

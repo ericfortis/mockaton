@@ -4,7 +4,6 @@ const MOUNT = '/mockaton'
 
 export const API = {
 	dashboard: MOUNT,
-
 	bulkSelect: MOUNT + '/bulk-select-by-comment',
 	collectProxied: MOUNT + '/collect-proxied',
 	cookies: MOUNT + '/cookies',

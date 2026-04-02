@@ -373,7 +373,7 @@ describe('Proxy Fallback', () => {
 		const CUSTOM_COOKIES = ['cookieX=x', 'cookieY=y']
 		const BODY_PAYLOAD = { a: 'b' }
 		const expectedBody = JSON.stringify(BODY_PAYLOAD, null, '  ') // config.formatCollectedJSON=true
-		
+
 		before(async () => {
 			fallbackServer = createServer(async (req, response) => {
 				response.writeHead(423, {

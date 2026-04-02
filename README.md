@@ -17,9 +17,31 @@ following a convention similar to the URLs.
 
 For example, for [/api/company/123](#), the filename could be:
 
-<pre>
-<code>my-mocks-dir/<b>api/company</b>/[id].GET.200.json</code>
-</pre>
+<code>my_mocks_dir/<b>api/company/[id]</b>.GET.200.json</code>
+```json
+{
+  "name": "Acme, Inc."
+}
+```
+
+Similarly, you can handle logic with [Functional Mocks](https://mockaton.com/functional-mocks):
+
+<code>my_mocks_dir/<b>api/company/[companyId]/user/[userId]</b>.GET.200.ts</code>
+```ts
+import { IncomingMessage, OutgoingMessage } from 'node:http'
+import { parseSplats } from 'mockaton'
+
+export default function (req: IncomingMessage, response: OutgoingMessage) {
+  const { companyId, userId } = parseSplats(req.url, import.meta.filename)
+  return JSON.stringify({
+    companyId,
+    userId,
+    name: 'Acme, Inc.'
+  })
+}
+```
+
+Besides filename routing, Mockaton has a programmatic [Control API](https://mockaton.com/api) and a UI Dashboard.
 
 
 ## Dashboard

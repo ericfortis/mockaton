@@ -47,8 +47,8 @@ function GlobalDelayField() {
 				step: 100,
 				autocomplete: 'none',
 				value: store.delay,
-				onChange,
-				onWheel: [onWheel, { passive: true }]
+				onWheel: [onWheel, { passive: true }],
+				onChange
 			})))
 }
 
@@ -78,8 +78,8 @@ function GlobalDelayJitterField() {
 				step: 10,
 				autocomplete: 'none',
 				value: (store.delayJitter * 100).toFixed(0),
-				onChange,
-				onWheel: [onWheel, { passive: true }]
+				onWheel: [onWheel, { passive: true }],
+				onChange
 			})))
 }
 
@@ -92,8 +92,8 @@ function CookieSelector() {
 		r('label', { className: CSS.CookieSelector },
 			r('span', null, t`Cookie`),
 			r('select', {
-				autocomplete: 'off',
 				disabled,
+				autocomplete: 'off',
 				title: disabled
 					? t`No cookies specified in config.cookies`
 					: undefined,

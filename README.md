@@ -24,6 +24,15 @@ For example, for [/api/company/123](#), the filename could be:
 }
 ```
 
+Or, you can write it in TypeScript (it will be sent as JSON).
+
+<code>my_mocks_dir/<b>api/company/[id]</b>.GET.200.ts</code>
+```ts
+export default {
+  "name": "Acme, Inc."
+}
+```
+
 Similarly, you can handle logic with [Functional Mocks](https://mockaton.com/functional-mocks):
 
 <code>my_mocks_dir/<b>api/company/[companyId]/user/[userId]</b>.GET.200.ts</code>

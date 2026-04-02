@@ -73,10 +73,10 @@ function GlobalDelayJitterField() {
 			r('span', null, t`Max Jitter %`),
 			r('input', {
 				type: 'number',
+				autocomplete: 'none',
 				min: 0,
 				max: 300,
 				step: 10,
-				autocomplete: 'none',
 				value: (store.delayJitter * 100).toFixed(0),
 				onWheel: [onWheel, { passive: true }],
 				onChange
@@ -92,8 +92,8 @@ function CookieSelector() {
 		r('label', { className: CSS.CookieSelector },
 			r('span', null, t`Cookie`),
 			r('select', {
-				disabled,
 				autocomplete: 'off',
+				disabled,
 				title: disabled
 					? t`No cookies specified in config.cookies`
 					: undefined,

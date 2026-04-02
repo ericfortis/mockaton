@@ -1,24 +1,25 @@
 :root {
 	color-scheme: light dark;
-	--colorBackground: light-dark(#fff, #181818);
-	--colorInputBackground: light-dark(#fff, #222);
-	--colorSecondaryButtonBackground: light-dark(#fcfcfc, #2c2c2c);
-	--colorHeaderBackground: light-dark(#f2f2f3, #141414);
-	--colorComboBoxBackground: light-dark(#eee, #2a2a2a);
+	--colorBg: light-dark(#fff, #181818);
+	--colorBgField: light-dark(#fcfcfc, #2c2c2c);
+
+	--colorBgHeader: light-dark(#f2f2f3, #141414);
+	--colorBgHeaderField: light-dark(#fff, #222);
+
 	--colorBorder: light-dark(#e0e0e0, #323232);
 	--colorBorderActive: light-dark(#c8c8c8, #3c3c3c);
-	--colorSecondaryAction: light-dark(#666, #aaa);
+
 	--colorLabel: light-dark(#555, #aaa);
-	--colorDisabledMockSelector: light-dark(#444, #a9b9b9);
 	--colorText: light-dark(#000, #fff);
 
 	--colorAccent: light-dark(#0059dd, #2495ff);
-	--colorHover: light-dark(rgba(119, 193, 255, 0.4), rgba(0, 63, 115, 0.5));
+	--colorHover: light-dark(#bbe0ff, #062d59);
+
 	--colorRed: light-dark(#da0f00, #f41606);
 	--colorPink: light-dark(#ed206a, #f92672);
 	--colorPurple: light-dark(#9b71e8, #ae81ff);
 	--colorGreen: light-dark(#388e3c, #a6e22e);
-	--color4xxBackground: light-dark(#ffedd1, #68554a);
+	--colorBg4xx: light-dark(#ffedd1, #68554a);
 
 	accent-color: var(--colorAccent);
 	--radius: 16px;
@@ -33,7 +34,7 @@ body {
 body {
 	display: grid;
 	grid-template-rows: auto 1fr;
-	background: var(--colorBackground);
+	background: var(--colorBg);
 	color: var(--colorText);
 	font-family: system-ui, sans-serif;
 }
@@ -88,12 +89,14 @@ select {
 
 	&:enabled {
 		border-color: var(--colorBorder);
-		background-color: var(--colorSecondaryButtonBackground);
+		background-color: var(--colorBgField);
+
 		&:hover {
 			border-color: var(--colorHover);
 			background-color: var(--colorHover);
 		}
 	}
+
 	&:disabled {
 		cursor: not-allowed;
 		opacity: 50%;
@@ -105,7 +108,7 @@ header {
 	display: flex;
 	flex: 0 0 100%;
 	padding: 16px;
-	background: var(--colorHeaderBackground);
+	background: var(--colorBgHeader);
 
 	.Logo {
 		align-self: end;
@@ -186,7 +189,7 @@ header {
 		align-self: end;
 		margin-left: auto;
 		border-radius: 50%;
-		fill: var(--colorSecondaryAction);
+		fill: var(--colorLabel);
 
 		&:hover {
 			fill: var(--colorAccent);
@@ -227,7 +230,7 @@ header {
 		margin-top: 2px;
 		color: var(--colorText);
 		font-size: 11px;
-		background-color: var(--colorInputBackground);
+		background-color: var(--colorBgHeaderField);
 		border-radius: var(--radius);
 	}
 
@@ -256,6 +259,11 @@ header {
 
 	&.GlobalDelayJitter {
 		width: 80px;
+
+		&:focus-within {
+			z-index: 100;
+		}
+
 		span {
 			margin-left: 4px;
 		}
@@ -263,9 +271,6 @@ header {
 			border-left: 2px solid transparent;
 			border-bottom-left-radius: 0;
 			border-top-left-radius: 0;
-		}
-		&:focus-within {
-			z-index: 100;
 		}
 	}
 
@@ -294,6 +299,7 @@ header {
 			input:enabled + .checkboxBody {
 				cursor: pointer;
 			}
+
 			input:disabled {
 				cursor: not-allowed;
 			}
@@ -351,6 +357,7 @@ main {
 			&:active {
 				border-color: var(--colorBorderActive);
 			}
+
 			&::before,
 			&::after {
 				position: absolute;
@@ -360,7 +367,7 @@ main {
 			&::before {
 				top: calc(50% + 6px);
 				height: 22px;
-				border-left: 3px solid var(--colorBackground);
+				border-left: 3px solid var(--colorBg);
 			}
 			&::after {
 				top: calc(50% + 10px);
@@ -379,7 +386,7 @@ main {
 	padding-right: 14px;
 	padding-left: 16px;
 	border-bottom: 1px solid var(--colorBorder);
-	background: var(--colorHeaderBackground);
+	background: var(--colorBgHeader);
 }
 
 .GroupByMethod {
@@ -399,7 +406,7 @@ main {
 		text-align-last: center;
 		color: var(--colorText);
 		font-size: 11px;
-		background-color: var(--colorInputBackground);
+		background-color: var(--colorBgHeaderField);
 		border-radius: var(--radius);
 	}
 }
@@ -458,7 +465,7 @@ main {
 	min-width: 38px;
 	padding: 4px 0;
 	margin-right: 8px;
-	color: var(--colorSecondaryAction);
+	color: var(--colorLabel);
 	font-size: 11px;
 	text-align: center;
 	white-space: nowrap;
@@ -505,7 +512,7 @@ main {
 		font-size: 11px;
 	}
 	&.status4xx {
-		background: var(--color4xxBackground);
+		background: var(--colorBg4xx);
 	}
 	&:disabled {
 		padding-right: 4px;
@@ -514,7 +521,7 @@ main {
 		appearance: none;
 		background: transparent;
 		cursor: default;
-		color: var(--colorDisabledMockSelector);
+		color: var(--colorLabel);
 		opacity: 0.8;
 	}
 }
@@ -546,7 +553,7 @@ main {
 			border-color: var(--colorAccent);
 			fill: var(--colorAccent);
 			background: var(--colorAccent);
-			stroke: var(--colorBackground);
+			stroke: var(--colorBg);
 		}
 
 		&:enabled:hover:not(:checked) + .checkboxBody {
@@ -564,7 +571,7 @@ main {
 		justify-content: center;
 		border: 1px solid var(--colorBorder);
 		fill: none;
-		stroke: var(--colorSecondaryAction);
+		stroke: var(--colorLabel);
 		stroke-width: 2.5px;
 		border-radius: 50%;
 	}
@@ -611,7 +618,7 @@ main {
 		padding: 4px;
 		font-size: 10px;
 		font-weight: bold;
-		color: var(--colorSecondaryAction);
+		color: var(--colorLabel);
 	}
 }
 
@@ -629,13 +636,13 @@ main {
 		> code {
 			white-space: pre;
 			tab-size: 2;
-			color: var(--colorSecondaryAction);
+			color: var(--colorLabel);
 		}
 	}
 }
 
 .syntaxPunc {
-	color: var(--colorSecondaryAction);
+	color: var(--colorLabel);
 }
 .syntaxKey,
 .syntaxTag {
@@ -657,7 +664,7 @@ main {
 	left: -16px;
 	width: calc(100% + 32px);
 	height: 2px;
-	background: var(--colorInputBackground);
+	background: var(--colorBgHeaderField);
 
 	> div {
 		position: absolute;

@@ -1,7 +1,4 @@
-import {
-	createElement as r,
-	t, classNames, restoreFocus, Fragment, defineClassNames
-} from './dom-utils.js'
+import { createElement as r, t, classNames, restoreFocus, Fragment, defineClassNames } from './dom-utils.js'
 
 import { store } from './app-store.js'
 import { API } from './ApiConstants.js'
@@ -82,8 +79,8 @@ function BulkSelector() {
 		r('label', { className: CSS.BulkSelector },
 			r('span', null, t`Bulk Select`),
 			r('select', {
-					autocomplete: 'off',
 					disabled,
+					autocomplete: 'off',
 					title: disabled
 						? t`No mock files have comments which are anything within parentheses on the filename.`
 						: undefined,
@@ -101,14 +98,11 @@ function MockList() {
 		return r('div', null, t`No mocks found`)
 
 	if (store.groupByMethod)
-		return Object.keys(store.brokersByMethod).map(method =>
-			Fragment(
-				r('div', {
-					className: classNames(
-						CSS.TableHeading,
-						store.canProxy && CSS.canProxy)
-				}, method),
-				store.brokersAsRowsByMethod(method).map(Row)))
+		return Object.keys(store.brokersByMethod).map(method => Fragment(
+			r('div', {
+				className: classNames(CSS.TableHeading, store.canProxy && CSS.canProxy)
+			}, method),
+			store.brokersAsRowsByMethod(method).map(Row)))
 
 	return store.brokersAsRowsByMethod('*').map(Row)
 }
@@ -122,9 +116,7 @@ function Row(row, i) {
 	return (
 		r('div', {
 				key: row.key,
-				className: classNames(
-					CSS.TableRow,
-					mounted && row.isNew && CSS.animIn)
+				className: classNames(CSS.TableRow, mounted && row.isNew && CSS.animIn)
 			},
 			store.canProxy && ProxyToggler(method, urlMask, row.proxied),
 
@@ -201,9 +193,7 @@ function PreviewLink(method, urlMask, urlMaskDittoed, autofocus) {
 	const [ditto, tail] = urlMaskDittoed
 	return (
 		r('a', {
-			className: classNames(
-				CSS.PreviewLink,
-				isChosen && CSS.chosen),
+			className: classNames(CSS.PreviewLink, isChosen && CSS.chosen),
 			href: urlMask,
 			autofocus,
 			onClick
@@ -241,11 +231,11 @@ function ProxyToggler(method, urlMask, checked) {
 	return ClickDragToggler({
 		className: CSS.ProxyToggler,
 		title: t`Proxy Toggler`,
+		body: CloudIcon(),
 		checked,
 		commit(checked) {
 			store.setProxied(method, urlMask, checked)
-		},
-		body: CloudIcon()
+		}
 	})
 }
 
@@ -276,13 +266,11 @@ function StaticRow(row) {
 	return (
 		r('div', {
 				key: row.key,
-				className: classNames(
-					CSS.TableRow,
-					mounted && row.isNew && CSS.animIn)
+				className: classNames(CSS.TableRow, mounted && row.isNew && CSS.animIn)
 			},
 
 			DelayToggler({
-				optClassName: store.canProxy && CSS.canProxy,
+				className: store.canProxy && CSS.canProxy,
 				checked: row.delayed,
 				commit(checked) {
 					store.setDelayedStatic(row.urlMask, checked)
@@ -322,12 +310,12 @@ function StatusCodeToggler({ title, body, commit, checked, disabled }) {
 	})
 }
 
-function DelayToggler({ checked, commit, optClassName }) {
+function DelayToggler({ checked, commit, className }) {
 	return ClickDragToggler({
-		canClickDrag: true,
 		checked,
 		commit,
-		className: classNames(CSS.DelayToggler, optClassName),
+		className: classNames(CSS.DelayToggler, className),
+		canClickDrag: true,
 		title: t`Delay`,
 		body: TimerIcon()
 	})

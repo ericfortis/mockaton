@@ -149,21 +149,19 @@ describe('Windows', () => {
 
 describe('Rejects malicious URLs', () => {
 	[
-		['double-encoded', `/${encodeURIComponent(encodeURIComponent('/'))}user`, 400],
-		['encoded null byte', '/user%00/admin', 400],
-		['invalid percent-encoding', '/user%ZZ', 400],
-		['encoded CRLF sequence', '/user%0d%0aSet-Cookie:%20x=1', 400],
-		['overlong/illegal UTF-8 sequence', '/user%C0%AF', 400],
-		['double-double-encoding trick', '/%25252Fuser', 400],
-		['zero-width/invisible char', '/user%E2%80%8Binfo', 404],
-		['encoded path traversal', '/user/..%2Fadmin', 404],
-		['raw path traversal', '/../user', 404],
-
-		['very long path', '/'.repeat(2048 + 1), 414]
+		['double-encoded', 400, `/${encodeURIComponent(encodeURIComponent('/'))}user`],
+		['encoded null byte', 400, '/user%00/admin'],
+		['invalid percent-encoding', 400, '/user%ZZ'],
+		['encoded CRLF sequence', 400, '/user%0d%0aSet-Cookie:%20x=1'],
+		['overlong/illegal UTF-8 sequence', 400, '/user%C0%AF'],
+		['double-double-encoding trick', 400, '/%25252Fuser'],
+		['zero-width/invisible char', 404, '/user%E2%80%8Binfo'],
+		['encoded path traversal', 404, '/user/..%2Fadmin'],
+		['raw path traversal', 404, '/../user'],
+		['very long path', 414, '/'.repeat(2048 + 1)]
 	]
-		.map(([title, url, status]) =>
-			test(title, async () =>
-				equal((await request(url)).status, status)))
+		.forEach(([title, status, url]) => test(title, async () =>
+			equal((await request(url)).status, status)))
 })
 
 

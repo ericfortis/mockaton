@@ -468,7 +468,7 @@ ErrorToast.close = () => {
 /** The version increments when a mock file is added, removed, or renamed. */
 function onRealTimeUpdate(onUpdate) {
 	let oldVersion = -1
-	let es = null
+	let conn = null
 	let timer = null
 
 	connect()
@@ -481,12 +481,12 @@ function onRealTimeUpdate(onUpdate) {
 	window.addEventListener('beforeunload', teardown)
 
 	function connect() {
-		if (es) return
+		if (conn) return
 
 		clearTimeout(timer)
-		es = new EventSource(API.syncVersion)
+		conn = new EventSource(API.syncVersion)
 
-		es.onmessage = function (event) {
+		conn.onmessage = function (event) {
 			if (ErrorToast.isOffline)
 				ErrorToast.close()
 
@@ -497,7 +497,7 @@ function onRealTimeUpdate(onUpdate) {
 			}
 		}
 
-		es.onerror = function () {
+		conn.onerror = function () {
 			teardown()
 			timer = setTimeout(connect, 3000)
 		}
@@ -505,8 +505,8 @@ function onRealTimeUpdate(onUpdate) {
 
 	function teardown() {
 		clearTimeout(timer)
-		es?.close()
-		es = null
+		conn?.close()
+		conn = null
 	}
 }
 

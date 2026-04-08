@@ -1,5 +1,5 @@
 import { createElement as r, t, defineClassNames } from './dom-utils.js'
-import { Logo, HelpIcon } from './app-icons.js'
+import { Logo, HelpIcon } from './graphics.js'
 import { store } from './app-store.js'
 
 import CSS from './app.css' with { type: 'css' }

@@ -114,7 +114,7 @@ header {
 		align-self: end;
 		margin-right: 22px;
 		margin-bottom: 3px;
-		opacity: 90%;
+		opacity: 94%;
 		transition: opacity 240ms ease-in-out;
 
 		&:hover {

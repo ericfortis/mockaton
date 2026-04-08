@@ -5,10 +5,18 @@
 
 # Ideas
 
-There’s an implicit question mark on each sentence.
+There’s an implicit question mark on each one.
+
+## Spelling
+- Mockaton
+- mockaton
+- mock-a-ton
+- Mock-a-Ton
+- Mock-aTon
+- MockaTon
 
 ## SSE mocks
-- in the right side of the dashboard, we could let the user inject data: frames
+- on the right side of the dashboard, we could let the user inject data: frames
 - the initial payload could be sent with a given interval?
   - the interval could be by default 4s, and the UI lets the user set it
   - what about when the data frames end? restart (likely no),

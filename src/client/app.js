@@ -3,7 +3,7 @@ import { createElement as r, t, classNames, restoreFocus, Fragment, defineClassN
 import { store } from './app-store.js'
 import { API } from './ApiConstants.js'
 import { Header } from './app-header.js'
-import { TimerIcon, CloudIcon } from './app-icons.js'
+import { TimerIcon, CloudIcon } from './graphics.js'
 import { PayloadViewer, previewMock } from './app-payload-viewer.js'
 
 import CSS from './app.css' with { type: 'css' }

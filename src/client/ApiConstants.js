@@ -18,7 +18,7 @@ export const API = {
 	state: MOUNT + '/state',
 	syncVersion: MOUNT + '/sync-version',
 	throws: MOUNT + '/throws',
-	toggle500: MOUNT + '/toggle500',
+	toggleStatus: MOUNT + '/toggle-status',
 	watchHotReload: MOUNT + '/watch-hot-reload',
 	watchMocks: MOUNT + '/watch-mocks',
 }

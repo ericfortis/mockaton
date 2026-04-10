@@ -493,20 +493,20 @@ describe('Proxy Fallback', () => {
 			equal((await r.json()).proxied, false)
 		})
 
-		test('unsets auto500', async () => {
+		test('unsets autoStatus', async () => {
 			const fx = new Fixture('unset-500-on-proxy.GET.200.txt')
 			await fx.sync()
 			await api.setProxyFallback('https://example.test')
 
-			const r0 = await api.toggle500(fx.method, fx.urlMask)
+			const r0 = await api.toggleStatus(500, fx.method, fx.urlMask)
 			const b0 = await r0.json()
 			equal(b0.proxied, false)
-			equal(b0.auto500, true)
+			equal(b0.autoStatus, 500)
 
 			const r1 = await api.setRouteIsProxied(fx.method, fx.urlMask, true)
 			const b1 = await r1.json()
 			equal(b1.proxied, true)
-			equal(b1.auto500, false)
+			equal(b1.autoStatus, 0)
 
 			await fx.unlink()
 			await api.setProxyFallback('')
@@ -700,20 +700,20 @@ describe('Static Files', () => {
 })
 
 
-describe('500', () => {
+describe('Auto Status', () => {
 	test('toggling ON 500 on a route without 500 auto-generates one', async () => {
 		const fx = new Fixture('toggling-500-without-500.GET.200.json')
 		await fx.sync()
 		equal((await fx.request()).status, fx.status)
 
-		const bp0 = await api.toggle500(fx.method, fx.urlMask)
+		const bp0 = await api.toggleStatus(500, fx.method, fx.urlMask)
 		const b0 = await bp0.json()
-		equal(b0.auto500, true)
+		equal(b0.autoStatus, 500)
 		equal(b0.status, 500)
 		equal((await fx.request()).status, 500)
 
-		const r1 = await api.toggle500(fx.method, fx.urlMask)
-		equal((await r1.json()).auto500, false)
+		const r1 = await api.toggleStatus(500, fx.method, fx.urlMask)
+		equal((await r1.json()).autoStatus, 0)
 		equal((await fx.request()).status, fx.status)
 	})
 
@@ -724,15 +724,15 @@ describe('500', () => {
 		await fx500.write()
 		await api.reset()
 
-		const bp0 = await api.toggle500(fx200.method, fx200.urlMask)
+		const bp0 = await api.toggleStatus(500, fx200.method, fx200.urlMask)
 		const b0 = await bp0.json()
-		equal(b0.auto500, false)
+		equal(b0.autoStatus, 0)
 		equal(b0.status, 500)
 		equal(await (await fx200.request()).text(), fx500.body)
 
-		const bp1 = await api.toggle500(fx200.method, fx200.urlMask)
+		const bp1 = await api.toggleStatus(500, fx200.method, fx200.urlMask)
 		const b1 = await bp1.json()
-		equal(b0.auto500, false)
+		equal(b0.autoStatus, 0)
 		equal(b1.status, 200)
 		equal(await (await fx200.request()).text(), fx200.body)
 
@@ -745,10 +745,28 @@ describe('500', () => {
 		await fx.sync()
 		await api.setProxyFallback('https://example.test')
 		await api.setRouteIsProxied(fx.method, fx.urlMask, true)
-		await api.toggle500(fx.method, fx.urlMask)
+		await api.toggleStatus(500, fx.method, fx.urlMask)
 		equal((await fx.fetchBroker()).proxied, false)
 		await fx.unlink()
 		await api.setProxyFallback('')
+	})
+
+	test('toggling ON 404 for static routes', async () => {
+		const fx = new FixtureStatic('static-404.txt')
+		await fx.sync()
+		equal((await fx.request()).status, 200)
+
+		const bp0 = await api.toggleStatus(404, fx.method, fx.urlMask)
+		const b0 = await bp0.json()
+		equal(b0.autoStatus, 404)
+		equal(b0.status, 404)
+		equal((await fx.request()).status, 404)
+
+		const r1 = await api.toggleStatus(404, fx.method, fx.urlMask)
+		equal((await r1.json()).autoStatus, 0)
+		equal((await fx.request()).status, 200)
+
+		await fx.unlink()
 	})
 })
 
@@ -1042,16 +1060,16 @@ describe('Registering Mocks', () => {
 		equal(b, undefined)
 	})
 
-	test('registering a 500 unsets auto500', async () => {
+	test('registering a 500 unsets autoStatus', async () => {
 		const fx200 = new Fixture('reg-error.GET.200.txt')
 		const fx500 = new Fixture('reg-error.GET.500.txt')
 		await fx200.register()
-		await api.toggle500(fx200.method, fx200.urlMask)
+		await api.toggleStatus(500, fx200.method, fx200.urlMask)
 		const b0 = await fx200.fetchBroker()
-		equal(b0.auto500, true)
+		equal(b0.autoStatus, 500)
 		await fx500.register()
 		const b1 = await fx200.fetchBroker()
-		equal(b1.auto500, false)
+		equal(b1.autoStatus, 0)
 		deepEqual(b1.mocks, [
 			fx200.file,
 			fx500.file

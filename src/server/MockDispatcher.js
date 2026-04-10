@@ -32,7 +32,7 @@ export async function dispatchMock(req, response) {
 
 		const { isStatic } = parseFilename(broker.file)
 
-		if (isStatic && req.headers.range && !broker.auto500) {
+		if (isStatic && req.headers.range && !broker.autoStatus) {
 			setTimeout(async () => {
 				await response.partialContent(req.headers.range, join(config.mocksDir, broker.file))
 			}, Number(broker.delayed && calcDelay()))
@@ -40,11 +40,11 @@ export async function dispatchMock(req, response) {
 			return
 		}
 
-		response.statusCode = broker.auto500
-			? 500
+		response.statusCode = broker.autoStatus
+			? broker.autoStatus
 			: broker.status
 
-		const { mime, body } = broker.auto500
+		const { mime, body } = broker.autoStatus
 			? { mime: '', body: '' }
 			: isStatic
 				? echoFilePlugin(join(config.mocksDir, broker.file))

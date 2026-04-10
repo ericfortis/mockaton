@@ -126,12 +126,12 @@ function Row(row, i) {
 			}),
 
 			StatusCodeToggler({
-				title: t`Internal Server Error`,
-				body: t`500`,
-				disabled: row.opts.length === 1 && row.status === 500,
-				checked: !row.proxied && row.status === 500,
+				title: row.isStatic ? t`Not Found` : t`Internal Server Error`,
+				body: row.isStatic ? t`404` : t`500`,
+				disabled: row.opts.length === 1 && (row.isStatic ? row.status === 404 : row.status === 500),
+				checked: !row.proxied && (row.isStatic ? row.status === 404 : row.status === 500),
 				commit() {
-					store.toggle500(method, urlMask)
+					store.toggleStatus(row.isStatic ? 404 : 500, method, urlMask)
 				}
 			}),
 

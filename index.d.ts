@@ -74,7 +74,7 @@ export type ClientMockBroker = {
 	file: string
 	status: number
 	isStatic: boolean
-	auto500: boolean
+	autoStatus: number
 	delayed: boolean
 	proxied: boolean
 }

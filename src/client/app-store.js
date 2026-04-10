@@ -161,8 +161,8 @@ export const store = {
 		})
 	},
 
-	toggle500(method, urlMask) {
-		store._request(() => api.toggle500(method, urlMask), async response => {
+	toggleStatus(status, method, urlMask) {
+		store._request(() => api.toggleStatus(status, method, urlMask), async response => {
 			store.setBroker(await response.json())
 			store.setChosenLink(method, urlMask)
 			store.renderRow(method, urlMask)
@@ -277,7 +277,8 @@ export class BrokerRowModel {
 	}
 
 	get status() { return this.#broker.status }
-	get auto500() { return this.#broker.auto500 }
+	get autoStatus() { return this.#broker.autoStatus }
+	get isStatic() { return this.#broker.isStatic }
 	get delayed() { return this.#broker.delayed }
 	get proxied() { return this.#broker.proxied && this.#canProxy }
 	get selectedFile() { return this.#broker.file }
@@ -288,13 +289,13 @@ export class BrokerRowModel {
 		const opts = this.#broker.mocks.map(f => [
 			f,
 			this.#optionLabelFor(f),
-			!this.auto500 && !this.proxied && f === this.selectedFile
+			!this.autoStatus && !this.proxied && f === this.selectedFile
 		])
 
-		if (this.auto500)
+		if (this.autoStatus)
 			opts.push([
-				'__AUTO_500__',
-				t`Auto500`,
+				'__AUTO_STATUS__',
+				this.autoStatus === 404 ? t`Auto404` : t`Auto500`,
 				true
 			])
 		else if (this.proxied)

@@ -50,7 +50,7 @@ export const apiPatchReqs = new Map([
 	[API.delay, setRouteIsDelayed],
 	[API.select, selectMock],
 	[API.proxied, setRouteIsProxied],
-	[API.toggle500, toggleRoute500],
+	[API.toggleStatus, toggleRouteStatus],
 
 	[API.watchMocks, setWatchMocks]
 ])
@@ -199,14 +199,14 @@ async function selectMock(req, response) {
 }
 
 
-async function toggleRoute500(req, response) {
-	const [method, urlMask] = await req.json()
+async function toggleRouteStatus(req, response) {
+	const [status, method, urlMask] = await req.json()
 
 	const broker = mockBrokersCollection.brokerByRoute(method, urlMask)
 	if (!broker)
 		response.unprocessable(`Route does not exist: ${method} ${urlMask}`)
 	else {
-		broker.toggle500()
+		broker.toggleStatus(status)
 		response.json(broker)
 	}
 }

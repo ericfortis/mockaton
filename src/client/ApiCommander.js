@@ -40,7 +40,7 @@ export class Commander {
 
 
 	/** @returns {JsonPromise<ClientMockBroker>} */
-	toggle500 = (method, urlMask) => this.#patch(API.toggle500, [method, urlMask])
+	toggleStatus = (status, method, urlMask) => this.#patch(API.toggleStatus, [status, method, urlMask])
 
 	// TODO change Status or Toggle404?
 

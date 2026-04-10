@@ -14,12 +14,12 @@ export class MockBroker {
 		this.isStatic = false // doesn’t follow filename convention
 		this.delayed = false
 		this.proxied = false
-		this.auto500 = false
+		this.autoStatus = 0
 		this.urlMaskMatches = new UrlMatcher(file).urlMaskMatches
 		this.register(file)
 	}
 
-	#is500 = file => parseFilename(file).status === 500
+	#isStatus = (file, status) => parseFilename(file).status === status
 
 	#sortMocks() {
 		this.mocks.sort()
@@ -28,7 +28,7 @@ export class MockBroker {
 	}
 
 	register(file) {
-		if (this.auto500 && this.#is500(file))
+		if (this.autoStatus && this.#isStatus(file, this.autoStatus))
 			this.selectFile(file)
 		this.mocks.push(file)
 		this.#sortMocks()
@@ -50,24 +50,24 @@ export class MockBroker {
 		this.status = status
 		this.isStatic = isStatic
 		this.proxied = false
-		this.auto500 = false
+		this.autoStatus = 0
 	}
 
 	selectDefaultFile() {
 		this.selectFile(this.mocks[0])
 	}
 
-	toggle500() {
-		const shouldUnset = this.auto500 || this.status === 500
+	toggleStatus(status) {
+		const shouldUnset = this.autoStatus === status || (!this.autoStatus && this.status === status)
 		if (shouldUnset)
 			this.selectDefaultFile()
 		else {
-			const f500 = this.mocks.find(this.#is500)
-			if (f500)
-				this.selectFile(f500)
+			const fStatus = this.mocks.find(f => parseFilename(f).status === status)
+			if (fStatus)
+				this.selectFile(fStatus)
 			else {
-				this.auto500 = true
-				this.status = 500
+				this.autoStatus = status
+				this.status = status
 			}
 		}
 		this.proxied = false
@@ -78,7 +78,7 @@ export class MockBroker {
 	}
 
 	setProxied(proxied) {
-		this.auto500 = false
+		this.autoStatus = 0
 		this.proxied = proxied
 	}
 

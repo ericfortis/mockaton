@@ -4,6 +4,7 @@ import { logger } from './utils/logger.js'
 
 import { proxy } from './ProxyRelay.js'
 import { cookie } from './cookie.js'
+import { parseFilename } from '../client/Filename.js'
 import { echoFilePlugin } from './MockDispatcherPlugins.js'
 import { brokerByRoute } from './mockBrokersCollection.js'
 import { config, calcDelay } from './config.js'
@@ -29,12 +30,25 @@ export async function dispatchMock(req, response) {
 		if (cookie.getCurrent())
 			response.setHeader('Set-Cookie', cookie.getCurrent())
 
+		const { isStatic } = parseFilename(broker.file)
+
+		if (isStatic && req.headers.range && !broker.auto500) {
+			setTimeout(async () => {
+				await response.partialContent(req.headers.range, join(config.mocksDir, broker.file))
+			}, Number(broker.delayed && calcDelay()))
+			logger.accessMock(req.url, broker.file)
+			return
+		}
+
 		response.statusCode = broker.auto500
 			? 500
 			: broker.status
+
 		const { mime, body } = broker.auto500
 			? { mime: '', body: '' }
-			: await applyPlugins(join(config.mocksDir, broker.file), req, response)
+			: isStatic
+				? echoFilePlugin(join(config.mocksDir, broker.file))
+				: await applyPlugins(join(config.mocksDir, broker.file), req, response)
 
 		response.setHeader('Content-Type', mime)
 		response.setHeader('Content-Length', length(body))

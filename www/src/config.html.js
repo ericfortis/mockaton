@@ -15,10 +15,11 @@ export default (url) => htmlTemplate({
 		<p>The CLI options override their counterparts in <code>mockaton.config.js</code></p>
 
 		${shell`
--c, --config <file>    (default: ./mockaton.config.js)
+mockaton [mocks-dir] [options]
 
--m, --mocks-dir <dir>  (default: ./mockaton-mocks/)
--s, --static-dir <dir> (default: ./mockaton-static-mocks/)
+[mocks-dir]           (default: ./mockaton-mocks/)
+
+-c, --config <file>    (default: ./mockaton.config.js)
 
 -H, --host <host>      (default: 127.0.0.1)
 -p, --port <port>      (default: 0) which means auto-assigned
@@ -50,7 +51,6 @@ import {
 
 export default defineConfig({
   mocksDir: 'mockaton-mocks',
-  staticDir: 'mockaton-static-mocks',
   ignore: /(\\.DS_Store|~)$/,
   watcherEnabled: true,
   watcherDebounceMs: 80,
@@ -95,29 +95,12 @@ export default defineConfig({
 		<p>
 			Defaults to <code>mockaton-mocks</code> in the current working directory.
 		</p>
-
-		<h3><code>staticDir<span class="syntax_type">?: string</span></code></h3>
 		<p>
-			Defaults to <code>mockaton-static-mocks</code> in the current working directory.
+			This directory contains your mocks. Files that don’t follow the
+			<a href="/convention">Filename Convention</a> are served as
+			<code>GET 200</code> or <code>GET 206</code> (partial content,
+			e.g., for videos).
 		</p>
-		<p>
-			This option is not needed besides serving partial content (e.g.,
-			videos). But it’s convenient for serving 200 GET requests
-			without having to add the filename extension convention. For
-			example, for using Mockaton as a <a href="/motivation#standalone-demo-server-docker-">standalone demo server</a>.
-		</p>
-		<p>
-			Files under <code>config.staticDir</code> take precedence over
-			corresponding <code>GET</code> mocks in <code>config.mocksDir</code>
-			(regardless of status code). For example, if you have two files for
-			<code>GET</code> <span class="NullLink">/foo/bar.jpg</span> such as:
-		</p>
-
-		${raw(`
-my-static-dir<strong>/foo/bar.jpg</strong> <span class="green"> // Wins</span>
- my-mocks-dir<strong>/foo/bar.jpg</strong>.GET.200.jpg <span class="red"> // Unreachable</span>
-			`)}
-
 
 		<h3><code>ignore<span class="syntax_type">?: RegExp</span></code></h3>
 		<p>

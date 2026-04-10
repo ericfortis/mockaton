@@ -12,7 +12,6 @@ export const store = {
 	renderRow(method, urlMask) {},
 
 	brokersByMethod: /** @type ClientBrokersByMethod */ {},
-	staticBrokers: /** @type ClientStaticBrokers */ {},
 
 	cookies: [],
 	comments: [],
@@ -148,19 +147,6 @@ export const store = {
 		return r
 	},
 
-	staticBrokersAsRows() {
-		const rows = Object.values(store.staticBrokers)
-			.map(b => new StaticBrokerRowModel(b))
-			.sort((a, b) => a.urlMask.localeCompare(b.urlMask))
-		const urlMasksDittoed = dittoSplitPaths(rows.map(r => r.urlMask))
-		rows.forEach((r, i) => {
-			r.setUrlMaskDittoed(urlMasksDittoed[i])
-			r.setIsNew(!store._dittoCache.has(r.key))
-			store._dittoCache.set(r.key, urlMasksDittoed[i])
-		})
-		return rows
-	},
-
 	previewLink(method, urlMask) {
 		store.setChosenLink(method, urlMask)
 		store.renderRow(method, urlMask)
@@ -194,18 +180,6 @@ export const store = {
 	setDelayed(method, urlMask, checked) {
 		store._request(() => api.setRouteIsDelayed(method, urlMask, checked), async response => {
 			store.setBroker(await response.json())
-		})
-	},
-
-	setDelayedStatic(route, checked) {
-		store._request(() => api.setStaticRouteIsDelayed(route, checked), () => {
-			store.staticBrokers[route].delayed = checked
-		})
-	},
-
-	setStaticRouteStatus(route, status) {
-		store._request(() => api.setStaticRouteStatus(route, status), () => {
-			store.staticBrokers[route].status = status
 		})
 	}
 }
@@ -341,28 +315,4 @@ export class BrokerRowModel {
 			extractComments(file).join(' ')
 		].filter(Boolean).join(' ')
 	}
-}
-
-
-class StaticBrokerRowModel {
-	isNew = false
-	key = ''
-	method = 'GET'
-	urlMaskDittoed = ['', '']
-	#broker = /** @type ClientStaticBroker */ {}
-
-	/** @param {ClientStaticBroker} broker */
-	constructor(broker) {
-		this.#broker = broker
-		this.key = 'sbrm' + '::' + this.method + '::' + broker.route
-	}
-	setUrlMaskDittoed(urlMaskDittoed) {
-		this.urlMaskDittoed = urlMaskDittoed
-	}
-	setIsNew(isNew) {
-		this.isNew = isNew
-	}
-	get urlMask() { return this.#broker.route }
-	get delayed() { return this.#broker.delayed }
-	get status() { return this.#broker.status }
 }

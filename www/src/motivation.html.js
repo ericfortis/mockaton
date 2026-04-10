@@ -35,7 +35,8 @@ export default (url) => htmlTemplate({
 			Sometimes I need to mock out filesystem resources I’m not allowed to
 			see (for instance, sensitive <abbr title="Personally Identifiable
 			Information">PII</abbr> documents). In those cases, I put a bunch of documents
-			on <code>config.staticDir</code> and I read that file structure with a <a
+			on <code>config.mocksDir</code> (without the filename convention)
+			and I read that file structure with a <a
 			href="/functional-mocks">Functional Mock</a> and generate links to them.
 		</p>
 
@@ -85,7 +86,7 @@ export default (url) => htmlTemplate({
 		<h2>Standalone Demo Server</h2>
 		<p>
 			You can deploy a Mockaton instance with your built SPA.
-			For that, put the built assets in <code>config.staticDir</code>.
+			For that, put the built assets in <code>config.mocksDir</code>.
 		</p>
 		<p>
 			The repo includes a demo which builds the frontend app and runs

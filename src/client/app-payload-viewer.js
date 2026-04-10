@@ -25,7 +25,11 @@ export function PayloadViewer() {
 
 
 function PayloadViewerTitle(file, statusText) {
-	const { method, status, ext } = parseFilename(file)
+	const { method, status, ext, isStatic } = parseFilename(file)
+
+	if (isStatic)
+		return r('span', null, file)
+
 	const fileNameWithComments = file.split('.').slice(0, -3).join('.')
 	return (
 		r('span', null,

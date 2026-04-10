@@ -10,6 +10,16 @@ export default (url) => htmlTemplate({
 	body: `
 		<h1 id="changelog">Changelog</h1>
 		<br />
+
+		<p><strong>13.0.0 breaking change.</strong></p>
+		<ul>
+			<li><code>config.staticMocks</code> has been removed in favor of allowing mocks without the filename convention within <code>config.mocksDir</code>.
+				To migrate, move the content of your old <code>staticDir</code> into your <code>mocksDir</code>.
+			</li>
+			<li>On the CLI, <code>--mocks-dir=my-dir</code> is now an optional positional argument.</li>
+		</ul>
+
+		<hr />
 		<p>12.7.0 dashboard: Alt-Click exclusively selects a checkbox within a column.</p>
 		<div class="RegionImg" data-max-width="480">
 			<video src="/assets/media/12.7.0-alt-click.mp4" autoplay loop controls>

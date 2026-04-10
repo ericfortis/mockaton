@@ -17,14 +17,12 @@ import CONFIG from './Mockaton.test.config.js'
 
 
 const mocksDir = mkdtempSync(join(tmpdir(), 'mocks'))
-const staticDir = mkdtempSync(join(tmpdir(), 'static'))
 
 const stdout = []
 const stderr = []
 const proc = spawn(join(import.meta.dirname, 'cli.js'), [
+	mocksDir,
 	'--config', join(import.meta.dirname, 'Mockaton.test.config.js'),
-	'--mocks-dir', mocksDir,
-	'--static-dir', staticDir,
 	'--no-open'
 ])
 
@@ -47,10 +45,8 @@ const listFromMocksDir = d => readdir(join(mocksDir, d))
 const readFromMocksDir = f => readFile(join(mocksDir, f), 'utf8')
 
 const makeDirInMocks = dir => mkdir(join(mocksDir, dir), { recursive: true })
-const makeDirInStaticMocks = dir => mkdir(join(staticDir, dir), { recursive: true })
 
 const renameInMocksDir = (src, target) => rename(join(mocksDir, src), join(mocksDir, target))
-const renameInStaticMocksDir = (src, target) => rename(join(staticDir, src), join(staticDir, target))
 
 
 const api = new Commander(serverAddr)
@@ -128,7 +124,7 @@ class Fixture extends BaseFixture {
 class FixtureStatic extends BaseFixture {
 	constructor(file, body = '') {
 		super(file, body)
-		this.dir = staticDir
+		this.dir = mocksDir
 		this.urlMask = '/' + file
 		this.method = 'GET'
 	}
@@ -165,8 +161,8 @@ describe('Rejects malicious URLs', () => {
 })
 
 
-describe('Warnings', () => {
-	test('rejects invalid filenames', async () => {
+describe('Filename Convention', () => {
+	test('registers invalid filenames as GET 200', async () => {
 		const fx0 = new Fixture('bar.GET._INVALID_STATUS_.json')
 		const fx1 = new Fixture('foo._INVALID_METHOD_.202.json')
 		const fx2 = new Fixture('missing-method-and-status.json')
@@ -175,10 +171,10 @@ describe('Warnings', () => {
 		await fx2.write()
 		await api.reset()
 
-		const log = stderr.join('')
-		match(log, /Invalid HTTP Response Status: "NaN"/)
-		match(log, /Unrecognized HTTP Method: "_INVALID_METHOD_"/)
-		match(log, /Invalid Filename Convention/)
+		const s = await fetchState()
+		equal(s.brokersByMethod.GET['/bar.GET._INVALID_STATUS_.json'].file, 'bar.GET._INVALID_STATUS_.json')
+		equal(s.brokersByMethod.GET['/foo._INVALID_METHOD_.202.json'].file, 'foo._INVALID_METHOD_.202.json')
+		equal(s.brokersByMethod.GET['/missing-method-and-status.json'].file, 'missing-method-and-status.json')
 
 		await fx0.unlink()
 		await fx1.unlink()
@@ -553,14 +549,6 @@ describe('404', () => {
 		await fx.unlink()
 	})
 
-	test('404s ignored static files', async () => {
-		const fx = new FixtureStatic('static-ignored.js~')
-		await fx.write()
-		await api.reset()
-		const r = await fx.request()
-		equal(r.status, 404)
-		await fx.unlink()
-	})
 })
 
 
@@ -660,7 +648,7 @@ describe('Static Files', () => {
 		await fxsIndex.write()
 		await fxsAsset.write()
 		await api.reset()
-	}) // the last test deletes them
+	})
 
 	describe('Static File Serving', () => {
 		test('Defaults to index.html', async () => {
@@ -678,64 +666,10 @@ describe('Static Files', () => {
 		})
 	})
 
-	test('Static File List', async () => {
-		const { staticBrokers } = await fetchState()
-		deepEqual(Object.keys(staticBrokers), [
-			fxsAsset.urlMask,
-			fxsIndex.urlMask
-		])
-	})
-
-	describe('Set Static Route is Delayed', () => {
-		test('422 for non-existing route', async () => {
-			const r = await api.setStaticRouteIsDelayed('/non-existing', true)
-			equal(r.status, 422)
-			equal(await r.text(), `Static route does not exist: /non-existing`)
-		})
-
-		test('422 for invalid delayed value', async () => {
-			const r = await api.setStaticRouteIsDelayed(fxsIndex.urlMask, 'not-a-boolean')
-			equal(await r.text(), 'Expected boolean for "delayed"')
-		})
-
-		test('200', async () => {
-			await api.setStaticRouteIsDelayed(fxsIndex.urlMask, true)
-			const { staticBrokers } = await fetchState()
-			equal(staticBrokers[fxsIndex.urlMask].delayed, true)
-		})
-	})
-
-	describe('Set Static Route Status Code', () => {
-		test('422 for non-existing route', async () => {
-			const r = await api.setStaticRouteStatus('/non-existing', 200)
-			equal(r.status, 422)
-			equal(await r.text(), `Static route does not exist: /non-existing`)
-		})
-
-		test('422 for invalid delayed value', async () => {
-			const r = await api.setStaticRouteStatus(fxsIndex.urlMask, 'not-200-or-404')
-			equal(r.status, 422)
-			equal(await r.text(), 'Expected 200 or 404 status code')
-		})
-
-		test('sets 404 and 200', async () => {
-			await api.setStaticRouteStatus(fxsIndex.urlMask, 404)
-			const r0 = await fxsIndex.request()
-			equal(r0.status, 404)
-
-			await api.setStaticRouteStatus(fxsIndex.urlMask, 200)
-			const r1 = await fxsIndex.request()
-			equal(r1.status, 200)
-		})
-
-		test('404s on a registered route but its file has been deleted', async () => {
-			// Possible: (1) due to watcher delay. (2) or, when not-watching and deleting.
-			const fx = new FixtureStatic('to-be-deleted.js')
-			await fx.sync()
-			await fx.unlink()
-			const r = await fx.request()
-			equal(r.status, 404)
-		})
+	test('are part of the normal mocks list', async () => {
+		const s = await fetchState()
+		equal(s.brokersByMethod.GET[fxsAsset.urlMask].file, fxsAsset.file)
+		equal(s.brokersByMethod.GET[fxsIndex.urlMask].file, fxsIndex.file)
 	})
 
 	describe('Static Partial Content', () => {
@@ -759,9 +693,9 @@ describe('Static Files', () => {
 		await fxsIndex.unlink()
 		await fxsAsset.unlink()
 		await api.reset()
-		const { staticBrokers } = await fetchState()
-		equal(staticBrokers[fxsIndex.urlMask], undefined)
-		equal(staticBrokers[fxsAsset.urlMask], undefined)
+		const s = await fetchState()
+		equal(s.brokersByMethod.GET?.[fxsIndex.urlMask], undefined)
+		equal(s.brokersByMethod.GET?.[fxsAsset.urlMask], undefined)
 	})
 })
 
@@ -1160,72 +1094,6 @@ describe('Registering Mocks', () => {
 })
 
 
-describe('Registering Static Mocks', () => {
-	test('when watcher is off, newly added mocks do not get registered', async () => {
-		await api.setWatchMocks(false)
-		const fx = new FixtureStatic('non-auto-registered-file.txt')
-		await fx.write()
-		await sleep()
-		const { staticBrokers } = await fetchState()
-		equal(staticBrokers['/' + fx.file], undefined)
-		await fx.unlink()
-	})
-
-	const fx = new FixtureStatic('static-register.txt', 'static-body')
-	test('registers static', async () => {
-		await api.setWatchMocks(true)
-		await fx.register()
-		const { staticBrokers } = await fetchState()
-		deepEqual(staticBrokers, {
-			['/' + fx.file]: {
-				route: '/' + fx.file,
-				status: 200,
-				delayed: false
-			}
-		})
-		const response = await fx.request()
-		equal(response.status, 200)
-		equal(await response.text(), fx.body)
-	})
-
-	test('unregisters static', async () => {
-		await fx.unregister()
-		const { staticBrokers } = await fetchState()
-		deepEqual(staticBrokers, {})
-	})
-
-	describe('getSyncVersion', () => {
-		const fx0 = new FixtureStatic('reg0/static0.txt')
-		let version
-		before(async () => {
-			await makeDirInStaticMocks('reg0')
-			await fx0.sync()
-			version = await resolveOnNextSyncVersion(-1)
-		})
-
-		const fx = new FixtureStatic('static1.txt')
-		test('responds when a file is added', async () => {
-			const prom = resolveOnNextSyncVersion(version)
-			await fx.write()
-			equal(await prom, version + 1)
-		})
-
-		test('responds when a file is deleted', async () => {
-			const prom = resolveOnNextSyncVersion(version + 1)
-			await fx.unlink()
-			equal(await prom, version + 2)
-		})
-
-		test('responds when dir is renamed', async () => {
-			const p0 = resolveOnNextSyncVersion(version + 2)
-			await renameInStaticMocksDir('reg0', 'reg1')
-			equal(await p0, version + 3)
-
-			const s = await fetchState()
-			equal(s.staticBrokers['/reg1/static0.txt'].route, '/reg1/static0.txt')
-		})
-	})
-})
 
 
 function sleep(ms = 100) {

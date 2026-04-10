@@ -1,12 +1,10 @@
 import { basename } from 'node:path'
 
-import { logger } from './utils/logger.js'
-import { listFilesRecursively } from './utils/fs.js'
-
 import { cookie } from './cookie.js'
 import { MockBroker } from './MockBroker.js'
+import { parseFilename } from '../client/Filename.js'
+import { listFilesRecursively } from './utils/fs.js'
 import { config, isFileAllowed } from './config.js'
-import { parseFilename, validateFilename } from '../client/Filename.js'
 
 
 /**
@@ -42,8 +40,7 @@ export function init() {
 /** @returns {boolean} registered */
 export function registerMock(file, isFromWatcher = false) {
 	if (brokerByFilename(file)?.hasMock(file)
-		|| !isFileAllowed(basename(file))
-		|| !filenameIsValid(file))
+		|| !isFileAllowed(basename(file)))
 		return false
 
 	const { method, urlMask } = parseFilename(file)
@@ -60,13 +57,6 @@ export function registerMock(file, isFromWatcher = false) {
 		broker.selectDefaultFile()
 
 	return true
-}
-
-function filenameIsValid(file) {
-	const error = validateFilename(file)
-	if (error)
-		logger.warn(error, file)
-	return !error
 }
 
 export function unregisterMock(file) {
@@ -99,6 +89,14 @@ export function brokerByRoute(method, url) {
 	for (let i = brokers.length - 1; i >= 0; i--)
 		if (brokers[i].urlMaskMatches(url))
 			return brokers[i]
+
+	// TODO Verify
+	if (method === 'GET') {
+		const indexUrl = url.endsWith('/') ? url + 'index.html' : url + '/index.html'
+		for (let i = brokers.length - 1; i >= 0; i--)
+			if (brokers[i].urlMaskMatches(indexUrl))
+				return brokers[i]
+	}
 }
 
 export function extractAllComments() {

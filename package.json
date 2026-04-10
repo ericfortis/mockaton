@@ -2,7 +2,7 @@
 	"name": "mockaton",
 	"description": "HTTP Mock Server",
 	"type": "module",
-	"version": "12.7.2",
+	"version": "13.0.0",
 	"exports": {
 		".": {
 			"import": "./index.js",
@@ -17,18 +17,13 @@
 	"license": "MIT",
 	"homepage": "https://mockaton.com",
 	"repository": "https://github.com/ericfortis/mockaton",
-	"keywords": [
-		"mock-server",
-		"rest-api",
-		"mock",
-		"api",
-		"testing"
-	],
+	"keywords": ["mock-server"],
 	"bin": {
 		"mockaton": "src/server/cli.js"
 	},
 	"scripts": {
-		"start": "make start"
+		"start": "make start",
+		"test": "make test"
 	},
 	"engines": {
 		"node": ">=22.18 <23 || >=23.6"

@@ -12,7 +12,7 @@ const cli = (...args) => spawnSync(rel('cli.js'), args, { encoding: 'utf8' })
 describe('CLI', () => {
 	test('invalid flag', () => {
 		const { stderr, status } = cli('--invalid-flag')
-		equal(stderr.trim(), `Unknown option '--invalid-flag'`)
+		equal(stderr.startsWith(`Unknown option '--invalid-flag'`), true)
 		equal(status, 1)
 	})
 
@@ -24,9 +24,8 @@ describe('CLI', () => {
 
 	test('invalid port', () => {
 		const { stderr, status } = cli(
-			'--mocks-dir', rel('../../mockaton-mocks'),
-			'--port', 'not-a-number',
-		)
+			rel('../../mockaton-mocks'),
+			'--port', 'not-a-number')
 		equal(stderr.trim(), `port="not-a-number" is invalid`)
 		equal(status, 1)
 	})
@@ -39,7 +38,7 @@ describe('CLI', () => {
 
 	test('-h outputs usage message', () => {
 		const { stdout, status } = cli('-h')
-		equal(stdout.split('\n')[0], 'Usage: mockaton [options]')
+		equal(stdout.split('\n')[0], 'Usage: mockaton [mocks-dir] [options]')
 		equal(status, 0)
 	})
 

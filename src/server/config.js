@@ -18,7 +18,6 @@ import { jsToJsonPlugin } from './MockDispatcherPlugins.js'
  * }} */
 const schema = {
 	mocksDir: [resolve('mockaton-mocks'), isDirectory],
-	staticDir: [resolve('mockaton-static-mocks'), optional(isDirectory)],
 	ignore: [/(\.DS_Store|~)$/, is(RegExp)],
 	watcherEnabled: [true, is(Boolean)],
 	watcherDebounceMs: [80, ms => Number.isInteger(ms) && ms >= 0],
@@ -76,11 +75,6 @@ export const ConfigValidator = Object.freeze(validators)
 export function setup(opts) {
 	if (opts.mocksDir)
 		opts.mocksDir = resolve(opts.mocksDir)
-
-	if (opts.staticDir)
-		opts.staticDir = resolve(opts.staticDir)
-	else if (!isDirectory(defaults.staticDir))
-		opts.staticDir = ''
 
 	Object.assign(config, opts)
 	validate(config, ConfigValidator)

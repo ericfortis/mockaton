@@ -20,7 +20,6 @@ import { IndexHtml, CSP } from '../client/IndexHtml.js'
 import { cookie } from './cookie.js'
 import { config, ConfigValidator } from './config.js'
 
-import * as staticCollection from './staticCollection.js'
 import * as mockBrokersCollection from './mockBrokersCollection.js'
 
 
@@ -53,9 +52,6 @@ export const apiPatchReqs = new Map([
 	[API.proxied, setRouteIsProxied],
 	[API.toggle500, toggleRoute500],
 
-	[API.delayStatic, setStaticRouteIsDelayed],
-	[API.staticStatus, setStaticRouteStatusCode],
-
 	[API.watchMocks, setWatchMocks]
 ])
 
@@ -78,7 +74,6 @@ function getState(_, response) {
 		comments: mockBrokersCollection.extractAllComments(),
 
 		brokersByMethod: mockBrokersCollection.all(),
-		staticBrokers: staticCollection.all(),
 
 		delay: config.delay,
 		delayJitter: config.delayJitter,
@@ -94,7 +89,6 @@ function getState(_, response) {
 
 function reset(_, response) {
 	mockBrokersCollection.init()
-	staticCollection.init()
 	response.ok()
 }
 
@@ -251,31 +245,3 @@ async function setRouteIsProxied(req, response) {
 
 
 
-async function setStaticRouteStatusCode(req, response) {
-	const [route, status] = await req.json()
-
-	const broker = staticCollection.brokerByRoute(route)
-	if (!broker)
-		response.unprocessable(`Static route does not exist: ${route}`)
-	else if (!(status === 200 || status === 404))
-		response.unprocessable(`Expected 200 or 404 status code`)
-	else {
-		broker.setStatus(status)
-		response.ok()
-	}
-}
-
-
-async function setStaticRouteIsDelayed(req, response) {
-	const [route, delayed] = await req.json()
-
-	const broker = staticCollection.brokerByRoute(route)
-	if (!broker)
-		response.unprocessable(`Static route does not exist: ${route}`)
-	else if (typeof delayed !== 'boolean')
-		response.unprocessable(`Expected boolean for "delayed"`)
-	else {
-		broker.setDelayed(delayed)
-		response.ok()
-	}
-}

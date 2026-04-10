@@ -10,8 +10,8 @@ export default (url) => htmlTemplate({
 		<h1>Filename Convention</h1>
 		<p>
 			The convention is for mocks within your <code class="green">config.mocksDir</code>.
-			In other words, it’s not <code class="red">config.staticDir</code> mocks, which are always
-			<code>GET</code> and return <code>200</code> or <code>206</code> (partial content, e.g., for videos).
+			Files that don’t follow the convention are served as <code>GET 200</code>
+			or <code>GET 206</code> (partial content, e.g., for videos).
 		</p>
 
 		<h2 id="extension">

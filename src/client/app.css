@@ -433,13 +433,6 @@ main {
 		&.canProxy {
 			margin-left: 100px;
 		}
-		&.nonGroupedByMethod {
-			margin-left: 118px;
-
-			&.canProxy {
-				margin-left: 146px;
-			}
-		}
 	}
 
 	.TableRow {

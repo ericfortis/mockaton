@@ -11,6 +11,7 @@ export class MockBroker {
 		this.file = '' // selected mock filename
 		this.mocks = [] // filenames
 		this.status = -1
+		this.isStatic = false // doesn’t follow filename convention
 		this.delayed = false
 		this.proxied = false
 		this.auto500 = false
@@ -44,10 +45,12 @@ export class MockBroker {
 	hasMock = file => this.mocks.includes(file)
 
 	selectFile(filename) {
+		const { status, isStatic } = parseFilename(filename)
 		this.file = filename
+		this.status = status
+		this.isStatic = isStatic
 		this.proxied = false
 		this.auto500 = false
-		this.status = parseFilename(filename).status
 	}
 
 	selectDefaultFile() {

@@ -5,12 +5,10 @@ import { EventEmitter } from 'node:events'
 import { config } from './config.js'
 import { isFile, isDirectory } from './utils/fs.js'
 
-import * as staticCollection from './staticCollection.js'
 import * as mockBrokerCollection from './mockBrokersCollection.js'
 
 
 let mocksWatcher = null
-let staticWatcher = null
 
 
 /**
@@ -67,33 +65,6 @@ export function watchMocksDir() {
 }
 
 
-export function watchStaticDir() {
-	const dir = config.staticDir
-	if (!dir)
-		return
-
-	staticWatcher = staticWatcher || watch(dir, { recursive: true, persistent: false }, (_, file) => {
-		if (!file)
-			return
-
-		if (isDirectory(join(dir, file))) {
-			staticCollection.init()
-			uiSyncVersion.increment()
-		}
-		else if (!isFile(join(dir, file))) { // file deleted
-			staticCollection.unregisterMock(file)
-			uiSyncVersion.increment()
-		}
-		else if (staticCollection.registerMock(file))
-			uiSyncVersion.increment()
-		else {
-			// ignore file edits
-		}
-	})
-}
-
-
-
 /** Realtime notify ARR Events */
 export function sseClientSyncVersion(req, response) {
 	response.writeHead(200, {
@@ -125,12 +96,9 @@ export function sseClientSyncVersion(req, response) {
 
 export function startWatchers() {
 	watchMocksDir()
-	watchStaticDir()
 }
 
 export function stopWatchers() {
 	mocksWatcher?.close()
-	staticWatcher?.close()
 	mocksWatcher = null
-	staticWatcher = null
 }

@@ -72,8 +72,7 @@ There’s an implicit question mark on each one.
   is using, (multiplayer) ideally, it’s one deployment per user
 
 ## More realtime updates
-- Currently, it's only for add/remove mock but not for static
-  files and changes from another client (Browser, or Commander).
+- Currently, it's only for add/remove mock but not for changes from another client (Browser, or Commander).
 
 ## 500 click-drag
 - Debounce preview
@@ -98,7 +97,7 @@ doesn’t break selecting across pages, (e.g., for selecting and copying)
   we can keep the config JSON safe. The is to have a config file
   js agnostic, so mockaton can be implemented in other languages.
 
-## Plugins for `staticMocks`
+## Plugins for non-conforming mocks
 - content disposition
 - compression
 - CSP
@@ -173,7 +172,7 @@ Copy the Set-Cookie response header, or Cookie Header from the Network tab,.
 
 ## Allow extensionless in `mocksDir`
 - Currently, we have to add .GET.200.json,
-- `staticDir` already supports that ^
+- Consolidated mocks already support that ^
 
 ## .headers
 `.headers` extendions add them to the response

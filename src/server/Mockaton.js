@@ -15,25 +15,21 @@ import { config, setup } from './config.js'
 import { apiPatchReqs, apiGetReqs } from './Api.js'
 
 import { dispatchMock } from './MockDispatcher.js'
-import { dispatchStatic } from './StaticDispatcher.js'
 
-import * as staticCollection from './staticCollection.js'
 import * as mockBrokerCollection from './mockBrokersCollection.js'
 
 import { watchDevSPA } from './WatcherDevClient.js'
-import { watchMocksDir, watchStaticDir } from './Watcher.js'
+import { watchMocksDir } from './Watcher.js'
 
 
 export function Mockaton(options) {
 	return new Promise((resolve, reject) => {
 		setup(options)
 		mockBrokerCollection.init()
-		staticCollection.init()
 
 		if (config.watcherEnabled) {
 			register('./cacheBustResolver.js', import.meta.url)
 			watchMocksDir()
-			watchStaticDir()
 		}
 		if (config.hotReload)
 			watchDevSPA()
@@ -83,9 +79,6 @@ async function onRequest(req, response) {
 
 		else if (method === 'GET' && apiGetReqs.has(pathname))
 			apiGetReqs.get(pathname)(req, response)
-
-		else if (method === 'GET' && staticCollection.brokerByRoute(pathname))
-			await dispatchStatic(req, response)
 
 		else
 			await dispatchMock(req, response)

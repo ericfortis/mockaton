@@ -110,8 +110,9 @@ export default function (req, response) {
 			What if I need to serve a static .js or .ts?
 		</h4>
 		<p>
-			<strong>Option A:</strong> Put it in your <code>config.staticDir</code> without the <code>.GET.200.js</code> extension.
-			Mocks in <code>staticDir</code> take precedence over <code>mocksDir/*</code>.
+			<strong>Option A:</strong> Put it in your <code>config.mocksDir</code>
+			without the <code>.GET.200.js</code> extension.
+			Non-conforming filenames are served as <code>GET 200/206</code>.
 		</p>
 		<p>
 			<strong>Option B:</strong> Read it and return it. For example:

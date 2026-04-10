@@ -10,7 +10,6 @@ docker-run: docker-stop
 		--publish 127.0.0.1:2020:2020 \
 		--volume $(PWD)/mockaton.config.js:/app/mockaton.config.js \
     --volume $(PWD)/mockaton-mocks:/app/mockaton-mocks \
-    --volume $(PWD)/mockaton-static-mocks:/app/mockaton-static-mocks \
 		mockaton
 
 docker-stop:

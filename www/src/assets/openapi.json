@@ -208,91 +208,6 @@
 				}
 			}
 		},
-		"/mockaton/static-status": {
-			"patch": {
-				"summary": "Set static HTTP status for a route",
-				"x-js-client-example": "await mockaton.setStaticRouteStatus('/media/picture.png', 404)",
-				"requestBody": {
-					"required": true,
-					"content": {
-						"application/json": {
-							"schema": {
-								"type": "array",
-								"minItems": 2,
-								"maxItems": 2,
-								"prefixItems": [
-									{
-										"$ref": "#/components/schemas/UrlStatic"
-									},
-									{
-										"type": "integer",
-										"enum": [
-											200,
-											404
-										],
-										"example": 404
-									}
-								],
-								"additionalItems": false
-							},
-							"example": [
-								"/media/picture.png",
-								404
-							]
-						}
-					}
-				},
-				"responses": {
-					"200": {
-						"description": "OK"
-					},
-					"422": {
-						"description": "Invalid request. Possible reasons:\n- Static route does not exist\n- Expected 200 or 404 `status`\n"
-					}
-				}
-			}
-		},
-		"/mockaton/delay-static": {
-			"patch": {
-				"summary": "Set static delay flag for a route",
-				"x-js-client-example": "await mockaton.setStaticRouteIsDelayed('/media/picture.png', true)",
-				"requestBody": {
-					"required": true,
-					"content": {
-						"application/json": {
-							"schema": {
-								"type": "array",
-								"minItems": 2,
-								"maxItems": 2,
-								"prefixItems": [
-									{
-										"$ref": "#/components/schemas/UrlStatic"
-									},
-									{
-										"type": "boolean",
-										"description": "delayed",
-										"example": true
-									}
-								],
-								"additionalItems": false
-							},
-							"example": [
-								"/media/picture.png",
-								true
-							]
-						}
-					}
-				},
-				"responses": {
-					"200": {
-						"description": "OK"
-					},
-					"422": {
-						"description": "Invalid request. Possible reasons:\n- Static route does not exist\n- Expected boolean for `delayed`\n"
-					}
-				}
-			}
-		},
 		"/mockaton/global-delay": {
 			"patch": {
 				"summary": "Set global delay for all responses",
@@ -459,7 +374,7 @@
 		"/mockaton/watch-mocks": {
 			"patch": {
 				"summary": "Enable or disable mock file watching",
-				"description": "Controls file watchers for both mocksDir and staticDir.",
+				"description": "Controls file watchers for mocksDir.",
 				"x-js-client-example": "await mockaton.setWatchMocks(true)",
 				"requestBody": {
 					"required": true,
@@ -556,11 +471,6 @@
 				"type": "string",
 				"example": "/api/user/friends"
 			},
-			"UrlStatic": {
-				"type": "string",
-				"description": "Filename of a static mock",
-				"example": "/media/picture.png"
-			},
 			"Filename": {
 				"type": "string",
 				"description": "Mock filename. The convention is UrlMask.Method.StatusCode.Extension",
@@ -600,25 +510,6 @@
 					"proxied"
 				]
 			},
-			"ClientStaticBroker": {
-				"type": "object",
-				"properties": {
-					"route": {
-						"$ref": "#/components/schemas/UrlStatic"
-					},
-					"delayed": {
-						"type": "boolean"
-					},
-					"status": {
-						"type": "number"
-					}
-				},
-				"required": [
-					"route",
-					"delayed",
-					"status"
-				]
-			},
 			"State": {
 				"type": "object",
 				"properties": {
@@ -629,12 +520,6 @@
 							"additionalProperties": {
 								"$ref": "#/components/schemas/ClientMockBroker"
 							}
-						}
-					},
-					"staticBrokers": {
-						"type": "object",
-						"additionalProperties": {
-							"$ref": "#/components/schemas/ClientStaticBroker"
 						}
 					},
 					"cookies": {
@@ -661,7 +546,6 @@
 				},
 				"required": [
 					"brokersByMethod",
-					"staticBrokers",
 					"cookies",
 					"comments",
 					"delay",

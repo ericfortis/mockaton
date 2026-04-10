@@ -45,9 +45,7 @@ function Main() {
 				r('div', { className: CSS.SubToolbar },
 					GroupByMethod(),
 					BulkSelector()),
-				r('div', { className: CSS.Table },
-					MockList(),
-					StaticFilesList())),
+				r('div', { className: CSS.Table }, MockList())),
 			r('div', { className: CSS.rightSide },
 				Resizer(leftSideRef),
 				PayloadViewer())))
@@ -240,64 +238,6 @@ function ProxyToggler(method, urlMask, checked) {
 }
 
 
-
-/** # StaticFilesList */
-
-function StaticFilesList() {
-	const rows = store.staticBrokersAsRows()
-	return !rows.length
-		? null
-		: Fragment(
-			r('div', {
-					className: classNames(CSS.TableHeading,
-						store.canProxy && CSS.canProxy,
-						!store.groupByMethod && CSS.nonGroupedByMethod),
-				},
-				store.groupByMethod
-					? t`Static GET`
-					: t`Static`),
-			rows.map(StaticRow))
-}
-
-/** @param {StaticBrokerRowModel} row */
-function StaticRow(row) {
-	const { groupByMethod } = store
-	const [ditto, tail] = row.urlMaskDittoed
-	return (
-		r('div', {
-				key: row.key,
-				className: classNames(CSS.TableRow, mounted && row.isNew && CSS.animIn)
-			},
-
-			DelayToggler({
-				className: store.canProxy && CSS.canProxy,
-				checked: row.delayed,
-				commit(checked) {
-					store.setDelayedStatic(row.urlMask, checked)
-				}
-			}),
-
-			StatusCodeToggler({
-				title: t`Not Found`,
-				body: t`404`,
-				checked: row.status === 404,
-				commit(checked) {
-					store.setStaticRouteStatus(row.urlMask, checked
-						? 404
-						: 200)
-				}
-			}),
-
-			!groupByMethod && r('span', { className: CSS.Method }, 'GET'),
-
-			r('a', {
-				href: row.urlMask,
-				target: '_blank',
-				className: CSS.PreviewLink,
-			}, ditto
-				? [r('span', { className: CSS.dittoDir }, ditto), tail]
-				: tail)))
-}
 
 function StatusCodeToggler({ title, body, commit, checked, disabled }) {
 	return ClickDragToggler({

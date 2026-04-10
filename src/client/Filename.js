@@ -19,29 +19,29 @@ export function includesComment(file, search) {
 	return extractComments(file).some(c => c.includes(search))
 }
 
-
-export function validateFilename(file) {
-	const tokens = file.replace(reComments, '').split('.')
-	if (tokens.length < 4)
-		return 'Invalid Filename Convention'
-
-	const { status, method } = parseFilename(file)
-	if (!responseStatusIsValid(status))
-		return `Invalid HTTP Response Status: "${status}"`
-
-	if (!METHODS.includes(method))
-		return `Unrecognized HTTP Method: "${method}"`
-}
-
-
 export function parseFilename(file) {
 	const tokens = file.replace(reComments, '').split('.')
-	return {
-		ext: tokens.pop(),
-		status: Number(tokens.pop()),
-		method: tokens.pop(),
-		urlMask: '/' + removeTrailingSlash(tokens.join('.'))
-	}
+
+	const followsConvention = tokens.length > 3
+		&& responseStatusIsValid(Number(tokens.at(-2)))
+		&& METHODS.includes(tokens.at(-3))
+	const isStatic = !followsConvention
+
+	return isStatic
+		? {
+			isStatic,
+			ext: tokens.pop() || '',
+			status: 200,
+			method: 'GET',
+			urlMask: '/' + file
+		}
+		: {
+			isStatic,
+			ext: tokens.pop(),
+			status: Number(tokens.pop()),
+			method: tokens.pop(),
+			urlMask: '/' + removeTrailingSlash(tokens.join('.'))
+		}
 }
 
 export function removeTrailingSlash(url = '') {

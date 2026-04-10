@@ -11,7 +11,6 @@ export type Plugin = (
 
 export interface Config {
 	mocksDir?: string
-	staticDir?: string
 	ignore?: RegExp
 	watcherEnabled?: boolean
 	watcherDebounceMs?: number
@@ -74,6 +73,7 @@ export type ClientMockBroker = {
 	mocks: string[]
 	file: string
 	status: number
+	isStatic: boolean
 	auto500: boolean
 	delayed: boolean
 	proxied: boolean
@@ -84,19 +84,8 @@ export type ClientBrokersByMethod = {
 	}
 }
 
-export type ClientStaticBroker = {
-	route: string
-	delayed: boolean
-	status: number
-}
-export type ClientStaticBrokers = {
-	[route: string]: ClientStaticBroker
-}
-
-
 export interface State {
 	brokersByMethod: ClientBrokersByMethod
-	staticBrokers: ClientStaticBrokers
 
 	cookies: [label: string, selected: boolean][]
 	comments: string[]

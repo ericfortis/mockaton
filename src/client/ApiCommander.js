@@ -42,17 +42,13 @@ export class Commander {
 	/** @returns {JsonPromise<ClientMockBroker>} */
 	toggle500 = (method, urlMask) => this.#patch(API.toggle500, [method, urlMask])
 
+	// TODO change Status or Toggle404?
+
 	/** @returns {JsonPromise<ClientMockBroker>} */
 	setRouteIsProxied = (method, urlMask, proxied) => this.#patch(API.proxied, [method, urlMask, proxied])
 
 	/** @returns {JsonPromise<ClientMockBroker>} */
 	setRouteIsDelayed = (method, urlMask, delayed) => this.#patch(API.delay, [method, urlMask, delayed])
-
-
-	setStaticRouteStatus = (urlMask, status) => this.#patch(API.staticStatus, [urlMask, status])
-
-	setStaticRouteIsDelayed = (urlMask, delayed) => this.#patch(API.delayStatic, [urlMask, delayed])
-
 
 
 	/** @returns {JsonPromise<State>} */

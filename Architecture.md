@@ -12,9 +12,9 @@ think of it as the router of a web-framework.
 Mockaton can be controlled via the **Web Dashboard UI** or **HTTP API**.
 
 ### Data Sources
-`config.mocksDir` is required, while `config.staticDir` is optional.
-The HTTP API provides real-time updates to indicate when a mock has been
-added, deleted, or renamed. For real-time updates we use long polling.
+`config.mocksDir` is required. The HTTP API provides real-time updates to
+indicate when a mock has been added, deleted, or renamed.
+For real-time updates we use long polling.
 
 In addition, Mockaton can be a reverse-proxy, so it can fetch from a real-backend.
 That can be done by route, or for routes users have no mocks for.
@@ -44,9 +44,8 @@ const server = await Mockaton(opts)
 
 ## Router
 Routes under `/mockaton/*` are reserved for the HTTP API and dashboard.
-The router first checks for those, and then checks for GET requests on `config.staticDir`.
-Lastly, if there’s no previous match, [MockDispatcher.js](src/server/MockDispatcher.js) handles
-the resource (or the 404).
+The router first checks for those, and then [MockDispatcher.js](src/server/MockDispatcher.js)
+handles the resource (or the 404).
 
 
 ## Mock Dispatcher

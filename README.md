@@ -20,9 +20,8 @@ for testing difficult to reproduce backend states.
 
 
 ## Quick Start (Docker)
-This will spin up Mockaton with the sample directories
-included in this repo mounted on the container. Mentioned dirs are: [mockaton-mocks/](./mockaton-mocks)
-and [mockaton-static-mocks/](./mockaton-static-mocks).
+This will spin up Mockaton with the sample directory
+included in this repo mounted on the container. Mentioned dir is: [mockaton-mocks/](./mockaton-mocks).
 
 ```sh
 git clone https://github.com/ericfortis/mockaton.git --depth 1

@@ -24,6 +24,6 @@ COPY --from=builder /app/dist ./mockaton-static-mocks
 COPY mockaton.config.js ./ 
 COPY mockaton-mocks ./mockaton-mocks
 ADD https://registry.npmjs.org/mockaton/latest /tmp/cache-buster
-RUN npm install --no-save mockaton@12
+RUN npm install --no-save mockaton@13
 EXPOSE 4040
 CMD ["npx", "mockaton", "--host", "0.0.0.0", "--port", "4040"]

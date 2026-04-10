@@ -367,7 +367,7 @@ main {
 			&::before {
 				top: calc(50% + 6px);
 				height: 22px;
-				border-left: 3px solid var(--colorBg);
+				border-left: 2px solid var(--colorBg);
 			}
 			&::after {
 				top: calc(50% + 10px);
@@ -389,7 +389,8 @@ main {
 	background: var(--colorBgHeader);
 }
 
-.GroupByMethod {
+.GroupByMethod,
+.ViewSourceCheckbox {
 	display: flex;
 	align-items: center;
 	gap: 6px;
@@ -626,10 +627,22 @@ main {
 		padding-top: 12px;
 		font-family: monospace;
 
+		&:has(> code > :is(iframe, video)) {
+			padding: 0;
+		}
+
 		> code {
 			white-space: pre;
 			tab-size: 2;
 			color: var(--colorLabel);
+
+			> video {
+				width: 100%;
+			}
+			> iframe {
+				width: 100%;
+				height: 100%;
+			}
 		}
 	}
 }

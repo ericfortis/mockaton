@@ -99,26 +99,53 @@ async function updatePayloadViewer(proxied, file, response) {
 		? PayloadViewerTitleWhenProxied(response)
 		: PayloadViewerTitle(file, response.statusText))
 
-	if (mime.startsWith('image/')) // Naively assumes GET 200
+	if (!response.ok) {
+		codeRef.elem.textContent = await bodyAsText()
+		return
+	}
+
+	if (mime.startsWith('image/'))
 		codeRef.elem.replaceChildren(r('img', {
 			src: URL.createObjectURL(await response.blob())
 		}))
-	else {
-		const body = await response.text() || t`/* Empty Response Body */`
-		if (mime === 'application/json')
-			codeRef.elem.replaceChildren(SyntaxJSON(body))
-		else if (isXML(mime))
-			codeRef.elem.replaceChildren(SyntaxXML(body))
-		else
-			codeRef.elem.textContent = body
+
+	else if (mime.startsWith('video/'))
+		codeRef.elem.replaceChildren(r('video', {
+			src: store.chosenLink.urlMask,
+			controls: true
+		}))
+
+	else if (mime.startsWith('audio/'))
+		codeRef.elem.replaceChildren(r('audio', {
+			src: store.chosenLink.urlMask,
+			controls: true
+		}))
+
+	else if (['text/html', 'application/pdf'].includes(mime))
+		codeRef.elem.replaceChildren(r('iframe', {
+			src: store.chosenLink.urlMask // using a blob is would need to allow inline styles etc in CSP
+		}))
+
+	else if (mime === 'application/json')
+		codeRef.elem.replaceChildren(SyntaxJSON(await bodyAsText()))
+
+	else if (['text/xml', 'application/xml'].includes(mime))
+		codeRef.elem.replaceChildren(SyntaxXML(await bodyAsText()))
+
+	else if (mime.startsWith('text/'))
+		codeRef.elem.textContent = await bodyAsText()
+
+	else
+		codeRef.elem.replaceChildren(r('a', {
+			href: URL.createObjectURL(await response.blob()),
+			download: store.chosenLink.urlMask
+		}, t`Download`))
+
+
+	async function bodyAsText() {
+		return (await response.text()) || t`/* Empty Response Body */`
 	}
 }
-
-function isXML(mime) {
-	return ['text/html', 'text/xml', 'application/xml'].some(m => mime.includes(m))
-		|| /application\/.*\+xml/.test(mime)
-}
-
 
 
 function SyntaxJSON(json) {

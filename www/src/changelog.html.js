@@ -17,8 +17,11 @@ export default (url) => htmlTemplate({
 				To migrate, move the content of your old <code>staticDir</code> into your <code>mocksDir</code>.
 			</li>
 			<li>On the CLI, <code>--mocks-dir=my-dir</code> is now an optional positional argument.</li>
-			<li><code>commander.toggle500(method, urlMask)</code> is now <code>commander.toggleStatus(status, method, urlMask)</code>.
-				It now supports toggling 404 for static mocks and 500 for dynamic mocks.
+			<li>
+				<code>commander.toggle500(method, urlMask)</code> is now <code>commander.toggleStatus(status, method, urlMask)</code>.
+			</li>
+			<li>
+				<code>commander.setStaticRouteStatus(url, status)</code> is now <code>commander.toggleStatus(status, 'GET', url)</code>.
 			</li>
 		</ul>
 

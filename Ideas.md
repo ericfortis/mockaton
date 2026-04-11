@@ -1,5 +1,5 @@
 # Bugs
-- Minor UX: `dittoCache` doesn't get cleared, so deleting and adding a mock again will not animate it
+- Deleting a folder of mocks, doesn't unregister them
 - Preview mock. Don't preview when indirectly toggling off a status code, or proxy checkbox when using Alt+Click
   - payload in store? So it stays when re-rendering?
 - In Chrome (not FF), rendering iframe HTML as payload and resizing the left-panel prevents the iframe from scrolling.
@@ -16,6 +16,11 @@ There’s an implicit question mark on each one.
 - Mock-a-Ton
 - Mock-aTon
 - MockaTon
+
+## Project Name Field
+- config.projectName
+- key for LocalStorage prefs
+
 
 ## SSE mocks
 - on the right side of the dashboard, we could let the user inject data: frames

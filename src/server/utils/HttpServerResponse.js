@@ -19,14 +19,14 @@ export class ServerResponse extends http.ServerResponse {
 
 	html(html, csp) {
 		logger.access(this)
-		this.setHeader('Content-Type', mimeFor('html'))
+		this.setHeader('Content-Type', mimeFor('.html'))
 		this.setHeader('Content-Security-Policy', csp)
 		this.end(html)
 	}
 
 	json(payload) {
 		logger.access(this)
-		this.setHeader('Content-Type', mimeFor('json'))
+		this.setHeader('Content-Type', mimeFor('.json'))
 		this.end(JSON.stringify(payload))
 	}
 

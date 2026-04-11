@@ -218,7 +218,7 @@ async function setRouteIsDelayed(req, response) {
 	else {
 		broker.setDelayed(delayed)
 		response.json(broker)
-		uiSyncVersion.increment()	
+		uiSyncVersion.increment()
 	}
 }
 

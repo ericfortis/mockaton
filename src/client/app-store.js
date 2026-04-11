@@ -33,6 +33,16 @@ export const store = {
 		store.render()
 	},
 
+	collapsedFolders: new Set(JSON.parse(globalThis.localStorage?.getItem('collapsedFolders') || '[]')),
+	setFolderCollapsed(folder, collapsed) {
+		if (collapsed)
+			store.collapsedFolders.add(folder)
+		else
+			store.collapsedFolders.delete(folder)
+
+		globalThis.localStorage?.setItem('collapsedFolders', JSON.stringify([...store.collapsedFolders]))
+	},
+
 	chosenLink: { method: '', urlMask: '' },
 	setChosenLink(method, urlMask) {
 		store.chosenLink = { method, urlMask }
@@ -112,8 +122,17 @@ export const store = {
 	},
 
 
+	_dittoCache: new Map(),
+
 	brokerFor(method, urlMask) {
 		return store.brokersByMethod[method]?.[urlMask]
+	},
+
+	brokerAsRow(method, urlMask) {
+		const b = store.brokerFor(method, urlMask)
+		const r = new BrokerRowModel(b, store.canProxy)
+		r.setUrlMaskDittoed(store._dittoCache.get(r.key))
+		return r
 	},
 
 	_setBroker(broker) {
@@ -122,17 +141,21 @@ export const store = {
 		store.brokersByMethod[method][urlMask] = broker
 	},
 
-	_dittoCache: new Map(),
-
-	_brokersAsArray(byMethod = '*') {
-		const arr = []
-		for (const [method, brokers] of Object.entries(store.brokersByMethod))
-			if (byMethod === '*' || byMethod === method)
-				arr.push(...Object.values(brokers))
-		return arr
+	folderGroupsByMethod(method) {
+		const groups = []
+		let g = null
+		for (const row of store._brokersAsRowsByMethod(method)) {
+			const folder = row.urlMask.substring(0, row.urlMask.lastIndexOf('/') + 1)
+			if (!g || g.folder !== folder) {
+				g = { folder, children: [] }
+				groups.push(g)
+			}
+			g.children.push(row)
+		}
+		return groups
 	},
 
-	brokersAsRowsByMethod(method) {
+	_brokersAsRowsByMethod(method) {
 		const rows = store._brokersAsArray(method)
 			.map(b => new BrokerRowModel(b, store.canProxy))
 			.sort((a, b) => a.urlMask.localeCompare(b.urlMask))
@@ -145,12 +168,14 @@ export const store = {
 		return rows
 	},
 
-	brokerAsRow(method, urlMask) {
-		const b = store.brokerFor(method, urlMask)
-		const r = new BrokerRowModel(b, store.canProxy)
-		r.setUrlMaskDittoed(store._dittoCache.get(r.key))
-		return r
+	_brokersAsArray(byMethod = '*') {
+		const arr = []
+		for (const [method, brokers] of Object.entries(store.brokersByMethod))
+			if (byMethod === '*' || byMethod === method)
+				arr.push(...Object.values(brokers))
+		return arr
 	},
+	
 
 	previewLink(method, urlMask) {
 		store.setChosenLink(method, urlMask)

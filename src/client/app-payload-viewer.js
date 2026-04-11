@@ -132,7 +132,7 @@ async function updatePayloadViewer(proxied, file, response) {
 	else if (['text/xml', 'application/xml'].includes(mime))
 		codeRef.elem.replaceChildren(SyntaxXML(await bodyAsText()))
 
-	else if (mime.startsWith('text/'))
+	else if (mime.startsWith('text/') || mime === 'application/yaml')
 		codeRef.elem.textContent = await bodyAsText()
 
 	else

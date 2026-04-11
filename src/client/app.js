@@ -3,8 +3,8 @@ import { createElement as r, t, classNames, restoreFocus, Fragment, defineClassN
 import { store } from './app-store.js'
 import { API } from './ApiConstants.js'
 import { Header } from './app-header.js'
-import { TimerIcon, CloudIcon } from './graphics.js'
 import { PayloadViewer, previewMock } from './app-payload-viewer.js'
+import { TimerIcon, CloudIcon, ChevronDownIcon } from './graphics.js'
 
 import CSS from './app.css' with { type: 'css' }
 document.adoptedStyleSheets.push(CSS)
@@ -100,9 +100,30 @@ function MockList() {
 			r('div', {
 				className: classNames(CSS.TableHeading, store.canProxy && CSS.canProxy)
 			}, method),
-			store.brokersAsRowsByMethod(method).map(Row)))
+			FolderGroups(store.folderGroupsByMethod(method))))
 
-	return store.brokersAsRowsByMethod('*').map(Row)
+	return FolderGroups(store.folderGroupsByMethod('*'))
+}
+
+function FolderGroups(groups) {
+	return groups.map(({ folder, children }) => {
+		if (children.length === 1)
+			return Row(children[0], 0)
+
+		return r('details', {
+				className: CSS.FolderGroup,
+				open: !store.collapsedFolders.has(folder),
+				onToggle() {
+					// TODO alt+click exclusive open
+					store.setFolderCollapsed(folder, !this.open)
+				}
+			},
+			r('summary', null,
+				r('span', { className: CSS.FolderChevron }, ChevronDownIcon()),
+				r('span', { className: classNames(CSS.FolderName, store.groupByMethod && CSS.groupedByMethod) },
+					folder + '…')),
+			children.map(Row))
+	})
 }
 
 /**

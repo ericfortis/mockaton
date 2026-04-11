@@ -11,6 +11,11 @@ export default (url) => htmlTemplate({
 		<h1 id="changelog">Changelog</h1>
 		<br />
 
+		<p>13.3.0 dashboard: collapse folders</p>
+		<div class="RegionImg" data-max-width="520">
+			<video src="/assets/media/13.3.0-collapse-folder.mp4" autoplay loop controls>
+		</div>
+		<p>13.2.0 add remaining realtime notifications.</p>
 		<p>13.1.0 new apis: <code>writeMock</code>, <code>deleteMock</code></p>
 		<p><strong>13.0.0 breaking change.</strong></p>
 		<ul>

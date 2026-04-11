@@ -40,7 +40,6 @@ export async function resolveIn(baseDir, file) {
 			: null
 	}
 	catch (e) {
-		console.error('DDDDDD', e)
 		return null
 	}
 }

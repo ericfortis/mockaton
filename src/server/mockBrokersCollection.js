@@ -61,8 +61,8 @@ export function registerMock(file, isFromWatcher = false) {
 
 export function unregisterMock(file) {
 	const broker = brokerByFilename(file)
-	const hasNoMoreMocks = broker?.unregister(file)
-	if (hasNoMoreMocks) {
+	const methodHasNoMoreMocks = broker?.unregister(file) // TODO or it was a directory of many mocks
+	if (methodHasNoMoreMocks) {
 		const { method, urlMask } = parseFilename(file)
 		delete collection[method][urlMask]
 		if (!Object.keys(collection[method]).length)

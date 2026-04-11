@@ -15,9 +15,20 @@ export default (url) => htmlTemplate({
 	body: `
 		<h1>
 			Control API
-			<a href="/assets/openapi.json">OpenAPI Spec ↗</a>
 		</h1>
 
+		<h2>OpenAPI Spec</h2>
+		<p>
+			You can download the <a href="/assets/openapi.json">OpenAPI Spec ↗</a>,
+			or import it:
+		</p>
+
+		${js(`
+import spec from 'mockaton/openapi.json'
+console.log(spec)
+`)}
+
+		<h2>Curl and Commander Examples</h2>
 		<form>
 			<label>
 				<span>Server</span>
@@ -45,7 +56,7 @@ function Api(method, url, obj) {
 	const urlParts = url.split('/')
 	const urlLast = urlParts.pop()
 	return `
-		<details>
+		<details open>
 			<summary>
 				<span class="Method">${method}</span>
 				<span class="Path">${urlParts.join('/')}<strong>/${urlLast}</strong></span>

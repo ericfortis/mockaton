@@ -42,7 +42,6 @@ export class Commander {
 	/** @returns {JsonPromise<ClientMockBroker>} */
 	toggleStatus = (method, urlMask, status) => this.#patch(API.toggleStatus, [method, urlMask, status])
 
-	// TODO change Status or Toggle404?
 
 	/** @returns {JsonPromise<ClientMockBroker>} */
 	setRouteIsProxied = (method, urlMask, proxied) => this.#patch(API.proxied, [method, urlMask, proxied])

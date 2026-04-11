@@ -2,17 +2,19 @@
 	"name": "mockaton",
 	"description": "HTTP Mock Server",
 	"type": "module",
-	"version": "13.2.0",
+	"version": "13.2.1",
 	"exports": {
 		".": {
 			"import": "./index.js",
 			"types": "./index.d.ts"
-		}
+		},
+		"./openapi.json": "./www/src/assets/openapi.json"
 	},
 	"files": [
 		"src",
 		"index.js",
-		"index.d.ts"
+		"index.d.ts",
+		"www/src/assets/openapi.json"
 	],
 	"license": "MIT",
 	"homepage": "https://mockaton.com",

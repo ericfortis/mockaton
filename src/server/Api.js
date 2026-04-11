@@ -200,7 +200,7 @@ async function selectMock(req, response) {
 
 
 async function toggleRouteStatus(req, response) {
-	const [status, method, urlMask] = await req.json()
+	const [method, urlMask, status] = await req.json()
 
 	const broker = mockBrokersCollection.brokerByRoute(method, urlMask)
 	if (!broker)

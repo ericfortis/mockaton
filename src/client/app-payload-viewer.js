@@ -99,7 +99,7 @@ async function updatePayloadViewer(proxied, file, response) {
 		? PayloadViewerTitleWhenProxied(response)
 		: PayloadViewerTitle(file, response.statusText))
 
-	if (!response.ok) {
+	if (!response.ok || response.status === 204) {
 		codeRef.elem.textContent = await bodyAsText()
 		return
 	}

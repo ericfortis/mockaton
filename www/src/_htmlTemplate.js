@@ -15,7 +15,7 @@ const pages = [
 	['/alternatives', 'Alternatives']
 ]
 
-export function socialMetadata(title, description, route) {
+export function socialMetadata(title, description, route = '') {
 	return `
 <title>${title}</title>
 

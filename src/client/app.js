@@ -131,7 +131,7 @@ function Row(row, i) {
 				disabled: row.opts.length === 1 && (row.isStatic ? row.status === 404 : row.status === 500),
 				checked: !row.proxied && (row.isStatic ? row.status === 404 : row.status === 500),
 				commit() {
-					store.toggleStatus(row.isStatic ? 404 : 500, method, urlMask)
+					store.toggleStatus(method, urlMask, row.isStatic ? 404 : 500)
 				}
 			}),
 

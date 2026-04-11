@@ -161,8 +161,8 @@ export const store = {
 		})
 	},
 
-	toggleStatus(status, method, urlMask) {
-		store._request(() => api.toggleStatus(status, method, urlMask), async response => {
+	toggleStatus(method, urlMask, status) {
+		store._request(() => api.toggleStatus(method, urlMask, status), async response => {
 			store.setBroker(await response.json())
 			store.setChosenLink(method, urlMask)
 			store.renderRow(method, urlMask)

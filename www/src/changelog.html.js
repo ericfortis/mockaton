@@ -21,7 +21,10 @@ export default (url) => htmlTemplate({
 				<code>commander.toggle500(method, urlMask)</code> is now <code>commander.toggleStatus(status, method, urlMask)</code>.
 			</li>
 			<li>
-				<code>commander.setStaticRouteStatus(url, status)</code> is now <code>commander.toggleStatus(status, 'GET', url)</code>.
+				<code>commander.setStaticRouteStatus(url, status)</code> is now <code>commander.toggleStatus('GET', url, status)</code>.
+			</li>
+			<li>
+				<code>commander.setStaticRouteIsDelayed(url, value)</code> is now <code>commander.setRouteIsDelayed('GET', url, delayed)</code>.
 			</li>
 		</ul>
 

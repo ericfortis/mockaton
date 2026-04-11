@@ -73,9 +73,6 @@ There’s an implicit question mark on each one.
 - Some note or flag on the dashboard, to indicate when someone
   is using, (multiplayer) ideally, it’s one deployment per user
 
-## More realtime updates
-- Currently, it's only for add/remove mock but not for changes from another client (Browser, or Commander).
-
 ## 500 click-drag
 - Debounce preview
 - Only update the previewer if that route was being previewed

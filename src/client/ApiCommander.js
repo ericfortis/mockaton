@@ -61,7 +61,8 @@ export class Commander {
 
 
 	/**
-	 * SSE - Streams an incremental version when a mock is added, deleted, or renamed
+	 * SSE - Streams an incremental version when a mock is added, deleted, or renamed.
+	 *  Also, when the internal state changes.
 	 * @returns {Promise<Response>}
 	 */
 	getSyncVersion = () => fetch(this.addr + API.syncVersion)

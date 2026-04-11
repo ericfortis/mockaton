@@ -10,6 +10,7 @@ export const store = {
 	onError(err) {},
 	render() {},
 	renderRow(method, urlMask) {},
+	skipNextRender: false,
 
 	brokersByMethod: /** @type ClientBrokersByMethod */ {},
 
@@ -58,49 +59,53 @@ export const store = {
 			if (store.showProxyField === null) // isFirstCall
 				store.showProxyField = Boolean(store.proxyFallback)
 
-			store.render()
+			if (store.skipNextRender)
+				store.skipNextRender = false
+			else
+				store.render()
 		})
 	},
 
 	reset() {
 		store._request(api.reset, () => {
 			store.setChosenLink('', '')
-			store.fetchState()
 		})
 	},
 
 	bulkSelectByComment(value) {
-		store._request(() => api.bulkSelectByComment(value), () => {
-			store.fetchState()
-		})
+		store._request(() => api.bulkSelectByComment(value))
 	},
 
 	setGlobalDelay(value) {
+		store.skipNextRender = true
 		store._request(() => api.setGlobalDelay(value), () => {
 			store.delay = value
 		})
 	},
 
 	setGlobalDelayJitter(value) {
+		store.skipNextRender = true
 		store._request(() => api.setGlobalDelayJitter(value), () => {
 			store.delayJitter = value
 		})
 	},
 
 	selectCookie(name) {
+		store.skipNextRender = true
 		store._request(() => api.selectCookie(name), async response => {
 			store.cookies = await response.json()
 		})
 	},
 
 	setProxyFallback(value) {
+		store.skipNextRender = true
 		store._request(() => api.setProxyFallback(value), () => {
 			store.proxyFallback = value
-			store.render()
 		})
 	},
 
 	setCollectProxied(checked) {
+		store.skipNextRender = true
 		store._request(() => api.setCollectProxied(checked), () => {
 			store.collectProxied = checked
 		})
@@ -111,7 +116,7 @@ export const store = {
 		return store.brokersByMethod[method]?.[urlMask]
 	},
 
-	setBroker(broker) {
+	_setBroker(broker) {
 		const { method, urlMask } = parseFilename(broker.file)
 		store.brokersByMethod[method] ??= {}
 		store.brokersByMethod[method][urlMask] = broker
@@ -153,33 +158,37 @@ export const store = {
 	},
 
 	selectFile(file) {
+		store.skipNextRender = true
 		store._request(() => api.select(file), async response => {
 			const { method, urlMask } = parseFilename(file)
-			store.setBroker(await response.json())
+			store._setBroker(await response.json())
 			store.setChosenLink(method, urlMask)
 			store.renderRow(method, urlMask)
 		})
 	},
 
 	toggleStatus(method, urlMask, status) {
+		store.skipNextRender = true
 		store._request(() => api.toggleStatus(method, urlMask, status), async response => {
-			store.setBroker(await response.json())
+			store._setBroker(await response.json())
 			store.setChosenLink(method, urlMask)
 			store.renderRow(method, urlMask)
 		})
 	},
 
 	setProxied(method, urlMask, checked) {
+		store.skipNextRender = true
 		store._request(() => api.setRouteIsProxied(method, urlMask, checked), async response => {
-			store.setBroker(await response.json())
+			store._setBroker(await response.json())
 			store.setChosenLink(method, urlMask)
 			store.renderRow(method, urlMask)
 		})
 	},
 
 	setDelayed(method, urlMask, checked) {
+		store.skipNextRender = true
 		store._request(() => api.setRouteIsDelayed(method, urlMask, checked), async response => {
-			store.setBroker(await response.json())
+			store._setBroker(await response.json())
 		})
 	}
 }

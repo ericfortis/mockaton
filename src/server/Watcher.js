@@ -12,24 +12,22 @@ let mocksWatcher = null
 
 
 /**
- * ARR Event = Add, Remove, or Rename Mock
- *
  * The emitter is debounced so it handles e.g. bulk deletes,
  * and also renames, which are two events (delete + add).
  */
-const uiSyncVersion = new class extends EventEmitter {
+export const uiSyncVersion = new class extends EventEmitter {
 	version = 0
 
 	increment = /** @type {function} */ this.#debounce(() => {
 		this.version++
-		super.emit('ARR')
+		super.emit('INC')
 	})
 
 	subscribe(listener) {
-		this.on('ARR', listener)
+		this.on('INC', listener)
 	}
 	unsubscribe(listener) {
-		this.removeListener('ARR', listener)
+		this.removeListener('INC', listener)
 	}
 
 	#debounce(fn) { // TESTME 
@@ -39,11 +37,6 @@ const uiSyncVersion = new class extends EventEmitter {
 			timer = setTimeout(fn, config.watcherDebounceMs)
 		}
 	}
-}
-
-
-export function notifyARR() {
-	uiSyncVersion.increment()
 }
 
 
@@ -69,8 +62,12 @@ export function watchMocksDir() {
 	})
 }
 
+export function stopMocksDirWatcher() {
+	mocksWatcher?.close()
+	mocksWatcher = null
+}
 
-/** Realtime notify ARR Events */
+
 export function sseClientSyncVersion(req, response) {
 	response.writeHead(200, {
 		'Content-Type': 'text/event-stream',
@@ -99,11 +96,3 @@ export function sseClientSyncVersion(req, response) {
 }
 
 
-export function startWatchers() {
-	watchMocksDir()
-}
-
-export function stopWatchers() {
-	mocksWatcher?.close()
-	mocksWatcher = null
-}

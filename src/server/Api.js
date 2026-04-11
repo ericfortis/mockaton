@@ -5,24 +5,18 @@
 
 import { join } from 'node:path'
 
-import {
-	sseClientHotReload,
-	DASHBOARD_ASSETS,
-	CLIENT_DIR
-} from './WatcherDevClient.js'
-import { startWatchers, stopWatchers, sseClientSyncVersion, notifyARR } from './Watcher.js'
-
 import pkgJSON from '../../package.json' with { type: 'json' }
+
+import { sseClientHotReload, DASHBOARD_ASSETS, CLIENT_DIR } from './WatcherDevClient.js'
+import { stopMocksDirWatcher, sseClientSyncVersion, uiSyncVersion, watchMocksDir } from './Watcher.js'
 
 import { API } from '../client/ApiConstants.js'
 import { IndexHtml, CSP } from '../client/IndexHtml.js'
 
 import { cookie } from './cookie.js'
 import { config, ConfigValidator } from './config.js'
-
-import { write, rm, isFile, resolveIn } from './utils/fs.js'
-
 import * as mockBrokersCollection from './mockBrokersCollection.js'
+import { write, rm, isFile, resolveIn } from './utils/fs.js'
 
 
 export const apiGetReqs = new Map([
@@ -95,6 +89,7 @@ function getState(_, response) {
 function reset(_, response) {
 	mockBrokersCollection.init()
 	response.ok()
+	uiSyncVersion.increment()
 }
 
 
@@ -106,21 +101,7 @@ async function setCorsAllowed(req, response) {
 	else {
 		config.corsAllowed = corsAllowed
 		response.ok()
-	}
-}
-
-
-async function setWatchMocks(req, response) {
-	const enabled = await req.json()
-
-	if (typeof enabled !== 'boolean')
-		response.unprocessable(`Expected boolean for "watchMocks"`)
-	else {
-		if (enabled)
-			startWatchers()
-		else
-			stopWatchers()
-		response.ok()
+		uiSyncVersion.increment()
 	}
 }
 
@@ -132,7 +113,9 @@ async function setGlobalDelay(req, response) {
 		response.unprocessable(`Expected non-negative integer for "delay"`)
 	else {
 		config.delay = delay
+		uiSyncVersion.increment()
 		response.ok()
+		uiSyncVersion.increment()
 	}
 }
 
@@ -144,6 +127,7 @@ async function setGlobalDelayJitter(req, response) {
 	else {
 		config.delayJitter = jitter
 		response.ok()
+		uiSyncVersion.increment()
 	}
 }
 
@@ -154,8 +138,10 @@ async function selectCookie(req, response) {
 	const error = cookie.setCurrent(cookieKey)
 	if (error)
 		response.unprocessable(error?.message || error)
-	else
+	else {
 		response.json(cookie.list())
+		uiSyncVersion.increment()
+	}
 }
 
 
@@ -167,6 +153,7 @@ async function setProxyFallback(req, response) {
 	else {
 		config.proxyFallback = fallback
 		response.ok()
+		uiSyncVersion.increment()
 	}
 }
 
@@ -178,6 +165,7 @@ async function setCollectProxied(req, response) {
 	else {
 		config.collectProxied = collectProxied
 		response.ok()
+		uiSyncVersion.increment()
 	}
 }
 
@@ -188,6 +176,7 @@ async function bulkUpdateBrokersByCommentTag(req, response) {
 
 	mockBrokersCollection.setMocksMatchingComment(comment)
 	response.ok()
+	uiSyncVersion.increment()
 }
 
 
@@ -200,6 +189,7 @@ async function selectMock(req, response) {
 	else {
 		broker.selectFile(file)
 		response.json(broker)
+		uiSyncVersion.increment()
 	}
 }
 
@@ -213,6 +203,7 @@ async function toggleRouteStatus(req, response) {
 	else {
 		broker.toggleStatus(status)
 		response.json(broker)
+		uiSyncVersion.increment()
 	}
 }
 
@@ -228,6 +219,7 @@ async function setRouteIsDelayed(req, response) {
 	else {
 		broker.setDelayed(delayed)
 		response.json(broker)
+		uiSyncVersion.increment()	
 	}
 }
 
@@ -245,6 +237,7 @@ async function setRouteIsProxied(req, response) {
 	else {
 		broker.setProxied(proxied)
 		response.json(broker)
+		uiSyncVersion.increment()
 	}
 }
 
@@ -263,7 +256,7 @@ async function writeMock(req, response) {
 
 	if (!config.watcherEnabled) {
 		mockBrokersCollection.registerMock(file, true)
-		notifyARR()
+		uiSyncVersion.increment()
 	}
 	response.ok()
 }
@@ -286,10 +279,24 @@ async function deleteMock(req, response) {
 
 	if (!config.watcherEnabled) {
 		mockBrokersCollection.unregisterMock(file)
-		notifyARR()
+		uiSyncVersion.increment()
 	}
 	response.ok()
 }
 
 
+
+async function setWatchMocks(req, response) {
+	const enabled = await req.json()
+
+	if (typeof enabled !== 'boolean')
+		response.unprocessable(`Expected boolean for "watchMocks"`)
+	else {
+		if (enabled)
+			watchMocksDir()
+		else
+			stopMocksDirWatcher()
+		response.ok()
+	}
+}
 

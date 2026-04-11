@@ -489,7 +489,7 @@
 		"/mockaton/sync-version": {
 			"get": {
 				"summary": "Get sync version for long‑polling updates",
-				"description": "A counter that’s incremented when a new mock is added, removed, or renamed.",
+				"description": "A counter that’s incremented when a new mock is added, removed, or renamed. Also, when the internal state changes, e.g., when changing the mock file for a route.",
 				"x-js-client-example": "await mockaton.getSyncVersion()",
 				"parameters": [
 					{

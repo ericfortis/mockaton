@@ -42,6 +42,11 @@ const uiSyncVersion = new class extends EventEmitter {
 }
 
 
+export function notifyARR() {
+	uiSyncVersion.increment()
+}
+
+
 export function watchMocksDir() {
 	const dir = config.mocksDir
 	mocksWatcher = mocksWatcher || watch(dir, { recursive: true, persistent: false }, (_, file) => {

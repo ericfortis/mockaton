@@ -7,7 +7,7 @@ import { mkdtempSync } from 'node:fs'
 import { randomUUID } from 'node:crypto'
 import { equal, deepEqual, match } from 'node:assert/strict'
 import { describe, test, before, beforeEach, after } from 'node:test'
-import { writeFile, unlink, mkdir, readFile, rename, readdir } from 'node:fs/promises'
+import { unlink, mkdir, readFile, rename, readdir, writeFile } from 'node:fs/promises'
 
 import { mimeFor } from './utils/mime.js'
 import { parseFilename } from '../client/Filename.js'
@@ -26,8 +26,8 @@ const proc = spawn(join(import.meta.dirname, 'cli.js'), [
 	'--no-open'
 ])
 
-proc.stdout.on('data', data => { stdout.push(data.toString()) })
-proc.stderr.on('data', data => { stderr.push(data.toString()) })
+proc.stdout.on('data', data => stdout.push(data.toString()))
+proc.stderr.on('data', data => stderr.push(data.toString()))
 
 const serverAddr = await new Promise((resolve, reject) => {
 	proc.stdout.once('data', () => {
@@ -43,9 +43,8 @@ after(() => proc.kill('SIGUSR2'))
 const rmFromMocksDir = f => unlink(join(mocksDir, f))
 const listFromMocksDir = d => readdir(join(mocksDir, d))
 const readFromMocksDir = f => readFile(join(mocksDir, f), 'utf8')
-
+const writeInMocksDir = (f, data) => writeFile(join(mocksDir, f), data)
 const makeDirInMocks = dir => mkdir(join(mocksDir, dir), { recursive: true })
-
 const renameInMocksDir = (src, target) => rename(join(mocksDir, src), join(mocksDir, target))
 
 
@@ -71,33 +70,8 @@ class BaseFixture {
 		this.file = file
 		this.body = body || `Body for ${file}`
 	}
-
-	async #nextMacroTask() {
-		await new Promise(resolve => setTimeout(resolve, 0))
-	}
-
-	async register() {
-		const nextVerPromise = resolveOnNextSyncVersion()
-		await this.#nextMacroTask()
-		await this.write()
-		await nextVerPromise
-	}
-
-	async unregister() {
-		const nextVerPromise = resolveOnNextSyncVersion()
-		await this.#nextMacroTask()
-		await this.unlink()
-		await nextVerPromise
-	}
-
-	async write() { await writeFile(this.#path(), this.body, 'utf8') }
-	async unlink() { await unlink(this.#path()) }
-	#path() { return join(this.dir, this.file) }
-
-	async sync() {
-		await this.write()
-		await api.reset()
-	}
+	write() { return api.writeMock(this.file, this.body) }
+	delete() { return api.deleteMock(this.file) }
 
 	request(options = {}) {
 		options.method ??= this.method
@@ -135,10 +109,10 @@ class FixtureStatic extends BaseFixture {
 describe('Windows', () => {
 	test('path separators are normalized to forward slashes', async () => {
 		const fx = new Fixture('win-paths.GET.200.json')
-		await fx.sync()
+		await fx.write()
 		const b = await fx.fetchBroker()
 		equal(b.file, fx.file)
-		await fx.unlink()
+		await fx.delete()
 	})
 })
 
@@ -163,22 +137,22 @@ describe('Rejects malicious URLs', () => {
 
 describe('Filename Convention', () => {
 	test('registers invalid filenames as GET 200', async () => {
+		await api.reset()
 		const fx0 = new Fixture('bar.GET._INVALID_STATUS_.json')
 		const fx1 = new Fixture('foo._INVALID_METHOD_.202.json')
 		const fx2 = new Fixture('missing-method-and-status.json')
 		await fx0.write()
 		await fx1.write()
 		await fx2.write()
-		await api.reset()
 
 		const s = await fetchState()
 		equal(s.brokersByMethod.GET['/bar.GET._INVALID_STATUS_.json'].file, 'bar.GET._INVALID_STATUS_.json')
 		equal(s.brokersByMethod.GET['/foo._INVALID_METHOD_.202.json'].file, 'foo._INVALID_METHOD_.202.json')
 		equal(s.brokersByMethod.GET['/missing-method-and-status.json'].file, 'missing-method-and-status.json')
 
-		await fx0.unlink()
-		await fx1.unlink()
-		await fx2.unlink()
+		await fx0.delete()
+		await fx1.delete()
+		await fx2.delete()
 	})
 
 	test('body parser rejects invalid JSON in API requests', async () => {
@@ -232,7 +206,7 @@ describe('CORS', () => {
 
 	test('responds', async () => {
 		const fx = new Fixture('cors-response.GET.200.json')
-		await fx.sync()
+		await fx.write()
 		const r = await fx.request({
 			headers: {
 				'origin': CONFIG.corsOrigins[0]
@@ -241,7 +215,7 @@ describe('CORS', () => {
 		equal(r.status, 200)
 		equal(r.headers.get('access-control-allow-origin'), CONFIG.corsOrigins[0])
 		equal(r.headers.get('access-control-expose-headers'), 'Content-Encoding')
-		await fx.unlink()
+		await fx.delete()
 	})
 })
 
@@ -278,7 +252,7 @@ describe('Cookie', () => {
 
 	test('updates selected cookie', async () => {
 		const fx = new Fixture('update-cookie.GET.200.json')
-		await fx.sync()
+		await fx.write()
 		const resA = await fx.request()
 		equal(resA.headers.get('set-cookie'), CONFIG.cookies.userA)
 
@@ -290,7 +264,7 @@ describe('Cookie', () => {
 
 		const resB = await fx.request()
 		equal(resB.headers.get('set-cookie'), CONFIG.cookies.userB)
-		await fx.unlink()
+		await fx.delete()
 	})
 })
 
@@ -324,7 +298,7 @@ describe('Delay', () => {
 
 	test('updates route delay', async () => {
 		const fx = new Fixture('route-delay.GET.200.json')
-		await fx.sync()
+		await fx.write()
 		const DELAY = 100
 		await api.setGlobalDelay(DELAY)
 		await api.setRouteIsDelayed(fx.method, fx.urlMask, true)
@@ -332,7 +306,7 @@ describe('Delay', () => {
 		const r = await fx.request()
 		equal(await r.text(), fx.body)
 		equal(performance.now() - t0 > DELAY, true)
-		await fx.unlink()
+		await fx.delete()
 	})
 
 	describe('Set Route is Delayed', () => {
@@ -344,18 +318,18 @@ describe('Delay', () => {
 
 		test('422 for invalid delayed value', async () => {
 			const fx = new Fixture('set-route-delay.GET.200.json')
-			await fx.sync()
+			await fx.write()
 			const r = await api.setRouteIsDelayed(fx.method, fx.urlMask, 'not-a-boolean')
 			equal(await r.text(), 'Expected boolean for "delayed"')
-			await fx.unlink()
+			await fx.delete()
 		})
 
 		test('200', async () => {
 			const fx = new Fixture('set-route-delay.GET.200.json')
-			await fx.sync()
+			await fx.write()
 			const r = await api.setRouteIsDelayed(fx.method, fx.urlMask, true)
 			equal((await r.json()).delayed, true)
-			await fx.unlink()
+			await fx.delete()
 		})
 	})
 })
@@ -451,11 +425,11 @@ describe('Proxy Fallback', () => {
 	describe('Set Route is Proxied', () => {
 		const fx = new Fixture('route-is-proxied.GET.200.json')
 		beforeEach(async () => {
-			await fx.sync()
+			await fx.write()
 			await api.setProxyFallback('')
 		})
 		after(async () => {
-			await fx.unlink()
+			await fx.delete()
 		})
 
 		test('422 for non-existing route', async () => {
@@ -495,7 +469,7 @@ describe('Proxy Fallback', () => {
 
 		test('unsets autoStatus', async () => {
 			const fx = new Fixture('unset-500-on-proxy.GET.200.txt')
-			await fx.sync()
+			await fx.write()
 			await api.setProxyFallback('https://example.test')
 
 			const r0 = await api.toggleStatus(fx.method, fx.urlMask, 500)
@@ -508,14 +482,14 @@ describe('Proxy Fallback', () => {
 			equal(b1.proxied, true)
 			equal(b1.autoStatus, 0)
 
-			await fx.unlink()
+			await fx.delete()
 			await api.setProxyFallback('')
 		})
 	})
 
 	test('updating selected mock resets proxied flag', async () => {
 		const fx = new Fixture('select-resets-proxied.GET.200.txt')
-		await fx.sync()
+		await fx.write()
 		await api.setProxyFallback('https://example.test')
 		const r0 = await api.setRouteIsProxied(fx.method, fx.urlMask, true)
 		equal((await r0.json()).proxied, true)
@@ -524,7 +498,7 @@ describe('Proxy Fallback', () => {
 		equal((await r1.json()).proxied, false)
 
 		await api.setProxyFallback('')
-		await fx.unlink()
+		await fx.delete()
 	})
 })
 
@@ -543,12 +517,10 @@ describe('404', () => {
 	test('404s ignored files', async () => {
 		const fx = new Fixture('ignored.GET.200.json~')
 		await fx.write()
-		await api.reset()
 		const r = await fx.request()
 		equal(r.status, 404)
-		await fx.unlink()
+		await fx.delete()
 	})
-
 })
 
 
@@ -561,8 +533,8 @@ describe('Default Mock', () => {
 		await api.reset()
 	})
 	after(async () => {
-		await fxA.unlink()
-		await fxB.unlink()
+		await fxA.delete()
+		await fxB.delete()
 	})
 
 	test('sorts mocks list with the user specified default first for dashboard display', async () => {
@@ -585,22 +557,22 @@ describe('Dynamic Mocks', () => {
 		const fx = new Fixture(
 			'js-object.GET.200.js',
 			'export default { FROM_JS: true }')
-		await fx.sync()
+		await fx.write()
 		const r = await fx.request()
 		equal(r.headers.get('content-type'), mimeFor('.json'))
 		deepEqual(await r.json(), { FROM_JS: true })
-		await fx.unlink()
+		await fx.delete()
 	})
 
 	test('TS array is sent as JSON', async () => {
 		const fx = new Fixture(
 			'js-object.GET.200.ts',
 			'export default ["from ts"]')
-		await fx.sync()
+		await fx.write()
 		const r = await fx.request()
 		equal(r.headers.get('content-type'), mimeFor('.json'))
 		deepEqual(await r.json(), ['from ts'])
-		await fx.unlink()
+		await fx.delete()
 	})
 })
 
@@ -611,14 +583,14 @@ describe('Dynamic Function Mocks', () => {
 			export default function (req, response) {
   			return Buffer.from('A')
 			}`)
-		await fx.sync()
+		await fx.write()
 		const r = await fx.request()
 		equal(r.status, 200)
 		equal(r.headers.get('content-length'), '1')
 		equal(r.headers.get('content-type'), mimeFor('.json'))
 		equal(r.headers.get('set-cookie'), CONFIG.cookies.userA)
 		equal(await r.text(), 'A')
-		await fx.unlink()
+		await fx.delete()
 	})
 
 	test('can override filename convention (also supports TS)', async () => {
@@ -629,14 +601,14 @@ describe('Dynamic Function Mocks', () => {
 			  response.setHeader('set-cookie', 'custom-cookie')
 			  return new Uint8Array([65, 65])
 			}`)
-		await fx.sync()
+		await fx.write()
 		const r = await fx.request({ method: 'POST' })
 		equal(r.status, 201)
 		equal(r.headers.get('content-length'), String(2))
 		equal(r.headers.get('content-type'), 'custom-mime')
 		equal(r.headers.get('set-cookie'), 'custom-cookie')
 		equal(await r.text(), 'AA')
-		await fx.unlink()
+		await fx.delete()
 	})
 })
 
@@ -645,9 +617,9 @@ describe('Static Files', () => {
 	const fxsIndex = new FixtureStatic('index.html', '<h1>Index</h1>')
 	const fxsAsset = new FixtureStatic('asset-script.js', 'const a = 1')
 	before(async () => {
+		await api.reset()
 		await fxsIndex.write()
 		await fxsAsset.write()
-		await api.reset()
 	})
 
 	describe('Static File Serving', () => {
@@ -690,9 +662,9 @@ describe('Static Files', () => {
 	})
 
 	test('unregisters static route', async () => {
-		await fxsIndex.unlink()
-		await fxsAsset.unlink()
 		await api.reset()
+		await fxsIndex.delete()
+		await fxsAsset.delete()
 		const s = await fetchState()
 		equal(s.brokersByMethod.GET?.[fxsIndex.urlMask], undefined)
 		equal(s.brokersByMethod.GET?.[fxsAsset.urlMask], undefined)
@@ -703,7 +675,7 @@ describe('Static Files', () => {
 describe('Auto Status', () => {
 	test('toggling ON 500 on a route without 500 auto-generates one', async () => {
 		const fx = new Fixture('toggling-500-without-500.GET.200.json')
-		await fx.sync()
+		await fx.write()
 		equal((await fx.request()).status, fx.status)
 
 		const bp0 = await api.toggleStatus(fx.method, fx.urlMask, 500)
@@ -718,11 +690,11 @@ describe('Auto Status', () => {
 	})
 
 	test('toggling ON 500 picks existing 500 and toggling OFF selects default', async () => {
+		await api.reset()
 		const fx200 = new Fixture('reg-error.GET.200.txt')
 		const fx500 = new Fixture('reg-error.GET.500.txt')
 		await fx200.write()
 		await fx500.write()
-		await api.reset()
 
 		const bp0 = await api.toggleStatus(fx200.method, fx200.urlMask, 500)
 		const b0 = await bp0.json()
@@ -736,24 +708,24 @@ describe('Auto Status', () => {
 		equal(b1.status, 200)
 		equal(await (await fx200.request()).text(), fx200.body)
 
-		await fx200.unlink()
-		await fx500.unlink()
+		await fx200.delete()
+		await fx500.delete()
 	})
 
 	test('toggling ON 500 unsets `proxied` flag', async () => {
 		const fx = new Fixture('proxied-to-500.GET.200.txt')
-		await fx.sync()
+		await fx.write()
 		await api.setProxyFallback('https://example.test')
 		await api.setRouteIsProxied(fx.method, fx.urlMask, true)
 		await api.toggleStatus(fx.method, fx.urlMask, 500)
 		equal((await fx.fetchBroker()).proxied, false)
-		await fx.unlink()
+		await fx.delete()
 		await api.setProxyFallback('')
 	})
 
 	test('toggling ON 404 for static routes', async () => {
 		const fx = new FixtureStatic('static-404.txt')
-		await fx.sync()
+		await fx.write()
 		equal((await fx.request()).status, 200)
 
 		const bp0 = await api.toggleStatus(fx.method, fx.urlMask, 404)
@@ -766,7 +738,7 @@ describe('Auto Status', () => {
 		equal((await r1.json()).autoStatus, 0)
 		equal((await fx.request()).status, 200)
 
-		await fx.unlink()
+		await fx.delete()
 	})
 })
 
@@ -774,10 +746,10 @@ describe('Auto Status', () => {
 describe('Index-like routes', () => {
 	test('resolves dirs to the file without urlMask', async () => {
 		const fx = new Fixture('.GET.200.json')
-		await fx.sync()
+		await fx.write()
 		const r = await request('/')
 		equal(await r.text(), fx.body)
-		await fx.unlink()
+		await fx.delete()
 	})
 })
 
@@ -785,20 +757,20 @@ describe('Index-like routes', () => {
 describe('MIME', () => {
 	test('derives content-type from known mime', async () => {
 		const fx = new Fixture('tmp.GET.200.json')
-		await fx.sync()
+		await fx.write()
 		const r = await fx.request()
 		equal(r.headers.get('content-type'), 'application/json')
-		await fx.unlink()
+		await fx.delete()
 	})
 
 	test('derives content-type from custom mime', async () => {
 		const ext = Object.keys(CONFIG.extraMimes)[0]
 		const mime = Object.values(CONFIG.extraMimes)[0]
 		const fx = new Fixture(`tmp.GET.200.${ext}`)
-		await fx.sync()
+		await fx.write()
 		const r = await fx.request()
 		equal(r.headers.get('content-type'), mime)
-		await fx.unlink()
+		await fx.delete()
 	})
 })
 
@@ -819,8 +791,8 @@ describe('Headers', () => {
 
 describe('Method and Status', () => {
 	const fx = new Fixture('uncommon-method.ACL.201.txt')
-	before(async () => await fx.sync())
-	after(async () => await fx.unlink())
+	before(async () => await fx.write())
+	after(async () => await fx.delete())
 
 	test('dispatches the response status', async () => {
 		const r = await fx.request()
@@ -846,11 +818,10 @@ describe('Select', () => {
 	before(async () => {
 		await fx.write()
 		await fxAlt.write()
-		await api.reset()
 	})
 	after(async () => {
-		await fx.unlink()
-		await fxAlt.unlink()
+		await fx.delete()
+		await fxAlt.delete()
 	})
 
 	test('422 when updating non-existing mock', async () => {
@@ -887,13 +858,12 @@ describe('Bulk Select', () => {
 		await fxIotaB.write()
 		await fxKappaA.write()
 		await fxKappaB.write()
-		await api.reset()
 	})
 	after(async () => {
-		await fxIota.unlink()
-		await fxIotaB.unlink()
-		await fxKappaA.unlink()
-		await fxKappaB.unlink()
+		await fxIota.delete()
+		await fxIotaB.delete()
+		await fxKappaA.delete()
+		await fxKappaB.delete()
 	})
 
 	test('extracts all comments without duplicates', async () =>
@@ -919,9 +889,9 @@ describe('Bulk Select', () => {
 describe('Decoding URLs', () => {
 	test('allows dots, spaces, amp, etc.', async () => {
 		const fx = new Fixture('dot.in.path and amp & and colon:.GET.200.txt')
-		await fx.sync()
+		await fx.write()
 		equal(await (await fx.request()).text(), fx.body)
-		await fx.unlink()
+		await fx.delete()
 	})
 })
 
@@ -937,13 +907,12 @@ describe('Dynamic Params', () => {
 		await fx1.write()
 		await fx2.write()
 		await fx3.write()
-		await api.reset()
 	})
 	after(async () => {
-		await fx0.unlink()
-		await fx1.unlink()
-		await fx2.unlink()
-		await fx3.unlink()
+		await fx0.delete()
+		await fx1.delete()
+		await fx2.delete()
+		await fx3.delete()
 	})
 
 	test('variable at end', async () => {
@@ -978,8 +947,8 @@ describe('Query String', () => {
 		await api.reset()
 	})
 	after(async () => {
-		await fx0.unlink()
-		await fx1.unlink()
+		await fx0.delete()
+		await fx1.delete()
 	})
 
 	test('multiple params', async () => {
@@ -1003,12 +972,54 @@ describe('Query String', () => {
 
 test('head for get. returns the headers without body only for GETs requested as HEAD', async () => {
 	const fx = new Fixture('head-get.GET.200.json')
-	await fx.sync()
+	await fx.write()
 	const r = await fx.request({ method: 'HEAD' })
 	equal(r.status, 200)
 	equal(r.headers.get('content-length'), String(Buffer.byteLength(fx.body)))
 	equal(await r.text(), '')
-	await fx.unlink()
+	await fx.delete()
+})
+
+
+describe('Write and Delete Mock', () => {
+	test('guards mocksDir', async () => {
+		const r = await api.writeMock('../outside.txt', '')
+		equal(r.status, 403)
+
+		const r2 = await api.deleteMock('../outside.txt')
+		equal(r2.status, 403)
+	})
+
+	test('write and delete (with watcher)', async () => {
+		await api.setWatchMocks(true)
+		const file = 'new-mock.GET.200.txt'
+
+		const nextVerPromise = resolveOnNextSyncVersion()
+		const res = await api.writeMock(file, '')
+		equal(res.status, 200)
+		await nextVerPromise
+		const r = await request('/new-mock')
+		equal(r.status, 200)
+
+		const nextVerPromise2 = resolveOnNextSyncVersion()
+		await api.deleteMock(file)
+		await nextVerPromise2
+		const r2 = await request('/new-mock')
+		equal(r2.status, 404)
+	})
+
+	test('write and delete (without watcher)', async () => {
+		await api.setWatchMocks(false)
+		const file = 'manual-mock.GET.200.txt'
+
+		await api.writeMock(file, '')
+		const r = await request('/manual-mock')
+		equal(r.status, 200)
+
+		await api.deleteMock(file)
+		const r2 = await request('/manual-mock')
+		equal(r2.status, 404)
+	})
 })
 
 
@@ -1027,76 +1038,102 @@ describe('Watch mocks API toggler', () => {
 
 
 describe('Registering Mocks', () => {
-	const fxA = new Fixture('register(default).GET.200.json')
-	const fxB = new Fixture('register(alt).GET.200.json')
+	// simulates user interacting with the file-system directly
+	class FixtureExternal extends Fixture {
+		constructor(props) {
+			super(props)
+		}
+
+		async writeExternally() {
+			const nextVerPromise = resolveOnNextSyncVersion()
+			await sleep(0) // next macro task
+			await this.write()
+			await nextVerPromise
+		}
+
+		async deleteExternally() {
+			const nextVerPromise = resolveOnNextSyncVersion()
+			await sleep(0)
+			await this.delete()
+			await nextVerPromise
+		}
+	}
+
+	function sleep(ms) {
+		return new Promise(resolve => setTimeout(resolve, ms))
+	}
+
+
+	const fxA = new FixtureExternal('register(default).GET.200.json')
+	const fxB = new FixtureExternal('register(alt).GET.200.json')
 
 	test('when watcher is off, newly added mocks do not get registered', async () => {
 		await api.setWatchMocks(false)
-		const fx = new Fixture('non-auto-registered-file.GET.200.json')
-		await fx.write()
-		await sleep()
+		const fx = new FixtureExternal('non-auto-registered-file.GET.200.json')
+		await writeInMocksDir(fx.file, fx.body)
+		await sleep(100)
 		equal(await fx.fetchBroker(), undefined)
-		await fx.unlink()
+		await rmFromMocksDir(fx.file)
 	})
 
 	test('register', async () => {
 		await api.setWatchMocks(true)
-		await fxA.register()
-		await fxB.register()
+		await fxA.writeExternally()
+		await fxB.writeExternally()
 		const b = await fxA.fetchBroker()
 		deepEqual(b.mocks, [fxA.file, fxB.file])
 	})
 
 	test('unregistering selected ensures a mock is selected', async () => {
 		await api.select(fxA.file)
-		await fxA.unregister()
+		await fxA.deleteExternally()
 		const b = await fxA.fetchBroker()
 		deepEqual(b.mocks, [fxB.file])
 	})
 
 	test('unregistering the last mock removes broker', async () => {
-		await fxB.unregister()
+		await fxB.deleteExternally()
 		const b = await fxB.fetchBroker()
 		equal(b, undefined)
 	})
 
 	test('registering a 500 unsets autoStatus', async () => {
-		const fx200 = new Fixture('reg-error.GET.200.txt')
-		const fx500 = new Fixture('reg-error.GET.500.txt')
-		await fx200.register()
+		const fx200 = new FixtureExternal('reg-error.GET.200.txt')
+		const fx500 = new FixtureExternal('reg-error.GET.500.txt')
+		await fx200.writeExternally()
 		await api.toggleStatus(fx200.method, fx200.urlMask, 500)
 		const b0 = await fx200.fetchBroker()
 		equal(b0.autoStatus, 500)
-		await fx500.register()
+		await fx500.writeExternally()
 		const b1 = await fx200.fetchBroker()
 		equal(b1.autoStatus, 0)
 		deepEqual(b1.mocks, [
 			fx200.file,
 			fx500.file
 		])
-		await fx200.unregister()
-		await fx500.unregister()
+		await fx200.deleteExternally()
+		await fx500.deleteExternally()
 	})
 
 	describe('getSyncVersion', () => {
-		const fx0 = new Fixture('reg0/runtime0.GET.200.txt')
+		const fx0 = new FixtureExternal('reg0/runtime0.GET.200.txt')
 		let version
 		before(async () => {
 			await makeDirInMocks('reg0')
-			await fx0.sync()
+			await writeInMocksDir(fx0.file, fx0.body)
 			version = await resolveOnNextSyncVersion(-1)
 		})
 
-		const fx = new Fixture('runtime1.GET.200.txt')
+		const fx = new FixtureExternal('runtime1.GET.200.txt')
 		test('responds when a file is added', async () => {
 			const prom = resolveOnNextSyncVersion(version)
-			await fx.write()
+			await writeInMocksDir(fx.file, fx.body)
 			equal(await prom, version + 1)
 		})
 
 		test('responds when a file is deleted', async () => {
 			const prom = resolveOnNextSyncVersion(version + 1)
-			await fx.unlink()
+			await rmFromMocksDir(fx.file)
 			equal(await prom, version + 2)
 		})
 
@@ -1110,13 +1147,6 @@ describe('Registering Mocks', () => {
 		})
 	})
 })
-
-
-
-
-function sleep(ms = 100) {
-	return new Promise(resolve => setTimeout(resolve, ms))
-}
 
 
 /** In Node, there's no EventSource, so we work around it like this.
@@ -1143,3 +1173,4 @@ async function resolveOnNextSyncVersion(currSyncVer = undefined) {
 				}
 	}
 }
+

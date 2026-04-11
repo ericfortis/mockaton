@@ -10,6 +10,7 @@ export default {
 	logLevel: 'verbose',
 	corsOrigins: ['https://example.test'],
 	corsExposedHeaders: ['Content-Encoding'],
+	readOnly: false,
 	watcherEnabled: false, // But we enable it at run-time
 	watcherDebounceMs: 0
 }

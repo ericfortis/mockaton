@@ -10,7 +10,7 @@ import {
 	DASHBOARD_ASSETS,
 	CLIENT_DIR
 } from './WatcherDevClient.js'
-import { startWatchers, stopWatchers, sseClientSyncVersion } from './Watcher.js'
+import { startWatchers, stopWatchers, sseClientSyncVersion, notifyARR } from './Watcher.js'
 
 import pkgJSON from '../../package.json' with { type: 'json' }
 
@@ -19,6 +19,8 @@ import { IndexHtml, CSP } from '../client/IndexHtml.js'
 
 import { cookie } from './cookie.js'
 import { config, ConfigValidator } from './config.js'
+
+import { write, rm, isFile, resolveIn } from './utils/fs.js'
 
 import * as mockBrokersCollection from './mockBrokersCollection.js'
 
@@ -52,6 +54,8 @@ export const apiPatchReqs = new Map([
 	[API.proxied, setRouteIsProxied],
 	[API.toggleStatus, toggleRouteStatus],
 
+	[API.writeMock, writeMock],
+	[API.deleteMock, deleteMock],
 	[API.watchMocks, setWatchMocks]
 ])
 
@@ -80,6 +84,7 @@ function getState(_, response) {
 
 		proxyFallback: config.proxyFallback,
 		collectProxied: config.collectProxied,
+		readOnly: config.readOnly,
 		corsAllowed: config.corsAllowed
 	})
 }
@@ -241,6 +246,49 @@ async function setRouteIsProxied(req, response) {
 		broker.setProxied(proxied)
 		response.json(broker)
 	}
+}
+
+
+async function writeMock(req, response) {
+	if (config.readOnly)
+		return response.forbidden()
+
+	const [file, content] = await req.json()
+	const path = await resolveIn(config.mocksDir, file)
+
+	if (!path)
+		return response.forbidden()
+
+	await write(path, content)
+
+	if (!config.watcherEnabled) {
+		mockBrokersCollection.registerMock(file, true)
+		notifyARR()
+	}
+	response.ok()
+}
+
+
+async function deleteMock(req, response) {
+	if (config.readOnly)
+		return response.forbidden()
+
+	const file = await req.json()
+	const path = await resolveIn(config.mocksDir, file)
+
+	if (!path)
+		return response.forbidden()
+
+	if (!isFile(path))
+		return response.unprocessable(`Missing Mock: ${file}`)
+
+	await rm(path)
+
+	if (!config.watcherEnabled) {
+		mockBrokersCollection.unregisterMock(file)
+		notifyARR()
+	}
+	response.ok()
 }
 
 

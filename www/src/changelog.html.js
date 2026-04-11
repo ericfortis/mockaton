@@ -11,6 +11,7 @@ export default (url) => htmlTemplate({
 		<h1 id="changelog">Changelog</h1>
 		<br />
 
+		<p>13.1.0 new apis: <code>writeMock</code>, <code>deleteMock</code></p>
 		<p><strong>13.0.0 breaking change.</strong></p>
 		<ul>
 			<li><code>config.staticMocks</code> has been removed in favor of allowing mocks without the filename convention within <code>config.mocksDir</code>.

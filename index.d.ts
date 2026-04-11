@@ -14,6 +14,7 @@ export interface Config {
 	ignore?: RegExp
 	watcherEnabled?: boolean
 	watcherDebounceMs?: number
+	readOnly?: boolean
 
 	host?: string,
 	port?: number
@@ -95,6 +96,8 @@ export interface State {
 
 	collectProxied: boolean
 	proxyFallback: string
+
+	readOnly: boolean
 
 	corsAllowed?: boolean
 }

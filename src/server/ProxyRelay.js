@@ -38,11 +38,11 @@ export async function proxy(req, response, delay) {
 
 	if (config.collectProxied) {
 		const ext = extFor(proxyResponse.headers.get('content-type'))
-		saveMockToDisk(req.url, req.method, proxyResponse.status, ext, body)
+		await saveMockToDisk(req.url, req.method, proxyResponse.status, ext, body)
 	}
 }
 
-function saveMockToDisk(url, method, status, ext, body) {
+async function saveMockToDisk(url, method, status, ext, body) {
 	if (config.formatCollectedJSON && ext === 'json')
 		try {
 			body = JSON.stringify(JSON.parse(body), null, '  ')
@@ -52,7 +52,7 @@ function saveMockToDisk(url, method, status, ext, body) {
 		}
 
 	try {
-		write(makeUniqueMockFilename(url, method, status, ext), body)
+		await write(makeUniqueMockFilename(url, method, status, ext), body)
 	}
 	catch (err) {
 		logger.warn('Write access denied', err)

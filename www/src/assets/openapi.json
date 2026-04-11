@@ -249,7 +249,7 @@
 					"content": {
 						"application/json": {
 							"schema": {
-								"type": "float",
+								"type": "number",
 								"description": "0 to 3 float percent",
 								"example": 0.5
 							}
@@ -403,6 +403,71 @@
 				}
 			}
 		},
+		"/mockaton/write-mock": {
+			"patch": {
+				"summary": "Write a mock file",
+				"description": "Writes a mock file to the mocks directory. Guarded by `readOnly` and `mocksDir`.",
+				"x-js-client-example": "await mockaton.writeMock('api/user/friends.GET.200.json', '{ \"friends\": [] }')",
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"type": "array",
+								"minItems": 2,
+								"maxItems": 2,
+								"prefixItems": [
+									{
+										"$ref": "#/components/schemas/Filename"
+									},
+									{
+										"type": "string",
+										"description": "File content"
+									}
+								],
+								"additionalItems": false
+							}
+						}
+					}
+				},
+				"responses": {
+					"200": {
+						"description": "OK"
+					},
+					"403": {
+						"description": "Forbidden (read-only mode or outside mocksDir)"
+					}
+				}
+			}
+		},
+		"/mockaton/delete-mock": {
+			"patch": {
+				"summary": "Delete a mock file",
+				"description": "Deletes a mock file from the mocks directory. Guarded by `readOnly` and `mocksDir`.",
+				"x-js-client-example": "await mockaton.deleteMock('api/user/friends.GET.200.json')",
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"$ref": "#/components/schemas/Filename"
+							}
+						}
+					}
+				},
+				"responses": {
+					"200": {
+						"description": "OK"
+					},
+					"403": {
+						"description": "Forbidden (read-only mode or outside mocksDir)"
+					},
+					"422": {
+						"description": "Mock file does not exist"
+					}
+				}
+			}
+		},
 		"/mockaton/state": {
 			"get": {
 				"summary": "Get complete Mockaton state",
@@ -500,6 +565,9 @@
 					"autoStatus": {
 						"type": "number"
 					},
+					"isStatic": {
+						"type": "boolean"
+					},
 					"delayed": {
 						"type": "boolean"
 					},
@@ -512,6 +580,7 @@
 					"file",
 					"status",
 					"autoStatus",
+					"isStatic",
 					"delayed",
 					"proxied"
 				]
@@ -540,11 +609,17 @@
 					"delay": {
 						"type": "number"
 					},
+					"delayJitter": {
+						"type": "number"
+					},
 					"collectProxied": {
 						"type": "boolean"
 					},
 					"proxyFallback": {
 						"type": "string"
+					},
+					"readOnly": {
+						"type": "boolean"
 					},
 					"corsAllowed": {
 						"type": "boolean"
@@ -555,8 +630,11 @@
 					"cookies",
 					"comments",
 					"delay",
+					"delayJitter",
 					"collectProxied",
-					"proxyFallback"
+					"proxyFallback",
+					"readOnly",
+					"corsAllowed"
 				]
 			},
 			"CookieSelectionList": {

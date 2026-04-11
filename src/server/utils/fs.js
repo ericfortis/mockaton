@@ -1,5 +1,6 @@
-import { join, dirname, sep, posix } from 'node:path'
-import { lstatSync, readdirSync, writeFileSync, mkdirSync } from 'node:fs'
+import { join, dirname, sep, posix, resolve } from 'node:path'
+import { lstatSync, readdirSync } from 'node:fs'
+import { mkdir, writeFile, unlink, realpath } from 'node:fs/promises'
 
 
 export const isFile = path => lstatSync(path, { throwIfNoEntry: false })?.isFile()
@@ -19,7 +20,27 @@ export function listFilesRecursively(dir) {
 	}
 }
 
-export function write(path, body) {
-	mkdirSync(dirname(path), { recursive: true })
-	writeFileSync(path, body)
+export async function write(path, body) {
+	await mkdir(dirname(path), { recursive: true })
+	await writeFile(path, body)
+}
+
+export async function rm(path) {
+	await unlink(path)
+}
+
+
+/** @returns {string | null} absolute path if it’s within `baseDir` */
+export async function resolveIn(baseDir, file) {
+	try {
+		const parent = await realpath(baseDir)
+		const child = resolve(parent, file)
+		return child.startsWith(parent + sep)
+			? child
+			: null
+	}
+	catch (e) {
+		console.error('DDDDDD', e)
+		return null
+	}
 }

@@ -19,6 +19,7 @@ import { jsToJsonPlugin } from './MockDispatcherPlugins.js'
 const schema = {
 	mocksDir: [resolve('mockaton-mocks'), isDirectory],
 	ignore: [/(\.DS_Store|~)$/, is(RegExp)],
+	readOnly: [true, is(Boolean)],
 	watcherEnabled: [true, is(Boolean)],
 	watcherDebounceMs: [80, ms => Number.isInteger(ms) && ms >= 0],
 

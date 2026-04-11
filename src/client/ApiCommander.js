@@ -51,6 +51,11 @@ export class Commander {
 	setRouteIsDelayed = (method, urlMask, delayed) => this.#patch(API.delay, [method, urlMask, delayed])
 
 
+	writeMock = (file, content) => this.#patch(API.writeMock, [file, content])
+
+	deleteMock = file => this.#patch(API.deleteMock, file)
+
+
 	/** @returns {JsonPromise<State>} */
 	getState = () => fetch(this.addr + API.state)
 

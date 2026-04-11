@@ -21,6 +21,8 @@ export const API = {
 	toggleStatus: MOUNT + '/toggle-status',
 	watchHotReload: MOUNT + '/watch-hot-reload',
 	watchMocks: MOUNT + '/watch-mocks',
+	writeMock: MOUNT + '/write-mock',
+	deleteMock: MOUNT + '/delete-mock',
 }
 
 export const HEADER_502 = 'Mockaton502'

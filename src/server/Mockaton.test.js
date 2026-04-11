@@ -61,29 +61,10 @@ function request(path, options = {}) {
 }
 
 
-class BaseFixture {
-	dir = ''
-	urlMask = ''
-	method = ''
-
+class Fixture {
 	constructor(file, body = '') {
 		this.file = file
 		this.body = body || `Body for ${file}`
-	}
-	write() { return api.writeMock(this.file, this.body) }
-	delete() { return api.deleteMock(this.file) }
-
-	request(options = {}) {
-		options.method ??= this.method
-		return request(this.urlMask, options)
-	}
-}
-
-
-class Fixture extends BaseFixture {
-	constructor(file, body = '') {
-		super(file, body)
-		this.dir = mocksDir
 		const t = parseFilename(file)
 		this.urlMask = t.urlMask
 		this.method = t.method
@@ -93,14 +74,12 @@ class Fixture extends BaseFixture {
 	async fetchBroker() {
 		return (await fetchState()).brokersByMethod?.[this.method]?.[this.urlMask]
 	}
-}
+	write() { return api.writeMock(this.file, this.body) }
+	delete() { return api.deleteMock(this.file) }
 
-class FixtureStatic extends BaseFixture {
-	constructor(file, body = '') {
-		super(file, body)
-		this.dir = mocksDir
-		this.urlMask = '/' + file
-		this.method = 'GET'
+	request(options = {}) {
+		options.method ??= this.method
+		return request(this.urlMask, options)
 	}
 }
 
@@ -614,8 +593,8 @@ describe('Dynamic Function Mocks', () => {
 
 
 describe('Static Files', () => {
-	const fxsIndex = new FixtureStatic('index.html', '<h1>Index</h1>')
-	const fxsAsset = new FixtureStatic('asset-script.js', 'const a = 1')
+	const fxsIndex = new Fixture('index.html', '<h1>Index</h1>')
+	const fxsAsset = new Fixture('asset-script.js', 'const a = 1')
 	before(async () => {
 		await api.reset()
 		await fxsIndex.write()
@@ -724,7 +703,7 @@ describe('Auto Status', () => {
 	})
 
 	test('toggling ON 404 for static routes', async () => {
-		const fx = new FixtureStatic('static-404.txt')
+		const fx = new Fixture('static-404.txt')
 		await fx.write()
 		equal((await fx.request()).status, 200)
 
@@ -1040,10 +1019,6 @@ describe('Watch mocks API toggler', () => {
 describe('Registering Mocks', () => {
 	// simulates user interacting with the file-system directly
 	class FixtureExternal extends Fixture {
-		constructor(props) {
-			super(props)
-		}
-
 		async writeExternally() {
 			const nextVerPromise = resolveOnNextSyncVersion()
 			await sleep(0) // next macro task
@@ -1062,7 +1037,6 @@ describe('Registering Mocks', () => {
 	function sleep(ms) {
 		return new Promise(resolve => setTimeout(resolve, ms))
 	}
-
 
 	const fxA = new FixtureExternal('register(default).GET.200.json')
 	const fxB = new FixtureExternal('register(alt).GET.200.json')
@@ -1138,9 +1112,9 @@ describe('Registering Mocks', () => {
 		})
 
 		test('responds when dir is renamed', async () => {
-			const p0 = resolveOnNextSyncVersion(version + 2)
+			const prom = resolveOnNextSyncVersion(version + 2)
 			await renameInMocksDir('reg0', 'reg1')
-			equal(await p0, version + 3)
+			equal(await prom, version + 3)
 
 			const s = await fetchState()
 			equal(s.brokersByMethod.GET['/reg1/runtime0'].file, 'reg1/runtime0.GET.200.txt')

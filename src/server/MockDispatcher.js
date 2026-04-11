@@ -53,11 +53,8 @@ export async function dispatchMock(req, response) {
 		response.setHeader('Content-Type', mime)
 		response.setHeader('Content-Length', length(body))
 
-		setTimeout(() =>
-			response.end(isHead
-				? null
-				: body
-			), Number(broker.delayed && calcDelay()))
+		setTimeout(() => response.end(isHead ? null : body),
+			Number(broker.delayed && calcDelay()))
 
 		logger.accessMock(req.url, broker.file)
 	}

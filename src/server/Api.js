@@ -113,7 +113,6 @@ async function setGlobalDelay(req, response) {
 		response.unprocessable(`Expected non-negative integer for "delay"`)
 	else {
 		config.delay = delay
-		uiSyncVersion.increment()
 		response.ok()
 		uiSyncVersion.increment()
 	}

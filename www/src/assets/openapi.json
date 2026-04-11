@@ -545,7 +545,7 @@
 			"Filename": {
 				"type": "string",
 				"description": "Mock filename. The convention is UrlMask.Method.StatusCode.Extension",
-				"example": "api/user/avatar.GET.200.svg"
+				"example": "api/user/friends.GET.200.json"
 			},
 			"ClientMockBroker": {
 				"type": "object",

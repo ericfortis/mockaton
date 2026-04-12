@@ -35,7 +35,7 @@ export function init() {
 
 /** @returns {boolean} registered */
 export function registerMock(file, isFromWatcher = false) {
-	if (brokerByFilename(file)?.hasMock(file) ||
+	if (brokerByFilename(file)?.hasMock(file) || 
 		!isFileAllowed(basename(file)))
 		return false
 
@@ -65,8 +65,16 @@ export function unregisterMock(file) {
 				delete collection[method]
 		}
 	}
-	else // maybe it was a dir
-		init()
+	else for (const f of filesInDir(file)) // maybe it was a dir
+		unregisterMock(f)
+}
+
+function filesInDir(dir) {
+	const files = []
+	forEachBroker(b => {
+		files.push(...(b.mocks.filter(m => m.startsWith(dir + '/'))))
+	})
+	return files
 }
 
 /** @returns {MockBroker | undefined} */

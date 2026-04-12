@@ -1,5 +1,4 @@
 # Bugs
-- Deleting a folder of mocks, doesn't unregister them
 - Preview mock. Don't preview when indirectly toggling off a status code, or proxy checkbox when using Alt+Click
   - payload in store? So it stays when re-rendering?
 - In Chrome (not FF), rendering iframe HTML as payload and resizing the left-panel prevents the iframe from scrolling.

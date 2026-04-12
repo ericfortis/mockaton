@@ -47,7 +47,6 @@ export function registerMock(file, isFromWatcher = false) {
 	collection[method] ??= {}
 
 	let broker = collection[method][urlMask]
-
 	if (!broker)
 		broker = collection[method][urlMask] = new MockBroker(file)
 	else
@@ -61,15 +60,26 @@ export function registerMock(file, isFromWatcher = false) {
 
 export function unregisterMock(file) {
 	const broker = brokerByFilename(file)
-	const methodHasNoMoreMocks = broker?.unregister(file) // TODO or it was a directory of many mocks
-	if (methodHasNoMoreMocks) {
-		const { method, urlMask } = parseFilename(file)
-		delete collection[method][urlMask]
-		if (!Object.keys(collection[method]).length)
-			delete collection[method]
+	if (broker) {
+		const brokerIsEmpty = broker.unregister(file)
+		if (brokerIsEmpty) {
+			const { method, urlMask } = parseFilename(file)
+			delete collection[method][urlMask]
+			if (!Object.keys(collection[method]).length)
+				delete collection[method]
+		}
 	}
+	else for (const f of filesInDir(file)) // maybe it was a dir
+		unregisterMock(f)
 }
 
+function filesInDir(dir) {
+	const files = []
+	forEachBroker(b => {
+		files.push(...(b.mocks.filter(m => m.startsWith(dir + '/'))))
+	})
+	return files
+}
 
 /** @returns {MockBroker | undefined} */
 export function brokerByFilename(file) {

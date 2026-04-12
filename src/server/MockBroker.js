@@ -36,10 +36,10 @@ export class MockBroker {
 
 	unregister(file) {
 		this.mocks = this.mocks.filter(f => f !== file)
-		const isEmpty = !this.mocks.length
-		if (!isEmpty && this.file === file)
+		const brokerIsEmpty = !this.mocks.length
+		if (!brokerIsEmpty && this.file === file)
 			this.selectDefaultFile()
-		return isEmpty
+		return brokerIsEmpty
 	}
 
 	hasMock = file => this.mocks.includes(file)

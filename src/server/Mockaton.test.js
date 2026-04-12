@@ -7,7 +7,7 @@ import { mkdtempSync } from 'node:fs'
 import { randomUUID } from 'node:crypto'
 import { equal, deepEqual, match } from 'node:assert/strict'
 import { describe, test, before, beforeEach, after } from 'node:test'
-import { unlink, mkdir, readFile, rename, readdir, writeFile } from 'node:fs/promises'
+import { unlink, mkdir, readFile, rename, readdir, writeFile, rm } from 'node:fs/promises'
 
 import { mimeFor } from './utils/mime.js'
 import { parseFilename } from '../client/Filename.js'
@@ -26,8 +26,15 @@ const proc = spawn(join(import.meta.dirname, 'cli.js'), [
 	'--no-open'
 ])
 
-proc.stdout.on('data', data => stdout.push(data.toString()))
-proc.stderr.on('data', data => stderr.push(data.toString()))
+const DEBUG = false
+proc.stdout.on('data', data => {
+	stdout.push(data.toString())
+	DEBUG && process.stdout.write(stdout.at(-1))
+})
+proc.stderr.on('data', data => {
+	stderr.push(data.toString())
+	DEBUG && process.stderr.write(stdout.at(-1))
+})
 
 const serverAddr = await new Promise((resolve, reject) => {
 	proc.stdout.once('data', () => {
@@ -41,11 +48,13 @@ after(() => proc.kill('SIGUSR2'))
 
 
 const rmFromMocksDir = f => unlink(join(mocksDir, f))
-const listFromMocksDir = d => readdir(join(mocksDir, d))
 const readFromMocksDir = f => readFile(join(mocksDir, f), 'utf8')
 const writeInMocksDir = (f, data) => writeFile(join(mocksDir, f), data)
-const makeDirInMocks = dir => mkdir(join(mocksDir, dir), { recursive: true })
 const renameInMocksDir = (src, target) => rename(join(mocksDir, src), join(mocksDir, target))
+
+const listFromMocksDir = d => readdir(join(mocksDir, d))
+const rmDirFromMocks = d => rm(join(mocksDir, d), { recursive: true })
+const makeDirInMocks = dir => mkdir(join(mocksDir, dir), { recursive: true })
 
 
 const api = new Commander(serverAddr)
@@ -1119,6 +1128,16 @@ describe('Registering Mocks', () => {
 			const s = await fetchState()
 			equal(s.brokersByMethod.GET['/reg1/runtime0'].file, 'reg1/runtime0.GET.200.txt')
 		})
+	})
+
+	test('deleting a folder unregisters mocks in it', async () => {
+		const fx = new Fixture('api/bulk-delete/bar.GET.200.json')
+		await fx.write()
+		await sleep(0)
+		const nextVerPromise = resolveOnNextSyncVersion()
+		await rmDirFromMocks('api/bulk-delete')
+		await nextVerPromise
+		equal(await fx.fetchBroker(), undefined)
 	})
 })
 

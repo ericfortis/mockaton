@@ -108,7 +108,6 @@ export const store = {
 	},
 
 	setProxyFallback(value) {
-		store.skipNextRender = true
 		store._request(() => api.setProxyFallback(value), () => {
 			store.proxyFallback = value
 		})

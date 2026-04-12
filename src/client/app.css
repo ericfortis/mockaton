@@ -432,7 +432,7 @@ main {
 		}
 
 		&.canProxy {
-			margin-left: 100px;
+			margin-left: 124px;
 		}
 	}
 
@@ -480,8 +480,15 @@ main {
 
 			.FolderName {
 				margin-left: 125px;
+				&.canProxy {
+					margin-left: 155px;
+				}
+
 				&.groupedByMethod {
 					margin-left: 79px;
+					&.canProxy {
+						margin-left: 109px;
+					}
 				}
 			}
 

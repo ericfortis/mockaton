@@ -120,7 +120,12 @@ function FolderGroups(groups) {
 			},
 			r('summary', null,
 				r('span', { className: CSS.FolderChevron }, ChevronDownIcon()),
-				r('span', { className: classNames(CSS.FolderName, store.groupByMethod && CSS.groupedByMethod) },
+				r('span', {
+						className: classNames(
+							CSS.FolderName,
+							store.groupByMethod && CSS.groupedByMethod,
+							store.canProxy && CSS.canProxy)
+					},
 					folder + '…')),
 			children.map(Row))
 	})

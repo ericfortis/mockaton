@@ -88,6 +88,7 @@ function getState(_, response) {
 
 function reset(_, response) {
 	mockBrokersCollection.init()
+	cookie.init(config.cookies)
 	response.ok()
 	uiSyncVersion.increment()
 }

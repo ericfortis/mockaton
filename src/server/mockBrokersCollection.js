@@ -1,6 +1,5 @@
 import { basename } from 'node:path'
 
-import { cookie } from './cookie.js'
 import { MockBroker } from './MockBroker.js'
 import { parseFilename } from '../client/Filename.js'
 import { listFilesRecursively } from './utils/fs.js'
@@ -28,19 +27,16 @@ export const all = () => collection
 
 export function init() {
 	collection = {}
-	cookie.init(config.cookies)
-
 	listFilesRecursively(config.mocksDir)
 		.sort()
 		.forEach(f => registerMock(f))
-
 	forEachBroker(b => b.selectDefaultFile())
 }
 
 /** @returns {boolean} registered */
 export function registerMock(file, isFromWatcher = false) {
-	if (brokerByFilename(file)?.hasMock(file)
-		|| !isFileAllowed(basename(file)))
+	if (brokerByFilename(file)?.hasMock(file) ||
+		!isFileAllowed(basename(file)))
 		return false
 
 	const { method, urlMask } = parseFilename(file)
@@ -69,16 +65,8 @@ export function unregisterMock(file) {
 				delete collection[method]
 		}
 	}
-	else for (const f of filesInDir(file)) // maybe it was a dir
-		unregisterMock(f)
-}
-
-function filesInDir(dir) {
-	const files = []
-	forEachBroker(b => {
-		files.push(...(b.mocks.filter(m => m.startsWith(dir + '/'))))
-	})
-	return files
+	else // maybe it was a dir
+		init()
 }
 
 /** @returns {MockBroker | undefined} */

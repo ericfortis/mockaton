@@ -174,7 +174,7 @@ export const store = {
 				arr.push(...Object.values(brokers))
 		return arr
 	},
-	
+
 
 	previewLink(method, urlMask) {
 		store.setChosenLink(method, urlMask)

@@ -106,15 +106,12 @@ function MockList() {
 }
 
 function FolderGroups(groups) {
-	return groups.map(({ folder, children }) => {
-		if (children.length === 1)
-			return Row(children[0], 0)
-
-		return r('details', {
+	return groups.map(({ folder, children }) => children.length === 1
+		? Row(children[0], 0)
+		: r('details', {
 				className: CSS.FolderGroup,
 				open: !store.collapsedFolders.has(folder),
 				onToggle() {
-					// TODO alt+click exclusive open
 					store.setFolderCollapsed(folder, !this.open)
 				}
 			},
@@ -127,8 +124,7 @@ function FolderGroups(groups) {
 							store.canProxy && CSS.canProxy)
 					},
 					folder + '…')),
-			children.map(Row))
-	})
+			children.map(Row)))
 }
 
 /**

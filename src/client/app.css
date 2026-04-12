@@ -13,7 +13,7 @@
 	--colorText: light-dark(#000, #fff);
 
 	--colorAccent: light-dark(#0059dd, #2495ff);
-	--colorHover: light-dark(#bbe0ff, #062d59);
+	--colorHover: light-dark(#c1e2ff, #062d59);
 
 	--colorRed: light-dark(#da0f00, #f41606);
 	--colorPink: light-dark(#ed206a, #f92672);
@@ -48,6 +48,11 @@ body {
 	font-size: 100%;
 	scrollbar-width: thin;
 	corner-shape: squircle;
+}
+
+label,
+button {
+	user-select: none;
 }
 
 a:focus-visible,
@@ -449,6 +454,7 @@ main {
 
 	.FolderGroup {
 		position: relative;
+		border-radius: var(--radius);
 
 		> summary {
 			left: 0;
@@ -465,7 +471,6 @@ main {
 			text-overflow: ellipsis;
 			border-radius: var(--radius);
 
-
 			&:active {
 				cursor: grabbing;
 			}
@@ -475,7 +480,7 @@ main {
 			}
 
 			&:hover {
-				color: var(--colorText);
+				background: var(--colorHover);
 			}
 
 			.FolderName {
@@ -510,17 +515,23 @@ main {
 			}
 		}
 
-		&[open] > summary {
-			position: absolute;
-			top: 0;
-			left: 0;
-			width: 16px;
-
-			.FolderChevron {
-				transform: rotate(0deg);
+		&[open] {
+			&:has(summary:hover) {
+				background: linear-gradient(90deg, var(--colorHover), var(--colorBg));
 			}
-			.FolderName {
-				display: none;
+
+			> summary {
+				position: absolute;
+				top: 0;
+				left: 0;
+				width: 16px;
+
+				.FolderChevron {
+					transform: rotate(0deg);
+				}
+				.FolderName {
+					display: none;
+				}
 			}
 		}
 	}

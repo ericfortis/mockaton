@@ -3,6 +3,7 @@ import { createElement as r, t, classNames, restoreFocus, Fragment, defineClassN
 import { store } from './app-store.js'
 import { API } from './ApiConstants.js'
 import { Header } from './app-header.js'
+import { dirStructure } from './dirStructure.js'
 import { PayloadViewer, previewMock } from './app-payload-viewer.js'
 import { TimerIcon, CloudIcon, ChevronDownIcon } from './graphics.js'
 
@@ -100,15 +101,27 @@ function MockList() {
 			r('div', {
 				className: classNames(CSS.TableHeading, store.canProxy && CSS.canProxy)
 			}, method),
-			FolderGroups(store.folderGroupsByMethod(method))))
+			FolderGroups(store.brokersAsRowsByMethod(method))))
 
-	return FolderGroups(store.folderGroupsByMethod('*'))
+	return FolderGroups(store.brokersAsRowsByMethod('*'))
 }
 
-function FolderGroups(groups) {
-	return groups.map(({ folder, children }) => children.length === 1
-		? Row(children[0], 0)
-		: r('details', {
+function FolderGroups(bRows) {
+	const res = []
+	for (const b of dirStructure(bRows)) {
+		if (!b.children.length)
+			res.push(Row(b))
+		else
+			res.push(FolderGroup(b))
+	}
+	return res
+}
+
+function FolderGroup(broker) {
+	const folder = broker.urlMask
+	const children = broker.children
+	return (
+		r('details', {
 				className: CSS.FolderGroup,
 				open: !store.collapsedFolders.has(folder),
 				onToggle() {
@@ -124,14 +137,14 @@ function FolderGroups(groups) {
 							store.canProxy && CSS.canProxy)
 					},
 					folder + '…')),
-			children.map(Row)))
+			Row(broker),
+			children.map(c => c.children.length
+				? FolderGroup(c)
+				: Row(c))))
 }
 
-/**
- * @param {BrokerRowModel} row
- * @param {number} i
- */
-function Row(row, i) {
+/** @param {BrokerRowModel} row */
+function Row(row) {
 	const { method, urlMask } = row
 	return (
 		r('div', {
@@ -159,7 +172,7 @@ function Row(row, i) {
 
 			!store.groupByMethod && r('span', { className: CSS.Method }, method),
 
-			PreviewLink(method, urlMask, row.urlMaskDittoed, i === 0),
+			PreviewLink(method, urlMask, row.urlMaskDittoed),
 
 			MockSelector(row)))
 }
@@ -204,7 +217,7 @@ function renderRow(method, urlMask) {
 
 
 
-function PreviewLink(method, urlMask, urlMaskDittoed, autofocus) {
+function PreviewLink(method, urlMask, urlMaskDittoed) {
 	function onClick(event) {
 		event.preventDefault()
 		store.previewLink(method, urlMask)
@@ -215,7 +228,6 @@ function PreviewLink(method, urlMask, urlMaskDittoed, autofocus) {
 		r('a', {
 			className: classNames(CSS.PreviewLink, isChosen && CSS.chosen),
 			href: urlMask,
-			autofocus,
 			onClick
 		}, ditto
 			? [r('span', { className: CSS.dittoDir }, ditto), tail]

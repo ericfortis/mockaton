@@ -140,21 +140,7 @@ export const store = {
 		store.brokersByMethod[method][urlMask] = broker
 	},
 
-	folderGroupsByMethod(method) {
-		const groups = []
-		let g = null
-		for (const row of store._brokersAsRowsByMethod(method)) {
-			const folder = row.urlMask.substring(0, row.urlMask.lastIndexOf('/') + 1)
-			if (!g || g.folder !== folder) {
-				g = { folder, children: [] }
-				groups.push(g)
-			}
-			g.children.push(row)
-		}
-		return groups
-	},
-
-	_brokersAsRowsByMethod(method) {
+	brokersAsRowsByMethod(method) {
 		const rows = store._brokersAsArray(method)
 			.map(b => new BrokerRowModel(b, store.canProxy))
 			.sort((a, b) => a.urlMask.localeCompare(b.urlMask))
@@ -285,6 +271,7 @@ export class BrokerRowModel {
 	method = ''
 	urlMask = ''
 	urlMaskDittoed = ['', '']
+	children = []
 	#broker = /** @type ClientMockBroker */ {}
 	#canProxy = false
 

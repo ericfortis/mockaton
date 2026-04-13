@@ -5,8 +5,8 @@ import pkgJSON from '../../package.json' with { type: 'json' }
 
 import { logger } from './utils/logger.js'
 import { ServerResponse } from './utils/HttpServerResponse.js'
-import { IncomingMessage, BodyReaderError, hasControlChars } from './utils/HttpIncomingMessage.js'
 import { setCorsHeaders, isPreflight } from './utils/http-cors.js'
+import { IncomingMessage, BodyReaderError, hasControlChars } from './utils/HttpIncomingMessage.js'
 
 import { API } from '../client/ApiConstants.js'
 

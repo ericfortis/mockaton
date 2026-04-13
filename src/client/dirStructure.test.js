@@ -33,30 +33,25 @@ const expected = [
 						children: []
 					}
 				]
-			},
-			{
+			}, {
 				urlMask: '/api/user',
 				method: 'POST',
 				children: []
-			},
-			{
+			}, {
 				urlMask: '/api/user',
 				method: 'PATCH',
 				children: []
 			}
 		]
-	},
-	{
+	}, {
 		urlMask: '/api/video/[id]',
 		method: 'GET',
 		children: []
-	},
-	{
+	}, {
 		urlMask: '/index.html',
 		method: 'GET',
 		children: []
-	},
-	{
+	}, {
 		urlMask: '/media/file-a.txt',
 		method: 'GET',
 		children: [
@@ -64,8 +59,7 @@ const expected = [
 				urlMask: '/media/file-b.txt',
 				method: 'GET',
 				children: []
-			},
-			{
+			}, {
 				urlMask: '/media/sub/file-aa.txt',
 				method: 'GET',
 				children: [
@@ -80,7 +74,5 @@ const expected = [
 	}
 ]
 
-test('acceptance', () => {
-	deepEqual(dirStructure(input), expected)
-})
+test('acceptance', () => deepEqual(dirStructure(input), expected))
 

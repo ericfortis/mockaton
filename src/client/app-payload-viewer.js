@@ -93,8 +93,6 @@ export async function previewMock() {
 
 
 async function updatePayloadViewer(proxied, file, response) {
-	const mime = response.headers.get('content-type') || ''
-
 	titleRef.elem.replaceChildren(proxied
 		? PayloadViewerTitleWhenProxied(response)
 		: PayloadViewerTitle(file, response.statusText))
@@ -104,6 +102,12 @@ async function updatePayloadViewer(proxied, file, response) {
 		return
 	}
 
+	async function bodyAsText() {
+		return (await response.text()) || t`/* Empty Response Body */`
+	}
+
+	const mime = response.headers.get('content-type') || ''
+	
 	if (mime.startsWith('image/'))
 		codeRef.elem.replaceChildren(r('img', {
 			src: URL.createObjectURL(await response.blob())
@@ -140,11 +144,6 @@ async function updatePayloadViewer(proxied, file, response) {
 			href: URL.createObjectURL(await response.blob()),
 			download: store.chosenLink.urlMask
 		}, t`Download`))
-
-
-	async function bodyAsText() {
-		return (await response.text()) || t`/* Empty Response Body */`
-	}
 }
 
 

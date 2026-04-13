@@ -151,16 +151,28 @@ function Row(row) {
 				key: row.key,
 				className: classNames(CSS.TableRow, mounted && row.isNew && CSS.animIn)
 			},
-			store.canProxy && ProxyToggler(method, urlMask, row.proxied),
 
-			DelayToggler({
+			store.canProxy && ClickDragToggler({
+				className: CSS.ProxyToggler,
+				title: t`Proxy Toggler`,
+				body: CloudIcon(),
+				checked: row.proxied,
+				commit(checked) {
+					store.setProxied(method, urlMask, checked)
+				}
+			}),
+
+			ClickDragToggler({
+				title: t`Delay`,
+				body: TimerIcon(),
 				checked: row.delayed,
 				commit(checked) {
 					store.setDelayed(method, urlMask, checked)
-				},
+				}
 			}),
 
-			StatusCodeToggler({
+			ClickDragToggler({
+				className: CSS.StatusCodeToggler,
 				title: row.isStatic ? t`Not Found` : t`Internal Server Error`,
 				body: row.isStatic ? t`404` : t`500`,
 				disabled: row.opts.length === 1 && (row.isStatic ? row.status === 404 : row.status === 500),
@@ -176,6 +188,7 @@ function Row(row) {
 
 			MockSelector(row)))
 }
+
 
 function renderRow(method, urlMask) {
 	unChooseOld()
@@ -214,7 +227,6 @@ function renderRow(method, urlMask) {
 		}
 	}
 }
-
 
 
 function PreviewLink(method, urlMask, urlMaskDittoed) {
@@ -258,42 +270,6 @@ function MockSelector(row) {
 			r('option', { value, selected }, label))))
 }
 
-
-function ProxyToggler(method, urlMask, checked) {
-	return ClickDragToggler({
-		className: CSS.ProxyToggler,
-		title: t`Proxy Toggler`,
-		body: CloudIcon(),
-		checked,
-		commit(checked) {
-			store.setProxied(method, urlMask, checked)
-		}
-	})
-}
-
-
-
-function StatusCodeToggler({ title, body, commit, checked, disabled }) {
-	return ClickDragToggler({
-		title,
-		disabled,
-		className: CSS.StatusCodeToggler,
-		commit,
-		checked,
-		body
-	})
-}
-
-function DelayToggler({ checked, commit, className }) {
-	return ClickDragToggler({
-		checked,
-		commit,
-		className: classNames(CSS.DelayToggler, className),
-		canClickDrag: true,
-		title: t`Delay`,
-		body: TimerIcon()
-	})
-}
 
 function ClickDragToggler({ checked, commit, className, title, body }) {
 	function onPointerEnter(event) {

@@ -6,7 +6,7 @@
 		<typescript-loader value="MANUAL_SETUP_IN_NODE_OPTION"/>
 		<envs/>
 		<scope-kind value="DIRECTORY"/>
-		<test-directory value="$PROJECT_DIR$/src/server"/>
+		<test-directory value="$PROJECT_DIR$/src/"/>
 		<method v="2"/>
 	</configuration>
 </component>

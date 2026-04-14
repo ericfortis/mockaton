@@ -107,7 +107,7 @@ async function updatePayloadViewer(proxied, file, response) {
 	}
 
 	const mime = response.headers.get('content-type') || ''
-	
+
 	if (mime.startsWith('image/'))
 		codeRef.elem.replaceChildren(r('img', {
 			src: URL.createObjectURL(await response.blob())

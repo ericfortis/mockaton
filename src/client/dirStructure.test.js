@@ -43,15 +43,18 @@ const expected = [
 				children: []
 			}
 		]
-	}, {
+	},
+	{
 		urlMask: '/api/video/[id]',
 		method: 'GET',
 		children: []
-	}, {
+	},
+	{
 		urlMask: '/index.html',
 		method: 'GET',
 		children: []
-	}, {
+	},
+	{
 		urlMask: '/media/file-a.txt',
 		method: 'GET',
 		children: [

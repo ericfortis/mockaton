@@ -1,59 +1,47 @@
 function TrieNode() {
-	this.items = []
-	this.kids = new Map()
+	this.brokers = []
+	this.tnChildren = new Map()
 }
-
-// TODO it should ignore query string
 
 /**
  * @param {Partial<BrokerRowModel>[]} brokers
  * @returns {Partial<BrokerRowModel>[]}
  */
 export function dirStructure(brokers) {
-	const root = new TrieNode()
-
-	for (const b of brokers) {
-		let node = root
-		for (const seg of b.urlMask.split('/')) {
-			if (!node.kids.has(seg))
-				node.kids.set(seg, new TrieNode())
-			node = node.kids.get(seg)
-		}
-		node.items.push(b)
-	}
-
-	const result = []
-	for (const c of root.kids.values())
-		result.push(...convert(c))
-
-	return root.items.length
-		? [merge(root.items, result)]
-		: result
+	return dfs(trie(brokers))
 }
 
-function convert(node) {
-	const children = []
-	for (const c of node.kids.values())
-		children.push(...convert(c))
+function trie(brokers) {
+	const root = new TrieNode()
+	for (const b of brokers) {
+		let node = root
+		for (const seg of b.urlMask.split('/')) { // TODO it should ignore query string
+			const segNode = node.tnChildren.get(seg) || new TrieNode()
+			node.tnChildren.set(seg, segNode)
+			node = segNode
+		}
+		node.brokers.push(b)
+	}
+	return root
+}
 
-	const elems = node.items.length
-		? [node.items[0], ...children, ...node.items.slice(1)]
-		: children
+/** @param {TrieNode} node */
+function dfs(node) {
+	const childBrokers = []
+	for (const tnc of node.tnChildren.values())
+		childBrokers.push(...dfs(tnc))
 
-	if (!elems.length)
+	const brokers = node.brokers.length
+		? [node.brokers[0], ...childBrokers, ...node.brokers.slice(1)]
+		: childBrokers
+
+	if (!brokers.length)
 		return []
 
-	const [head, ...rest] = elems
-	if (node.items.length || !head.children.length) {
+	const [head, ...rest] = brokers
+	if (node.brokers.length || !head.children.length) {
 		head.children.push(...rest)
 		return [head]
 	}
-	return elems
-}
-
-function merge(items, children) {
-	const [head, ...rest] = items
-	if (children.length || rest.length)
-		head.children.push(...children, ...rest)
-	return head
+	return brokers
 }

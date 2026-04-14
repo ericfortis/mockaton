@@ -91,7 +91,6 @@ function BulkSelector() {
 }
 
 
-
 function MockList() {
 	if (!Object.keys(store.brokersByMethod).length)
 		return r('div', null, t`No mocks found`)
@@ -172,16 +171,24 @@ function Row(row) {
 				}
 			}),
 
-			ClickDragToggler({
-				className: CSS.StatusCodeToggler,
-				title: row.isStatic ? t`Not Found` : t`Internal Server Error`,
-				body: row.isStatic ? t`404` : t`500`,
-				disabled: row.opts.length === 1 && (row.isStatic ? row.status === 404 : row.status === 500),
-				checked: !row.proxied && (row.isStatic ? row.status === 404 : row.status === 500),
-				commit() {
-					store.toggleStatus(method, urlMask, row.isStatic ? 404 : 500)
-				}
-			}),
+			ClickDragToggler(
+				row.isStatic
+					? {
+						className: CSS.StatusCodeToggler,
+						title: t`Not Found`,
+						body: t`404`,
+						disabled: row.opts.length === 1 && row.status === 404,
+						checked: !row.proxied && row.status === 404,
+						commit() { store.toggleStatus(method, urlMask, 404) }
+					}
+					: {
+						className: CSS.StatusCodeToggler,
+						title: t`Internal Server Error`,
+						body: t`500`,
+						disabled: row.opts.length === 1 && row.status === 500,
+						checked: !row.proxied && row.status === 500,
+						commit() { store.toggleStatus(method, urlMask, 500) }
+					}),
 
 			!store.groupByMethod && r('span', { className: CSS.Method }, method),
 

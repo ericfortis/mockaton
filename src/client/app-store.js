@@ -209,18 +209,18 @@ export const store = {
 function initPreference(param) {
 	const qs = new URLSearchParams(globalThis.location?.search)
 	if (!qs.has(param)) {
-		const group = globalThis.localStorage?.getItem(param) !== 'false'
+		const group = globalThis.localStorage?.getItem(param) !== '0'
 		if (!group) {
 			const url = new URL(globalThis.location?.href)
-			url.searchParams.set(param, false)
+			url.searchParams.set(param, '0')
 			history.replaceState(null, '', url)
 		}
 		return group
 	}
-	return qs.get(param) !== 'false'
+	return qs.get(param) !== '0'
 }
 
-// When false, the URL and localStorage will have param=false
+// When false, the URL and localStorage will have param='0'
 function togglePreference(param, nextVal) {
 	if (nextVal)
 		globalThis.localStorage?.removeItem(param)
@@ -231,7 +231,7 @@ function togglePreference(param, nextVal) {
 	if (nextVal)
 		url.searchParams.delete(param)
 	else
-		url.searchParams.set(param, false)
+		url.searchParams.set(param, '0')
 	history.replaceState(null, '', url)
 }
 

@@ -6,7 +6,7 @@
 	--colorBgHeader: light-dark(#f2f2f3, #141414);
 	--colorBgHeaderField: light-dark(#fff, #222);
 
-	--colorBorder: light-dark(#e0e0e0, #323232);
+	--colorBorder: light-dark(#e0e0e0, #2c2c2c);
 	--colorBorderActive: light-dark(#c8c8c8, #3c3c3c);
 
 	--colorLabel: light-dark(#555, #aaa);
@@ -16,7 +16,7 @@
 	--colorHover: light-dark(#dbedff, #062d59);
 
 	--colorRed: light-dark(#da0f00, #f41606);
-	--colorPink: light-dark(#ed206a, #f92672);
+	--colorPink: light-dark(#ed206a, #ff2e7a);
 	--colorPurple: light-dark(#9b71e8, #ae81ff);
 	--colorGreen: light-dark(#388e3c, #a6e22e);
 	--colorBg4xx: light-dark(#ffedd1, #68554a);
@@ -44,6 +44,8 @@ body {
 	padding: 0;
 	border: 0;
 	margin: 0;
+	letter-spacing: -0.374px;
+	line-height: 1.2;
 	font-family: inherit;
 	font-size: 100%;
 	scrollbar-width: thin;
@@ -119,12 +121,7 @@ header {
 		align-self: end;
 		margin-right: 22px;
 		margin-bottom: 3px;
-		opacity: 94%;
 		transition: opacity 240ms ease-in-out;
-
-		&:hover {
-			opacity: 1;
-		}
 
 		svg {
 			width: 120px;
@@ -192,12 +189,14 @@ header {
 		height: 24px;
 		flex-shrink: 0;
 		align-self: end;
+		margin-bottom: 2px;
 		margin-left: auto;
 		border-radius: 50%;
-		fill: var(--colorLabel);
+		fill: white;
+		background: var(--colorAccent);
 
-		&:hover {
-			fill: var(--colorAccent);
+		svg {
+			transform: scale(.7);
 		}
 	}
 }

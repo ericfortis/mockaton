@@ -48,7 +48,7 @@ function LeftSide() {
 			BulkSelector()),
 		r('div', { className: CSS.Table }, MockList()))
 }
-LeftSide.ref = {}
+LeftSide.ref = { width: undefined }
 LeftSide.$ = selector => LeftSide.ref.elem.querySelector(selector)
 LeftSide.$$ = selector => LeftSide.ref.elem.querySelectorAll(selector)
 

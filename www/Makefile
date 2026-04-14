@@ -1,7 +1,7 @@
 start:
 	./packaton.js development 
 
-build: 
+build: sync_images avif
 	./packaton.js production
 
 preview: build
@@ -17,6 +17,9 @@ zip: build
 	rm -f dist.zip
 	cd dist && zip -qrX ../dist.zip .
 
+
+sync_images:
+	cp ../pixaton-tests/tests/macos/pic-for-readme* src/assets/media/
 
 avif:
 	npx mediasnacks avif -y src/assets/media/**/*.png

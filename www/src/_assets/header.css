@@ -19,14 +19,7 @@ header {
 		padding-right: 16px;
 		padding-bottom: 3px;
 		padding-left: 15px;
-
-		&:hover {
-			fill: var(--accentLight);
-		}
-
-		&:focus-visible {
-			fill: var(--accent);
-		}
+		color: var(--accentLight);
 	}
 
 	.right {

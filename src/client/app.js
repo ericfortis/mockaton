@@ -22,35 +22,35 @@ initKeyboardNavigation()
 let mounted = false
 function render() {
 	restoreFocus(() => document.body.replaceChildren(App()))
-	if (store.hasChosenLink)
-		previewMock()
+	if (store.hasChosenLink) previewMock()
+	if (!mounted) LeftSide.$('a')?.focus()
 	mounted = true
 }
 
-
-const leftSideRef = {}
-
 function App() {
-	return Fragment(Header(), Main())
-}
-
-
-function Main() {
-	return (
+	return Fragment(
+		Header(),
 		r('main', null,
-			r('div', {
-					ref: leftSideRef,
-					style: { width: leftSideRef.width },
-					className: CSS.leftSide
-				},
-				r('div', { className: CSS.SubToolbar },
-					GroupByMethod(),
-					BulkSelector()),
-				r('div', { className: CSS.Table }, MockList())),
+			LeftSide(),
 			r('div', { className: CSS.rightSide },
-				Resizer(leftSideRef),
+				Resizer(LeftSide.ref),
 				PayloadViewer())))
 }
+
+function LeftSide() {
+	return r('div', {
+			ref: LeftSide.ref,
+			style: { width: LeftSide.ref.width },
+			className: CSS.leftSide
+		},
+		r('div', { className: CSS.SubToolbar },
+			GroupByMethod(),
+			BulkSelector()),
+		r('div', { className: CSS.Table }, MockList()))
+}
+LeftSide.ref = {}
+LeftSide.$ = selector => LeftSide.ref.elem.querySelector(selector)
+LeftSide.$$ = selector => LeftSide.ref.elem.querySelectorAll(selector)
 
 
 function GroupByMethod() {
@@ -163,6 +163,7 @@ function Row(row) {
 			}),
 
 			ClickDragToggler({
+				className: CSS.DelayToggler,
 				title: t`Delay`,
 				body: TimerIcon(),
 				checked: row.delayed,
@@ -193,12 +194,12 @@ function Row(row) {
 function renderRow(method, urlMask) {
 	unChooseOld()
 	const row = store.brokerAsRow(method, urlMask)
-	const tr = leftSideRef.elem.querySelector(`.${CSS.TableRow}[key="${row.key}"]`)
+	const tr = LeftSide.$(`.${CSS.TableRow}[key="${row.key}"]`)
 	mergeTableRow(tr, Row(row))
 	previewMock()
 
 	function unChooseOld() {
-		return leftSideRef.elem.querySelector(`a.${CSS.chosen}`)
+		return LeftSide.$(`a.${CSS.chosen}`)
 			?.classList.remove(CSS.chosen)
 	}
 
@@ -293,7 +294,7 @@ function ClickDragToggler({ checked, commit, className, title, body }) {
 			return
 
 		// Uncheck all other in the column. 
-		for (const elem of leftSideRef.elem.querySelectorAll(selector))
+		for (const elem of LeftSide.$$(selector))
 			if (elem !== this && elem.checked && !elem.disabled) {
 				elem.checked = false
 				elem.dispatchEvent(new Event('change'))
@@ -476,7 +477,6 @@ function columnSelectors() {
 	]
 }
 
-
 function initKeyboardNavigation() {
 	const rowSelectors = [
 		...columnSelectors(),
@@ -491,7 +491,7 @@ function initKeyboardNavigation() {
 				const sel = selectorForColumnOf(pivot)
 				if (sel) {
 					const offset = key === 'ArrowDown' ? +1 : -1
-					const siblings = leftSideRef.elem.querySelectorAll(sel)
+					const siblings = LeftSide.$$(sel)
 					circularAdjacent(offset, siblings, pivot).focus()
 				}
 				break

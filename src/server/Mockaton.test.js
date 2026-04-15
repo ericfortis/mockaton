@@ -14,6 +14,7 @@ import { parseFilename } from '../client/Filename.js'
 import { API, Commander } from '../../index.js'
 
 import CONFIG from './Mockaton.test.config.js'
+import { config } from './config.js'
 
 
 const mocksDir = mkdtempSync(join(tmpdir(), 'mocks'))
@@ -1131,13 +1132,14 @@ describe('Registering Mocks', () => {
 	})
 
 	test('deleting a folder unregisters mocks in it', async () => {
-		const fx = new Fixture('api/bulk-delete/bar.GET.200.json')
-		await fx.write()
-		await sleep(0)
+		const fx = new FixtureExternal('api/bulk-delete/bar.GET.200.json')
+		await fx.writeExternally()
+		config.watcherDebounceMs = 100 // Because on macOS rmdir triggers a few events
 		const nextVerPromise = resolveOnNextSyncVersion()
 		await rmDirFromMocks('api/bulk-delete')
 		await nextVerPromise
 		equal(await fx.fetchBroker(), undefined)
+		await sleep(50) // Only for Docker, not sure why we need to delay the server teardown 
 	})
 })
 

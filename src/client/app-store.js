@@ -1,7 +1,7 @@
 import { Commander } from './ApiCommander.js'
-import { QueryParamBool } from './dom-utils.js'
 import { dittoSplitPaths, groupByFolder } from './dir-tree.js'
 import { parseFilename, extractComments } from './Filename.js'
+import { QueryParamBool, LocalStorageSet } from './dom-utils.js'
 import { EXT_UNKNOWN_MIME, EXT_EMPTY } from './ApiConstants.js'
 
 
@@ -26,25 +26,19 @@ export const store = {
 	showProxyField: null,
 	get canProxy() { return Boolean(store.proxyFallback) },
 
-	_queryParams: {
-		groupByMethod: new QueryParamBool('groupByMethod'),
-	},
-	get groupByMethod() {
-		return store._queryParams.groupByMethod.value
-	},
+	_groupByMethod: new QueryParamBool('groupByMethod'),
+	get groupByMethod() { return store._groupByMethod.value },
 	toggleGroupByMethod() {
-		store._queryParams.groupByMethod.toggle()
+		store._groupByMethod.toggle()
 		store.render()
 	},
 
-	collapsedFolders: new Set(JSON.parse(globalThis.localStorage?.getItem('collapsedFolders') || '[]')),
+	collapsedFolders: new LocalStorageSet('collapsedFolders'),
 	setFolderCollapsed(folder, collapsed) {
 		if (collapsed)
 			store.collapsedFolders.add(folder)
 		else
 			store.collapsedFolders.delete(folder)
-
-		globalThis.localStorage?.setItem('collapsedFolders', JSON.stringify([...store.collapsedFolders]))
 	},
 
 	chosenLink: { method: '', urlMask: '' },

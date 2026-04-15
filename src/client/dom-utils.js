@@ -117,3 +117,38 @@ export class QueryParamBool {
 		history.replaceState(null, '', url)
 	}
 }
+
+
+export class LocalStorageSet {
+	constructor(key) {
+		this.key = key
+		this.value = this.#parse()
+	}
+
+	add(item) {
+		this.value.add(item)
+		this.#persist()
+	}
+
+	delete(item) {
+		this.value.delete(item)
+		this.#persist()
+	}
+
+	has(item) {
+		return this.value.has(item)
+	}
+
+	#parse() {
+		try {
+			return new Set(JSON.parse(globalThis.localStorage?.getItem(this.key) || '[]'))
+		}
+		catch {
+			return new Set()
+		}
+	}
+
+	#persist() {
+		globalThis.localStorage?.setItem(this.key, JSON.stringify([...this.value]))
+	}
+}

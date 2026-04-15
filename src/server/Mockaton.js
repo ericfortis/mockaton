@@ -10,6 +10,7 @@ import { IncomingMessage, BodyReaderError, hasControlChars } from './utils/HttpI
 
 import { API } from '../client/ApiConstants.js'
 
+import { cookie } from './cookie.js'
 import { config, setup } from './config.js'
 import { apiPatchReqs, apiGetReqs } from './Api.js'
 
@@ -24,6 +25,7 @@ import { watchMocksDir } from './Watcher.js'
 export function Mockaton(options) {
 	return new Promise((resolve, reject) => {
 		setup(options)
+		cookie.init(config.cookies)
 		mockBrokerCollection.init()
 
 		if (config.watcherEnabled) {

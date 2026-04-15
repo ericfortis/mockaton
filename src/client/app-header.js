@@ -4,8 +4,9 @@ import { store } from './app-store.js'
 
 import CSS from './app.css' with { type: 'css' }
 import { extractClassNames } from './css-modules.js'
-Object.assign(CSS, extractClassNames(CSS))
 
+
+Object.assign(CSS, extractClassNames(CSS))
 
 export function Header() {
 	return (

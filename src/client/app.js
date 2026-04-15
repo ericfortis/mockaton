@@ -3,15 +3,15 @@ import { createElement as r, t, restoreFocus, Fragment, classNames } from './dom
 import { store } from './app-store.js'
 import { API } from './ApiConstants.js'
 import { Header } from './app-header.js'
-import { dirStructure } from './dirStructure.js'
 import { PayloadViewer, previewMock } from './app-payload-viewer.js'
 import { TimerIcon, CloudIcon, ChevronDownIcon } from './graphics.js'
 
 import CSS from './app.css' with { type: 'css' }
 import { extractClassNames } from './css-modules.js'
+
+
 document.adoptedStyleSheets.push(CSS)
 Object.assign(CSS, extractClassNames(CSS))
-
 
 store.onError = onError
 store.render = render
@@ -101,14 +101,14 @@ function MockList() {
 			r('div', {
 				className: classNames(CSS.TableHeading, store.canProxy && CSS.canProxy)
 			}, method),
-			FolderGroups(store.brokersAsRowsByMethod(method))))
+			FolderGroups(store.folderGroupsByMethod(method))))
 
-	return FolderGroups(store.brokersAsRowsByMethod('*'))
+	return FolderGroups(store.folderGroupsByMethod('*'))
 }
 
-function FolderGroups(bRows) {
+function FolderGroups(brokersTree) {
 	const res = []
-	for (const b of dirStructure(bRows)) {
+	for (const b of brokersTree) {
 		if (!b.children.length)
 			res.push(Row(b))
 		else

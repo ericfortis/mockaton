@@ -1,4 +1,4 @@
-import { createElement as r, t, extractClassNames } from './dom-utils.js'
+import { createElement as r, t, extractClassNames } from './utils/dom.js'
 import { Logo, HelpIcon } from './graphics.js'
 import { store } from './app-store.js'
 

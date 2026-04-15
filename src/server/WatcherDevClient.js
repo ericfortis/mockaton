@@ -6,7 +6,7 @@ import { config } from './config.js'
 
 
 export const CLIENT_DIR = join(import.meta.dirname, '../client')
-export const DASHBOARD_ASSETS = readdirSync(CLIENT_DIR)
+export const DASHBOARD_ASSETS = readdirSync(CLIENT_DIR, { recursive: true })
 
 
 const devClientWatcher = new class extends EventEmitter {

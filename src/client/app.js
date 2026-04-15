@@ -1,4 +1,4 @@
-import { createElement as r, t, restoreFocus, Fragment, classNames, extractClassNames } from './dom-utils.js'
+import { createElement as r, t, restoreFocus, Fragment, classNames, extractClassNames } from './utils/dom.js'
 
 import { store } from './app-store.js'
 import { API } from './ApiConstants.js'

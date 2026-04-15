@@ -1,7 +1,7 @@
 import { test, describe } from 'node:test'
 import { deepEqual, equal } from 'node:assert/strict'
 import { parseSplats, parseQueryParams } from './UrlParsers.js'
-import { config } from '../config.js'
+import { config } from './config.js'
 
 test('parseQueryParams', () => {
 	const searchParams = parseQueryParams('/api/foo?limit=123')

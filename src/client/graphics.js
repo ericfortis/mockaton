@@ -1,4 +1,4 @@
-import { createSvgElement as s } from './dom-utils.js'
+import { createSvgElement as s } from './utils/dom.js'
 
 
 export const Logo = () =>

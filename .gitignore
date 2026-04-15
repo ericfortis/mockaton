@@ -1,6 +1,5 @@
 .env
 .idea
-.junie/memory
 lcov.info
 node_modules/
 www/dist/

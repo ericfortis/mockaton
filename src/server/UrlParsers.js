@@ -1,7 +1,7 @@
 import { relative } from 'node:path'
-import { config } from '../config.js'
-import { decode } from './HttpIncomingMessage.js'
-import { parseFilename, removeTrailingSlash, removeQueryStringAndFragment } from '../../client/Filename.js'
+import { config } from './config.js'
+import { decode } from './utils/HttpIncomingMessage.js'
+import { parseFilename, removeTrailingSlash, removeQueryStringAndFragment } from '../client/Filename.js'
 
 
 export function parseQueryParams(url) {

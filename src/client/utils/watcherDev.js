@@ -1,5 +1,4 @@
-import { API } from './ApiConstants.js'
-
+import { API } from '../ApiConstants.js'
 
 let conn = null
 let timer = null
@@ -34,6 +33,6 @@ function teardown() {
 }
 
 async function hotReloadCSS(file) {
-	const mod = await import(`./${file}?${Date.now()}`, { with: { type: 'css' } })
+	const mod = await import(`../${file}?${Date.now()}`, { with: { type: 'css' } })
 	document.adoptedStyleSheets = [mod.default]
 }

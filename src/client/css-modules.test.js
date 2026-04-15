@@ -1,6 +1,7 @@
 import { test } from 'node:test'
 import { deepEqual, equal } from 'node:assert/strict'
-import { extractClassNames, classNames } from './dom-utils.js'
+import { extractClassNames } from './css-modules.js'
+import { classNames } from './dom-utils.js'
 
 
 test('classNames', () => {

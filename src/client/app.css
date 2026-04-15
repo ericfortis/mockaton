@@ -185,15 +185,19 @@ header {
 	}
 
 	.HelpLink {
-		width: 24px;
-		height: 24px;
+		width: 22px;
+		height: 22px;
 		flex-shrink: 0;
 		align-self: end;
-		margin-bottom: 2px;
+		margin-bottom: 3px;
 		margin-left: auto;
 		border-radius: 50%;
-		fill: white;
-		background: var(--colorAccent);
+		fill: var(--colorBgHeader);
+		background: var(--colorLabel);
+
+		&:hover {
+			background: var(--colorAccent);
+		}
 
 		svg {
 			transform: scale(.7);

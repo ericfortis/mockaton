@@ -1,9 +1,8 @@
-import { createElement as r, t, restoreFocus, Fragment, classNames } from './dom-utils.js'
+import { createElement as r, t, restoreFocus, Fragment, classNames, extractClassNames } from './dom-utils.js'
 
 import { store } from './app-store.js'
 import { API } from './ApiConstants.js'
 import { Header } from './app-header.js'
-import { extractClassNames } from './css-modules.js'
 import { PayloadViewer, previewMock } from './app-payload-viewer.js'
 import { TimerIcon, CloudIcon, ChevronDownIcon } from './graphics.js'
 

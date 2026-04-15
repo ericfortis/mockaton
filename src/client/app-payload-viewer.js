@@ -1,5 +1,4 @@
-import { createElement as r, t } from './dom-utils.js'
-import { extractClassNames } from './css-modules.js'
+import { createElement as r, t, extractClassNames } from './dom-utils.js'
 import { HEADER_502 } from './ApiConstants.js'
 import { parseFilename } from './Filename.js'
 import { store } from './app-store.js'

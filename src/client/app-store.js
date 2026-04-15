@@ -1,4 +1,5 @@
 import { Commander } from './ApiCommander.js'
+import { QueryParamBool } from './dom-utils.js'
 import { dittoSplitPaths, groupByFolder } from './dir-tree.js'
 import { parseFilename, extractComments } from './Filename.js'
 import { EXT_UNKNOWN_MIME, EXT_EMPTY } from './ApiConstants.js'
@@ -25,10 +26,14 @@ export const store = {
 	showProxyField: null,
 	get canProxy() { return Boolean(store.proxyFallback) },
 
-	groupByMethod: initPreference('groupByMethod'),
+	_queryParams: {
+		groupByMethod: new QueryParamBool('groupByMethod'),
+	},
+	get groupByMethod() {
+		return store._queryParams.groupByMethod.value
+	},
 	toggleGroupByMethod() {
-		store.groupByMethod = !store.groupByMethod
-		togglePreference('groupByMethod', store.groupByMethod)
+		store._queryParams.groupByMethod.toggle()
 		store.render()
 	},
 

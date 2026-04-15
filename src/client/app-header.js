@@ -1,9 +1,9 @@
 import { createElement as r, t } from './dom-utils.js'
+import { extractClassNames } from './css-modules.js'
 import { Logo, HelpIcon } from './graphics.js'
 import { store } from './app-store.js'
 
 import CSS from './app.css' with { type: 'css' }
-import { extractClassNames } from './css-modules.js'
 
 
 Object.assign(CSS, extractClassNames(CSS))

@@ -1,5 +1,5 @@
 import { Commander } from './ApiCommander.js'
-import { dittoSplitPaths, dirStructure } from './dir-tree.js'
+import { dittoSplitPaths, groupByFolder } from './dir-tree.js'
 import { parseFilename, extractComments } from './Filename.js'
 import { EXT_UNKNOWN_MIME, EXT_EMPTY } from './ApiConstants.js'
 
@@ -23,9 +23,7 @@ export const store = {
 	collectProxied: false,
 	proxyFallback: '',
 	showProxyField: null,
-	get canProxy() {
-		return Boolean(store.proxyFallback)
-	},
+	get canProxy() { return Boolean(store.proxyFallback) },
 
 	groupByMethod: initPreference('groupByMethod'),
 	toggleGroupByMethod() {
@@ -124,10 +122,6 @@ export const store = {
 
 	_dittoCache: new Map(),
 
-	brokerFor(method, urlMask) {
-		return store.brokersByMethod[method]?.[urlMask]
-	},
-
 	brokerAsRow(method, urlMask) {
 		const b = store.brokerFor(method, urlMask)
 		const r = new BrokerRowModel(b, store.canProxy)
@@ -135,14 +129,12 @@ export const store = {
 		return r
 	},
 
-	folderGroupsByMethod(method) {
-		return dirStructure(store._brokersAsRowsByMethod(method))
+	brokerFor(method, urlMask) {
+		return store.brokersByMethod[method]?.[urlMask]
 	},
 
-	_setBroker(broker) {
-		const { method, urlMask } = parseFilename(broker.file)
-		store.brokersByMethod[method] ??= {}
-		store.brokersByMethod[method][urlMask] = broker
+	folderGroupsByMethod(method) {
+		return groupByFolder(store._brokersAsRowsByMethod(method))
 	},
 
 	_brokersAsRowsByMethod(method) {
@@ -205,10 +197,14 @@ export const store = {
 		store._request(() => api.setRouteIsDelayed(method, urlMask, checked), async response => {
 			store._setBroker(await response.json())
 		})
+	},
+
+	_setBroker(broker) {
+		const { method, urlMask } = parseFilename(broker.file)
+		store.brokersByMethod[method] ??= {}
+		store.brokersByMethod[method][urlMask] = broker
 	}
 }
-
-
 
 // When false, the URL will be updated with param=false
 function initPreference(param) {
@@ -239,6 +235,7 @@ function togglePreference(param, nextVal) {
 		url.searchParams.set(param, '0')
 	history.replaceState(null, '', url)
 }
+
 
 
 export class BrokerRowModel {

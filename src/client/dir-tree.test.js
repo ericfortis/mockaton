@@ -1,6 +1,6 @@
 import { test } from 'node:test'
 import { deepEqual } from 'node:assert/strict'
-import { dirStructure, dittoSplitPaths } from './dir-tree.js'
+import { groupByFolder, dittoSplitPaths } from './dir-tree.js'
 
 
 test('dittoSplitPaths', () => {
@@ -102,5 +102,5 @@ test('dirStructure', () => {
 		}
 	]
 
-	deepEqual(dirStructure(input), expected)
+	deepEqual(groupByFolder(input), expected)
 })

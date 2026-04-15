@@ -28,11 +28,6 @@ export function dittoSplitPaths(paths) {
 // -------
 
 
-function TrieNode() {
-	this.brokers = []
-	this.tnChildren = new Map()
-}
-
 /**
  * @param {Partial<BrokerRowModel>[]} brokers
  * @returns {Partial<BrokerRowModel>[]}
@@ -53,6 +48,11 @@ function trie(brokers) {
 		node.brokers.push(b)
 	}
 	return root
+}
+
+function TrieNode() {
+	this.brokers = []
+	this.tnChildren = new Map()
 }
 
 /** @param {TrieNode} node */

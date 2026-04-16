@@ -8,6 +8,7 @@ import { readBody, BodyReaderError } from './utils/HttpIncomingMessage.js'
 import { config } from './config.js'
 import { logger } from './utils/logger.js'
 import { makeMockFilename } from '../client/Filename.js'
+import { EXT_EMPTY, EXT_UNKNOWN_MIME } from '../client/ApiConstants.js'
 
 
 export async function proxy(req, response, delay) {
@@ -37,7 +38,10 @@ export async function proxy(req, response, delay) {
 	setTimeout(() => response.end(body), delay) // TESTME
 
 	if (config.collectProxied) {
-		const ext = extFor(proxyResponse.headers.get('content-type'))
+		const mime = proxyResponse.headers.get('content-type')
+		const ext = mime
+			? extFor(mime) || EXT_UNKNOWN_MIME
+			: EXT_EMPTY
 		await saveMockToDisk(req.url, req.method, proxyResponse.status, ext, body)
 	}
 }

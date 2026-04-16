@@ -3,6 +3,7 @@ import { METHODS } from 'node:http'
 
 import { logger } from './utils/logger.js'
 import { isDirectory } from './utils/fs.js'
+import { registerMimes } from './utils/mime.js'
 import { openInBrowser } from './utils/openInBrowser.js'
 import { optional, is, validate } from './utils/validate.js'
 import { validateCorsAllowedMethods, validateCorsAllowedOrigins } from './utils/http-cors.js'
@@ -80,6 +81,7 @@ export function setup(opts) {
 	Object.assign(config, opts)
 	validate(config, ConfigValidator)
 	logger.setLevel(config.logLevel)
+	registerMimes(config.extraMimes)
 }
 
 export const isFileAllowed = f => !config.ignore.test(f)

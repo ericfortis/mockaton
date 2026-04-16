@@ -1,6 +1,4 @@
 import { MIMEType } from 'node:util'
-import { config } from '../config.js'
-import { EXT_UNKNOWN_MIME, EXT_EMPTY } from '../../client/ApiConstants.js'
 
 
 // Generated with:
@@ -119,7 +117,14 @@ const extToMime = {
 	zst: 'application/zstd'
 }
 
-const mimeToExt = mapMimeToExt(extToMime)
+const mimeToExt = {
+	data: mapMimeToExt(extToMime)
+}
+
+export function registerMimes(obj) {
+	Object.assign(extToMime, obj)
+	mimeToExt.data = mapMimeToExt(extToMime)
+}
 
 function mapMimeToExt(e2m) {
 	const m = {}
@@ -130,7 +135,7 @@ function mapMimeToExt(e2m) {
 
 export function mimeFor(filename) {
 	const ext = extname(filename).toLowerCase()
-	return config.extraMimes[ext] || extToMime[ext] || ''
+	return extToMime[ext] || ''
 }
 function extname(filename) {
 	const i = filename.lastIndexOf('.')
@@ -142,12 +147,7 @@ function extname(filename) {
 
 export function extFor(mime) {
 	return mime
-		? findExt(mime)
-		: EXT_EMPTY
-}
-function findExt(rawMime) {
-	const m = new MIMEType(rawMime).essence
-	const extraMimeToExt = mapMimeToExt(config.extraMimes)
-	return extraMimeToExt[m] || mimeToExt[m] || EXT_UNKNOWN_MIME
+		? mimeToExt.data[new MIMEType(mime).essence]
+		: ''
 }
 

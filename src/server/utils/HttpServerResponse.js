@@ -1,5 +1,5 @@
 import http from 'node:http'
-import fs, { readFileSync } from 'node:fs'
+import fs from 'node:fs'
 
 import { mimeFor } from './mime.js'
 
@@ -25,9 +25,9 @@ export class ServerResponse extends http.ServerResponse {
 		this.end(JSON.stringify(payload))
 	}
 
-	file(file) {
+	async file(file) {
 		this.setHeader('Content-Type', mimeFor(file))
-		this.end(readFileSync(file, 'utf8'))
+		this.end(await fs.promises.readFile(file, 'utf8'))
 	}
 
 	noContent() {

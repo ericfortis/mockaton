@@ -19,6 +19,6 @@ export default {
 		'None': ''
 	},
 
-	logLevel: 'verbose',
+	logLevel: 'normal',
 	hotReload: true
 }

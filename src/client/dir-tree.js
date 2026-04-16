@@ -49,11 +49,8 @@ function trie(brokers) {
 }
 
 class TrieNode {
-	#children
-	constructor() {
-		this.brokers = []
-		this.#children = new Map()
-	}
+	#children = new Map()
+	brokers = []
 	addChild(k, v) { this.#children.set(k, v) }
 	getChild(k) { return this.#children.get(k) }
 	getChildren() { return this.#children.values() }

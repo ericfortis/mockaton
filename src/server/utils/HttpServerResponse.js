@@ -1,7 +1,6 @@
 import http from 'node:http'
 import fs, { readFileSync } from 'node:fs'
 
-import { logger } from './logger.js'
 import { mimeFor } from './mime.js'
 
 
@@ -12,62 +11,52 @@ export class ServerResponse extends http.ServerResponse {
 	}
 
 	ok() {
-		logger.access(this)
 		this.end()
 	}
 
 	html(html, csp) {
-		logger.access(this)
 		this.setHeader('Content-Type', mimeFor('.html'))
 		this.setHeader('Content-Security-Policy', csp)
 		this.end(html)
 	}
 
 	json(payload) {
-		logger.access(this)
 		this.setHeader('Content-Type', mimeFor('.json'))
 		this.end(JSON.stringify(payload))
 	}
 
 	file(file) {
-		logger.access(this)
 		this.setHeader('Content-Type', mimeFor(file))
 		this.end(readFileSync(file, 'utf8'))
 	}
 
 	noContent() {
 		this.statusCode = 204
-		logger.access(this)
 		this.end()
 	}
 
 
 	badRequest() {
 		this.statusCode = 400
-		logger.access(this)
 		this.end()
 	}
 
 	forbidden() {
 		this.statusCode = 403
-		logger.access(this)
 		this.end()
 	}
 
 	notFound() {
 		this.statusCode = 404
-		logger.access(this)
 		this.end()
 	}
 
 	uriTooLong() {
 		this.statusCode = 414
-		logger.access(this)
 		this.end()
 	}
 
 	unprocessable(error) {
-		logger.access(this)
 		this.statusCode = 422
 		this.end(error)
 	}

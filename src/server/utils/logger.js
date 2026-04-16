@@ -13,15 +13,15 @@ export const logger = new class {
 			console.info(this.#msg('INFO', ...msg))
 	}
 
-	accessMock(url, ...msg) {
+	normal(tag = 'NORMAL', url, ...msg) {
 		if (this.#level !== 'quiet')
-			console.log(this.#msg('MOCK', url, ...msg))
+			console.log(this.#msg(tag, url, ...msg))
 	}
 
-	access(response, error = '') {
+	verbose(tag = 'VERBOSE', response, error = '') {
 		if (this.#level === 'verbose')
 			console.log(this.#msg(
-				'ACCESS',
+				tag,
 				response.req.method,
 				response.statusCode,
 				response.req.url,

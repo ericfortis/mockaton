@@ -50,6 +50,13 @@ export function Mockaton(options) {
 
 async function onRequest(req, response) {
 	response.on('error', logger.warn)
+	response.on('finish', () => {
+		const f = response.getHeader('Mockaton-File')
+		if (f)
+			logger.normal('MOCK', req.url, f)
+		else
+			logger.verbose('API', response)
+	})
 
 	response.setHeader('Server', `Mockaton ${pkgJSON.version}`)
 	response.setHeaderList(config.extraHeaders)

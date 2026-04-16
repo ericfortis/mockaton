@@ -1,8 +1,8 @@
 import { Commander } from './ApiCommander.js'
 import { dittoSplitPaths, groupByFolder } from './dir-tree.js'
 import { parseFilename, extractComments } from './Filename.js'
-import { QueryParamBool, LocalStorageSet } from './utils/dom.js'
 import { EXT_UNKNOWN_MIME, EXT_EMPTY } from './ApiConstants.js'
+import { LocalStorageSet, QueryParamBool } from './utils/LocalStorage.js'
 
 
 export const t = translation => translation[0]

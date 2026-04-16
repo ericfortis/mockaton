@@ -2,9 +2,6 @@ export function t(translation) {
 	return translation[0]
 }
 
-export function classNames(...args) {
-	return args.filter(Boolean).join(' ')
-}
 
 export function createElement(tag, props, ...children) {
 	const elem = document.createElement(tag)
@@ -20,6 +17,7 @@ export function createElement(tag, props, ...children) {
 	return elem
 }
 
+
 export function createSvgElement(tag, props, ...children) {
 	const elem = document.createElementNS('http://www.w3.org/2000/svg', tag)
 	for (const [k, v] of Object.entries(props))
@@ -27,6 +25,7 @@ export function createSvgElement(tag, props, ...children) {
 	elem.append(...children.flat().filter(Boolean))
 	return elem
 }
+
 
 export function Fragment(...args) {
 	const frag = new DocumentFragment()
@@ -67,19 +66,6 @@ function selectorFor(elem) {
 		elem = elem.parentElement
 	}
 	return path.reverse().join('>')
-}
-
-
-export function extractClassNames({ cssRules }) {
-	// Class names must begin with _ or a letter, then it can have numbers and hyphens
-	// TODO think about tag.className selectors
-	const reClassName = /(?:^|[\s,{>])&?\s*\.([a-zA-Z_][\w-]*)/g
-	const cNames = {}
-	let match
-	for (const rule of cssRules)
-		while (match = reClassName.exec(rule.cssText))
-			cNames[match[1]] = match[1]
-	return cNames
 }
 
 

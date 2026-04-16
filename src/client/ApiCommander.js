@@ -10,7 +10,7 @@ export class Commander {
 	}
 
 	/** @returns {Promise<Response>} */
-	#patch = (api, body) => fetch(this.addr + api, {
+	#patch = (api, body = undefined) => fetch(this.addr + api, {
 		method: 'PATCH',
 		body: JSON.stringify(body)
 	})

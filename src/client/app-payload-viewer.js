@@ -1,8 +1,9 @@
-import { createElement as r, t, extractClassNames } from './utils/dom.js'
+import { createElement as r, t } from './utils/dom.js'
 import { parseFilename } from './Filename.js'
 import { store } from './app-store.js'
 
 import CSS from './app.css' with { type: 'css' }
+import { extractClassNames } from './utils/css.js'
 
 
 Object.assign(CSS, extractClassNames(CSS))

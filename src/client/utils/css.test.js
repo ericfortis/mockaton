@@ -1,6 +1,6 @@
 import { test } from 'node:test'
 import { deepEqual, equal } from 'node:assert/strict'
-import { classNames, extractClassNames } from './dom.js'
+import { extractClassNames, classNames } from './css.js'
 
 
 test('classNames', () => equal(classNames('a', false && 'b'), 'a'))

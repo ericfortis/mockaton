@@ -765,15 +765,18 @@ describe('MIME', () => {
 
 
 describe('Headers', () => {
-	test('responses have version in "Server" header', async () => {
+	test('api responses have version in "Server" header', async () => {
 		const r = await api.getState()
 		const val = r.headers.get('server')
 		match(val, /^Mockaton \d+\.\d+\.\d+$/)
 	})
 
-	test('custom headers are included', async () => {
-		const { headers } = await api.getState()
-		equal(headers.get(CONFIG.extraHeaders[0]), CONFIG.extraHeaders[1])
+	test('mock responses have version in "Server" header and custom headers', async () => {
+		const fx = new Fixture('header.GET.200.json')
+		await fx.write()
+		const r = await fx.request()
+		match(r.headers.get('server'), /^Mockaton \d+\.\d+\.\d+$/)
+		equal(r.headers.get(CONFIG.extraHeaders[0]), CONFIG.extraHeaders[1])
 	})
 })
 

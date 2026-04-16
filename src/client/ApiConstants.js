@@ -29,3 +29,5 @@ export const DEFAULT_MOCK_COMMENT = '(default)'
 
 export const EXT_UNKNOWN_MIME = 'unknown'
 export const EXT_EMPTY = 'empty'
+
+export const FILENAME_HEADER = 'Mockaton-File'

@@ -7,9 +7,12 @@ import { parseFilename } from '../client/Filename.js'
 import { echoFilePlugin } from './MockDispatcherPlugins.js'
 import { brokerByRoute } from './mockBrokersCollection.js'
 import { config, calcDelay } from './config.js'
+import { FILENAME_HEADER } from '../client/ApiConstants.js'
 
 
 export async function dispatchMock(req, response) {
+	response.setHeaderList(config.extraHeaders)
+	
 	try {
 		const isHead = req.method === 'HEAD'
 
@@ -26,7 +29,7 @@ export async function dispatchMock(req, response) {
 			return
 		}
 
-		response.setHeader('Mockaton-File', broker.file)
+		response.setHeader(FILENAME_HEADER, broker.file)
 
 		if (cookie.getCurrent())
 			response.setHeader('Set-Cookie', cookie.getCurrent())

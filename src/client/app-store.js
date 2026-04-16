@@ -1,8 +1,9 @@
 import { Commander } from './ApiCommander.js'
-import { dittoSplitPaths, groupByFolder } from './dir-tree.js'
+import { groupByFolder } from './dir/groupByFolder.js'
 import { parseFilename, extractComments } from './Filename.js'
 import { EXT_UNKNOWN_MIME, EXT_EMPTY } from './ApiConstants.js'
 import { LocalStorageSet, QueryParamBool } from './utils/LocalStorage.js'
+import { dittoSplitPaths } from './dir/dittoSplitPaths.js'
 
 
 export const t = translation => translation[0]

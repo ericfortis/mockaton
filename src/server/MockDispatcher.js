@@ -1,7 +1,6 @@
 import { join } from 'node:path'
 
 import { logger } from './utils/logger.js'
-
 import { proxy } from './ProxyRelay.js'
 import { cookie } from './cookie.js'
 import { parseFilename } from '../client/Filename.js'
@@ -23,9 +22,11 @@ export async function dispatchMock(req, response) {
 			return
 		}
 		if (!broker) {
-			response.mockNotFound()
+			response.notFound()
 			return
 		}
+
+		response.setHeader('Mockaton-File', broker.file)
 
 		if (cookie.getCurrent())
 			response.setHeader('Set-Cookie', cookie.getCurrent())
@@ -36,7 +37,6 @@ export async function dispatchMock(req, response) {
 			setTimeout(async () => {
 				await response.partialContent(req.headers.range, join(config.mocksDir, broker.file))
 			}, Number(broker.delayed && calcDelay()))
-			logger.accessMock(req.url, broker.file)
 			return
 		}
 
@@ -55,14 +55,14 @@ export async function dispatchMock(req, response) {
 
 		setTimeout(() => response.end(isHead ? null : body),
 			Number(broker.delayed && calcDelay()))
-
-		logger.accessMock(req.url, broker.file)
 	}
 	catch (error) { // TESTME
 		if (error?.code === 'ENOENT') // mock-file has been deleted
-			response.mockNotFound()
-		else
-			response.internalServerError(error)
+			response.notFound()
+		else {
+			response.internalServerError()
+			logger.error(500, req.url, error?.message || error, error?.stack || '')
+		}
 	}
 }
 

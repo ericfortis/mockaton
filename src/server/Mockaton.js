@@ -87,7 +87,9 @@ async function onRequest(req, response) {
 	catch (error) {
 		if (error instanceof BodyReaderError)
 			response.unprocessable(`${error.name}: ${error.message}`)
-		else
+		else {
+			logger.error(500, req.url, error?.message || error, error?.stack || '')
 			response.internalServerError(error)
+		}
 	}
 }

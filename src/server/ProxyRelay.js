@@ -25,8 +25,10 @@ export async function proxy(req, response, delay) {
 	catch (error) { // TESTME
 		if (error instanceof BodyReaderError)
 			response.unprocessable(error.name)
-		else
-			response.badGateway(error)
+		else {
+			response.badGateway()
+			logger.warn(error.cause.message)
+		}
 		return
 	}
 

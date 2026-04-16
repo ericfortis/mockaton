@@ -34,7 +34,7 @@ proc.stdout.on('data', data => {
 })
 proc.stderr.on('data', data => {
 	stderr.push(data.toString())
-	DEBUG && process.stderr.write(stdout.at(-1))
+	DEBUG && process.stderr.write(stderr.at(-1))
 })
 
 const serverAddr = await new Promise((resolve, reject) => {
@@ -150,7 +150,7 @@ describe('Filename Convention', () => {
 			body: '[invalid_json]'
 		})
 		equal(r.status, 422)
-		match(stdout.at(-1), /BodyReaderError: Could not parse/)
+		equal(await r.text(), 'BodyReaderError: Could not parse')
 	})
 
 	test('returns 500 when a handler throws', async () => {

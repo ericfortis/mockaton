@@ -60,12 +60,6 @@ export class ServerResponse extends http.ServerResponse {
 		this.end()
 	}
 
-	mockNotFound() {
-		this.statusCode = 404
-		logger.accessMock(this.req.url, '404')
-		this.end()
-	}
-
 	uriTooLong() {
 		this.statusCode = 414
 		logger.access(this)
@@ -73,20 +67,18 @@ export class ServerResponse extends http.ServerResponse {
 	}
 
 	unprocessable(error) {
-		logger.access(this, error)
+		logger.access(this)
 		this.statusCode = 422
 		this.end(error)
 	}
 
 
-	internalServerError(error) {
-		logger.error(500, this.req.url, error?.message || error, error?.stack || '')
+	internalServerError() {
 		this.statusCode = 500
 		this.end()
 	}
 
-	badGateway(error) {
-		logger.warn(error.cause.message)
+	badGateway() {
 		this.statusCode = 502
 		this.end()
 	}
@@ -102,20 +94,20 @@ export class ServerResponse extends http.ServerResponse {
 			this.statusCode = 416 // Range Not Satisfiable
 			this.setHeader('Content-Range', `bytes */${size}`)
 			this.end()
+			return
 		}
-		else {
-			this.statusCode = 206 // Partial Content
-			this.setHeader('Accept-Ranges', 'bytes')
-			this.setHeader('Content-Range', `bytes ${start}-${end}/${size}`)
-			this.setHeader('Content-Type', mimeFor(file))
+
+		this.statusCode = 206 // Partial Content
+		this.setHeader('Accept-Ranges', 'bytes')
+		this.setHeader('Content-Range', `bytes ${start}-${end}/${size}`)
+		this.setHeader('Content-Type', mimeFor(file))
+
+		return new Promise((resolve, reject) => {
 			const reader = fs.createReadStream(file, { start, end })
-			const response = this
-			reader.on('open', function () {
-				this.pipe(response)
-			})
-			reader.on('error', error => {
-				this.internalServerError(error)
-			})
-		}
+			this.on('error', reject)
+			reader.on('error', reject)
+			reader.on('end', resolve)
+			reader.pipe(this)
+		})
 	}
 }

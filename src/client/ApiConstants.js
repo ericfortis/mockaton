@@ -25,8 +25,6 @@ export const API = {
 	deleteMock: MOUNT + '/delete-mock',
 }
 
-export const HEADER_502 = 'Mockaton502'
-
 export const DEFAULT_MOCK_COMMENT = '(default)'
 
 export const EXT_UNKNOWN_MIME = 'unknown'

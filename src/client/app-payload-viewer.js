@@ -1,5 +1,4 @@
 import { createElement as r, t, extractClassNames } from './utils/dom.js'
-import { HEADER_502 } from './ApiConstants.js'
 import { parseFilename } from './Filename.js'
 import { store } from './app-store.js'
 
@@ -42,12 +41,9 @@ function PayloadViewerTitle(file, statusText) {
 
 function PayloadViewerTitleWhenProxied(response) {
 	const mime = response.headers.get('content-type') || ''
-	const badGateway = response.headers.get(HEADER_502)
 	return (
 		r('span', null,
-			badGateway
-				? r('span', null, t`⛔ Fallback Backend Error` + ' ')
-				: r('span', null, t`Got` + ' '),
+			r('span', null, t`Got` + ' '),
 			r('abbr', { title: response.statusText }, response.status),
 			' ' + mime))
 }

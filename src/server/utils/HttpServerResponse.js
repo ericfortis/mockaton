@@ -3,7 +3,6 @@ import fs, { readFileSync } from 'node:fs'
 
 import { logger } from './logger.js'
 import { mimeFor } from './mime.js'
-import { HEADER_502 } from '../../client/ApiConstants.js'
 
 
 export class ServerResponse extends http.ServerResponse {
@@ -87,9 +86,8 @@ export class ServerResponse extends http.ServerResponse {
 	}
 
 	badGateway(error) {
-		logger.warn('Fallback Proxy Error:', error.cause.message)
+		logger.warn(error.cause.message)
 		this.statusCode = 502
-		this.setHeader(HEADER_502, 1)
 		this.end()
 	}
 

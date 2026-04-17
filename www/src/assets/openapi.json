@@ -10,37 +10,97 @@
 		}
 	],
 	"paths": {
-		"/mockaton/reset": {
-			"patch": {
-				"summary": "Re-initialize Mockaton",
-				"description": "The selected mocks, cookies, and delays go back to default, but `proxyFallback`, `collectProxied`, and `corsAllowed` are not affected.",
-				"x-js-client-example": "await mockaton.reset()",
+		"/mockaton/state": {
+			"get": {
+				"summary": "Get complete Mockaton state",
+				"x-js-client-example": "await mockaton.getState()",
 				"responses": {
 					"200": {
-						"description": "OK"
+						"description": "Mockaton state",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/State"
+								}
+							}
+						}
 					}
 				}
 			}
 		},
-		"/mockaton/bulk-select-by-comment": {
+		"/mockaton/write-mock": {
 			"patch": {
-				"summary": "Select all mocks that have a particular comment",
-				"x-js-client-example": "await mockaton.bulkSelectByComment('(demo-a)')",
+				"summary": "Write a mock file",
+				"description": "Writes a mock file to the mocks directory. Requires `config.readOnly = false`",
+				"x-js-client-example": "await mockaton.writeMock('api/user/friends.GET.200.json', '{ \"friends\": [] }')",
 				"requestBody": {
 					"required": true,
 					"content": {
 						"application/json": {
 							"schema": {
-								"type": "string",
-								"description": "Parentheses are optional, so you can pass a partial match. For example, passing `'demo-'` (without the final `a`) works too. On routes with many partial matches, their first mock in alphabetical order wins.",
-								"example": "(demo-a)"
+								"type": "array",
+								"minItems": 2,
+								"maxItems": 2,
+								"prefixItems": [
+									{
+										"$ref": "#/components/schemas/Filename"
+									},
+									{
+										"type": "string",
+										"description": "File content"
+									}
+								],
+								"additionalItems": false
 							}
 						}
 					}
 				},
 				"responses": {
 					"200": {
-						"$ref": "#/components/responses/Broker"
+						"description": "OK"
+					},
+					"403": {
+						"description": "Forbidden (read-only mode or outside mocksDir)"
+					}
+				}
+			}
+		},
+		"/mockaton/delete-mock": {
+			"patch": {
+				"summary": "Delete a mock file",
+				"description": "Deletes a mock file from the mocks directory. Requires `config.readOnly=false`",
+				"x-js-client-example": "await mockaton.deleteMock('api/user/friends.GET.200.json')",
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"$ref": "#/components/schemas/Filename"
+							}
+						}
+					}
+				},
+				"responses": {
+					"200": {
+						"description": "OK"
+					},
+					"403": {
+						"description": "Forbidden (read-only mode or outside mocksDir)"
+					},
+					"422": {
+						"description": "Mock file does not exist"
+					}
+				}
+			}
+		},
+		"/mockaton/reset": {
+			"patch": {
+				"summary": "Re-initialize Mockaton",
+				"description": "The selected mocks, cookies, and delays go back to their defaults, but `proxyFallback`, `collectProxied`, and `corsAllowed` are not affected.",
+				"x-js-client-example": "await mockaton.reset()",
+				"responses": {
+					"200": {
+						"description": "OK"
 					}
 				}
 			}
@@ -73,6 +133,29 @@
 								"example": "Mock file does not exist"
 							}
 						}
+					}
+				}
+			}
+		},
+		"/mockaton/bulk-select-by-comment": {
+			"patch": {
+				"summary": "Select all mocks that have a particular comment",
+				"x-js-client-example": "await mockaton.bulkSelectByComment('(demo-a)')",
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"type": "string",
+								"description": "Parentheses are optional, so you can pass a partial match. For example, passing `'demo-'` (without the final `a`) works too. On routes with many partial matches, their first mock in alphabetical order wins.",
+								"example": "(demo-a)"
+							}
+						}
+					}
+				},
+				"responses": {
+					"200": {
+						"$ref": "#/components/responses/Broker"
 					}
 				}
 			}
@@ -119,52 +202,6 @@
 					},
 					"422": {
 						"description": "Route does not exist"
-					}
-				}
-			}
-		},
-		"/mockaton/proxied": {
-			"patch": {
-				"summary": "Set whether a route is proxied",
-				"description": "Applicable only when there’s a proxy fallback server URL already set. See `PATCH /mockaton/fallback`",
-				"x-js-client-example": "await mockaton.setRouteIsProxied('GET', '/api/user/friends', true)",
-				"requestBody": {
-					"required": true,
-					"content": {
-						"application/json": {
-							"schema": {
-								"type": "array",
-								"minItems": 3,
-								"maxItems": 3,
-								"prefixItems": [
-									{
-										"$ref": "#/components/schemas/Method"
-									},
-									{
-										"$ref": "#/components/schemas/UrlMask"
-									},
-									{
-										"type": "boolean",
-										"description": "proxied",
-										"example": true
-									}
-								],
-								"additionalItems": false
-							},
-							"example": [
-								"GET",
-								"/api/user",
-								true
-							]
-						}
-					}
-				},
-				"responses": {
-					"200": {
-						"$ref": "#/components/responses/Broker"
-					},
-					"422": {
-						"description": "Invalid request. Possible reasons:\n- Route does not exist\n- Expected boolean for `proxied`\n- No `proxyFallback` configured\n"
 					}
 				}
 			}
@@ -266,6 +303,39 @@
 				}
 			}
 		},
+		"/mockaton/cookies": {
+			"patch": {
+				"summary": "Select a cookie label",
+				"x-js-client-example": "await mockaton.selectCookie('Normal User')",
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"type": "string",
+								"description": "Cookie key",
+								"example": "Normal User"
+							}
+						}
+					}
+				},
+				"responses": {
+					"200": {
+						"description": "Available cookie labels",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/CookieSelectionList"
+								}
+							}
+						}
+					},
+					"422": {
+						"description": "Cookie key not found"
+					}
+				}
+			}
+		},
 		"/mockaton/cors": {
 			"patch": {
 				"summary": "Enable or disable CORS",
@@ -344,35 +414,48 @@
 				}
 			}
 		},
-		"/mockaton/cookies": {
+		"/mockaton/proxied": {
 			"patch": {
-				"summary": "Select a cookie label",
-				"x-js-client-example": "await mockaton.selectCookie('Normal User')",
+				"summary": "Set whether a route is proxied",
+				"description": "Applicable only when there’s a proxy fallback server URL already set. See `PATCH /mockaton/fallback`",
+				"x-js-client-example": "await mockaton.setRouteIsProxied('GET', '/api/user/friends', true)",
 				"requestBody": {
 					"required": true,
 					"content": {
 						"application/json": {
 							"schema": {
-								"type": "string",
-								"description": "Cookie key",
-								"example": "Normal User"
-							}
+								"type": "array",
+								"minItems": 3,
+								"maxItems": 3,
+								"prefixItems": [
+									{
+										"$ref": "#/components/schemas/Method"
+									},
+									{
+										"$ref": "#/components/schemas/UrlMask"
+									},
+									{
+										"type": "boolean",
+										"description": "proxied",
+										"example": true
+									}
+								],
+								"additionalItems": false
+							},
+							"example": [
+								"GET",
+								"/api/user",
+								true
+							]
 						}
 					}
 				},
 				"responses": {
 					"200": {
-						"description": "Available cookie labels",
-						"content": {
-							"application/json": {
-								"schema": {
-									"$ref": "#/components/schemas/CookieSelectionList"
-								}
-							}
-						}
+						"$ref": "#/components/responses/Broker"
 					},
 					"422": {
-						"description": "Cookie key not found"
+						"description": "Invalid request. Possible reasons:\n- Route does not exist\n- Expected boolean for `proxied`\n- No `proxyFallback` configured\n"
 					}
 				}
 			}
@@ -399,89 +482,6 @@
 					},
 					"422": {
 						"description": "Invalid input - expected boolean"
-					}
-				}
-			}
-		},
-		"/mockaton/write-mock": {
-			"patch": {
-				"summary": "Write a mock file",
-				"description": "Writes a mock file to the mocks directory. Guarded by `readOnly` and `mocksDir`.",
-				"x-js-client-example": "await mockaton.writeMock('api/user/friends.GET.200.json', '{ \"friends\": [] }')",
-				"requestBody": {
-					"required": true,
-					"content": {
-						"application/json": {
-							"schema": {
-								"type": "array",
-								"minItems": 2,
-								"maxItems": 2,
-								"prefixItems": [
-									{
-										"$ref": "#/components/schemas/Filename"
-									},
-									{
-										"type": "string",
-										"description": "File content"
-									}
-								],
-								"additionalItems": false
-							}
-						}
-					}
-				},
-				"responses": {
-					"200": {
-						"description": "OK"
-					},
-					"403": {
-						"description": "Forbidden (read-only mode or outside mocksDir)"
-					}
-				}
-			}
-		},
-		"/mockaton/delete-mock": {
-			"patch": {
-				"summary": "Delete a mock file",
-				"description": "Deletes a mock file from the mocks directory. Guarded by `readOnly` and `mocksDir`.",
-				"x-js-client-example": "await mockaton.deleteMock('api/user/friends.GET.200.json')",
-				"requestBody": {
-					"required": true,
-					"content": {
-						"application/json": {
-							"schema": {
-								"$ref": "#/components/schemas/Filename"
-							}
-						}
-					}
-				},
-				"responses": {
-					"200": {
-						"description": "OK"
-					},
-					"403": {
-						"description": "Forbidden (read-only mode or outside mocksDir)"
-					},
-					"422": {
-						"description": "Mock file does not exist"
-					}
-				}
-			}
-		},
-		"/mockaton/state": {
-			"get": {
-				"summary": "Get complete Mockaton state",
-				"x-js-client-example": "await mockaton.getState()",
-				"responses": {
-					"200": {
-						"description": "Mockaton state",
-						"content": {
-							"application/json": {
-								"schema": {
-									"$ref": "#/components/schemas/State"
-								}
-							}
-						}
 					}
 				}
 			}

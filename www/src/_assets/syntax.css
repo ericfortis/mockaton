@@ -1,10 +1,10 @@
 :root {
-	--syntaxCmd: light-dark(#1184f4, #359dff);
+	--syntaxCmd: light-dark(#1184f4, #b9ffe6);
 	--syntaxComment: light-dark(#777, #8c8c8c);
-	--syntaxKeyword: light-dark(#5a5e88, #8aa19b);
+	--syntaxKeyword: light-dark(#5a5e88, #6bb1a1);
 	--syntaxNum: light-dark(#9e009e, #925cff);
 	--syntaxProperty: light-dark(#321385, #b067ff);
-	--syntaxString: light-dark(#ec009f, #ff1ce4);
+	--syntaxString: light-dark(#ec009f, #ff11e6);
 	--syntaxVar: light-dark(green, #21cd3e);
 	--syntaxPunctionation: #999;
 	--syntaxRegex: #f0a;

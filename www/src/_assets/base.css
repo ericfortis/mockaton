@@ -13,9 +13,9 @@
 	--zIndexNextDoc: 41;
 	--zIndexFooter: 41;
 	--zIndexNav: 40;
-	
+
 	color-scheme: light dark;
-	
+
 	--bgHeader: light-dark(#272727, #000);
 	--bg: light-dark(#fdfdfd, #1a1a1a);
 	--fgHigh: light-dark(#000, #fff);
@@ -56,6 +56,7 @@
 	background: none;
 	color: inherit;
 	font-family: inherit;
+	line-height: 1.2;
 	font-size: inherit;
 	outline: 0;
 	corner-shape: squircle;
@@ -123,7 +124,7 @@ code {
 }
 pre {
 	max-width: 760px;
-	padding: 16px;
+	padding: 18px;
 	margin-top: 8px;
 	font-family: monospace;
 	border-radius: 16px;

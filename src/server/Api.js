@@ -4,10 +4,12 @@
  */
 
 import { join } from 'node:path'
+import { readdirSync } from 'node:fs'
+import { write, rm, isFile, resolveIn } from './utils/fs.js'
 
 import pkgJSON from '../../package.json' with { type: 'json' }
 
-import { sseClientHotReload, DASHBOARD_ASSETS, CLIENT_DIR } from './WatcherDevClient.js'
+import { sseClientHotReload } from './utils/WatcherDevClient.js'
 import { stopMocksDirWatcher, sseClientSyncVersion, uiSyncVersion, watchMocksDir } from './Watcher.js'
 
 import { API } from '../client/ApiConstants.js'
@@ -16,7 +18,11 @@ import { IndexHtml, CSP } from '../client/IndexHtml.js'
 import { cookie } from './cookie.js'
 import { config, ConfigValidator } from './config.js'
 import * as mockBrokersCollection from './mockBrokersCollection.js'
-import { write, rm, isFile, resolveIn } from './utils/fs.js'
+
+
+export const CLIENT_DIR = join(import.meta.dirname, '../client')
+const DASHBOARD_ASSETS = readdirSync(CLIENT_DIR, { recursive: true })
+
 
 
 export const apiGetReqs = new Map([
@@ -26,9 +32,10 @@ export const apiGetReqs = new Map([
 	[API.state, getState],
 	[API.syncVersion, sseClientSyncVersion],
 
-	[API.watchHotReload, sseClientHotReload],
+	[API.watchHotReload, onDevWatch],
 	[API.throws, () => { throw new Error('Test500') }]
 ])
+
 
 
 export const apiPatchReqs = new Map([
@@ -83,6 +90,12 @@ function getState(_, response) {
 	})
 }
 
+function onDevWatch(req, response) {
+	if (config.hotReload)
+		sseClientHotReload(req, response)
+	else
+		response.notFound()
+}
 
 /** # PATCH */
 

@@ -40,7 +40,7 @@ function init() {
 	}
 
 	async function hotReloadCSS(file) {
-		const mod = await import(`../${file}?${Date.now()}`, { with: { type: 'css' } })
+		const mod = await import(`${document.baseURI}${file}?${Date.now()}`, { with: { type: 'css' } })
 		document.adoptedStyleSheets = [mod.default]
 	}
 }

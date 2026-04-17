@@ -12,7 +12,7 @@ import { FILENAME_HEADER } from '../client/ApiConstants.js'
 
 export async function dispatchMock(req, response) {
 	response.setHeaderList(config.extraHeaders)
-	
+
 	try {
 		const isHead = req.method === 'HEAD'
 

@@ -12,12 +12,12 @@ import { API, FILENAME_HEADER } from '../client/ApiConstants.js'
 
 import { cookie } from './cookie.js'
 import { config, setup } from './config.js'
-import { apiPatchReqs, apiGetReqs } from './Api.js'
+import { apiPatchReqs, apiGetReqs, CLIENT_DIR } from './Api.js'
 
 import { dispatchMock } from './MockDispatcher.js'
 import * as mockBrokerCollection from './mockBrokersCollection.js'
 
-import { watchDevSPA } from './WatcherDevClient.js'
+import { watchDevSPA } from './utils/WatcherDevClient.js'
 import { watchMocksDir } from './Watcher.js'
 
 
@@ -32,7 +32,7 @@ export function Mockaton(options) {
 			watchMocksDir()
 		}
 		if (config.hotReload)
-			watchDevSPA()
+			watchDevSPA(CLIENT_DIR)
 
 		const server = createServer({ IncomingMessage, ServerResponse }, onRequest)
 		server.on('error', reject)
@@ -49,7 +49,7 @@ export function Mockaton(options) {
 
 async function onRequest(req, response) {
 	response.setHeader('Server', `Mockaton ${pkgJSON.version}`)
-	
+
 	response.on('error', logger.warn)
 
 	response.on('finish', () => {

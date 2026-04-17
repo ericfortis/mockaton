@@ -4,9 +4,8 @@ import { store } from './app-store.js'
 
 import CSS from './app.css' with { type: 'css' }
 import { extractClassNames } from './utils/css.js'
-
-
 Object.assign(CSS, extractClassNames(CSS))
+
 
 const titleRef = {}
 const codeRef = {}

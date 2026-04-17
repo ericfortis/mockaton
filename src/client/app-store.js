@@ -1,9 +1,9 @@
 import { Commander } from './ApiCommander.js'
 import { groupByFolder } from './dir/groupByFolder.js'
-import { parseFilename, extractComments } from './Filename.js'
-import { EXT_UNKNOWN_MIME, EXT_EMPTY } from './ApiConstants.js'
-import { LocalStorageSet, QueryParamBool } from './utils/LocalStorage.js'
 import { dittoSplitPaths } from './dir/dittoSplitPaths.js'
+import { parseFilename, extractComments } from './Filename.js'
+import { LocalStorageSet, QueryParamBool } from './utils/LocalStorage.js'
+import { EXT_UNKNOWN_MIME, EXT_EMPTY } from './ApiConstants.js'
 
 
 export const t = translation => translation[0]
@@ -205,38 +205,6 @@ export const store = {
 		store.brokersByMethod[method][urlMask] = broker
 	}
 }
-
-// When false, the URL will be updated with param=false
-function initPreference(param) {
-	const qs = new URLSearchParams(globalThis.location?.search)
-	if (!qs.has(param)) {
-		const group = globalThis.localStorage?.getItem(param) !== '0'
-		if (!group) {
-			const url = new URL(globalThis.location?.href)
-			url.searchParams.set(param, '0')
-			history.replaceState(null, '', url)
-		}
-		return group
-	}
-	return qs.get(param) !== '0'
-}
-
-// When false, the URL and localStorage will have param='0'
-function togglePreference(param, nextVal) {
-	if (nextVal)
-		globalThis.localStorage?.removeItem(param)
-	else
-		globalThis.localStorage?.setItem(param, nextVal)
-
-	const url = new URL(location.href)
-	if (nextVal)
-		url.searchParams.delete(param)
-	else
-		url.searchParams.set(param, '0')
-	history.replaceState(null, '', url)
-}
-
-
 
 export class BrokerRowModel {
 	opts = /** @type {[key:string, label:string, selected:boolean][]} */ []

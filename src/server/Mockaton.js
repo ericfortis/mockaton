@@ -15,7 +15,6 @@ import { config, setup } from './config.js'
 import { apiPatchReqs, apiGetReqs } from './Api.js'
 
 import { dispatchMock } from './MockDispatcher.js'
-
 import * as mockBrokerCollection from './mockBrokersCollection.js'
 
 import { watchDevSPA } from './WatcherDevClient.js'
@@ -49,7 +48,10 @@ export function Mockaton(options) {
 }
 
 async function onRequest(req, response) {
+	response.setHeader('Server', `Mockaton ${pkgJSON.version}`)
+	
 	response.on('error', logger.warn)
+
 	response.on('finish', () => {
 		const f = response.getHeader(FILENAME_HEADER)
 		if (f)
@@ -57,8 +59,6 @@ async function onRequest(req, response) {
 		else
 			logger.verbose('API', response)
 	})
-
-	response.setHeader('Server', `Mockaton ${pkgJSON.version}`)
 
 	const url = req.url || ''
 

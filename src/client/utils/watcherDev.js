@@ -1,38 +1,46 @@
-import { API } from '../ApiConstants.js'
+const url = new URL(import.meta.url).searchParams.get('url')
 
-let conn = null
-let timer = null
+if (!url)
+	console.warn('Missing ?url=')
+else
+	init()
 
-window.addEventListener('beforeunload', teardown)
-connect()
-function connect() {
-	if (conn) return
+function init() {
+	let conn = null
+	let timer = null
 
-	clearTimeout(timer)
-	conn = new EventSource(API.watchHotReload)
+	connect()
+	window.addEventListener('beforeunload', teardown)
 
-	conn.onmessage = function (event) {
-		const file = event.data
-		if (file.endsWith('.css'))
-			hotReloadCSS(file)
-		else if (file)
-			location.reload()
+	function connect() {
+		if (conn) return
+
+		clearTimeout(timer)
+		conn = new EventSource(url)
+
+		conn.onmessage = function (event) {
+			const file = event.data
+			if (file.endsWith('.css'))
+				hotReloadCSS(file)
+			else if (file)
+				location.reload()
+		}
+
+		conn.onerror = function () {
+			console.error('hot reload')
+			teardown()
+			timer = setTimeout(connect, 3000)
+		}
 	}
 
-	conn.onerror = function () {
-		console.error('hot reload')
-		teardown()
-		timer = setTimeout(connect, 3000)
+	function teardown() {
+		clearTimeout(timer)
+		conn?.close()
+		conn = null
 	}
-}
 
-function teardown() {
-	clearTimeout(timer)
-	conn?.close()
-	conn = null
-}
-
-async function hotReloadCSS(file) {
-	const mod = await import(`../${file}?${Date.now()}`, { with: { type: 'css' } })
-	document.adoptedStyleSheets = [mod.default]
+	async function hotReloadCSS(file) {
+		const mod = await import(`../${file}?${Date.now()}`, { with: { type: 'css' } })
+		document.adoptedStyleSheets = [mod.default]
+	}
 }

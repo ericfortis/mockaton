@@ -23,7 +23,7 @@ export const IndexHtml = (hotReloadEnabled, version) => `
 </head>
 <body>
 ${hotReloadEnabled
-	? '<script type="module" src="utils/watcherDev.js"></script>'
+	? `<script type="module" src="utils/watcherDev.js?url=${API.watchHotReload}"></script>`
 	: ''}
 </body>
 </html>

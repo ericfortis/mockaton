@@ -9,16 +9,20 @@ export default () => htmlTemplate({
 	`,
 	body: `
 		<h1>${MockatonLogo()}</h1>
+		<br />
 		<p>
 			HTTP mock server for simulating APIs
 			— ideal for triggering difficult to reproduce backend states.
 		</p>
-		
-		<h2>Overview</h2>
+
+		<h2>TL;DR</h2>
+		<p>Think of a <code>servedir</code> command that supports dynamic segments in filenames.</p>
+		${shell(`
+npx mockaton my-mocks-dir
+`)}
 		<p>
-			A given directory is scanned for filenames following a
-			convention similar to the URLs. For example, for <span
-			class="NullLink">/api/company/123</span>, the filename could be:
+
+			For <span class="NullLink">/api/company/123</span>, the filename could be:
 		</p>
 		
 		${raw(`

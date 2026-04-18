@@ -1,6 +1,6 @@
 import { test, describe } from 'node:test'
 import { deepEqual, equal } from 'node:assert/strict'
-import { parseSplats, parseQueryParams } from './UrlParsers.js'
+import { parseSegments, parseQueryParams } from './UrlParsers.js'
 import { config } from './config.js'
 
 test('parseQueryParams', () => {
@@ -9,44 +9,44 @@ test('parseQueryParams', () => {
 })
 
 
-describe('parseSplats', () => {
-	test('one splat', () => {
-		const splats = parseSplats(
+describe('parseSegments', () => {
+	test('one segment', () => {
+		const segments = parseSegments(
 			'/api/company/123',
 			`${config.mocksDir}/api/company/[companyId].GET.200.js`
 		)
-		deepEqual(splats, {
+		deepEqual(segments, {
 			companyId: '123'
 		})
 	})
 
-	test('one splat with trailing slash', () => {
-		const splats = parseSplats(
+	test('one segment with trailing slash', () => {
+		const segments = parseSegments(
 			'/api/company/123/',
 			`${config.mocksDir}/api/company/[companyId].GET.200.js`
 		)
-		deepEqual(splats, {
+		deepEqual(segments, {
 			companyId: '123'
 		})
 	})
 
-	test('two splats and comment', () => {
-		const splats = parseSplats(
+	test('two segments and comment', () => {
+		const segments = parseSegments(
 			'/api/company/123/user/456',
 			`${config.mocksDir}/api/company/[companyId]/user/[userId](comments).GET.200.js`
 		)
-		deepEqual(splats, {
+		deepEqual(segments, {
 			companyId: '123',
 			userId: '456',
 		})
 	})
 
 	test('ignores query string', () => {
-		const splats = parseSplats(
+		const segments = parseSegments(
 			'/api/company/123?foo=456',
 			`${config.mocksDir}/api/company/[companyId]?foo=[fooId].GET.200.js`
 		)
-		deepEqual(splats, {
+		deepEqual(segments, {
 			companyId: '123'
 		})
 	})

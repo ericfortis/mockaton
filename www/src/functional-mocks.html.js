@@ -90,15 +90,15 @@ export default function (req) {
 `}
 
 
-		<h3>Example C: Parse splats</h3>
+		<h3>Example C: Parse Segments</h3>
 
 		<code>api/company/[companyId]/user/[userId].GET.200.js</code>
 
 		${js`
-import { parseSplats } from 'mockaton'
+import { parseSegments } from 'mockaton'
 
 export default function (req, response) {
-  const { companyId, userId } = parseSplats(req.url, import.meta.filename)
+  const { companyId, userId } = parseSegments(req.url, import.meta.filename)
   return JSON.stringify({ companyId, userId })
 }
 `}

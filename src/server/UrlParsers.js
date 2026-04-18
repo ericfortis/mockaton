@@ -8,8 +8,14 @@ export function parseQueryParams(url) {
 	return new URL(url, 'http://_').searchParams
 }
 
-
+/** @deprecated Use parseSegments */
 export function parseSplats(url, filename) {
+	console.info('parseSplats is deprecated in favor of parseSegments')
+	return parseSegments(url, filename)
+}
+
+
+export function parseSegments(url, filename) {
 	const { urlMask } = parseFilename(relative(config.mocksDir, filename))
 
 	const splats = []

@@ -35,8 +35,8 @@ export default (url) => htmlTemplate({
 		</details>
 
 
-		<h2 id="splats">
-			Splats
+		<h2 id="dynamic-segments">
+			Dynamic Segments
 		</h2>
 		<p>
 			Anything within square brackets is always matched.

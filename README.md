@@ -10,6 +10,26 @@ for testing difficult to reproduce backend states.
 
 ## [Documentation ↗](https://mockaton.com) | [Changelog ↗](https://mockaton.com/changelog)
 
+## TL;DR
+```shell
+npx mockaton my-mocks-dir
+```
+
+It’s like `servedir`, but supports dynamic segments in filenames. For example:
+
+**Route**: [/api/company/123](#) <br/>
+**File**: my-mocks-dir/api/company/[id].GET.200.json
+
+Statics assets don’t need that extension:
+
+**Route**: [/media/avatar.png](#) <br/>
+**File**: my-mocks-dir/media/avatar.png
+
+
+## Dashboard
+Besides the dashboard, there’s a programmatic [Control API](https://mockaton.com/api).
+Also, there’s a [Browser Extension](https://mockaton.com/scraping) for scraping responses from your backend.
+
 <picture>
   <source media="(prefers-color-scheme: light)" srcset="https://raw.githubusercontent.com/ericfortis/mockaton/refs/heads/main/pixaton-tests/tests/macos/pic-for-readme.vp762x762.light.gold.png">
   <source media="(prefers-color-scheme: dark)" srcset="https://raw.githubusercontent.com/ericfortis/mockaton/refs/heads/main/pixaton-tests/tests/macos/pic-for-readme.vp762x762.dark.gold.png">
@@ -36,12 +56,8 @@ curl localhost:2020/api/user
 ```
 
 
-## Overview
-With Mockaton, you don’t need to write code for wiring up your
-mocks. Instead, a given directory is scanned for filenames
-following a convention similar to the URLs.
-
-For example, for [/api/company/123](#), the file could be:
+## Examples
+[/api/company/123](#)
 
 <code>my_mocks_dir/<b>api/company/[id]</b>.GET.200.json</code>
 ```json
@@ -49,6 +65,8 @@ For example, for [/api/company/123](#), the file could be:
   "name": "Acme, Inc."
 }
 ```
+
+<br/>
 
 Or, you can write it in TypeScript (it will be sent as JSON).
 
@@ -59,15 +77,17 @@ export default {
 }
 ```
 
+<br/>
+
 Similarly, you can handle logic with [Functional Mocks](https://mockaton.com/functional-mocks):
 
 <code>my_mocks_dir/<b>api/company/[companyId]/user/[userId]</b>.GET.200.ts</code>
 ```ts
 import { IncomingMessage, OutgoingMessage } from 'node:http'
-import { parseSplats } from 'mockaton'
+import { parseSegments } from 'mockaton'
 
 export default async function (req: IncomingMessage, response: OutgoingMessage) {
-  const { companyId, userId } = parseSplats(req.url, import.meta.filename)
+  const { companyId, userId } = parseSegments(req.url, import.meta.filename)
   const foo = await getFoo()
   return JSON.stringify({
     foo,
@@ -77,11 +97,3 @@ export default async function (req: IncomingMessage, response: OutgoingMessage) 
   })
 }
 ```
-
-## Browser Extension
-[Browser Extension](https://mockaton.com/scraping) for scraping responses from your backend.
-
-
-## API
-Programmatic [Control API](https://mockaton.com/api).
-

@@ -8,14 +8,6 @@
 
 There’s an implicit question mark on each one.
 
-## Spelling
-- Mockaton
-- mockaton
-- mock-a-ton
-- Mock-a-Ton
-- Mock-aTon
-- MockaTon
-
 ## Project Name Field
 - config.projectName
 - key for LocalStorage prefs

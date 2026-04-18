@@ -17,7 +17,7 @@ header {
 		box-sizing: content-box;
 		padding-top: 12px;
 		padding-right: 16px;
-		padding-bottom: 3px;
+		padding-bottom: 6px;
 		padding-left: 15px;
 		color: var(--accentLight);
 	}

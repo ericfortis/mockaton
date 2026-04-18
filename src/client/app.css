@@ -119,12 +119,12 @@ header {
 
 	.Logo {
 		align-self: end;
-		margin-right: 22px;
-		margin-bottom: 3px;
+		margin-right: 18px;
+		margin-bottom: 2px;
 		transition: opacity 240ms ease-in-out;
 
 		svg {
-			width: 120px;
+			width: 122px;
 			pointer-events: none;
 			fill: var(--colorText);
 		}
@@ -185,6 +185,7 @@ header {
 	}
 
 	.HelpLink {
+		opacity: 0.8;
 		width: 22px;
 		height: 22px;
 		flex-shrink: 0;
@@ -197,6 +198,7 @@ header {
 
 		&:hover {
 			background: var(--colorAccent);
+			opacity: 1;
 		}
 
 		svg {

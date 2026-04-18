@@ -3,6 +3,7 @@
   - payload in store? So it stays when re-rendering?
 - In Chrome (not FF), rendering iframe HTML as payload and resizing the left-panel prevents the iframe from scrolling.
   Resizing the browser afterward fixes the iframe scrolling.
+- Collapsing // https://news.ycombinator.com/item?id=47813454
 
 # Ideas
 
@@ -83,9 +84,6 @@ doesn’t break selecting across pages, (e.g., for selecting and copying)
 
 ## Fetch logs
 - API for streaming logs?
-
-## Proxy Fallback
-- support static mocks
 
 ## Plugins
 - think about using a name in the config, instead of the function, So

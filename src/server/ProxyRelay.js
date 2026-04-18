@@ -34,7 +34,8 @@ export async function proxy(req, response, delay) {
 
 	response.writeHead(proxyResponse.status, {
 		...Object.fromEntries(proxyResponse.headers),
-		'Set-Cookie': proxyResponse.headers.getSetCookie() // parses multiple into an array
+		'set-cookie': proxyResponse.headers.getSetCookie(), // parses multiple into an array
+		'cache-control': 'no-cache'
 	})
 	const body = await proxyResponse.text()
 	setTimeout(() => response.end(body), delay) // TESTME

@@ -74,7 +74,7 @@ function request(path, options = {}) {
 class Fixture {
 	constructor(file, body = '') {
 		this.file = file
-		this.body = body || `Body for ${file}`
+		this.body = body || `Body for: ${file}`
 		const t = parseFilename(file)
 		this.urlMask = t.urlMask
 		this.method = t.method
@@ -336,7 +336,8 @@ describe('Proxy Fallback', () => {
 				response.writeHead(423, {
 					'custom_header': 'my_custom_header',
 					'content-type': mimeFor('.json'),
-					'set-cookie': CUSTOM_COOKIES
+					'set-cookie': CUSTOM_COOKIES,
+					'cache-control': 'public'
 				})
 				response.end(JSON.stringify(BODY_PAYLOAD))
 			})
@@ -359,6 +360,9 @@ describe('Proxy Fallback', () => {
 
 			equal(r1.headers.get('set-cookie'), CUSTOM_COOKIES.join(', '))
 			equal(r2.headers.get('set-cookie'), CUSTOM_COOKIES.join(', '))
+
+			equal(r1.headers.get('cache-control'), 'no-cache') // unsets cache
+			equal(r2.headers.get('cache-control'), 'no-cache')
 
 			deepEqual(await r2.json(), BODY_PAYLOAD)
 			deepEqual(await r1.json(), BODY_PAYLOAD)

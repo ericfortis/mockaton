@@ -3,3 +3,47 @@ h1 svg {
 	fill: var(--fgHigh);
 	color: var(--colorAccent);
 }
+
+table {
+	overflow: hidden;
+	margin-top: 32px;
+	th {
+		padding-bottom: 12px;
+		text-align: left;
+	}
+	td {
+		padding-right: 10px;
+		padding-bottom: 12px;
+		padding-left: 0;
+		font-size: 16px;
+
+		&:nth-child(1) {
+			color: var(--colorAccent);
+			filter: saturate(.7);
+		}
+
+		&:nth-child(2) {
+			text-wrap: nowrap;
+			font-family: monospace;
+			font-size: 0.8rem;
+		}
+
+		&:nth-child(3) {
+			opacity: .8;
+		}
+	}
+
+	@media (max-width: 680px) {
+		thead {
+			display: none;
+		}
+		tr {
+			display: block;
+			margin-bottom: 1.4rem;
+		}
+		td {
+			display: block;
+			width: 100%;
+		}
+	}
+}

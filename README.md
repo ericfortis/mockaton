@@ -2,10 +2,10 @@
 [![Test](https://github.com/ericfortis/mockaton/actions/workflows/test.yml/badge.svg)](https://github.com/ericfortis/mockaton/actions/workflows/test.yml)
 [![codecov](https://codecov.io/github/ericfortis/mockaton/graph/badge.svg?token=90NYLMMG1J)](https://codecov.io/github/ericfortis/mockaton)
 
-## [Documentation ↗](https://mockaton.com) | [Changelog ↗](https://mockaton.com/changelog)
+## [Docs ↗](https://mockaton.com) | [Changelog ↗](https://mockaton.com/changelog)
 
-Mockaton is an HTTP mock server for simulating APIs with minimal setup &mdash; ideal
-for testing difficult to reproduce backend states.
+Mockaton is an HTTP mock server for simulating APIs with minimal setup &mdash;
+designed for testing difficult to reproduce backend states.
 
 <picture>
   <source media="(prefers-color-scheme: light)" srcset="https://raw.githubusercontent.com/ericfortis/mockaton/refs/heads/main/pixaton-tests/tests/macos/pic-for-readme.vp762x762.light.gold.png">
@@ -14,9 +14,9 @@ for testing difficult to reproduce backend states.
 </picture>
 
 
-## Quick Demo (Docker)
-This will spin up Mockaton with the sample directory
-included in this repo mounted on the container. Mentioned dir is: [mockaton-mocks/](./mockaton-mocks).
+## Demo (Docker)
+This will spin up Mockaton with the [sample directory](./mockaton-mocks)
+included in this repo mounted on the container.
 
 ```sh
 git clone https://github.com/ericfortis/mockaton.git --depth 1
@@ -36,21 +36,24 @@ curl localhost:2020/api/user
 npx mockaton my-mocks-dir/
 ```
 
-Mockaton is like `servedir`, but filenames can have dynamic parameters.
-Also, each route can have different mock variants, either by using comments or different status code in the filename.
+Mockaton will serve the files on that given directory.
+Filenames can have dynamic parameters and comments.
+Each route can have different mock file variants.
 
 
 | Route | Filename | Description |
 | -----| -----| ---|
 | /api/company/123 | api/company/[id].GET.200.json | `[id]` is a dynamic parameter |
 | /media/avatar.png | media/avatar.png | Statics assets don’t need the above extension |
-| /api/login | api/login(invalid attempt).POST.401.json | Anything within parenthesis is a comment, they are ignored when routing |
-| /api/login | api/login(default).GET.200.json | `(default)` is a special comment; otherwise, the first other mock variant in alphabetical order wins  |
+| /api/login | api/login(invalid attempt).POST.401.json | Anything within parenthesis is a **comment**, they are ignored when routing |
+| /api/login | api/login(default).GET.200.json | `(default)` is a special comment; otherwise, the first mock variant in alphabetical order wins  |
 | /api/login | api/login(locked out user).POST.423.ts | TypeScript or JavaScript mocks are sent as JSON by default |
+
+[Config Docs](https://mockaton.com/config)
 
 
 ## How to control Mockaton?
-Besides the dashboard, there’s a programmatic [API](https://mockaton.com/api).
+Besides the dashboard, there’s a [Programmatic API](https://mockaton.com/api).
 
 
 ## How to scrape responses from a backend?
@@ -63,7 +66,7 @@ There’s a [Browser Extension](https://mockaton.com/scraping) for scraping resp
 
 ### Example A: JSON
 - **Route:** /api/company/123
-- **Filename:** mocks-dir/api/company/[id].GET.200.json
+- **Filename:** api/company/[id].GET.200.json
 
 ```json
 {
@@ -75,7 +78,7 @@ There’s a [Browser Extension](https://mockaton.com/scraping) for scraping resp
 Exporting an Object, Array, or String is sent as JSON.
 
 - **Route:** /api/company/abc
-- **Filename:** mocks-dir/api/company/[id].GET.200.ts
+- **Filename:** api/company/[id].GET.200.ts
 
 ```ts
 export default {
@@ -83,11 +86,12 @@ export default {
 }
 ```
 
-### Example C: Function Mocks
-With a function mock you can do pretty much anything you could do with a normal backend handler.
+### Example C: [Function Mocks](https://mockaton.com/function-mocks)
+With a function mock you can do pretty much anything you could do with a normal backend handler.</p>
+For example, you can handle complex logic, URL parsing, saving toa database, etc.
 
 - **Route:** /api/company/abc/user/999
-- **Filename:** mocks-dir/api/company/[companyId]/user/[userId].GET.200.ts
+- **Filename:** api/company/[companyId]/user/[userId].GET.200.ts
 
 ```ts
 import { IncomingMessage, OutgoingMessage } from 'node:http'

@@ -1,0 +1,9 @@
+{
+  "apis": [
+    {
+      "name": "Mockaton API",
+      "base_url": "/api",
+      "spec_url": "/assets/openapi.json"
+    }
+  ]
+}

@@ -986,12 +986,14 @@ test('head for get. returns the headers without body only for GETs requested as 
 
 
 describe('Write and Delete Mock', () => {
-	test('guards mocksDir', async () => {
+	test('rejects filenames resolving outside mocksDir', async () => {
 		const r = await api.writeMock('../outside.txt', '')
 		equal(r.status, 403)
+		match(await r.text(), /Filename path resolves outside config.mocksDir/)
 
 		const r2 = await api.deleteMock('../outside.txt')
 		equal(r2.status, 403)
+		match(await r2.text(), /Filename path resolves outside config.mocksDir/)
 	})
 
 	test('write and delete (with watcher)', async () => {

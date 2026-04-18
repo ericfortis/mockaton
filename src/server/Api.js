@@ -257,13 +257,15 @@ async function setRouteIsProxied(req, response) {
 
 async function writeMock(req, response) {
 	if (config.readOnly)
-		return response.forbidden()
+		return response.forbidden('Forbidden: config.readOnly is true')
 
 	const [file, content] = await req.json()
+	if (typeof file !== 'string')
+		return response.unprocessable('Invalid or missing filename. Expected: JSON [filename, content]')
+	
 	const path = await resolveIn(config.mocksDir, file)
-
 	if (!path)
-		return response.forbidden()
+		return response.forbidden('Filename path resolves outside config.mocksDir')
 
 	await write(path, content)
 
@@ -277,13 +279,13 @@ async function writeMock(req, response) {
 
 async function deleteMock(req, response) {
 	if (config.readOnly)
-		return response.forbidden()
+		return response.forbidden('Forbidden: config.readOnly is true')
 
 	const file = await req.json()
 	const path = await resolveIn(config.mocksDir, file)
 
 	if (!path)
-		return response.forbidden()
+		return response.forbidden('Filename path resolves outside config.mocksDir')
 
 	if (!isFile(path))
 		return response.unprocessable(`Missing Mock: ${file}`)

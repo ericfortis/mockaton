@@ -41,9 +41,9 @@ export class ServerResponse extends http.ServerResponse {
 		this.end()
 	}
 
-	forbidden() {
+	forbidden(msg) {
 		this.statusCode = 403
-		this.end()
+		this.end(msg)
 	}
 
 	notFound() {

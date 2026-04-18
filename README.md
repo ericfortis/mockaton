@@ -10,20 +10,22 @@ for testing difficult to reproduce backend states.
 
 ## [Documentation ↗](https://mockaton.com) | [Changelog ↗](https://mockaton.com/changelog)
 
-## TL;DR
+## Basic Usage
 ```shell
-npx mockaton my-mocks-dir
+npx mockaton my-mocks-dir/
 ```
 
-It’s like `servedir`, but supports dynamic segments in filenames. For example:
+Mockaton is like a `servedir` or `python -m http.server` command, but in addition it supports dynamic parameters and
+each route can have different mock variants, either by using comments or different status code in the filename.
 
-**Route**: [/api/company/123](#) <br/>
-**File**: my-mocks-dir/api/company/[id].GET.200.json
 
-Statics assets don’t need that extension:
+| Route | File | Description |
+| -----| -----| ---|
+| /api/company/123 | my-mocks-dir/api/company/[id].GET.200.json | `[id]` is a dynamic parameter |
+| /media/avatar.png | my-mocks-dir/media/avatar.png | Statics assets don’t need the above extension |
+| /api/user | my-mocks-dir/api/user(demo-part1).GET.200.ts | Anything within parenthesis is a comment, they are ignored when routing |
+| /api/user | my-mocks-dir/api/user(default).GET.200.ts | `(default)` is a special comment; otherwise, the first other mock variant in alphabetical order wins  |
 
-**Route**: [/media/avatar.png](#) <br/>
-**File**: my-mocks-dir/media/avatar.png
 
 
 ## Dashboard
@@ -56,32 +58,35 @@ curl localhost:2020/api/user
 ```
 
 
-## Examples
-[/api/company/123](#)
+## How to create mocks?
 
-<code>my_mocks_dir/<b>api/company/[id]</b>.GET.200.json</code>
+### Example A (JSON)
+- **Route:** /api/company/123
+- **Filename:** mocks-dir/api/company/[id].GET.200.json
+
 ```json
 {
   "name": "Acme, Inc."
 }
 ```
 
-<br/>
+### Example B (TypeScript or JavaScript)
+Exporting an Object, Array, or String is sent as JSON.
 
-Or, you can write it in TypeScript (it will be sent as JSON).
+- **Route:** /api/company/abc
+- **Filename:** mocks-dir/api/company/[id].GET.200.ts
 
-<code>my_mocks_dir/<b>api/company/[id]</b>.GET.200.ts</code>
 ```ts
 export default {
   name: 'Acme, Inc.'
 }
 ```
 
-<br/>
+### Example C (Function Mocks)
 
-Similarly, you can handle logic with [Function Mocks](https://mockaton.com/function-mocks):
+- **Route:** /api/company/abc/user/999
+- **Filename:** mocks-dir/api/company/[companyId]/user/[userId].GET.200.ts
 
-<code>my_mocks_dir/<b>api/company/[companyId]/user/[userId]</b>.GET.200.ts</code>
 ```ts
 import { IncomingMessage, OutgoingMessage } from 'node:http'
 import { parseSegments } from 'mockaton'

@@ -17,15 +17,15 @@ export default (url) => htmlTemplate({
 		${shell`
 mockaton [mocks-dir] [options]
 
-[mocks-dir]           (default: ./mockaton-mocks/)
+[mocks-dir]          (default: ./mockaton-mocks/)
 
--c, --config <file>    (default: ./mockaton.config.js)
+-c, --config <file>  (default: ./mockaton.config.js)
 
--H, --host <host>      (default: 127.0.0.1)
--p, --port <port>      (default: 0) which means auto-assigned
+-H, --host <host>    (default: 127.0.0.1)
+-p, --port <port>    (default: 0) which means auto-assigned
 
--q, --quiet            Errors only
---no-open              Don’t open dashboard in a browser
+-q, --quiet          Errors only
+--no-open            Don’t open dashboard in a browser
 
 -h, --help
 -v, --version

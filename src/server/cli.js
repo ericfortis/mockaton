@@ -48,16 +48,16 @@ else if (args.help)
 Usage: mockaton [mocks-dir] [options]
 
 Options:
-  -c, --config <file>    (default: ./mockaton.config.js)
+  -c, --config <file>  (default: ./mockaton.config.js)
   
-  -H, --host <host>      (default: 127.0.0.1)
-  -p, --port <port>      (default: 0) which means auto-assigned
+  -H, --host <host>    (default: 127.0.0.1)
+  -p, --port <port>    (default: 0) which means auto-assigned
   
-  -q, --quiet            Errors only
-  --no-open              Don’t open dashboard in a browser
+  -q, --quiet          Show errors only
+  --no-open            Don’t open dashboard in a browser
   
-  -h, --help             Show this help
-  -v, --version          Show version
+  -h, --help
+  -v, --version
 
 Notes:
   * mockaton.config.js supports more options, see: https://mockaton.com/config

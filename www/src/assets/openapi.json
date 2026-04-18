@@ -1,8 +1,8 @@
 {
-	"openapi": "3.1.2",
+	"openapi": "3.2.0",
 	"info": {
 		"title": "Mockaton Control API",
-		"version": "1.0.0"
+		"version": "1.0.1"
 	},
 	"servers": [
 		{
@@ -10,6 +10,26 @@
 		}
 	],
 	"paths": {
+		"/mockaton/openapi": {
+			"get": {
+				"summary": "Get this OpenAPI spec",
+				"x-js-client-example": "await mockaton.getOpenAPI()",
+				"responses": {
+					"200": {
+						"description": "OpenAPI spec",
+						"content": {
+							"application/json": {
+								"schema": {
+									"type": "object",
+									"additionalProperties": true
+								}
+							}
+						}
+					}
+				}
+			}
+		},
+
 		"/mockaton/state": {
 			"get": {
 				"summary": "Get complete Mockaton state",
@@ -488,29 +508,17 @@
 		},
 		"/mockaton/sync-version": {
 			"get": {
-				"summary": "Get sync version for long‑polling updates",
+				"summary": "Get sync version as SSE",
 				"description": "A counter that’s incremented when a new mock is added, removed, or renamed. Also, when the internal state changes, e.g., when changing the mock file for a route.",
 				"x-js-client-example": "await mockaton.getSyncVersion()",
-				"parameters": [
-					{
-						"name": "sync_version",
-						"in": "header",
-						"required": false,
-						"example": -1,
-						"schema": {
-							"type": "number"
-						},
-						"description": "When not present, or when the version mismatches it responds right away. Otherwise, it long polls. Times out in 8s."
-					}
-				],
 				"responses": {
 					"200": {
-						"description": "Sync version value",
+						"description": "Stream of sync version updates (SSE)",
 						"content": {
-							"application/json": {
+							"text/event-stream": {
 								"schema": {
-									"type": "number",
-									"description": "Incremental integer"
+									"type": "integer",
+									"description": "Incremental sync version emitted per event"
 								}
 							}
 						}

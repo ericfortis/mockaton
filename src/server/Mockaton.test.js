@@ -227,6 +227,14 @@ describe('Dashboard', () => {
 })
 
 
+describe('OpenAPI', () => {
+	test('serves the json spec', async () => {
+		const r = await request(API.openAPI)
+		match(await r.text(), new RegExp('"openapi":'))
+	})
+})
+
+
 describe('Cookie', () => {
 	test('422 when trying to select non-existing cookie', async () => {
 		const r = await api.selectCookie('non-existing-cookie-key')

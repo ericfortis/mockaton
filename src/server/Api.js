@@ -7,6 +7,7 @@ import { join } from 'node:path'
 import { readdirSync } from 'node:fs'
 import { write, rm, isFile, resolveIn } from './utils/fs.js'
 
+import openapi from '../../www/src/assets/openapi.json' with { type: 'json' }
 import pkgJSON from '../../package.json' with { type: 'json' }
 
 import { sseClientHotReload } from './utils/WatcherDevClient.js'
@@ -24,7 +25,6 @@ export const CLIENT_DIR = join(import.meta.dirname, '../client')
 const DASHBOARD_ASSETS = readdirSync(CLIENT_DIR, { recursive: true })
 
 
-
 export const apiGetReqs = new Map([
 	[API.dashboard, serveDashboard],
 	...DASHBOARD_ASSETS.map(f => [API.dashboard + '/' + f, serveStatic(f)]),
@@ -33,7 +33,8 @@ export const apiGetReqs = new Map([
 	[API.syncVersion, sseClientSyncVersion],
 
 	[API.watchHotReload, onDevWatch],
-	[API.throws, () => { throw new Error('Test500') }]
+	[API.throws, () => { throw new Error('Test500') }],
+	[API.openAPI, (_, response) => response.json(openapi)]
 ])
 
 
@@ -96,7 +97,6 @@ function onDevWatch(req, response) {
 	else
 		response.notFound()
 }
-
 /** # PATCH */
 
 function reset(_, response) {

@@ -65,4 +65,6 @@ export class Commander {
 	 * @returns {Promise<Response>}
 	 */
 	getSyncVersion = () => fetch(this.addr + API.syncVersion)
+
+	getOpenAPI = () => fetch(this.addr + API.openAPI)
 }

@@ -4,25 +4,33 @@ const MOUNT = '/mockaton'
 
 export const API = {
 	dashboard: MOUNT,
+
+	reset: MOUNT + '/reset',
+
+	select: MOUNT + '/select',
 	bulkSelect: MOUNT + '/bulk-select-by-comment',
-	collectProxied: MOUNT + '/collect-proxied',
-	cookies: MOUNT + '/cookies',
-	cors: MOUNT + '/cors',
+
 	delay: MOUNT + '/delay',
+	proxied: MOUNT + '/proxied',
+	toggleStatus: MOUNT + '/toggle-status',
+
+	cors: MOUNT + '/cors',
+	cookies: MOUNT + '/cookies',
 	fallback: MOUNT + '/fallback',
+	collectProxied: MOUNT + '/collect-proxied',
 	globalDelay: MOUNT + '/global-delay',
 	globalDelayJitter: MOUNT + '/global-delay-jitter',
-	proxied: MOUNT + '/proxied',
-	reset: MOUNT + '/reset',
-	select: MOUNT + '/select',
-	state: MOUNT + '/state',
-	syncVersion: MOUNT + '/sync-version',
-	throws: MOUNT + '/throws',
-	toggleStatus: MOUNT + '/toggle-status',
-	watchHotReload: MOUNT + '/watch-hot-reload',
-	watchMocks: MOUNT + '/watch-mocks',
+
 	writeMock: MOUNT + '/write-mock',
 	deleteMock: MOUNT + '/delete-mock',
+	watchMocks: MOUNT + '/watch-mocks',
+
+	state: MOUNT + '/state',
+	throws: MOUNT + '/throws',
+	syncVersion: MOUNT + '/sync-version',
+	watchHotReload: MOUNT + '/watch-hot-reload',
+
+	openAPI: MOUNT + '/openapi'
 }
 
 export const DEFAULT_MOCK_COMMENT = '(default)'

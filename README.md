@@ -15,8 +15,8 @@ for testing difficult to reproduce backend states.
 npx mockaton my-mocks-dir/
 ```
 
-Mockaton is like a `servedir` or `python -m http.server` command, but in addition it supports dynamic parameters and
-each route can have different mock variants, either by using comments or different status code in the filename.
+Mockaton is like a `servedir` or `python -m http.server` command, but in addition filenames can have dynamic parameters.
+Also, each route can have different mock variants, either by using comments or different status code in the filename.
 
 
 | Route | File | Description |

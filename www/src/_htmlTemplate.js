@@ -6,7 +6,7 @@ const pages = [
 	['/installation', 'Installation'],
 	['/scraping', 'Scraping Mocks'],
 	['/convention', 'Convention'],
-	['/functional-mocks', 'Functional Mocks'],
+	['/function-mocks', 'Function Mocks'],
 	['/config', 'Config'],
 	['/api', 'API'],
 	['/plugins', 'Plugins'],

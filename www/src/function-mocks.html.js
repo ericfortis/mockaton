@@ -3,9 +3,9 @@ import { js } from './_syntaxHighlight.js'
 
 // language=html
 export default (url) => htmlTemplate({
-	head: socialMetadata('Functional Mocks', '', url),
+	head: socialMetadata('Function Mocks', '', url),
 	body: `
-		<h1>Functional Mocks</h1>
+		<h1>Function Mocks</h1>
 
 		<p><em>
 			Node 22.18+ and 23.6+ support TypeScript by default.

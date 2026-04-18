@@ -79,7 +79,7 @@ export default {
 
 <br/>
 
-Similarly, you can handle logic with [Functional Mocks](https://mockaton.com/functional-mocks):
+Similarly, you can handle logic with [Function Mocks](https://mockaton.com/function-mocks):
 
 <code>my_mocks_dir/<b>api/company/[companyId]/user/[userId]</b>.GET.200.ts</code>
 ```ts

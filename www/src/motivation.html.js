@@ -37,11 +37,11 @@ export default (url) => htmlTemplate({
 			Information">PII</abbr> documents). In those cases, I put a bunch of documents
 			on <code>config.mocksDir</code> (without the filename convention)
 			and I read that file structure with a <a
-			href="/functional-mocks">Functional Mock</a> and generate links to them.
+			href="/function-mocks">Function Mock</a> and generate links to them.
 		</p>
 
 		<p>
-			Functional mocks can pretty much do anything you can do
+			Function mocks can pretty much do anything you can do
 			with a normal backend request handler. For example, you can:
 		</p>
 		<ul>

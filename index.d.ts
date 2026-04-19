@@ -1,6 +1,6 @@
 import { Server, IncomingMessage, OutgoingMessage } from 'node:http'
 
-export type Plugin = (
+export declare type Plugin = (
 	filePath: string,
 	request: IncomingMessage,
 	response: OutgoingMessage
@@ -9,7 +9,7 @@ export type Plugin = (
 	body: string | Uint8Array
 }>
 
-export interface Config {
+export declare interface Config {
 	mocksDir?: string
 	ignore?: RegExp
 	watcherEnabled?: boolean
@@ -49,28 +49,28 @@ export interface Config {
 }
 
 
-export function Mockaton(options: Partial<Config>): Promise<Server | undefined>
+export declare function Mockaton(options: Partial<Config>): Promise<Server | undefined>
 
-export function defineConfig(options: Partial<Config>): Partial<Config>
+export declare function defineConfig(options: Partial<Config>): Partial<Config>
 
-export const jsToJsonPlugin: Plugin
-export const echoFilePlugin: Plugin
+export declare const jsToJsonPlugin: Plugin
+export declare const echoFilePlugin: Plugin
 
 
 // Utils
 
-export function jwtCookie(cookieName: string, payload: any, path?: string): string
+export declare function jwtCookie(cookieName: string, payload: any, path?: string): string
 
-export function parseJSON(request: IncomingMessage): Promise<any>
-export function parseSegments(reqUrl: string, filename: string): Record<string, string>
-export function parseQueryParams(reqUrl: string): URLSearchParams
+export declare function parseJSON(request: IncomingMessage): Promise<any>
+export declare function parseSegments(reqUrl: string, filename: string): Record<string, string>
+export declare function parseQueryParams(reqUrl: string): URLSearchParams
 
-export type JsonPromise<T> = Promise<Response & { json(): Promise<T> }>
+export declare type JsonPromise<T> = Promise<Response & { json(): Promise<T> }>
 
 
 // API
 
-export type ClientMockBroker = {
+export declare type ClientMockBroker = {
 	mocks: string[]
 	file: string
 	status: number
@@ -79,13 +79,13 @@ export type ClientMockBroker = {
 	delayed: boolean
 	proxied: boolean
 }
-export type ClientBrokersByMethod = {
+export declare type ClientBrokersByMethod = {
 	[method: string]: {
 		[urlMask: string]: ClientMockBroker
 	}
 }
 
-export interface State {
+export declare interface State {
 	brokersByMethod: ClientBrokersByMethod
 
 	cookies: [label: string, selected: boolean][]

@@ -1,11 +1,12 @@
 ![NPM Version](https://img.shields.io/npm/v/mockaton)
 [![Test](https://github.com/ericfortis/mockaton/actions/workflows/test.yml/badge.svg)](https://github.com/ericfortis/mockaton/actions/workflows/test.yml)
 [![codecov](https://codecov.io/github/ericfortis/mockaton/graph/badge.svg?token=90NYLMMG1J)](https://codecov.io/github/ericfortis/mockaton)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
 ## [Docs ↗](https://mockaton.com) | [Changelog ↗](https://mockaton.com/changelog)
 
-Mockaton is an HTTP mock server for simulating APIs with minimal setup &mdash;
-designed for testing difficult to reproduce backend states.
+Mockaton is an HTTP mock server for simulating APIs, designed
+for testing difficult to reproduce backend states with minimal setup.
 
 <picture>
   <source media="(prefers-color-scheme: light)" srcset="https://raw.githubusercontent.com/ericfortis/mockaton/refs/heads/main/pixaton-tests/tests/macos/pic-for-readme.vp762x762.light.gold.png">
@@ -36,9 +37,9 @@ curl localhost:2020/api/user
 npx mockaton my-mocks-dir/
 ```
 
-Mockaton will serve the files on that given directory.
-Filenames can have dynamic parameters and comments.
-Each route can have different mock file variants.
+Mockaton will serve the files on that given directory. It’s a file-system
+based router, so filenames can have dynamic parameters and comments.
+Also, each route can have different mock file variants.
 
 
 | Route | Filename | Description |
@@ -58,8 +59,6 @@ Besides the dashboard, there’s a [Programmatic API](https://mockaton.com/api).
 
 ## How to scrape responses from a backend?
 There’s a [Browser Extension](https://mockaton.com/scraping) for scraping responses from your backend.
-
-
 
 
 ## How to create mocks?

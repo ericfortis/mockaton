@@ -12,8 +12,8 @@ export default () => htmlTemplate({
 		<br />
 
 		<p>
-			Mockaton is an HTTP mock server for simulating APIs with minimal setup &mdash;
-			designed for testing difficult to reproduce backend states.
+			Mockaton is an HTTP mock server for simulating APIs, designed
+			for testing difficult to reproduce backend states with minimal setup.
 		</p>
 
 		<h2>Dashboard</h2>
@@ -73,9 +73,9 @@ npx mockaton my-mocks-dir/
 
 		<br />
 		<p>
-			Mockaton will serve the files on that given directory.
-			Filenames can have dynamic parameters and comments.
-			Each route can have different mock file variants.
+			Mockaton will serve the files on that given directory. It’s a file-system
+			based router, so filenames can have dynamic parameters and comments.
+			Also, each route can have different mock file variants.
 		</p>
 
 		<table>

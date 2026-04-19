@@ -37,8 +37,7 @@ mockaton [mocks-dir] [options]
 		</h2>
 		<p>
 			Mockaton looks for a file <code>mockaton.config.js</code>
-			in its current working directory. The next section has
-			the documentation, but here’s an overview of the defaults:
+			in its current working directory. Here’s an overview of the defaults:
 		</p>
 
 		${js`
@@ -89,8 +88,6 @@ export default defineConfig({
 
 
 		<br />
-		<h2>Config Documentation</h2>
-
 		<h3><code>mocksDir<span class="syntax_type">?: string</span></code></h3>
 		<p>
 			Defaults to <code>mockaton-mocks</code> in the current working directory.

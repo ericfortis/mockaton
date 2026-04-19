@@ -21,7 +21,7 @@
 	--fgHigh: light-dark(#000, #fff);
 	--fg: light-dark(#000, #dbdbdb);
 	--fg2: light-dark(#444, #ccc);
-	--bgFaint: light-dark(#f2f2f3, #282828);
+	--bgFaint: light-dark(#f5f5f6, #282828);
 	--faintBorder: light-dark(#e6e6e6, #333);
 
 	--videoTrackHoverBG: #6b93fd;
@@ -56,7 +56,7 @@
 	background: none;
 	color: inherit;
 	font-family: inherit;
-	line-height: 1.2;
+	line-height: 1.3;
 	font-size: inherit;
 	outline: 0;
 	corner-shape: squircle;

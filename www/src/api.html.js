@@ -56,7 +56,7 @@ function Api(method, url, obj) {
 	const urlParts = url.split('/')
 	const urlLast = urlParts.pop()
 	return `
-		<details open>
+		<details>
 			<summary>
 				<span class="Method">${method}</span>
 				<span class="Path">${urlParts.join('/')}<strong>/${urlLast}</strong></span>

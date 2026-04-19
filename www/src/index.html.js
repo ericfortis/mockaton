@@ -71,7 +71,7 @@ npx mockaton my-mocks-dir/
 
 		<br />
 		<p>
-			Mockaton will serve the files on that given directory. It’s a file-system
+			Mockaton will serve the files on the given directory. It’s a file-system
 			based router, so filenames can have dynamic parameters and comments.
 			Also, each route can have different mock file variants.
 		</p>

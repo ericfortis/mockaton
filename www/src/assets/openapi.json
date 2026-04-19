@@ -12,7 +12,7 @@
 	"paths": {
 		"/mockaton/openapi": {
 			"get": {
-				"summary": "Get this OpenAPI spec",
+				"summary": "Get OpenAPI spec",
 				"x-js-client-example": "await mockaton.getOpenAPI()",
 				"responses": {
 					"200": {

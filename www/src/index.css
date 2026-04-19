@@ -19,7 +19,8 @@ table {
 
 		&:nth-child(1) {
 			color: var(--colorAccent);
-			filter: saturate(.7);
+			filter: saturate(.6);
+			font-size: 0.95rem;
 		}
 
 		&:nth-child(2) {

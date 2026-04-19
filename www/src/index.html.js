@@ -56,13 +56,11 @@ cd mockaton
 make docker
 `}
 
-
-		<p>Dashboard: <a href="http://localhost:2020/mockaton">localhost:2020/mockaton</a></p>
 		<p>Test it:</p>
-
 		${shell(`
 curl localhost:2020/api/user
 `)}
+		<p>Dashboard: <a href="http://localhost:2020/mockaton">localhost:2020/mockaton</a></p>
 
 
 		<h2 id="basic-usage">Basic Usage</h2>

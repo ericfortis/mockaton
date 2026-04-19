@@ -24,16 +24,15 @@ git clone https://github.com/ericfortis/mockaton.git --depth 1
 cd mockaton
 make docker
 ```
-Dashboard: [localhost:2020/mockaton](http://localhost:2020/mockaton)
-
 Test it:
-```shell
+```sh
 curl localhost:2020/api/user
 ```
+Dashboard: [localhost:2020/mockaton](http://localhost:2020/mockaton)
 
 
 ## Basic Usage
-```shell
+```sh
 npx mockaton my-mocks-dir/
 ```
 

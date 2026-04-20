@@ -258,7 +258,7 @@ async function setRouteIsProxied(req, response) {
 
 async function writeMock(req, response) {
 	if (config.readOnly)
-		return response.forbidden('Forbidden: config.readOnly is true')
+		return response.forbidden('Forbidden: Mockaton is in read-only mode. See config.readOnly, or --no-read-only (CLI)')
 
 	const [file, content] = await req.json()
 	if (typeof file !== 'string')
@@ -280,7 +280,7 @@ async function writeMock(req, response) {
 
 async function deleteMock(req, response) {
 	if (config.readOnly)
-		return response.forbidden('Forbidden: config.readOnly is true')
+		return response.forbidden('Forbidden: Mockaton is in read-only mode. See config.readOnly, or --no-read-only (CLI)')
 
 	const file = await req.json()
 	const path = await resolveIn(config.mocksDir, file)

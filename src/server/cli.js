@@ -22,6 +22,7 @@ try {
 
 			quiet: { short: 'q', type: 'boolean' },
 			'no-open': { short: 'n', type: 'boolean' },
+			'no-read-only': { type: 'boolean' },
 
 			help: { short: 'h', type: 'boolean' },
 			version: { short: 'v', type: 'boolean' }
@@ -54,7 +55,8 @@ Options:
   -p, --port <port>    (default: 0) which means auto-assigned
   
   -q, --quiet          Show errors only
-  --no-open            Don’t open dashboard in a browser
+  --no-open            Don't open dashboard in a browser
+  --no-read-only       Allow writing and deleting mocks via API
   
   -h, --help
   -v, --version
@@ -81,6 +83,7 @@ else {
 
 	if (args.quiet) opts.logLevel = 'quiet'
 	if (args['no-open']) opts.onReady = () => {}
+	if (args['no-read-only']) opts.readOnly = false
 
 	try {
 		await Mockaton(opts)

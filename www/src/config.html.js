@@ -26,6 +26,8 @@ mockaton [mocks-dir] [options]
 
 -q, --quiet          Errors only
 --no-open            Don’t open dashboard in a browser
+--no-read-only       Allow writing and deleting mocks via API
+
 
 -h, --help
 -v, --version

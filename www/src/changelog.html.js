@@ -11,6 +11,7 @@ export default (url) => htmlTemplate({
 		<h1 id="changelog">Changelog</h1>
 		<br />
 
+		<p>13.6.0 <code>--no-read-only</code> cli flag.</p>
 		<p>13.5.0 <code>GET /mockaton/openapi</code> serves the spec.</p>
 		<p>13.4.0 <code>parseSegments</code> utility. <code><strike>parseSplats</strike></code> is now deprecated.</p>
 		<p>13.3.0 dashboard: collapse folders</p>

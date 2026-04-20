@@ -1,36 +1,7 @@
-<!-- SKILLS_IGNORE_BEGIN -->
-![NPM Version](https://img.shields.io/npm/v/mockaton)
-[![Test](https://github.com/ericfortis/mockaton/actions/workflows/test.yml/badge.svg)](https://github.com/ericfortis/mockaton/actions/workflows/test.yml)
-[![codecov](https://codecov.io/github/ericfortis/mockaton/graph/badge.svg?token=90NYLMMG1J)](https://codecov.io/github/ericfortis/mockaton)
-[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
-
-## [Docs ↗](https://mockaton.com) | [Changelog ↗](https://mockaton.com/changelog)
-
-Mockaton is an HTTP mock server for simulating APIs, designed
-for testing difficult to reproduce backend states with minimal setup.
-
-<picture>
-  <source media="(prefers-color-scheme: light)" srcset="https://raw.githubusercontent.com/ericfortis/mockaton/refs/heads/main/pixaton-tests/tests/macos/pic-for-readme.vp762x762.light.gold.png">
-  <source media="(prefers-color-scheme: dark)" srcset="https://raw.githubusercontent.com/ericfortis/mockaton/refs/heads/main/pixaton-tests/tests/macos/pic-for-readme.vp762x762.dark.gold.png">
-  <img alt="Mockaton Dashboard" src="https://raw.githubusercontent.com/ericfortis/mockaton/refs/heads/main/pixaton-tests/tests/macos/pic-for-readme.vp762x762.dark.gold.png">
-</picture>
-
-
-## Demo (Docker)
-This will spin up Mockaton with the [sample directory](./mockaton-mocks)
-included in this repo mounted on the container.
-
-```sh
-git clone https://github.com/ericfortis/mockaton.git --depth 1
-cd mockaton
-make docker
-```
-Test it:
-```sh
-curl localhost:2020/api/user
-```
-Dashboard: [localhost:2020/mockaton](http://localhost:2020/mockaton)
-<!-- SKILLS_IGNORE_END -->
+---
+name: Mockaton
+description: Generates and serves mock HTTP APIs from filesystem conventions. Use when creating, editing, or reasoning about mock endpoints.
+---
 
 ## Basic Usage
 ```sh
@@ -56,11 +27,7 @@ Also, each route can have different mock file variants.
 - How to **control** Mockaton? Besides the dashboard, there's a [Programmatic API](https://mockaton.com/api).
 - How to **add plugins**? You can write [Plugins](https://mockaton.com/plugins) for customizing responses.
 
-<!-- SKILLS_IGNORE_BEGIN -->
-## How to scrape your backend APIs?
-Mockaton has a [Browser Extension](https://mockaton.com/scraping) that lets
-you download in bulk all your API responses following Mockaton's filename convention.
-<!-- SKILLS_IGNORE_END -->
+
 
 ## How to create mocks?
 

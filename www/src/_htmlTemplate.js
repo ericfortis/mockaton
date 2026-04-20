@@ -29,6 +29,8 @@ ${description && `<meta property="og:description" content="${description}" />`}
 <meta name="twitter:title" content="${title}" />
 ${description && `<meta name="twitter:description" content="${description}" />`}
 <meta name="twitter:image" content="https://mockaton.com/assets/social-preview.jpg" />
+
+<link rel="ai:capabilities" href="/assets/SKILLS.md">
 	`
 }
 
@@ -79,6 +81,7 @@ export const htmlTemplate = ({ head = '', body }) => `
 		<ul>
 			${pages.map(([url, title]) =>
 				`<li><a href="${url}">${title}</a></li>`).join('\n')}
+			<li><a href="/assets/SKILLS.md">Skills</a></li>
 		</ul>
 	</nav>
 

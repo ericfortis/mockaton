@@ -8,13 +8,15 @@
 			"import": "./index.js",
 			"types": "./index.d.ts"
 		},
-		"./openapi.json": "./www/src/assets/openapi.json"
+		"./openapi.json": "./www/src/assets/openapi.json",
+		"./SKILLS.md": "./www/src/assets/SKILLS.md"
 	},
 	"files": [
 		"src",
 		"index.js",
 		"index.d.ts",
-		"www/src/assets/openapi.json"
+		"www/src/assets/openapi.json",
+		"www/src/assets/SKILLS.md"
 	],
 	"license": "MIT",
 	"homepage": "https://mockaton.com",

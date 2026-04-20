@@ -49,18 +49,26 @@ Also, each route can have different mock file variants.
 | /api/login | api/login(default).GET.200.json | `(default)` is a special comment; otherwise, the first mock variant in alphabetical order wins  |
 | /api/login | api/login(locked out user).POST.423.ts | TypeScript or JavaScript mocks are sent as JSON by default |
 
-[Config Docs](https://mockaton.com/config)
+
+## Docs
+- How to **configure** Mockaton? See [CLI and mockaton.config.js](https://mockaton.com/config) docs.
+- How to **control** Mockaton? Besides the dashboard, there’s a [Programmatic API](https://mockaton.com/api).
+- How to **add plugins**? You can write [Plugins](https://mockaton.com/plugins) for customizing responses.
 
 
-## How to control Mockaton?
-Besides the dashboard, there’s a [Programmatic API](https://mockaton.com/api).
-
-
-## How to scrape responses from a backend?
-There’s a [Browser Extension](https://mockaton.com/scraping) for scraping responses from your backend.
+## How to scrape your backend APIs?
+Mockaton has a [Browser Extension](https://mockaton.com/scraping) that lets
+you download in bulk all your API responses following Mockaton’s filename convention.
 
 
 ## How to create mocks?
+
+Write to your mocks directory. Alternatively, there’s an API [PATCH /mockaton/write-mock](https://mockaton.com/api).
+```sh
+mkdir -p my-mocks-dir/api
+echo '{ "name": "John" }' > my-mocks-dir/api/user.GET.200.json
+sleep 0.1 # Wait for the watcher to register it
+```
 
 ### Example A: JSON
 - **Route:** /api/company/123

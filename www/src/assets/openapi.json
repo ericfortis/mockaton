@@ -51,7 +51,7 @@
 		"/mockaton/write-mock": {
 			"patch": {
 				"summary": "Write a mock file",
-				"description": "Writes a mock file to the mocks directory. Requires `config.readOnly = false`",
+				"description": "Writes a mock file to the mocks directory. Requires `config.readOnly = false` and `config.watcherEnabled = true`.",
 				"x-js-client-example": "await mockaton.writeMock('api/user/friends.GET.200.json', '{ \"friends\": [] }')",
 				"requestBody": {
 					"required": true,
@@ -77,7 +77,7 @@
 				},
 				"responses": {
 					"200": {
-						"description": "OK"
+						"description": "OK. The mock has been written and registered successfully."
 					},
 					"403": {
 						"description": "Forbidden (read-only mode or outside mocksDir)"

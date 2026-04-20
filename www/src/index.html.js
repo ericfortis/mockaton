@@ -112,17 +112,35 @@ npx mockaton my-mocks-dir/
 			</tr>
 			</tbody>
 		</table>
-		<p><a href="/config">Config Docs</a></p>
 
 
-		<h2 id="how-to-control-mockaton-">How to control Mockaton?</h2>
-		<p>Besides the dashboard, there’s a <a href="/api">Programmatic API</a>.</p>
+		<h2>Docs</h2>
+		<ul>
+			<li>How to <strong>configure</strong> Mockaton? See <a href="/config">CLI and mockaton.config.js</a> docs.</li>
+			<li>How to <strong>control</strong> Mockaton? Besides the dashboard, there’s a <a href="/api">Programmatic API</a>.</li>
+			<li>How to <strong>add plugins</strong>? You can write <a href="/plugins">Plugins</a> for customizing responses.</li>
+		</ul>
 
-		<h2 id="how-to-scrape-responses-from-a-backend-">How to scrape responses from a backend?</h2>
-		<p>There’s a <a href="/scraping">Browser Extension</a> for scraping responses from your backend.</p>
+
+		<h2>How to scrape your backend APIs?</h2>
+		<p>
+			Mockaton has a <a href="/scraping">Browser Extension</a> that lets
+			you download in bulk all your API responses following Mockaton’s filename convention.
+		</p>
 
 
 		<h2 id="how-to-create-mocks-">How to create mocks?</h2>
+		<p>
+			Write to your mocks directory. Alternatively, there’s an API <a href="/api">PATCH /mockaton/write-mock</a>.
+		</p>
+
+		${shell`
+mkdir -p my-mocks-dir/api
+echo '{ "name": "John" }' > my-mocks-dir/api/user.GET.200.json
+sleep 0.1 # Wait for the watcher to register it
+	`}
+
+
 		<h3 id="example-a-json">Example A: JSON</h3>
 		<ul>
 			<li><strong>Route:</strong> /api/company/123</li>

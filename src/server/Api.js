@@ -97,6 +97,7 @@ function onDevWatch(req, response) {
 	else
 		response.notFound()
 }
+
 /** # PATCH */
 
 function reset(_, response) {

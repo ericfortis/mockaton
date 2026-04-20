@@ -7,24 +7,17 @@ import { parseFilename, includesComment, extractComments, removeQueryStringAndFr
  * files that can be served for the route, the currently selected file, etc.
  */
 export class MockBroker {
+	file = '' // selected mock filename
+	mocks = [] // filenames
+	isStatic = false // doesn’t follow filename convention
+	delayed = false
+	proxied = false
+	status = -1
+	autoStatus = 0
+	
 	constructor(file) {
-		this.file = '' // selected mock filename
-		this.mocks = [] // filenames
-		this.status = -1
-		this.isStatic = false // doesn’t follow filename convention
-		this.delayed = false
-		this.proxied = false
-		this.autoStatus = 0
 		this.urlMaskMatches = new UrlMatcher(file).urlMaskMatches
 		this.register(file)
-	}
-
-	#isStatus = (file, status) => parseFilename(file).status === status
-
-	#sortMocks() {
-		this.mocks.sort()
-		const defaults = this.mocks.filter(f => includesComment(f, DEFAULT_MOCK_COMMENT))
-		this.mocks = Array.from(new Set(defaults).union(new Set(this.mocks)))
 	}
 
 	register(file) {
@@ -40,6 +33,14 @@ export class MockBroker {
 		if (!brokerIsEmpty && this.file === file)
 			this.selectDefaultFile()
 		return brokerIsEmpty
+	}
+
+	#isStatus = (file, status) => parseFilename(file).status === status
+
+	#sortMocks() {
+		this.mocks.sort()
+		const defaults = this.mocks.filter(f => includesComment(f, DEFAULT_MOCK_COMMENT))
+		this.mocks = Array.from(new Set(defaults).union(new Set(this.mocks)))
 	}
 
 	hasMock = file => this.mocks.includes(file)

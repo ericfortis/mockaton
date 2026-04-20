@@ -3,8 +3,7 @@ import { API } from './ApiConstants.js'
 
 /** Client for controlling Mockaton via its HTTP API */
 export class Commander {
-	addr = ''
-
+	/** @param {string} addr */
 	constructor(addr) {
 		this.addr = addr
 	}

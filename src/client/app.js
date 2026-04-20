@@ -38,15 +38,16 @@ function App() {
 }
 
 function LeftSide() {
-	return r('div', {
-			ref: LeftSide.ref,
-			style: { width: LeftSide.ref.width },
-			className: CSS.leftSide
-		},
-		r('div', { className: CSS.SubToolbar },
-			GroupByMethod(),
-			BulkSelector()),
-		r('div', { className: CSS.Table }, MockList()))
+	return (
+		r('div', {
+				ref: LeftSide.ref,
+				style: { width: LeftSide.ref.width },
+				className: CSS.leftSide
+			},
+			r('div', { className: CSS.SubToolbar },
+				GroupByMethod(),
+				BulkSelector()),
+			r('div', { className: CSS.Table }, MockList())))
 }
 LeftSide.ref = { width: undefined }
 LeftSide.$ = selector => LeftSide.ref.elem.querySelector(selector)

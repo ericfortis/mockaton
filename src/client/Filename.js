@@ -25,22 +25,21 @@ export function parseFilename(file) {
 	const followsConvention = tokens.length > 3
 		&& responseStatusIsValid(Number(tokens.at(-2)))
 		&& METHODS.includes(tokens.at(-3))
-	const isStatic = !followsConvention
 
-	return isStatic
+	return followsConvention
 		? {
-			isStatic,
-			ext: tokens.pop() || '',
-			status: 200,
-			method: 'GET',
-			urlMask: '/' + file
-		}
-		: {
-			isStatic,
+			isStatic: false,
 			ext: tokens.pop(),
 			status: Number(tokens.pop()),
 			method: tokens.pop(),
 			urlMask: '/' + removeTrailingSlash(tokens.join('.'))
+		}
+		: {
+			isStatic: true,
+			ext: tokens.pop() || '',
+			status: 200,
+			method: 'GET',
+			urlMask: '/' + file
 		}
 }
 

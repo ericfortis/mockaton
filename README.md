@@ -4,7 +4,7 @@
 [![codecov](https://codecov.io/github/ericfortis/mockaton/graph/badge.svg?token=90NYLMMG1J)](https://codecov.io/github/ericfortis/mockaton)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
-## [Docs ↗](https://mockaton.com) | [Changelog ↗](https://mockaton.com/changelog) | [Skills ↗](https://mockaton.com/skills)
+## [Docs ↗](https://mockaton.com) | [Changelog ↗](https://mockaton.com/changelog) | [Skills ↗](https://mockaton.com/assets/SKILLS.md)
 
 Mockaton is an HTTP mock server for simulating APIs, designed
 for testing difficult to reproduce backend states with minimal setup.

@@ -107,15 +107,20 @@ class UrlMatcher {
 		this.#urlRegex = this.#buildUrlRegex(file)
 	}
 
+	#escapeRegex(str) {
+		return str.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')
+	}
+
 	#buildUrlRegex(file) {
 		let { urlMask } = parseFilename(file)
 		urlMask = removeQueryStringAndFragment(urlMask)
+		urlMask = this.#escapeRegex(urlMask)
 		urlMask = this.#disregardVariables(urlMask)
 		return new RegExp('^' + urlMask + '/*$')
 	}
 
-	#disregardVariables(str) { // Stars out all parts that are in square brackets
-		return str.replace(/\[.*?]/g, '[^/]+')
+	#disregardVariables(str) {
+		return str.replace(/\\\[.*?\\]/g, '[^/]+')
 	}
 
 	// Appending a '/' so URLs ending with variables don't match

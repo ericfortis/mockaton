@@ -940,6 +940,15 @@ describe('Dynamic Params', () => {
 	})
 })
 
+test('Dynamic Params on partial segments', async () => {
+	const fx = new Fixture('dynamic-params-partial-[id]/foo.GET.200.txt')
+	await makeDirInMocks('dynamic-params-partial-[id]')
+	await fx.write()
+	const r = await request('/dynamic-params-partial-999/foo')
+	equal(await r.text(), fx.body)
+	await fx.delete()
+})
+
 
 describe('Query String', () => {
 	const fx0 = new Fixture('query-string?foo=[foo]&bar=[bar].GET.200.json')

@@ -39,14 +39,13 @@ export default (url) => htmlTemplate({
 			Dynamic Segments
 		</h2>
 		<p>
-			Anything within square brackets is always matched.
+			Anything within square brackets are always matched.
 		</p>
 		<p>
 			For example, for <span class="NullLink">/api/company/<strong>123</strong>/user/<strong>789</strong></span>,
 			the filename could be:
 		</p>
 		<pre><code>api/company/<strong>[id]</strong>/user/<strong>[uid]</strong>.GET.200.json</code></pre>
-
 
 		<h2 id="comments">
 			Comments

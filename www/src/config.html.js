@@ -28,7 +28,7 @@ mockaton [mocks-dir] [options]
 --no-open            Don’t open dashboard in a browser
 --no-read-only       Allow writing and deleting mocks via API
 
-
+--skills             Show AI agent SKILLS.md file path
 -h, --help
 -v, --version
 		`}

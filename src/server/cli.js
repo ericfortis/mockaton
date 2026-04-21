@@ -1,13 +1,13 @@
 #!/usr/bin/env node
 
-import { resolve } from 'node:path'
+import { resolve, join } from 'node:path'
 import { parseArgs } from 'node:util'
 
 import { isFile } from './utils/fs.js'
 import { Mockaton } from '../../index.js'
-
 import pkgJSON from '../../package.json' with { type: 'json' }
 
+const rel = f => join(import.meta.dirname, f)
 
 process.on('unhandledRejection', error => { throw error })
 
@@ -25,6 +25,7 @@ try {
 			'no-read-only': { type: 'boolean' },
 
 			help: { short: 'h', type: 'boolean' },
+			skills: { type: 'boolean' },
 			version: { short: 'v', type: 'boolean' }
 		},
 		allowPositionals: true
@@ -44,6 +45,9 @@ process.on('SIGUSR2', () => process.exit(0))
 if (args.version)
 	console.log(pkgJSON.version)
 
+if (args.skills)
+	console.log(rel('../../www/src/assets/SKILLS.md')) 
+	
 else if (args.help)
 	console.log(`
 Usage: mockaton [mocks-dir] [options]
@@ -58,6 +62,7 @@ Options:
   --no-open            Don't open dashboard in a browser
   --no-read-only       Allow writing and deleting mocks via API
   
+  --skills             Show AI agent SKILLS.md file path
   -h, --help
   -v, --version
 

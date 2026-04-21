@@ -2,17 +2,17 @@ import pkgJson from '../../package.json' with { type: 'json' }
 
 const pages = [
 	['/', 'Overview'],
-	['/motivation', 'Motivation'],
+	['/use-cases', 'Use Cases'],
 	['/installation', 'Installation'],
-	['/scraping', 'Scraping Mocks'],
-	['/convention', 'Convention'],
-	['/function-mocks', 'Function Mocks'],
 	['/config', 'Config'],
+	['/convention', 'Convention'],
+	['/scraping', 'Scraping Mocks'],
+	['/function-mocks', 'Function Mocks'],
 	['/api', 'API'],
 	['/plugins', 'Plugins'],
 	['/privacy-and-security', 'Privacy and Security'],
 	['/changelog', 'Changelog'],
-	['/alternatives', 'Alternatives']
+	['/related-tech', 'Related Tech']
 ]
 
 export function socialMetadata(title, description, route = '') {

@@ -2,9 +2,17 @@ import { htmlTemplate, socialMetadata } from './_htmlTemplate.js'
 
 // language=html
 export default (url) => htmlTemplate({
-	head: socialMetadata('Alternatives', '', url),
+	head: socialMetadata('Related Tech', '', url),
 	body: `
-		<h1>Alternatives</h1>
+		<h1>Related Tech</h1>
+		<br />
+		<p>
+			Mockaton wins overall, but it’s worth knowing the strengths of related tools.
+			For instance, start with Burp, Charles Proxy, and JSON Server.
+			Also, if you use StoryBook for testing non-core components, learn about
+			MSW (you can map MSW to the Mockaton file structure, so you can
+			get the benefits of both).
+		</p>
 
 		<h2 id="proxy-like">
 			Proxy-like

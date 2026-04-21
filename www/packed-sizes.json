@@ -1,62 +1,62 @@
 {
-	"/alternatives.html": {
-		"hash": "IjLXjdrA29gPeR4WlgbIVZFFeew",
-		"delta": 0,
-		"size": 19830
-	},
 	"/api.html": {
-		"hash": "c17RMYz0awz4_d8ZCCf2YLZKDLI",
+		"hash": "rMUrL4eRHVA_umTX3qVf7o286wE",
 		"delta": 0,
-		"size": 41821
+		"size": 41819
 	},
 	"/changelog.html": {
-		"hash": "clz8oRMXDjkQUSTH4dwmT9YVUV0",
+		"hash": "qOf8VBh_47HPA_EseKeT9gtBf-8",
 		"delta": 0,
-		"size": 29746
+		"size": 29744
 	},
 	"/config.html": {
-		"hash": "dTjgInJKvjwtUAKxSvDbGbQ_tjM",
+		"hash": "3gK0mtoG-tewh2qbC3ZCJE-t9sY",
 		"delta": 0,
-		"size": 37502
+		"size": 37500
 	},
 	"/convention.html": {
-		"hash": "bG0A3755KJIuzRPh7itZnt8-YuE",
+		"hash": "VSIjyv_VbjMsCXKAkb-R2Aac_Qs",
 		"delta": 0,
-		"size": 20978
+		"size": 20976
 	},
 	"/function-mocks.html": {
-		"hash": "yPJ_vSIixRxvpj4uCqVl8iMXoRY",
+		"hash": "8Z4Q9wGfurWifIi_BIR-GH4jl-w",
 		"delta": 0,
-		"size": 28762
+		"size": 28760
 	},
 	"/index.html": {
-		"hash": "4K8dsKsUmgbXy_lVVgMvFbB_w7o",
+		"hash": "BGdqsknIjfVx-cerskZgpRZbsMw",
 		"delta": 0,
-		"size": 30185
+		"size": 30183
 	},
 	"/installation.html": {
-		"hash": "48TWX7x9c8BPdVpwUaSXmC9cIO8",
+		"hash": "xOzbm2J8eVS3YIKpPxKBZH_PxSY",
 		"delta": 0,
-		"size": 20589
-	},
-	"/motivation.html": {
-		"hash": "LGxQmq8lgqDznWS5pmqwVb-lOq8",
-		"delta": 0,
-		"size": 21133
+		"size": 20587
 	},
 	"/plugins.html": {
-		"hash": "1JyIFtlcOY7iOFnGb9FU65Proy0",
+		"hash": "g2B3o6igv_1puyCVZonT4V2rges",
 		"delta": 0,
-		"size": 24090
+		"size": 24088
 	},
 	"/privacy-and-security.html": {
-		"hash": "clbOACk6i-Zi4OLXqLf1bf80WaM",
+		"hash": "KZmE-vuX4QegOdWOU_cQ7WqVM6U",
 		"delta": 0,
-		"size": 18581
+		"size": 18696
+	},
+	"/related-tech.html": {
+		"hash": "h_YCZPwKTFkApcuGPP9FxZQiPU4",
+		"delta": 20153,
+		"size": 20153
 	},
 	"/scraping.html": {
-		"hash": "9siLn4wBnzACES3tDZac7FpyuXg",
+		"hash": "CF0bVh-oF05kRsfTR0xg-9Kvd_s",
 		"delta": 0,
-		"size": 19404
+		"size": 19402
+	},
+	"/use-cases.html": {
+		"hash": "Vxy5Ml8NeRVe665AB6NrILLh5GE",
+		"delta": -3,
+		"size": 20765
 	}
 }

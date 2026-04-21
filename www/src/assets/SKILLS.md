@@ -15,11 +15,11 @@ Also, each route can have different mock file variants.
 
 | Route | Filename | Description |
 | -----| -----| ---|
-| /api/company/123 | api/company/[id].GET.200.json | `[id]` is a dynamic parameter |
+| /api/company/123 | api/company/[id].GET.200.ts | `[id]` is a dynamic parameter. `.ts`, and `.js` are sent as JSON by default |
 | /media/avatar.png | media/avatar.png | Statics assets don't need the above extension |
-| /api/login | api/login(invalid attempt).POST.401.json | Anything within parenthesis is a **comment**, they are ignored when routing |
-| /api/login | api/login(default).GET.200.json | `(default)` is a special comment; otherwise, the first mock variant in alphabetical order wins  |
-| /api/login | api/login(locked out user).POST.423.ts | TypeScript or JavaScript mocks are sent as JSON by default |
+| /api/login | api/login(invalid attempt).POST.401.ts | Anything within parenthesis is a **comment**, they are ignored when routing |
+| /api/login | api/login(default).GET.200.ts | `(default)` is a special comment; otherwise, the first mock variant in alphabetical order wins  |
+| /api/login | api/login(locked out user).POST.423.json | `.json` is allowed too |
 
 
 ## Docs
@@ -39,25 +39,27 @@ sleep 0.1 # Wait for the watcher to register it
 ```
 
 ### Example A: JSON
+For JSON responses, use TypeScript (or JavaScript), and export an Object, Array, or String.
+
 - **Route:** /api/company/123
-- **Filename:** api/company/[id].GET.200.json
-
-```json
-{
-  "name": "Acme, Inc."
-}
-```
-
-### Example B: TypeScript or JavaScript
-Exporting an Object, Array, or String is sent as JSON.
-
-- **Route:** /api/company/abc
 - **Filename:** api/company/[id].GET.200.ts
 
 ```ts
 export default {
+  id: 123,
   name: 'Acme, Inc.'
 }
+```
+
+### Example B: Non-JSON
+- **Route:** /api/company/123
+- **Filename:** api/company/[id].GET.200.xml
+
+```xml
+<company>
+ <id>123</id>
+ <name>Acme, Inc.</name>
+</company>
 ```
 
 ### Example C: [Function Mocks](https://mockaton.com/function-mocks)

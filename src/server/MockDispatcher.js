@@ -7,7 +7,6 @@ import { parseFilename } from '../client/Filename.js'
 import { echoFilePlugin } from './MockDispatcherPlugins.js'
 import { brokerByRoute } from './mockBrokersCollection.js'
 import { config, calcDelay } from './config.js'
-import { FILENAME_HEADER } from '../client/ApiConstants.js'
 
 
 export async function dispatchMock(req, response) {
@@ -29,7 +28,9 @@ export async function dispatchMock(req, response) {
 			return
 		}
 
-		response.setHeader(FILENAME_HEADER, broker.file)
+		response.on('finish', () => {
+			logger.normal('MOCK', req.url, broker.file)
+		})
 
 		if (cookie.getCurrent())
 			response.setHeader('Set-Cookie', cookie.getCurrent())

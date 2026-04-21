@@ -8,8 +8,7 @@ import { ServerResponse } from './utils/HttpServerResponse.js'
 import { setCorsHeaders, isPreflight } from './utils/http-cors.js'
 import { IncomingMessage, BodyReaderError, hasControlChars } from './utils/HttpIncomingMessage.js'
 
-import { API, FILENAME_HEADER } from '../client/ApiConstants.js'
-
+import { API } from '../client/ApiConstants.js'
 import { cookie } from './cookie.js'
 import { config, setup } from './config.js'
 import { apiPatchReqs, apiGetReqs, CLIENT_DIR } from './Api.js'
@@ -49,15 +48,12 @@ export function Mockaton(options) {
 
 async function onRequest(req, response) {
 	response.setHeader('Server', `Mockaton ${pkgJSON.version}`)
-
 	response.on('error', logger.warn)
 
+	let handledByMockDispatcher = false
 	response.on('finish', () => {
-		const f = response.getHeader(FILENAME_HEADER)
-		if (f)
-			logger.normal('MOCK', req.url, f)
-		else
-			logger.verbose('API', response)
+		if (!handledByMockDispatcher)
+			logger.verbose('APP', response)
 	})
 
 	const url = req.url || ''
@@ -87,8 +83,10 @@ async function onRequest(req, response) {
 		else if (method === 'GET' && apiGetReqs.has(pathname))
 			apiGetReqs.get(pathname)(req, response)
 
-		else
+		else {
+			handledByMockDispatcher = true
 			await dispatchMock(req, response)
+		}
 	}
 	catch (error) {
 		if (error instanceof BodyReaderError)

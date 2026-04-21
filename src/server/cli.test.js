@@ -26,7 +26,7 @@ describe('CLI', () => {
 		const { stderr, status } = cli(
 			rel('../../mockaton-mocks'),
 			'--port', 'not-a-number')
-		equal(stderr.trim(), `port="not-a-number" is invalid`)
+		equal(stderr.trim(), `port="not-a-number"\nExpected an integer between 0 and 65535`)
 		equal(status, 1)
 	})
 

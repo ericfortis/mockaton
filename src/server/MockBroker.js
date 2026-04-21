@@ -14,7 +14,7 @@ export class MockBroker {
 	proxied = false
 	status = -1
 	autoStatus = 0
-	
+
 	constructor(file) {
 		this.urlMaskMatches = new UrlMatcher(file).urlMaskMatches
 		this.register(file)

@@ -4,14 +4,20 @@ import { methodIsSupported } from './HttpIncomingMessage.js'
 
 export function validateCorsAllowedOrigins(arr) {
 	if (!Array.isArray(arr))
-		return false
+		return 'Expected Array'
 	if (arr.length === 1 && arr[0] === '*')
-		return true
+		return ''
 	return arr.every(o => URL.canParse(o))
+		? ''
+		: 'Expected URLs'
 }
 
 export function validateCorsAllowedMethods(arr) {
-	return Array.isArray(arr) && arr.every(methodIsSupported)
+	if (!Array.isArray(arr))
+		return 'Expected Array'
+	return arr.every(methodIsSupported)
+		? ''
+		: 'Unsupported Method'
 }
 
 

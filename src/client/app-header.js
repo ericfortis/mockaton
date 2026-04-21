@@ -45,6 +45,7 @@ function GlobalDelayField() {
 			r('input', {
 				type: 'number',
 				min: 0,
+				max: 120_000,
 				step: 100,
 				autocomplete: 'none',
 				value: store.delay,

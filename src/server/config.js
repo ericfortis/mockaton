@@ -1,57 +1,56 @@
 import { resolve } from 'node:path'
+import { lstatSync } from 'node:fs'
 import { METHODS } from 'node:http'
 
 import { logger } from './utils/logger.js'
-import { isDirectory } from './utils/fs.js'
 import { registerMimes } from './utils/mime.js'
 import { openInBrowser } from './utils/openInBrowser.js'
-import { optional, is, validate } from './utils/validate.js'
+import { is, validate, isInt, isFloat, isOneOf, optionalURL } from './utils/validate.js'
 import { validateCorsAllowedMethods, validateCorsAllowedOrigins } from './utils/http-cors.js'
 
 import { jsToJsonPlugin } from './MockDispatcherPlugins.js'
 
-
 /** @type {{
  * 	[K in keyof Config]-?: [
  * 		defaultVal: Config[K],
- * 		validator: (val: unknown) => boolean
+ * 		validator: (val: unknown) => err:string
  * 	]
  * }} */
 const schema = {
-	mocksDir: [resolve('mockaton-mocks'), isDirectory],
+	mocksDir: [resolve('mockaton-mocks'), p => !lstatSync(p).isDirectory()],
 	ignore: [/(\.DS_Store|~)$/, is(RegExp)],
 	readOnly: [true, is(Boolean)],
 	watcherEnabled: [true, is(Boolean)],
-	watcherDebounceMs: [80, ms => Number.isInteger(ms) && ms >= 0],
+	watcherDebounceMs: [80, isInt(0, 5000)],
 
 	host: ['127.0.0.1', is(String)],
-	port: [0, port => Number.isInteger(port) && port >= 0 && port < 2 ** 16], // 0 means auto-assigned
+	port: [0, isInt(0, 2 ** 16 - 1)], // 0 means auto-assigned
 
-	logLevel: ['normal', val => ['normal', 'quiet', 'verbose'].includes(val)],
+	logLevel: ['normal', isOneOf('normal', 'quiet', 'verbose')],
 
-	delay: [1200, ms => Number.isInteger(ms) && ms >= 0],
-	delayJitter: [0, percent => percent >= 0 && percent <= 3],
+	delay: [1200, isInt(0, 120_000)],
+	delayJitter: [0, isFloat(0, 3)],
 
-	proxyFallback: ['', optional(URL.canParse)], // e.g. http://localhost:9999
+	proxyFallback: ['', optionalURL], // e.g. http://localhost:9999
 	collectProxied: [false, is(Boolean)],
 	formatCollectedJSON: [true, is(Boolean)],
 
 	cookies: [{}, is(Object)], // defaults to the first kv
-	extraHeaders: [[], val => Array.isArray(val) && val.length % 2 === 0],
+	extraHeaders: [[], is(Array)],
 	extraMimes: [{}, is(Object)],
 
 	corsAllowed: [true, is(Boolean)],
 	corsOrigins: [['*'], validateCorsAllowedOrigins],
 	corsMethods: [METHODS, validateCorsAllowedMethods],
-	corsHeaders: [['content-type', 'authorization'], Array.isArray],
-	corsExposedHeaders: [[], Array.isArray],
+	corsHeaders: [['content-type', 'authorization'], is(Array)],
+	corsExposedHeaders: [[], is(Array)],
 	corsCredentials: [true, is(Boolean)],
 	corsMaxAge: [0, is(Number)],
 
 	plugins: [
 		[
 			[/\.(js|ts)$/, jsToJsonPlugin]
-		], Array.isArray],
+		], is(Array)],
 
 	onReady: [await openInBrowser, is(Function)],
 

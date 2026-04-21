@@ -166,7 +166,7 @@ describe('CORS', () => {
 		test('422 for non boolean', async () => {
 			const r = await api.setCorsAllowed('not-a-boolean')
 			equal(r.status, 422)
-			equal(await r.text(), 'Expected boolean for "corsAllowed"')
+			equal(await r.text(), 'Expected Boolean')
 		})
 
 		test('200', async () => {
@@ -271,7 +271,7 @@ describe('Delay', () => {
 		test('422 for invalid value', async () => {
 			const r = await api.setGlobalDelay('not-a-number')
 			equal(r.status, 422)
-			equal(await r.text(), 'Expected non-negative integer for "delay"')
+			equal(await r.text(), 'Expected an integer between 0 and 120000')
 		})
 		test('200 for valid global delay value', async () => {
 			const r = await api.setGlobalDelay(150)
@@ -284,7 +284,7 @@ describe('Delay', () => {
 		test('422 for invalid value', async () => {
 			const r = await api.setGlobalDelayJitter('not-a-number')
 			equal(r.status, 422)
-			equal(await r.text(), 'Expected 0 to 3 float for "delayJitter"')
+			equal(await r.text(), 'Expected a float between 0 and 3')
 		})
 		test('200 for valid value', async () => {
 			const r = await api.setGlobalDelayJitter(0.1)
@@ -391,7 +391,7 @@ describe('Proxy Fallback', () => {
 		test('422 when value is not a valid URL', async () => {
 			const r = await api.setProxyFallback('bad url')
 			equal(r.status, 422)
-			equal(await r.text(), 'Invalid Proxy Fallback URL')
+			equal(await r.text(), 'Expected an empty String or URL')
 		})
 
 		test('sets fallback', async () => {
@@ -411,7 +411,7 @@ describe('Proxy Fallback', () => {
 		test('422 for invalid collectProxied value', async () => {
 			const r = await api.setCollectProxied('not-a-boolean')
 			equal(r.status, 422)
-			equal(await r.text(), 'Expected a boolean for "collectProxied"')
+			equal(await r.text(), 'Expected Boolean')
 		})
 
 		test('200 set and unset', async () => {

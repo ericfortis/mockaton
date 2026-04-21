@@ -110,9 +110,9 @@ function reset(_, response) {
 
 async function setCorsAllowed(req, response) {
 	const corsAllowed = await req.json()
-
-	if (!ConfigValidator.corsAllowed(corsAllowed))
-		response.unprocessable(`Expected boolean for "corsAllowed"`)
+	const err = ConfigValidator.corsAllowed(corsAllowed)
+	if (err)
+		response.unprocessable(err)
 	else {
 		config.corsAllowed = corsAllowed
 		response.ok()
@@ -123,9 +123,9 @@ async function setCorsAllowed(req, response) {
 
 async function setGlobalDelay(req, response) {
 	const delay = await req.json()
-
-	if (!ConfigValidator.delay(delay))
-		response.unprocessable(`Expected non-negative integer for "delay"`)
+	const err = ConfigValidator.delay(delay)
+	if (err)
+		response.unprocessable(err)
 	else {
 		config.delay = delay
 		response.ok()
@@ -135,9 +135,9 @@ async function setGlobalDelay(req, response) {
 
 async function setGlobalDelayJitter(req, response) {
 	const jitter = await req.json()
-
-	if (!ConfigValidator.delayJitter(jitter))
-		response.unprocessable(`Expected 0 to 3 float for "delayJitter"`)
+	const err = ConfigValidator.delayJitter(jitter)
+	if (err)
+		response.unprocessable(err)
 	else {
 		config.delayJitter = jitter
 		response.ok()
@@ -148,7 +148,6 @@ async function setGlobalDelayJitter(req, response) {
 
 async function selectCookie(req, response) {
 	const cookieKey = await req.json()
-
 	const error = cookie.setCurrent(cookieKey)
 	if (error)
 		response.unprocessable(error?.message || error)
@@ -161,9 +160,9 @@ async function selectCookie(req, response) {
 
 async function setProxyFallback(req, response) {
 	const fallback = await req.json()
-
-	if (!ConfigValidator.proxyFallback(fallback))
-		response.unprocessable(`Invalid Proxy Fallback URL`)
+	const err = ConfigValidator.proxyFallback(fallback)
+	if (err)
+		response.unprocessable(err)
 	else {
 		config.proxyFallback = fallback
 		response.ok()
@@ -173,9 +172,9 @@ async function setProxyFallback(req, response) {
 
 async function setCollectProxied(req, response) {
 	const collectProxied = await req.json()
-
-	if (!ConfigValidator.collectProxied(collectProxied))
-		response.unprocessable(`Expected a boolean for "collectProxied"`)
+	const err = ConfigValidator.collectProxied(collectProxied)
+	if (err)
+		response.unprocessable(err)
 	else {
 		config.collectProxied = collectProxied
 		response.ok()
@@ -263,7 +262,7 @@ async function writeMock(req, response) {
 	const [file, content] = await req.json()
 	if (typeof file !== 'string')
 		return response.unprocessable('Invalid or missing filename. Expected: JSON [filename, content]')
-	
+
 	const path = await resolveIn(config.mocksDir, file)
 	if (!path)
 		return response.forbidden('Filename path resolves outside config.mocksDir')

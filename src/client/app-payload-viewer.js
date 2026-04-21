@@ -113,13 +113,15 @@ async function updatePayloadViewer(proxied, file, response) {
 	else if (mime.startsWith('video/'))
 		codeRef.elem.replaceChildren(r('video', {
 			src: store.chosenLink.urlMask,
-			controls: true
+			controls: true,
+			autoPlay: true
 		}))
 
 	else if (mime.startsWith('audio/'))
 		codeRef.elem.replaceChildren(r('audio', {
 			src: store.chosenLink.urlMask,
-			controls: true
+			controls: true,
+			autoPlay: true
 		}))
 
 	else if (['text/html', 'application/pdf'].includes(mime))

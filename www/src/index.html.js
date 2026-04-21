@@ -57,17 +57,17 @@ make docker
 `}
 
 		<p>Test it:</p>
-		${shell(`
+		${shell`
 curl localhost:2020/api/user
-`)}
+`}
 		<p>Dashboard: <a href="http://localhost:2020/mockaton">localhost:2020/mockaton</a></p>
 
 
 		<h2 id="basic-usage">Basic Usage</h2>
 
-		${shell(`
+		${shell`
 npx mockaton my-mocks-dir/
-`)}
+`}
 
 		<br />
 		<p>

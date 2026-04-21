@@ -1,8 +1,10 @@
 import Prism from 'prismjs'
 import loadLanguages from 'prismjs/components/index.js'
 
-
 loadLanguages(['json', 'shell'])
+
+const fnT = Prism.languages.shell['function']
+fnT.pattern = new RegExp(fnT.pattern.source.replace('|npm|', '|npm|npx|'), fnT.pattern.flags)
 
 Prism.hooks.add('wrap', env => {
 	env.classes = [`syntax_${env.type}`]

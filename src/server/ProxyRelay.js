@@ -2,7 +2,7 @@ import { join } from 'node:path'
 import { randomUUID } from 'node:crypto'
 
 import { extFor } from './utils/mime.js'
-import { write, isFile } from './utils/fs.js'
+import { write, isFile, resolveIn } from './utils/fs.js'
 import { readBody, BodyReaderError } from './utils/HttpIncomingMessage.js'
 
 import { config } from './config.js'
@@ -41,6 +41,10 @@ export async function proxy(req, response, delay) {
 	setTimeout(() => response.end(body), delay) // TESTME
 
 	if (config.collectProxied) {
+		if (config.readOnly) {
+			logger.info('Write denied: config.readOnly is true')
+			return
+		}
 		const mime = proxyResponse.headers.get('content-type')
 		const ext = mime
 			? extFor(mime) || EXT_UNKNOWN_MIME
@@ -59,10 +63,13 @@ async function saveMockToDisk(url, method, status, ext, body) {
 		}
 
 	try {
-		await write(makeUniqueMockFilename(url, method, status, ext), body)
+		const f = makeUniqueMockFilename(url, method, status, ext)
+		if (!resolveIn(config.mocksDir, f))
+			throw 'Attempted write outside config.mocksDir'
+		await write(f, body)
 	}
 	catch (err) {
-		logger.warn('Write access denied', err)
+		logger.warn('Write denied', err)
 	}
 }
 

@@ -45,7 +45,7 @@ process.on('SIGUSR2', () => process.exit(0))
 if (args.version)
 	console.log(pkgJSON.version)
 
-if (args.skills)
+else if (args.skills)
 	console.log(rel('../../www/src/assets/SKILLS.md')) 
 	
 else if (args.help)

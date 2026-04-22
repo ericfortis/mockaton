@@ -7,9 +7,11 @@ import { isFile } from './utils/fs.js'
 import { Mockaton } from '../../index.js'
 import pkgJSON from '../../package.json' with { type: 'json' }
 
-const rel = f => join(import.meta.dirname, f)
 
 process.on('unhandledRejection', error => { throw error })
+
+const DEFAULT_CONFIG_FILE = 'mockaton.config.js'
+const SKILLS_PATH = join(import.meta.dirname, '../../www/src/assets/SKILLS.md')
 
 let args, positionals
 try {
@@ -38,22 +40,21 @@ catch (error) {
 	process.exit(1)
 }
 
-// For clean exit on tests, so we can collect code-coverage
-process.on('SIGUSR2', () => process.exit(0))
+process.on('SIGUSR2', () => process.exit(0)) // For clean exit when collecting code-coverage
 
 
 if (args.version)
 	console.log(pkgJSON.version)
 
 else if (args.skills)
-	console.log(rel('../../www/src/assets/SKILLS.md')) 
-	
+	console.log(SKILLS_PATH)
+
 else if (args.help)
 	console.log(`
 Usage: mockaton [mocks-dir] [options]
 
 Options:
-  -c, --config <file>  (default: ./mockaton.config.js)
+  -c, --config <file>  (default: ./${DEFAULT_CONFIG_FILE})
   
   -H, --host <host>    (default: 127.0.0.1)
   -p, --port <port>    (default: 0) which means auto-assigned
@@ -68,7 +69,7 @@ Options:
 
 Notes:
   * mockaton.config.js supports more options, see: https://mockaton.com/config
-  * CLI options override their mockaton.config.js counterparts
+  * CLI options override their ${DEFAULT_CONFIG_FILE}} counterparts
 `.trim())
 
 else if (args.config && !isFile(args.config)) {
@@ -76,7 +77,7 @@ else if (args.config && !isFile(args.config)) {
 	process.exitCode = 1
 }
 else {
-	const userConf = resolve(args.config ?? 'mockaton.config.js')
+	const userConf = resolve(args.config ?? DEFAULT_CONFIG_FILE)
 	const opts = isFile(userConf)
 		? (await import(userConf)).default ?? {}
 		: {}

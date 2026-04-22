@@ -18,22 +18,22 @@ ${extractSkillContent(readFileSync(INPUT, 'utf8'))}
 
 
 function extractSkillContent(text) {
-	const markerIgnoreBegin = '<!-- SKILLS_IGNORE_BEGIN -->'
-	const markerIgnoreEnd = '<!-- SKILLS_IGNORE_END -->'
+	const IGNORE_BEGIN = '<!-- SKILLS_IGNORE_BEGIN -->'
+	const IGNORE_END = '<!-- SKILLS_IGNORE_END -->'
 	let result = ''
-	let index = 0
-	while (index < text.length) {
-		const start = text.indexOf(markerIgnoreBegin, index)
+	let i = 0
+	while (i < text.length) {
+		const start = text.indexOf(IGNORE_BEGIN, i)
 		if (start === -1) {
-			result += text.slice(index)
+			result += text.slice(i)
 			break
 		}
 
-		result += text.slice(index, start)
-		const end = text.indexOf(markerIgnoreEnd, start + markerIgnoreBegin.length)
+		result += text.slice(i, start)
+		const end = text.indexOf(IGNORE_END, IGNORE_BEGIN.length + start)
 		if (end === -1)
 			break
-		index = end + markerIgnoreEnd.length
+		i = IGNORE_END.length + end
 	}
 	return result.trim()
 }

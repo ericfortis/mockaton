@@ -96,8 +96,8 @@ export default {
 ```
 
 ### Example C: [Function Mocks](https://mockaton.com/function-mocks)
-With a function mock you can do pretty much anything you could do with a normal backend handler.</p>
-For example, you can handle complex logic, URL parsing, saving toa database, etc.
+With a function mock you can do pretty much anything you could do with a normal backend handler.
+For example, you can handle complex logic, URL parsing, saving to a database, etc.
 
 - **Route:** /api/company/abc/user/999
 - **Filename:** api/company/[companyId]/user/[userId].GET.200.ts

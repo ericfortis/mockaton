@@ -45,11 +45,9 @@ export const logger = new class {
 	#sanitize(url) {
 		try {
 			const decoded = decode(url)
-			if (!decoded)
-				return '__MULTI_ENCODED__'
 			return decoded
-				.replace(reControlAndDelChars, '')
-				.slice(0, 200)
+				? decoded.replace(reControlAndDelChars, '').slice(0, 200)
+				: '__MULTI_ENCODED__'
 		}
 		catch {
 			return '__NON_DECODABLE__'

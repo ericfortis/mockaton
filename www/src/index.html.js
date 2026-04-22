@@ -156,26 +156,26 @@ sleep 0.1 # Wait for the watcher to register it
 			<li><strong>Filename:</strong> api/company/[id].GET.200.ts</li>
 		</ul>
 
-		${js(`
+		${js`
 export default {
   name: 'Acme, Inc.'
 }
-`)}
+`}
 
 
 		<h3 id="example-c-function-mocks-https-mockaton-com-function-mocks-">
 			Example C: <a href="/function-mocks">Function Mocks</a>
 		</h3>
 		<p>
-			With a function mock you can do pretty much anything you could do with a normal backend handler.</p>
-		For example, you can handle complex logic, URL parsing, saving toa database, etc.
+			With a function mock you can do pretty much anything you could do with a normal backend handler.
+			For example, you can handle complex logic, URL parsing, saving to a database, etc.
 		</p>
 		<ul>
 			<li><strong>Route:</strong> /api/company/abc/user/999</li>
 			<li><strong>Filename:</strong> api/company/[companyId]/user/[userId].GET.200.ts</li>
 		</ul>
 
-		${js(`
+		${js`
 import { IncomingMessage, OutgoingMessage } from 'node:http'
 import { parseSegments } from 'mockaton'
 
@@ -189,7 +189,7 @@ export default async function (req: IncomingMessage, response: OutgoingMessage) 
     name: 'Acme, Inc.'
   })
 }
-`)}
+`}
 
 
 		</body>

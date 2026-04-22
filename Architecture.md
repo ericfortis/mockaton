@@ -1,31 +1,32 @@
 # Mockaton Architecture
 
 ## Overview
-Mockaton is a small program with no dependencies. Including
-tests, the server is 2.7KLoC, and the web client is 2KLoC.
+Mockaton is a small program with no dependencies.
 
 ### Server
 Mockaton is a Node.js HTTP Server. You can
 think of it as the router of a web-framework.
 
 ### Clients
-Mockaton can be controlled via the **Web Dashboard UI** or **HTTP API**.
+Mockaton can be controlled via the:
+- Web Dashboard UI
+- HTTP API
 
 ### Data Sources
-`config.mocksDir` is required. The HTTP API provides real-time updates to
-indicate when a mock has been added, deleted, or renamed.
-For real-time updates we use long polling.
-
-In addition, Mockaton can be a reverse-proxy, so it can fetch from a real-backend.
+- The `config` object lives in-memory and it's not persisted.
+- `config.mocksDir` must exist.
+- In addition, Mockaton can be a reverse-proxy, so it can fetch from a real-backend.
 That can be done by route, or for routes users have no mocks for.
+- Browser Extension. There’s a companion Chrome DevTools extension for scraping APIs
+  and saving their responses following the filename convention.
 
-### Browser Extension
-There’s a companion Chrome DevTools extension for scraping APIs
-and saving their responses following the filename convention.
+The HTTP API provides real-time updates (SSE) to indicate when a
+mock has been added, deleted, or renamed. Also, when config changes.
+
 
 ### Tests
 - Utilities are unit-tested.
-- Mockaton server is integration tested. You could write Mockaton in another
+- Mockaton server is integration tested. e.g., you could write Mockaton in another
  language and run our test suite against it.
 - UI is pixel-diff tested with `pixaton`, which is a sister project of Puppeteer utilities.
 
@@ -44,11 +45,11 @@ const server = await Mockaton(opts)
 
 ## Router
 Routes under `/mockaton/*` are reserved for the HTTP API and dashboard.
-The router first checks for those, and then [MockDispatcher.js](src/server/MockDispatcher.js)
-handles the resource (or the 404).
+The router first checks for those, and if there's no match, it delegates routing
+to [MockDispatcher.js](src/server/MockDispatcher.js).
 
 
-## Mock Dispatcher
+### Mock Dispatcher
 `dispatchMock(req, response)` first checks if the route can be proxied.
 Otherwise, it applies the matching plugin and ends the response.
 

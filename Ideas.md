@@ -13,7 +13,6 @@ There’s an implicit question mark on each one.
 - config.projectName
 - key for LocalStorage prefs
 
-
 ## SSE mocks
 - on the right side of the dashboard, we could let the user inject data: frames
 - the initial payload could be sent with a given interval?
@@ -34,7 +33,7 @@ There’s an implicit question mark on each one.
 
 
 ## Static Demo Deployment Image
-- Lke [demo-app-vite/Dockerfile](demo-app-vite/Dockerfile)
+- Like [demo-app-vite/Dockerfile](demo-app-vite/Dockerfile)
 
 ## Vite
 - Plugin
@@ -99,15 +98,11 @@ doesn’t break selecting across pages, (e.g., for selecting and copying)
 - mock creator (save)
 - typescript definition creator
 
-## Iframe Preview
-- Iframe to preview rendered HTML
-
 ## Partial Content
 - 206 (reject, handle, or send in full?)
 
 ## Custom Status Codes
 - allowing them?
-
 
 ## In Prod, auth
 - Check permission headers

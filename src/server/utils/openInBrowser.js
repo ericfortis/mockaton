@@ -5,7 +5,7 @@ export const openInBrowser = (async () => {
 	try {
 		return (await import('open')).default
 	}
-	catch (error) {
+	catch {
 		return _openInBrowser
 	}
 })()

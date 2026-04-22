@@ -12,4 +12,4 @@ demo-app-vite/pixaton-tests/**/*.candidate.png
 demo-app-vite/pixaton-tests/**/*.diff.png
 demo-app-vite/dist/
 
-
+/www/src/.well-known/agent-skills/

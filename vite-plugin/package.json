@@ -1,0 +1,17 @@
+{
+	"name": "mockaton-vite-plugin",
+	"version": "0.0.1",
+	"description": "Vite plugin for Mockaton",
+	"type": "module",
+	"main": "index.js",
+	"exports": {
+		".": {
+			"import": "./index.js",
+			"types": "./index.d.ts"
+		}
+	},
+	"peerDependencies": {
+		"vite": ">=8.0.0",
+		"mockaton": "*"
+	}
+}

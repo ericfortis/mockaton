@@ -3,6 +3,7 @@
 .junie
 lcov.info
 node_modules/
+vite-plugin/node_modules/
 www/dist/
 www/dist.zip
 

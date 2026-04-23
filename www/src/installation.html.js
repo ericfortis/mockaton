@@ -9,42 +9,66 @@ export default (url) => htmlTemplate({
 		<p>
 			<em>Requires Node.js <strong>v22.18+</strong></em>
 		</p>
-		<br />
-
-		<p>Create a sample mock in the default directory (<code>./mockaton-mocks</code>)</p>
-		${shell`
-mkdir -p         mockaton-mocks/api
-echo "[1,2,3]" > mockaton-mocks/api/foo.GET.200.json
-`}
 
 		<h2>Option 1: CLI</h2>
-		${shell`npx mockaton --port 4040`}
+		<p>Create a sample mock in the default directory (<code>./mockaton-mocks</code>)</p>
+		${shell`
+mkdir -p         my-mocks/api
+echo "[1,2,3]" > my-mocks/api/foo.GET.200.json
+`}
+		${shell`npx mockaton --port 4040 my-mocks`}
 
 		<p>Test it:</p>
 		${shell`curl localhost:4040/api/foo`}
 
 
-		<h2>Option 2: NPM</h2>
+		<h2>Option 2: Vite Plugin</h2>
+
+		${shell`
+npm install mockaton --save-dev
+`}
+
+		${js`
+import { defineConfig } from 'vite'
+import mockatonPlugin from 'mockaton/vite'
+
+export default defineConfig({
+	plugins: [
+		// …other plugins
+		mockatonPlugin({
+			port: 4040,
+			mocksDir: './my-mocks',
+		})
+	]
+})
+		`}
+
+
+		<h2>Option 3: NPM</h2>
 		${shell`npm install mockaton --save-dev`}
 
 		<p>In your <code>package.json</code>:</p>
 		${json`
 "scripts": {
-  "mockaton": "mockaton --port 4040"
+  "mockaton": "mockaton --port 4040 my-mocks"
 }
 `}
 
 
-		<h2>Option 3: Programmatic Launch</h2>
+		<h2>Option 4: Programmatic Launch</h2>
+		<p>
+			<code>mockaton.config.json</code> is not read by default in this case,
+			so if you want to use it you’d have to import it.
+		</p>
 		${js`
 import { Mockaton } from 'mockaton'
-import config from './mockaton.config.js'
+import config from './mockaton.config.js' // optional
 
 const server = await Mockaton(config)
 `}
 
 
-		<h2>Option 4: Docker</h2>
+		<h2>Option 5: Docker</h2>
 		<p>
 			This will spin up Mockaton with the sample directories
 			included in the repository mounted on the container.

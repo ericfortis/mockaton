@@ -14,22 +14,11 @@ npm install
 
 
 ### Start Mockaton and Vite
-```sh
-npm run mockaton
-```
-
 On another terminal:
 ```sh
 npm run start  
 ```
 
-Alternatively, you can start Mockaton and Vite in one command:
-
-```sh
-./start-mockaton-and-vite-macos
-# or
-./start-mockaton-and-vite-tmux
-```
 
 
 ### vite.config.js

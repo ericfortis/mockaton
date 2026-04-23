@@ -119,6 +119,7 @@ npx mockaton my-mocks-dir/
 			<li>How to <strong>configure</strong> Mockaton? See <a href="/config">CLI and mockaton.config.js</a> docs.</li>
 			<li>How to <strong>control</strong> Mockaton? Besides the dashboard, there’s a <a href="/api">Programmatic API</a>.</li>
 			<li>How to <strong>add plugins</strong>? You can write <a href="/plugins">Plugins</a> for customizing responses.</li>
+			<li>Using <strong>Vite</strong>? There is a <a href="/vite">Vite Plugin</a>.</li>
 		</ul>
 
 

@@ -11,28 +11,22 @@ function trie(brokers) {
 	for (const b of brokers) {
 		let node = root
 		for (const seg of b.urlMask.split('/')) { // TODO it should ignore query string
-			const segNode = node.getChild(seg) || new TrieNode()
-			node.addChild(seg, segNode)
-			node = segNode
+			if (node.hasChild(seg))
+				node = node.getChild(seg)
+			else {
+				const segNode = new TrieNode()
+				node.setChild(seg, segNode)
+				node = segNode
+			}
 		}
 		node.brokers.push(b)
 	}
 	return root
 }
 
-class TrieNode {
-	#children = new Map()
-	brokers = []
-	addChild(k, v) { this.#children.set(k, v) }
-	getChild(k) { return this.#children.get(k) }
-	getChildren() { return this.#children.values() }
-}
-
 /** @param {TrieNode} node */
 function dfs(node) {
-	const childBrokers = []
-	for (const tnc of node.getChildren())
-		childBrokers.push(...dfs(tnc))
+	const childBrokers = node.getChildren().flatMap(dfs)
 
 	const brokers = node.brokers.length
 		? [node.brokers[0], ...childBrokers, ...node.brokers.slice(1)]
@@ -49,3 +43,11 @@ function dfs(node) {
 	return brokers
 }
 
+class TrieNode {
+	#children = new Map()
+	brokers = []
+	setChild(k, v) { this.#children.set(k, v) }
+	hasChild(k) { return this.#children.has(k) }
+	getChild(k) { return this.#children.get(k)}
+	getChildren() { return Array.from(this.#children.values()) }
+}

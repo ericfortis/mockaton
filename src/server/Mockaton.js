@@ -25,11 +25,11 @@ export function Mockaton(options) {
 		setup(options)
 		cookie.init(config.cookies)
 		mockBrokerCollection.init()
+		register('./importResolver.js', import.meta.url)
 
-		if (config.watcherEnabled) {
-			register('./cacheBustResolver.js', import.meta.url)
+		if (config.watcherEnabled) 
 			watchMocksDir()
-		}
+
 		if (config.hotReload)
 			watchDevSPA(CLIENT_DIR)
 

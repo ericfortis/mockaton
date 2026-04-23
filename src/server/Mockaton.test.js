@@ -1035,6 +1035,39 @@ describe('Write and Delete Mock', () => {
 		const r2 = await request('/manual-mock')
 		equal(r2.status, 404)
 	})
+
+	test('can overwrite', async () => {
+		const f = 'overwrite.GET.200.txt'
+		await api.writeMock(f, 'write1')
+		await api.writeMock(f, 'write2')
+		const r = await request('/overwrite')
+		equal(await r.text(), 'write2')
+		await api.deleteMock(f)
+	})
+})
+
+
+describe('import resolver', () => {
+	test('resolves extensionless ts', async () => {
+		await api.writeMock('_scores.ts', 'export default [1,2,3]')
+		await api.writeMock('user-scores.GET.200.ts',
+			// language=typescript
+			`
+				import scores from './_scores'
+
+				export default scores
+			`)
+		const r = await request('/user-scores')
+		deepEqual(await r.json(), [1, 2, 3])
+	})
+
+	test('imports are cache busted', async () => {
+		await api.writeMock('_scores.ts', 'export default [4,5,6]')
+		const r = await request('/user-scores')
+		deepEqual(await r.json(), [4, 5, 6])
+		await api.deleteMock('_scores.ts')
+		await api.deleteMock('user-scores.GET.200.ts')
+	})
 })
 
 

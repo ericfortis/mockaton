@@ -34,7 +34,7 @@ Dashboard: [localhost:2020/mockaton](http://localhost:2020/mockaton)
 
 ## Basic Usage
 ```sh
-npx mockaton my-mocks-dir/
+npx mockaton --port 2020 my-mocks-dir/
 ```
 
 Mockaton will serve the files on the given directory. It's a file-system
@@ -53,7 +53,8 @@ Also, each route can have different mock file variants.
 
 ## Docs
 - How to **configure** Mockaton? See [CLI and mockaton.config.js](https://mockaton.com/config) docs.
-- How to **control** Mockaton? Besides the dashboard, there's a [Programmatic API](https://mockaton.com/api).
+- How to **control** Mockaton? Besides the dashboard, there's a [Programmatic API](https://mockaton.com/api), in which
+  you can delay a route, select a different mock file, such as a 500 error, among other options.
 - How to **add plugins**? You can write [Plugins](https://mockaton.com/plugins) for customizing responses.
 
 <!-- SKILLS_IGNORE_BEGIN -->
@@ -64,11 +65,22 @@ you download in bulk all your API responses following Mockaton's filename conven
 
 ## How to create mocks?
 
-Write to your mocks directory. Alternatively, there's an API [PATCH /mockaton/write-mock](https://mockaton.com/api).
+```sh
+npm install mockaton
+```
+
+Write to your mocks directory, `.ts` files are served as JSON by default.
 ```sh
 mkdir -p my-mocks-dir/api
-echo '{ "name": "John" }' > my-mocks-dir/api/user.GET.200.json
-sleep 0.1 # Wait for the watcher to register it
+cat << EOF >> my-mocks-dir/api/user.GET.200.ts
+interface User {
+  name: string
+}
+
+export default {
+  "name": "John"
+} satisfies User
+EOF
 ```
 
 ### Example A: JSON

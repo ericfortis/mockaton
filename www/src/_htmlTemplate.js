@@ -30,7 +30,7 @@ ${description && `<meta property="og:description" content="${description}" />`}
 ${description && `<meta name="twitter:description" content="${description}" />`}
 <meta name="twitter:image" content="https://mockaton.com/assets/social-preview.jpg" />
 
-<link rel="ai:capabilities" href="/.well-known/agent-skills/mockaton/SKILLS.md">
+<link rel="ai:capabilities" href="/.well-known/agent-skills/mockaton/SKILL.md">
 	`
 }
 
@@ -81,7 +81,7 @@ export const htmlTemplate = ({ head = '', body }) => `
 		<ul>
 			${pages.map(([url, title]) =>
 				`<li><a href="${url}">${title}</a></li>`).join('\n')}
-			<li><a href="/.well-known/agent-skills/mockaton/SKILLS.md">Skills</a></li>
+			<li><a href="/.well-known/agent-skills/mockaton/SKILL.md">Skills</a></li>
 		</ul>
 	</nav>
 

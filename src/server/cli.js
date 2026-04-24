@@ -11,7 +11,7 @@ import pkgJSON from '../../package.json' with { type: 'json' }
 process.on('unhandledRejection', error => { throw error })
 
 const DEFAULT_CONFIG_FILE = 'mockaton.config.js'
-const SKILLS_PATH = join(import.meta.dirname, '../../www/src/.well-known/agent-skills/mockaton/SKILLS.md')
+const SKILLS_PATH = join(import.meta.dirname, '../../www/src/.well-known/agent-skills/mockaton/SKILL.md')
 
 let args, positionals
 try {

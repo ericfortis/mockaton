@@ -6,8 +6,8 @@ import { mkdir, writeFile, readFile } from 'node:fs/promises'
 
 
 const INPUT = rel('README.md')
-const SKILLS_OUTPUT_PATH = rel('skills/mockaton/SKILLS.md')
-const WWW_SKILLS_OUTPUT_PATH = rel('www/src/.well-known/agent-skills/mockaton/SKILLS.md')
+const SKILLS_OUTPUT_PATH = rel('skills/mockaton/SKILL.md')
+const WWW_SKILLS_OUTPUT_PATH = rel('www/src/.well-known/agent-skills/mockaton/SKILL.md')
 const WWW_INDEX_OUTPUT_PATH = rel('www/src/.well-known/agent-skills/index.json')
 
 
@@ -25,7 +25,7 @@ const indexData = JSON.stringify({
 	'$schema': 'https://schemas.agentskills.io/discovery/0.2.0/schema.json',
 	skills: [
 		{
-			url: '/.well-known/agent-skills/mockaton/SKILLS.md',
+			url: '/.well-known/agent-skills/mockaton/SKILL.md',
 			name: 'mockaton',
 			type: 'skill-md',
 			description: 'Generates and serves HTTP API mocks',

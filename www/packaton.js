@@ -11,7 +11,10 @@ switch (process.argv[2]) {
 	case 'production':
 		Packaton({
 			mode: 'production',
-			sitemapDomain: 'mockaton.com'
+			sitemapDomain: 'mockaton.com',
+			routeHeaders: [
+				['Cache-Control', 'public,max-age=60'],
+			]
 		})
 		break
 

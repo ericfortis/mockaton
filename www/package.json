@@ -4,11 +4,11 @@
 	"type": "module",
 	"dependencies": {
 		"mediasnacks": "0.16.4",
-		"packaton": "0.0.25",
+		"packaton": "0.0.26",
 		"prismjs": "1.30.0"
 	},
 	"devDependencies": {
-		"terser": "5.46.1"
+		"terser": "5.46.2"
 	},
 	"scripts": {
 		"outdated": "npm outdated --parseable | awk -F: '{ printf \"npm i %-30s ;# %s\\n\", $4, $2 }'"

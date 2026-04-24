@@ -19,7 +19,7 @@ zip: build
 
 
 skills:
-	./make-skills.js
+	cd .. && ./make-skills.js
 
 sync_images:
 	cp ../pixaton-tests/tests/macos/pic-for-readme* src/assets/media/

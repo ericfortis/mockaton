@@ -4,7 +4,7 @@
 [![codecov](https://codecov.io/github/ericfortis/mockaton/graph/badge.svg?token=90NYLMMG1J)](https://codecov.io/github/ericfortis/mockaton)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
-## [Docs ↗](https://mockaton.com) | [Changelog ↗](https://mockaton.com/changelog) | [Skills ↗](https://mockaton.com/.well-known/agent-skills/mockaton/SKILLS.md)
+## [Docs ↗](https://mockaton.com) | [Changelog ↗](https://mockaton.com/changelog) | [Skills](skills/mockaton/SKILL.md)
 
 Mockaton is an HTTP mock server for simulating APIs, designed
 for testing difficult to reproduce backend states with minimal setup.
@@ -30,6 +30,7 @@ Test it:
 curl localhost:2020/api/user
 ```
 Dashboard: [localhost:2020/mockaton](http://localhost:2020/mockaton)
+
 <!-- SKILLS_IGNORE_END -->
 
 ## Basic Usage
@@ -61,6 +62,12 @@ Also, each route can have different mock file variants.
 ## How to scrape your backend APIs?
 Mockaton has a [Browser Extension](https://mockaton.com/scraping) that lets
 you download in bulk all your API responses following Mockaton's filename convention.
+
+
+## Skills
+```sh
+npx skills add ericfortis/mockaton
+```
 <!-- SKILLS_IGNORE_END -->
 
 ## How to create mocks?

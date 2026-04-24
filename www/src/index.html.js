@@ -134,11 +134,15 @@ npx mockaton my-mocks-dir/
 			Write to your mocks directory. Alternatively, there’s an API <a href="/api">PATCH /mockaton/write-mock</a>.
 		</p>
 
+		<h2>Skills</h2>
+		${shell`
+npx skills add ericfortis/mockaton
+`}
+
 		${shell`
 mkdir -p my-mocks-dir/api
 echo '{ "name": "John" }' > my-mocks-dir/api/user.GET.200.json
-sleep 0.1 # Wait for the watcher to register it
-	`}
+`}
 
 
 		<h3 id="example-a-json">Example A: JSON</h3>

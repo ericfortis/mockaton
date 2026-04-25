@@ -141,7 +141,15 @@ npx skills add ericfortis/mockaton
 
 		${shell`
 mkdir -p my-mocks-dir/api
-echo '{ "name": "John" }' > my-mocks-dir/api/user.GET.200.json
+cat > my-mocks-dir/api/user.GET.200.ts << EOF
+interface User {
+  name: string
+}
+
+export default {
+  "name": "John"
+} satisfies User
+EOF
 `}
 
 

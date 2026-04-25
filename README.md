@@ -79,7 +79,7 @@ npm install mockaton
 Write to your mocks directory, `.ts` files are served as JSON by default.
 ```sh
 mkdir -p my-mocks-dir/api
-cat << EOF >> my-mocks-dir/api/user.GET.200.ts
+cat > my-mocks-dir/api/user.GET.200.ts << EOF
 interface User {
   name: string
 }

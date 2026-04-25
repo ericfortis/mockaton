@@ -1,5 +1,5 @@
 :root {
-	--syntaxCmd: light-dark(#1184f4, #b9ffe6);
+	--syntaxCmd: light-dark(#0671da, #b9ffe6);
 	--syntaxComment: light-dark(#777, #8c8c8c);
 	--syntaxKeyword: light-dark(#5a5e88, #6bb1a1);
 	--syntaxNum: light-dark(#9e009e, #925cff);

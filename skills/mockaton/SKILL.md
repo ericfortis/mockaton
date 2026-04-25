@@ -29,6 +29,7 @@ Also, each route can have different mock file variants.
 - How to **add plugins**? You can write [Plugins](https://mockaton.com/plugins) for customizing responses.
 
 
+
 ## How to create mocks?
 
 ```sh
@@ -38,7 +39,7 @@ npm install mockaton
 Write to your mocks directory, `.ts` files are served as JSON by default.
 ```sh
 mkdir -p my-mocks-dir/api
-cat << EOF >> my-mocks-dir/api/user.GET.200.ts
+cat > my-mocks-dir/api/user.GET.200.ts << EOF
 interface User {
   name: string
 }

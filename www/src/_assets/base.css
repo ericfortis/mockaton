@@ -17,12 +17,13 @@
 	color-scheme: light dark;
 
 	--bgHeader: light-dark(#272727, #000);
-	--bg: light-dark(#fdfdfd, #1a1a1a);
+	--bg: light-dark(#fdfdfd, #111);
 	--fgHigh: light-dark(#000, #fff);
 	--fg: light-dark(#000, #dbdbdb);
 	--fg2: light-dark(#444, #ccc);
-	--bgFaint: light-dark(#f5f5f6, #282828);
+	--bgFaint: light-dark(#f8f8f8, #282828);
 	--faintBorder: light-dark(#e6e6e6, #333);
+	--colorLinkUnderline: light-dark(rgba(127, 127, 172, 0.2), rgba(127, 127, 172, .3));
 
 	--videoTrackHoverBG: #6b93fd;
 	--accentFaint: #e1ebff;
@@ -90,8 +91,8 @@ a {
 	display: inline-block;
 	color: var(--accent);
 	outline: 0;
-	text-decoration: none;
 	-webkit-user-drag: none;
+	text-decoration-color: var(--colorLinkUnderline);
 
 	&:hover,
 	&:focus-visible {

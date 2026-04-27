@@ -2,7 +2,6 @@
 ![NPM Version](https://img.shields.io/npm/v/mockaton)
 [![Test](https://github.com/ericfortis/mockaton/actions/workflows/test.yml/badge.svg)](https://github.com/ericfortis/mockaton/actions/workflows/test.yml)
 [![codecov](https://codecov.io/github/ericfortis/mockaton/graph/badge.svg?token=90NYLMMG1J)](https://codecov.io/github/ericfortis/mockaton)
-[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
 ## [Docs ↗](https://mockaton.com) | [Changelog ↗](https://mockaton.com/changelog) | [Skills](skills/mockaton/SKILL.md)
 
@@ -38,9 +37,10 @@ Dashboard: [localhost:2020/mockaton](http://localhost:2020/mockaton)
 npx mockaton --port 2020 my-mocks-dir/
 ```
 
-Mockaton will serve the files on the given directory. It's a file-system
-based router, so filenames can have dynamic parameters and comments.
-Also, each route can have different mock file variants.
+Mockaton will serve the files on the given directory. It's a file-system based router, so filenames can have dynamic
+parameters.
+Also, filenames can have comments, anything within parentheses, this way each route can have different mock file
+variants.
 
 
 | Route | Filename | Description |

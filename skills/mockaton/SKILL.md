@@ -8,9 +8,10 @@ user-invocable: false
 npx mockaton --port 2020 my-mocks-dir/
 ```
 
-Mockaton will serve the files on the given directory. It's a file-system
-based router, so filenames can have dynamic parameters and comments.
-Also, each route can have different mock file variants.
+Mockaton will serve the files on the given directory. It's a file-system based router, so filenames can have dynamic
+parameters.
+Also, filenames can have comments, anything within parentheses, this way each route can have different mock file
+variants.
 
 
 | Route | Filename | Description |

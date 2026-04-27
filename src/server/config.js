@@ -54,7 +54,8 @@ const schema = {
 
 	onReady: [await openInBrowser, is(Function)],
 
-	hotReload: [false, is(Boolean)]
+	hotReload: [false, is(Boolean)],
+	bypassImportCache: [true, is(Boolean)]
 }
 
 

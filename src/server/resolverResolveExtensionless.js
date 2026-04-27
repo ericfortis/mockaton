@@ -2,6 +2,7 @@ import { existsSync } from 'node:fs'
 import { join, dirname } from 'node:path'
 import { fileURLToPath, pathToFileURL } from 'node:url'
 
+
 export async function resolve(specifier, context, nextResolve) {
 	try {
 		return await nextResolve(specifier, context)

@@ -6,7 +6,6 @@ export const API = {
 	dashboard: MOUNT,
 
 	reset: MOUNT + '/reset',
-
 	select: MOUNT + '/select',
 	bulkSelect: MOUNT + '/bulk-select-by-comment',
 

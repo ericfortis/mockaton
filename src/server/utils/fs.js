@@ -34,8 +34,8 @@ export async function rm(path) {
 export async function resolveIn(baseDir, file) {
 	try {
 		const parent = await realpath(baseDir)
-		const child = resolve(parent, file)
-		return child.startsWith(parent + sep)
+		const child = resolve(join(parent, file))
+		return child.startsWith(join(parent, sep))
 			? child
 			: null
 	}

@@ -1047,7 +1047,7 @@ describe('Write and Delete Mock', () => {
 })
 
 
-describe('import resolver', () => {
+describe('import resolvers', () => {
 	test('resolves extensionless ts', async () => {
 		await api.writeMock('_scores.ts', 'export default [1,2,3]')
 		await api.writeMock('user-scores.GET.200.ts',

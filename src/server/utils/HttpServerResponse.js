@@ -27,7 +27,7 @@ export class ServerResponse extends http.ServerResponse {
 
 	async file(file) {
 		this.setHeader('Content-Type', mimeFor(file))
-		this.end(await fs.promises.readFile(file, 'utf8'))
+		this.end(await fs.promises.readFile(file))
 	}
 
 	noContent() {

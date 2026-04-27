@@ -2,7 +2,6 @@ import { resolve as _resolve } from 'node:path'
 
 const mockatonSrcRoot = `file://${_resolve(import.meta.dirname, '..')}`
 
-
 // We register this hook at runtime so it doesn’t interfere with non-dynamic imports. 
 // Cache bust by appending timestamp query param
 export async function resolve(specifier, context, nextResolve) {

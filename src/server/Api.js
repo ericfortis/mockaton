@@ -4,8 +4,7 @@
  */
 
 import { join } from 'node:path'
-import { readdirSync } from 'node:fs'
-import { write, rm, isFile, resolveIn } from './utils/fs.js'
+import { write, rm, isFile, resolveIn, listFilesRecursively } from './utils/fs.js'
 
 import openapi from '../../www/src/assets/openapi.json' with { type: 'json' }
 import pkgJSON from '../../package.json' with { type: 'json' }
@@ -22,12 +21,11 @@ import * as mockBrokersCollection from './mockBrokersCollection.js'
 
 
 export const CLIENT_DIR = join(import.meta.dirname, '../client')
-const DASHBOARD_ASSETS = readdirSync(CLIENT_DIR, { recursive: true })
-
 
 export const apiGetReqs = new Map([
 	[API.dashboard, serveDashboard],
-	...DASHBOARD_ASSETS.map(f => [API.dashboard + '/' + f, serveStatic(f)]),
+	...listFilesRecursively(CLIENT_DIR).map(f =>
+		[`${API.dashboard}/${f}`, serveStatic(f)]),
 
 	[API.state, getState],
 	[API.syncVersion, sseClientSyncVersion],
@@ -36,7 +34,6 @@ export const apiGetReqs = new Map([
 	[API.throws, () => { throw new Error('Test500') }],
 	[API.openAPI, (_, response) => response.json(openapi)]
 ])
-
 
 
 export const apiPatchReqs = new Map([
@@ -69,9 +66,7 @@ function serveDashboard(_, response) {
 }
 
 function serveStatic(f) {
-	return (_, response) => {
-		response.file(join(CLIENT_DIR, f))
-	}
+	return (_, response) => { response.file(join(CLIENT_DIR, f)) }
 }
 
 function getState(_, response) {

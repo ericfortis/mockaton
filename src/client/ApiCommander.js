@@ -17,15 +17,10 @@ export class Commander {
 	reset = () => this.#patch(API.reset)
 
 	setGlobalDelay = delay => this.#patch(API.globalDelay, delay)
-
 	setGlobalDelayJitter = jitterPct => this.#patch(API.globalDelayJitter, jitterPct)
-
 	setCorsAllowed = value => this.#patch(API.cors, value)
-
 	setWatchMocks = enabled => this.#patch(API.watchMocks, enabled)
-
 	setProxyFallback = proxyAddr => this.#patch(API.fallback, proxyAddr)
-
 	setCollectProxied = shouldCollect => this.#patch(API.collectProxied, shouldCollect)
 
 	/** @returns {JsonPromise<State.cookies>} */
@@ -50,7 +45,6 @@ export class Commander {
 
 
 	writeMock = (file, content) => this.#patch(API.writeMock, [file, content])
-
 	deleteMock = file => this.#patch(API.deleteMock, file)
 
 

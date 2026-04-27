@@ -2,7 +2,7 @@ import { join } from 'node:path'
 import { after } from 'node:test'
 
 import { launch } from 'puppeteer'
-import { removeDiffsAndCandidates, diffServer } from 'pixaton'
+import { removeDiffsAndCandidates, PixatonReviewServer } from 'pixaton'
 
 import devConfig from '../mockaton.config.js'
 import { Commander, Mockaton } from '../index.js'
@@ -40,5 +40,5 @@ export const page = await browser.newPage()
 after(() => {
 	browser?.close()
 	mServer?.close()
-	diffServer(testsDir)
+	PixatonReviewServer({ testsDir })
 })

@@ -7,7 +7,7 @@
 		"outdated": "npm outdated --parseable | awk -F: '{ printf \"npm i %-30s ;# %s\\n\", $4, $2 }'"
 	},
 	"devDependencies": {
-		"pixaton": "2.0.0",
+		"pixaton": "2.0.1",
 		"puppeteer": "24.42.0"
 	}
 }

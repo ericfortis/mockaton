@@ -1,18 +1,14 @@
 # Mockaton Architecture
 
-## Overview
-Mockaton is a small program with no dependencies.
+Mockaton is a small client-server program with no dependencies.
 
-### Server
-Mockaton is a Node.js HTTP Server. You can
-think of it as the router of a web-framework.
+## Server
+It’s a Node.js HTTP Server. Think of it as filesystem-based router.
 
-### Clients
-Mockaton can be controlled via the:
-- Web Dashboard UI
-- HTTP API
+## Clients
+Mockaton can be controlled via the **Web Dashboard UI**, or **HTTP API**.
 
-### Data Sources
+## Data Sources
 - The `config` object lives in-memory and it's not persisted.
 - `config.mocksDir` must exist.
 - In addition, Mockaton can be a reverse-proxy, so it can fetch from a real-backend.
@@ -23,8 +19,7 @@ That can be done by route, or for routes users have no mocks for.
 The HTTP API provides real-time updates (SSE) to indicate when a
 mock has been added, deleted, or renamed. Also, when config changes.
 
-
-### Tests
+## Tests
 - Utilities are unit-tested.
 - Mockaton server is integration tested. e.g., you could write Mockaton in another
  language and run our test suite against it.
@@ -32,7 +27,7 @@ mock has been added, deleted, or renamed. Also, when config changes.
 
 
 ## Entry Point
-`npx mockaton --port 4040`
+`npx mockaton --port 4040 my-mocks-dir`
 
 The NPM binary points to [cli.js](src/server/cli.js), which instantiates
 the server. End users are allowed to do that too as follows:
@@ -40,7 +35,10 @@ the server. End users are allowed to do that too as follows:
 ```shell
 import { Mockaton } from 'mockaton'
 
-const server = await Mockaton(opts)
+const server = await Mockaton({
+  mocksDir: 'my-dir',
+  // …other config options
+})
 ```
 
 ## Router

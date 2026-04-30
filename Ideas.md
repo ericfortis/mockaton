@@ -35,9 +35,6 @@ There’s an implicit question mark on each one.
 ## Static Demo Deployment Image
 - Like [demo-app-vite/Dockerfile](demo-app-vite/Dockerfile)
 
-## Vite
-- Plugin
-
 ## Storybook
 - Plugin
 

@@ -1,6 +1,7 @@
 .env
 .idea
 .junie
+.run
 lcov.info
 node_modules/
 vite-plugin/node_modules/

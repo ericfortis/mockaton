@@ -27,6 +27,7 @@ export function Mockaton(options) {
 		mockBrokerCollection.init()
 
 		register('./resolverResolveExtensionless.js', import.meta.url)
+
 		if (config.bypassImportCache)
 			register('./resolverBypassImportCache.js', import.meta.url)
 

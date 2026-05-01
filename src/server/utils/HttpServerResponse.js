@@ -1,5 +1,6 @@
-import http from 'node:http'
 import fs from 'node:fs'
+import http from 'node:http'
+import { pipeline } from 'node:stream/promises'
 
 import { mimeFor } from './mime.js'
 
@@ -27,7 +28,7 @@ export class ServerResponse extends http.ServerResponse {
 
 	async file(file) {
 		this.setHeader('Content-Type', mimeFor(file))
-		this.end(await fs.promises.readFile(file))
+		await pipeline(fs.createReadStream(file), this)
 	}
 
 	noContent() {
@@ -91,12 +92,8 @@ export class ServerResponse extends http.ServerResponse {
 		this.setHeader('Content-Range', `bytes ${start}-${end}/${size}`)
 		this.setHeader('Content-Type', mimeFor(file))
 
-		return new Promise((resolve, reject) => {
-			const reader = fs.createReadStream(file, { start, end })
-			this.on('error', reject)
-			reader.on('error', reject)
-			reader.on('end', resolve)
-			reader.pipe(this)
-		})
+		const stream = fs.createReadStream(file, { start, end })
+		this.on('close', () => stream.destroy())
+		stream.pipe(this)
 	}
 }

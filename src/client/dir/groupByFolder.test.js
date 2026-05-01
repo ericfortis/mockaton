@@ -11,7 +11,7 @@ test('groupByFolder', () => {
 		PartialBrokerRowModel('GET', '/api/user/avatar'),
 		PartialBrokerRowModel('GET', '/api/video/[id]'),
 		PartialBrokerRowModel('GET', '/index.html'),
-		PartialBrokerRowModel('GET', '/media/file-a.txt'),
+		PartialBrokerRowModel('GET', '/media/file-a'),
 		PartialBrokerRowModel('GET', '/media/file-b.txt'),
 		PartialBrokerRowModel('GET', '/media/sub/file-aa.txt'),
 		PartialBrokerRowModel('GET', '/media/sub/file-bb.txt'),
@@ -28,7 +28,7 @@ test('groupByFolder', () => {
 			PartialBrokerRowModel('PATCH', '/api/user')),
 		PartialBrokerRowModel('GET', '/api/video/[id]'),
 		PartialBrokerRowModel('GET', '/index.html'),
-		PartialBrokerRowModel('GET', '/media/file-a.txt',
+		PartialBrokerRowModel('GET', '/media/file-a',
 			PartialBrokerRowModel('GET', '/media/file-b.txt'),
 			PartialBrokerRowModel('GET', '/media/sub/file-aa.txt',
 				PartialBrokerRowModel('GET', '/media/sub/file-bb.txt')))

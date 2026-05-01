@@ -20,19 +20,22 @@ import { config, ConfigValidator } from './config.js'
 import * as mockBrokersCollection from './mockBrokersCollection.js'
 
 
-export const CLIENT_DIR = join(import.meta.dirname, '../client')
+export const CLIENT_ASSETS = join(import.meta.dirname, '../client')
 
 export const apiGetReqs = new Map([
 	[API.dashboard, serveDashboard],
-	...listFilesRecursively(CLIENT_DIR).map(f =>
-		[`${API.dashboard}/${f}`, serveStatic(f)]),
+
+	...listFilesRecursively(CLIENT_ASSETS).map(f => [
+		API.dashboard + '/' + f,
+		serveDashboardAsset(f)
+	]),
 
 	[API.state, getState],
 	[API.syncVersion, sseClientSyncVersion],
 
 	[API.watchHotReload, onDevWatch],
-	[API.throws, () => { throw new Error('Test500') }],
-	[API.openAPI, (_, response) => response.json(openapi)]
+	[API.openAPI, (_, response) => response.json(openapi)],
+	[API.throws, () => { throw new Error('Test500') }]
 ])
 
 
@@ -65,8 +68,10 @@ function serveDashboard(_, response) {
 	response.html(IndexHtml(config.hotReload, pkgJSON.version), CSP)
 }
 
-function serveStatic(f) {
-	return (_, response) => { response.file(join(CLIENT_DIR, f)) }
+function serveDashboardAsset(f) {
+	return (_, response) => {
+		response.file(join(CLIENT_ASSETS, f))
+	}
 }
 
 function getState(_, response) {
@@ -181,7 +186,6 @@ async function setCollectProxied(req, response) {
 
 async function bulkUpdateBrokersByCommentTag(req, response) {
 	const comment = await req.json()
-
 	mockBrokersCollection.setMocksMatchingComment(comment)
 	response.ok()
 	uiSyncVersion.increment()
@@ -190,7 +194,6 @@ async function bulkUpdateBrokersByCommentTag(req, response) {
 
 async function selectMock(req, response) {
 	const file = await req.json()
-
 	const broker = mockBrokersCollection.brokerByFilename(file)
 	if (!broker || !broker.hasMock(file))
 		response.unprocessable(`Missing Mock: ${file}`)
@@ -204,7 +207,6 @@ async function selectMock(req, response) {
 
 async function toggleRouteStatus(req, response) {
 	const [method, urlMask, status] = await req.json()
-
 	const broker = mockBrokersCollection.brokerByRoute(method, urlMask)
 	if (!broker)
 		response.unprocessable(`Route does not exist: ${method} ${urlMask}`)
@@ -218,7 +220,6 @@ async function toggleRouteStatus(req, response) {
 
 async function setRouteIsDelayed(req, response) {
 	const [method, urlMask, delayed] = await req.json()
-
 	const broker = mockBrokersCollection.brokerByRoute(method, urlMask)
 	if (!broker)
 		response.unprocessable(`Route does not exist: ${method} ${urlMask}`)
@@ -234,7 +235,6 @@ async function setRouteIsDelayed(req, response) {
 
 async function setRouteIsProxied(req, response) {
 	const [method, urlMask, proxied] = await req.json()
-
 	const broker = mockBrokersCollection.brokerByRoute(method, urlMask)
 	if (!broker)
 		response.unprocessable(`Route does not exist: ${method} ${urlMask}`)
@@ -298,7 +298,6 @@ async function deleteMock(req, response) {
 
 async function setWatchMocks(req, response) {
 	const enabled = await req.json()
-
 	if (typeof enabled !== 'boolean')
 		response.unprocessable(`Expected boolean for "watchMocks"`)
 	else {

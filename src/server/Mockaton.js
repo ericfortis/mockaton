@@ -11,7 +11,7 @@ import { IncomingMessage, BodyReaderError, hasControlChars } from './utils/HttpI
 import { API } from '../client/ApiConstants.js'
 import { cookie } from './cookie.js'
 import { config, setup } from './config.js'
-import { apiPatchReqs, apiGetReqs, CLIENT_DIR } from './Api.js'
+import { apiPatchReqs, apiGetReqs, CLIENT_ASSETS } from './Api.js'
 
 import { dispatchMock } from './MockDispatcher.js'
 import * as mockBrokerCollection from './mockBrokersCollection.js'
@@ -34,7 +34,7 @@ export function Mockaton(options) {
 			watchMocksDir()
 
 		if (config.hotReload)
-			watchDevSPA(CLIENT_DIR)
+			watchDevSPA(CLIENT_ASSETS)
 
 		const server = createServer({ IncomingMessage, ServerResponse }, onRequest)
 		server.on('error', reject)

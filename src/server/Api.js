@@ -38,7 +38,6 @@ const getReqs = new Map([
 	[API.throws, () => { throw new Error('Test500') }]
 ])
 
-
 const patchReqs = new Map([
 	[API.cors, setCorsAllowed],
 	[API.reset, reset],

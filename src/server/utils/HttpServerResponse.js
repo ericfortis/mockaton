@@ -74,13 +74,18 @@ export class ServerResponse extends http.ServerResponse {
 	}
 
 
-	async partialContent(range, file) {
+	async partialContent(file) {
 		const { size } = await fs.promises.lstat(file)
-		let [start, end] = range.replace(/bytes=/, '').split('-').map(n => parseInt(n, 10))
-		if (isNaN(end)) end = size - 1
-		if (isNaN(start)) start = size - end
+		let [start, end] = this.req.headers.range.replace(/bytes=/, '').split('-').map(n => parseInt(n, 10))
 
-		if (start < 0 || start > end || start >= size || end >= size) {
+		if (isNaN(start)) {
+			start = size - end
+			end = size - 1
+		}
+		else if (isNaN(end))
+			end = size - 1
+
+		if (start < 0 || end >= size || start > end) {
 			this.statusCode = 416 // Range Not Satisfiable
 			this.setHeader('Content-Range', `bytes */${size}`)
 			this.end()
@@ -90,6 +95,7 @@ export class ServerResponse extends http.ServerResponse {
 		this.statusCode = 206 // Partial Content
 		this.setHeader('Accept-Ranges', 'bytes')
 		this.setHeader('Content-Range', `bytes ${start}-${end}/${size}`)
+		this.setHeader('Content-Length', (end - start) + 1)
 		this.setHeader('Content-Type', mimeFor(file))
 
 		const stream = fs.createReadStream(file, { start, end })

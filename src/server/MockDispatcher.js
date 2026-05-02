@@ -39,7 +39,7 @@ export async function dispatchMock(req, response) {
 
 		if (isStatic && req.headers.range && !broker.autoStatus) {
 			setTimeout(async () => {
-				await response.partialContent(req.headers.range, join(config.mocksDir, broker.file))
+				await response.partialContent(join(config.mocksDir, broker.file))
 			}, Number(broker.delayed && calcDelay()))
 			return
 		}

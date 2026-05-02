@@ -1,5 +1,6 @@
 #!/usr/bin/env node
 
+import { pathToFileURL } from 'node:url'
 import { resolve, join } from 'node:path'
 import { parseArgs } from 'node:util'
 
@@ -79,7 +80,7 @@ else if (args.config && !isFile(args.config)) {
 else {
 	const userConf = resolve(args.config ?? DEFAULT_CONFIG_FILE)
 	const opts = isFile(userConf)
-		? (await import(userConf)).default ?? {}
+		? (await import(pathToFileURL(userConf))).default ?? {}
 		: {}
 
 	if (args.host) opts.host = args.host

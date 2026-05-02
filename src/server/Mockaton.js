@@ -11,7 +11,7 @@ import { IncomingMessage, BodyReaderError, hasControlChars } from './utils/HttpI
 import { API } from '../client/ApiConstants.js'
 import { cookie } from './cookie.js'
 import { config, setup } from './config.js'
-import { apiPatchReqs, apiGetReqs, CLIENT_ASSETS } from './Api.js'
+import { CLIENT_ASSETS, handleApiRequest } from './Api.js'
 
 import { dispatchMock } from './MockDispatcher.js'
 import * as mockBrokerCollection from './mockBrokersCollection.js'
@@ -50,6 +50,7 @@ export function Mockaton(options) {
 	})
 }
 
+
 async function onRequest(req, response) {
 	response.setHeader('Server', `Mockaton ${pkgJSON.version}`)
 	response.on('error', logger.warn)
@@ -71,23 +72,13 @@ async function onRequest(req, response) {
 		return
 	}
 
+	if (config.corsAllowed)
+		setCorsHeaders(req, response, config)
+
 	try {
-		if (config.corsAllowed)
-			setCorsHeaders(req, response, config)
-
-		const { method } = req
-		const { pathname } = new URL(url, 'http://_')
-
 		if (isPreflight(req))
 			response.noContent()
-
-		else if (method === 'PATCH' && apiPatchReqs.has(pathname))
-			await apiPatchReqs.get(pathname)(req, response)
-
-		else if (method === 'GET' && apiGetReqs.has(pathname))
-			apiGetReqs.get(pathname)(req, response)
-
-		else {
+		else if (!(await handleApiRequest(req, response))) {
 			handledByMockDispatcher = true
 			await dispatchMock(req, response)
 		}

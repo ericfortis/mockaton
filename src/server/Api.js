@@ -22,7 +22,7 @@ import * as mockBrokersCollection from './mockBrokersCollection.js'
 
 export const CLIENT_ASSETS = join(import.meta.dirname, '../client')
 
-export const apiGetReqs = new Map([
+const getReqs = new Map([
 	[API.dashboard, serveDashboard],
 
 	...listFilesRecursively(CLIENT_ASSETS).map(f => [
@@ -39,7 +39,7 @@ export const apiGetReqs = new Map([
 ])
 
 
-export const apiPatchReqs = new Map([
+const patchReqs = new Map([
 	[API.cors, setCorsAllowed],
 	[API.reset, reset],
 	[API.cookies, selectCookie],
@@ -60,6 +60,17 @@ export const apiPatchReqs = new Map([
 	[API.deleteMock, deleteMock],
 	[API.watchMocks, setWatchMocks]
 ])
+
+export async function handleApiRequest(req, response) {
+	const { pathname } = new URL(req.url, 'http://_')
+	const handler = (
+		req.method === 'GET' && getReqs.get(pathname) ||
+		req.method === 'PATCH' && patchReqs.get(pathname))
+	if (handler) {
+		await handler(req, response)
+		return true
+	}
+}
 
 
 /** # GET */

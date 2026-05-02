@@ -23,10 +23,12 @@
 
 	accent-color: var(--colorAccent);
 	--radius: 16px;
+	--subtoolbarHeight: 42px;
 }
 
 html,
 body {
+	overflow: hidden;
 	height: 100%;
 	font-size: 12px;
 }
@@ -341,15 +343,15 @@ main {
 	}
 
 	.leftSide {
-		overflow: hidden;
+		display: grid;
 		width: 50%;
 		border-top: 1px solid var(--colorBorder);
 		border-right: 1px solid var(--colorBorder);
+		grid-template-rows: var(--subtoolbarHeight) 1fr;
 	}
 
 	.rightSide {
 		position: relative;
-		overflow: hidden;
 		min-width: 100px;
 		min-height: 0;
 		flex: 1;
@@ -391,7 +393,6 @@ main {
 
 .SubToolbar {
 	display: flex;
-	height: 42px;
 	align-items: center;
 	justify-content: space-between;
 	padding-right: 14px;
@@ -719,7 +720,9 @@ main {
 
 
 .PayloadViewer {
+	display: grid;
 	height: 100%;
+	grid-template-rows: var(--subtoolbarHeight) 1fr;
 
 	> pre {
 		overflow: auto;

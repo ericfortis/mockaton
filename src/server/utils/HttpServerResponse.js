@@ -27,8 +27,20 @@ export class ServerResponse extends http.ServerResponse {
 	}
 
 	async file(file) {
-		this.setHeader('Content-Type', mimeFor(file))
-		await pipeline(fs.createReadStream(file), this)
+		try {
+			const { size } = await fs.promises.stat(file)
+			this.setHeader('Content-Length', size)
+			this.setHeader('Content-Type', mimeFor(file))
+			await pipeline(fs.createReadStream(file), this)
+		}
+		catch (err) {
+			if (this.headersSent)
+				this.destroy()
+			else if (err.code === 'ENOENT')
+				this.notFound()
+			else
+				throw err
+		}
 	}
 
 	noContent() {
@@ -75,31 +87,39 @@ export class ServerResponse extends http.ServerResponse {
 
 
 	async partialContent(file) {
-		const { size } = await fs.promises.lstat(file)
-		let [start, end] = this.req.headers.range.replace(/bytes=/, '').split('-').map(n => parseInt(n, 10))
+		try {
+			const { size } = await fs.promises.lstat(file)
+			let [start, end] = this.req.headers.range.replace(/bytes=/, '').split('-').map(n => parseInt(n, 10))
 
-		if (isNaN(start)) {
-			start = size - end
-			end = size - 1
+			if (isNaN(start)) {
+				start = size - end
+				end = size - 1
+			}
+			else if (isNaN(end))
+				end = size - 1
+
+			if (start < 0 || end >= size || start > end) {
+				this.statusCode = 416 // Range Not Satisfiable
+				this.setHeader('Content-Range', `bytes */${size}`)
+				this.end()
+				return
+			}
+
+			this.statusCode = 206 // Partial Content
+			this.setHeader('Accept-Ranges', 'bytes')
+			this.setHeader('Content-Range', `bytes ${start}-${end}/${size}`)
+			this.setHeader('Content-Length', (end - start) + 1)
+			this.setHeader('Content-Type', mimeFor(file))
+
+			await pipeline(fs.createReadStream(file, { start, end }), this)
 		}
-		else if (isNaN(end))
-			end = size - 1
-
-		if (start < 0 || end >= size || start > end) {
-			this.statusCode = 416 // Range Not Satisfiable
-			this.setHeader('Content-Range', `bytes */${size}`)
-			this.end()
-			return
+		catch (err) {
+			if (this.headersSent)
+				this.destroy()
+			else if (err.code === 'ENOENT')
+				this.notFound()
+			else
+				throw err
 		}
-
-		this.statusCode = 206 // Partial Content
-		this.setHeader('Accept-Ranges', 'bytes')
-		this.setHeader('Content-Range', `bytes ${start}-${end}/${size}`)
-		this.setHeader('Content-Length', (end - start) + 1)
-		this.setHeader('Content-Type', mimeFor(file))
-
-		const stream = fs.createReadStream(file, { start, end })
-		this.on('close', () => stream.destroy())
-		stream.pipe(this)
 	}
 }

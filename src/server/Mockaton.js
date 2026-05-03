@@ -88,7 +88,7 @@ async function onRequest(req, response) {
 			response.unprocessable(`${error.name}: ${error.message}`)
 		else {
 			logger.error(500, req.url, error?.message || error, error?.stack || '')
-			response.internalServerError(error)
+			response.internalServerError()
 		}
 	}
 }

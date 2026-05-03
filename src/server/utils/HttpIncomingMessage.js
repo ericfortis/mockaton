@@ -17,46 +17,38 @@ export class BodyReaderError extends Error {
 
 export class IncomingMessage extends http.IncomingMessage {
 	json() {
-		return readBody(this, JSON.parse)
+		return this.body(JSON.parse)
+	}
+
+	async body(parser = a => a) {
+		const MAX_BODY_SIZE = 200 * 1024
+		const expectedLength = this.headers['content-length'] | 0
+
+		const chunks = []
+		let lengthSoFar = 0
+		for await (const chunk of this) {
+			lengthSoFar += chunk.length
+			if (lengthSoFar > MAX_BODY_SIZE)
+				throw new BodyReaderError(`Body too large. Max is ${MAX_BODY_SIZE} bytes`)
+			chunks.push(chunk)
+		}
+
+		if (lengthSoFar !== expectedLength)
+			throw new BodyReaderError('Length mismatch')
+
+		try {
+			return parser(Buffer.concat(chunks).toString())
+		}
+		catch (_) {
+			throw new BodyReaderError('Could not parse')
+		}
 	}
 }
 
-export const parseJSON = req => readBody(req, JSON.parse)
+export const parseJSON = req =>
+	IncomingMessage.prototype.body.call(req, JSON.parse)
 
-export function readBody(req, parser = a => a) {
-	return new Promise((resolve, reject) => {
-		const MAX_BODY_SIZE = 200 * 1024
-		const expectedLength = req.headers['content-length'] | 0
-		let lengthSoFar = 0
-		const body = []
-		req.on('data', onData)
-		req.on('end', onEnd)
-		req.on('error', onEnd)
 
-		function onData(chunk) {
-			lengthSoFar += chunk.length
-			if (lengthSoFar > MAX_BODY_SIZE)
-				onEnd()
-			else
-				body.push(chunk)
-		}
-
-		function onEnd() {
-			req.removeListener('data', onData)
-			req.removeListener('end', onEnd)
-			req.removeListener('error', onEnd)
-			if (lengthSoFar !== expectedLength)
-				reject(new BodyReaderError('Length mismatch'))
-			else
-				try {
-					resolve(parser(Buffer.concat(body).toString()))
-				}
-				catch (_) {
-					reject(new BodyReaderError('Could not parse'))
-				}
-		}
-	})
-}
 
 export const reControlAndDelChars = /[\x00-\x1f\x7f]/
 

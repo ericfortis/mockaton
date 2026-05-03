@@ -3,7 +3,7 @@ import { randomUUID } from 'node:crypto'
 
 import { extFor } from './utils/mime.js'
 import { write, isFile, resolveIn } from './utils/fs.js'
-import { readBody, BodyReaderError } from './utils/HttpIncomingMessage.js'
+import { BodyReaderError } from './utils/HttpIncomingMessage.js'
 
 import { config } from './config.js'
 import { logger } from './utils/logger.js'
@@ -19,7 +19,7 @@ export async function proxy(req, response, delay) {
 			headers: req.headers,
 			body: req.method === 'GET' || req.method === 'HEAD'
 				? undefined
-				: await readBody(req)
+				: await req.body()
 		})
 	}
 	catch (error) { // TESTME

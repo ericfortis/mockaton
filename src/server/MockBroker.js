@@ -1,5 +1,6 @@
 import { DEFAULT_MOCK_COMMENT } from '../client/ApiConstants.js'
-import { parseFilename, includesComment, extractComments, removeQueryStringAndFragment } from '../client/Filename.js'
+import { parseFilename, includesComment, extractComments } from '../client/Filename.js'
+import { removeQueryStringAndFragment } from './utils/HttpIncomingMessage.js'
 
 
 /**

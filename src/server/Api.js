@@ -18,6 +18,7 @@ import { IndexHtml, CSP } from '../client/IndexHtml.js'
 import { cookie } from './cookie.js'
 import { config, ConfigValidator } from './config.js'
 import * as mockBrokersCollection from './mockBrokersCollection.js'
+import { removeQueryStringAndFragment } from './utils/HttpIncomingMessage.js'
 
 
 export const CLIENT_ASSETS = join(import.meta.dirname, '../client')
@@ -61,10 +62,10 @@ const patchReqs = new Map([
 ])
 
 export async function handleApiRequest(req, response) {
-	const { pathname } = new URL(req.url, 'http://_')
+	const url = removeQueryStringAndFragment(req.url)
 	const handler = (
-		req.method === 'GET' && getReqs.get(pathname) ||
-		req.method === 'PATCH' && patchReqs.get(pathname))
+		req.method === 'GET' && getReqs.get(url) ||
+		req.method === 'PATCH' && patchReqs.get(url))
 	if (handler) {
 		await handler(req, response)
 		return true

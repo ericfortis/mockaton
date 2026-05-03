@@ -3,6 +3,10 @@ import http, { METHODS } from 'node:http'
 
 export const methodIsSupported = method => METHODS.includes(method)
 
+export function removeQueryStringAndFragment(url = '') {
+	return new URL(url, 'http://_').pathname
+}
+
 export class BodyReaderError extends Error {
 	name = 'BodyReaderError'
 	constructor(msg) {
@@ -72,4 +76,3 @@ export function decode(url) {
 		? candidate
 		: '' // reject multiple encodings
 }
-

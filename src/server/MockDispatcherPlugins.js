@@ -1,7 +1,7 @@
 import { readFileSync } from 'node:fs'
 import { pathToFileURL } from 'node:url'
-
 import { mimeFor } from './utils/mime.js'
+
 
 export function echoFilePlugin(filePath) {
 	return {
@@ -9,6 +9,7 @@ export function echoFilePlugin(filePath) {
 		body: readFileSync(filePath)
 	}
 }
+
 
 export async function jsToJsonPlugin(filePath, req, response) {
 	const jsExport = (await import(pathToFileURL(filePath))).default

@@ -50,10 +50,6 @@ export function removeTrailingSlash(url = '') {
 		.replace('/#', '#')
 }
 
-export function removeQueryStringAndFragment(url = '') {
-	return new URL(url, 'http://_').pathname
-}
-
 function responseStatusIsValid(status) {
 	return Number.isInteger(status)
 		&& status >= 100

@@ -15,6 +15,11 @@ export class ServerResponse extends http.ServerResponse {
 		this.end()
 	}
 
+	noContent() {
+		this.statusCode = 204
+		this.end()
+	}
+
 	html(html, csp) {
 		this.setHeader('Content-Type', mimeFor('.html'))
 		this.setHeader('Content-Security-Policy', csp)
@@ -42,49 +47,6 @@ export class ServerResponse extends http.ServerResponse {
 				throw err
 		}
 	}
-
-	noContent() {
-		this.statusCode = 204
-		this.end()
-	}
-
-
-	badRequest() {
-		this.statusCode = 400
-		this.end()
-	}
-
-	forbidden(msg) {
-		this.statusCode = 403
-		this.end(msg)
-	}
-
-	notFound() {
-		this.statusCode = 404
-		this.end()
-	}
-
-	uriTooLong() {
-		this.statusCode = 414
-		this.end()
-	}
-
-	unprocessable(error) {
-		this.statusCode = 422
-		this.end(error)
-	}
-
-
-	internalServerError() {
-		this.statusCode = 500
-		this.end()
-	}
-
-	badGateway() {
-		this.statusCode = 502
-		this.end()
-	}
-
 
 	async partialContent(file) {
 		try {
@@ -121,5 +83,41 @@ export class ServerResponse extends http.ServerResponse {
 			else
 				throw err
 		}
+	}
+	
+
+	badRequest() {
+		this.statusCode = 400
+		this.end()
+	}
+
+	forbidden(msg) {
+		this.statusCode = 403
+		this.end(msg)
+	}
+
+	notFound() {
+		this.statusCode = 404
+		this.end()
+	}
+
+	uriTooLong() {
+		this.statusCode = 414
+		this.end()
+	}
+
+	unprocessable(error) {
+		this.statusCode = 422
+		this.end(error)
+	}
+
+	internalServerError() {
+		this.statusCode = 500
+		this.end()
+	}
+
+	badGateway() {
+		this.statusCode = 502
+		this.end()
 	}
 }

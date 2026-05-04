@@ -5,9 +5,13 @@ import { join, dirname } from 'node:path'
 import { mkdir, writeFile, readFile } from 'node:fs/promises'
 
 
+const rel = (...f) => join(import.meta.dirname, ...f)
 const INPUT = rel('README.md')
+
+const SKILL_URL = '/.well-known/agent-skills/mockaton/SKILL.md'
 const SKILLS_OUTPUT_PATH = rel('skills/mockaton/SKILL.md')
-const WWW_SKILLS_OUTPUT_PATH = rel('www/src/.well-known/agent-skills/mockaton/SKILL.md')
+const WWW_SKILLS_OUTPUT_PATH = rel('www/src', SKILL_URL)
+
 const WWW_INDEX_OUTPUT_PATH = rel('www/src/.well-known/agent-skills/index.json')
 
 
@@ -23,15 +27,13 @@ ${excludeSkillIgnoredRegions(await readFile(INPUT, 'utf8'))}
 
 const indexData = JSON.stringify({
 	'$schema': 'https://schemas.agentskills.io/discovery/0.2.0/schema.json',
-	skills: [
-		{
-			url: '/.well-known/agent-skills/mockaton/SKILL.md',
-			name: 'mockaton',
-			type: 'skill-md',
-			description: 'Generates and serves HTTP API mocks',
-			digest: 'sha256:' + createHash('sha256').update(skillData).digest('hex')
-		}
-	]
+	skills: [{
+		url: SKILL_URL,
+		name: 'mockaton',
+		type: 'skill-md',
+		description: 'Generates and serves HTTP API mocks',
+		digest: 'sha256:' + createHash('sha256').update(skillData).digest('hex')
+	}]
 }, null, '  ')
 
 
@@ -51,7 +53,6 @@ function excludeSkillIgnoredRegions(text) {
 			result += text.slice(i)
 			break
 		}
-
 		result += text.slice(i, start)
 		const end = text.indexOf(END, BEGIN.length + start)
 		if (end === -1)
@@ -59,10 +60,6 @@ function excludeSkillIgnoredRegions(text) {
 		i = END.length + end
 	}
 	return result.trim()
-}
-
-function rel(...f) {
-	return join(import.meta.dirname, ...f)
 }
 
 export async function write(path, body) {

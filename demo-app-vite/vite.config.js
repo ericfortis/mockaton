@@ -1,7 +1,7 @@
 import { defineConfig } from 'vite'
 import react from '@vitejs/plugin-react'
 import mockatonPlugin from 'mockaton/vite'
-import { jwtCookie } from 'mockaton'
+import mockatonConfig from './mockaton.config.js'
 
 
 const MOCKATON_PORT = 4040
@@ -10,19 +10,8 @@ export default defineConfig({
 	plugins: [
 		react(),
 		mockatonPlugin({
+			...mockatonConfig,
 			port: MOCKATON_PORT,
-			mocksDir: './mockaton-mocks',
-
-			cookies: {
-				'Non-Admin User': jwtCookie('id_token', {
-					name: 'John Doe',
-					roles: ['USER']
-				}),
-				'Admin User': jwtCookie('id_token', {
-					name: 'Charlie Root',
-					roles: ['ADMIN']
-				})
-			}
 		})
 	],
 

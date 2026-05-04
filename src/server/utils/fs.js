@@ -39,7 +39,7 @@ export async function resolveIn(baseDir, file) {
 			? child
 			: null
 	}
-	catch (e) {
+	catch {
 		return null
 	}
 }

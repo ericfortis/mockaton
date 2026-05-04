@@ -6,9 +6,9 @@ import { mkdtempSync, rmSync, realpathSync } from 'node:fs'
 
 import { resolveIn } from './fs.js'
 
-const isNull = v => equal(v, null)
-
 describe('resolveIn', () => {
+	const isNull = v => equal(v, null)
+	
 	const baseDir = mkdtempSync(join(tmpdir(), '_resolveIn'))
 	const baseParentDir = join(baseDir, '..')
 	after(() => rmSync(baseDir, { recursive: true, force: true }))

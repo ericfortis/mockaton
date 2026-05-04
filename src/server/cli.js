@@ -12,7 +12,7 @@ import pkgJSON from '../../package.json' with { type: 'json' }
 process.on('unhandledRejection', error => { throw error })
 
 const DEFAULT_CONFIG_FILE = 'mockaton.config.js'
-const SKILLS_PATH = join(import.meta.dirname, '../../www/src/.well-known/agent-skills/mockaton/SKILL.md')
+const SKILLS_PATH = join(import.meta.dirname, '../../skills/mockaton/SKILL.md')
 
 let args, positionals
 try {
@@ -64,7 +64,7 @@ Options:
   --no-open            Don't open dashboard in a browser
   --no-read-only       Allow writing and deleting mocks via API
   
-  --skills             Show AI agent SKILLS.md file path
+  --skills             Show AI agent SKILL.md file path
   -h, --help
   -v, --version
 

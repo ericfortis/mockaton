@@ -2,23 +2,23 @@
 	"name": "mockaton",
 	"description": "HTTP Mock Server",
 	"type": "module",
-	"version": "13.9.7",
+	"version": "13.9.8",
 	"exports": {
 		".": {
 			"import": "./index.js",
 			"types": "./index.d.ts"
 		},
 		"./vite": "./vite-plugin/index.js",
-		"./openapi.json": "./www/src/assets/openapi.json",
-		"./SKILLS.md": "./www/src/.well-known/agent-skills/mockaton/SKILLS.md"
+		"./SKILL.md": "./skills/mockaton/SKILL.md",
+		"./openapi.json": "./www/src/assets/openapi.json"
 	},
 	"files": [
 		"src",
 		"index.js",
 		"index.d.ts",
 		"vite-plugin",
-		"www/src/assets/openapi.json",
-		"www/src/.well-known/agent-skills/mockaton/SKILLS.md"
+		"skills/mockaton/SKILL.md",
+		"www/src/assets/openapi.json"
 	],
 	"license": "MIT",
 	"homepage": "https://mockaton.com",

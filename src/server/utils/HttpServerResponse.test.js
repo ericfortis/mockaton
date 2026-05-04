@@ -24,6 +24,7 @@ describe('ServerResponse', () => {
 			else
 				response.file(file)
 		})
+
 		await new Promise(resolve => server.listen(0, () => {
 			addr = `http://127.0.0.1:${(server.address().port)}`
 			resolve()
@@ -79,7 +80,7 @@ describe('ServerResponse', () => {
 		})
 	})
 
-	
+
 	describe('file', () => {
 		const GET = path => fetch(addr + path)
 

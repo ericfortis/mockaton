@@ -2,9 +2,10 @@
 	color-scheme: light dark;
 	--colorBg: light-dark(#fff, #181818);
 	--colorBgField: light-dark(#fcfcfc, #2c2c2c);
+	--colorBgFieldHover: light-dark(#fff, #171717);
 
-	--colorBgHeader: light-dark(#f2f2f3, #141414);
-	--colorBgHeaderField: light-dark(#fff, #222);
+	--colorBgHeader: light-dark(#f0f0f2, #141414);
+	--colorBgHeaderField: light-dark(#fafafa, #222);
 
 	--colorBorder: light-dark(#e0e0e0, #2c2c2c);
 	--colorBorderActive: light-dark(#c8c8c8, #3c3c3c);
@@ -24,6 +25,10 @@
 	accent-color: var(--colorAccent);
 	--radius: 16px;
 	--subtoolbarHeight: 42px;
+
+	--shadowRim: light-dark(#fff, #333);
+	--shadowDrop: light-dark(rgba(0, 0, 0, 0.2), #000);
+	--boxShadowRimDrop: inset 0 0 1px 1px var(--shadowRim), 0 1px 2px var(--shadowDrop);
 }
 
 html,
@@ -45,7 +50,7 @@ body {
 	padding: 0;
 	border: 0;
 	margin: 0;
-	letter-spacing: -0.374px;
+	letter-spacing: -0.2px;
 	line-height: 14px;
 	font-family: inherit;
 	font-size: 100%;
@@ -86,7 +91,6 @@ a {
 }
 
 select {
-	border: 1px solid transparent;
 	color: var(--colorText);
 	border-radius: var(--radius);
 	appearance: none;
@@ -101,7 +105,7 @@ select {
 
 		&:hover {
 			border-color: var(--colorHover);
-			background-color: var(--colorHover);
+			background-color: var(--colorBgFieldHover);
 		}
 	}
 
@@ -174,6 +178,7 @@ header {
 		background: transparent;
 		border-radius: 50px;
 		color: var(--colorRed);
+		box-shadow: var(--boxShadowRimDrop);
 
 		@media (prefers-color-scheme: dark) {
 			color: var(--colorText);
@@ -186,12 +191,13 @@ header {
 	}
 
 	.HelpLink {
-		width: 22px;
-		height: 22px;
+		width: 24px;
+		height: 24px;
 		flex-shrink: 0;
 		align-self: end;
 		margin-bottom: 3px;
 		margin-left: auto;
+		box-shadow: var(--boxShadowRimDrop);
 		opacity: 0.8;
 		border-radius: 50%;
 		fill: var(--colorBgHeader);
@@ -237,12 +243,17 @@ header {
 		width: 100%;
 		height: 28px;
 		padding: 4px 8px;
-		border: 1px solid var(--colorBorder);
 		margin-top: 2px;
 		color: var(--colorText);
 		font-size: 11px;
 		background-color: var(--colorBgHeaderField);
 		border-radius: var(--radius);
+		box-shadow: var(--boxShadowRimDrop);
+		transition: background-color ease-in-out 120ms;
+
+		&:hover {
+			background-color: var(--colorBgFieldHover);
+		}
 	}
 
 	&.GlobalDelay {
@@ -279,7 +290,6 @@ header {
 			margin-left: 4px;
 		}
 		input {
-			border-left: 2px solid transparent;
 			border-bottom-left-radius: 0;
 			border-top-left-radius: 0;
 		}
@@ -412,7 +422,6 @@ main {
 	select {
 		width: 110px;
 		padding: 6px 8px;
-		border: 1px solid var(--colorBorder);
 		margin-left: 4px;
 		background-image: none;
 		text-align-last: center;
@@ -420,6 +429,12 @@ main {
 		font-size: 11px;
 		background-color: var(--colorBgHeaderField);
 		border-radius: var(--radius);
+		box-shadow: var(--boxShadowRimDrop);
+		transition: background-color ease-in-out 120ms;
+
+		&:hover {
+			background-color: var(--colorBgFieldHover);
+		}
 	}
 }
 
@@ -602,6 +617,13 @@ main {
 	text-overflow: ellipsis;
 	text-align: right;
 
+	&:enabled {
+		box-shadow: var(--boxShadowRimDrop);
+		&:hover {
+			background-color: var(--colorBgFieldHover);
+		}
+	}
+
 	&.nonDefault {
 		font-weight: bold;
 		font-size: 11px;
@@ -665,11 +687,12 @@ main {
 		height: 22px;
 		align-items: center;
 		justify-content: center;
-		border: 1px solid var(--colorBorder);
 		fill: none;
 		stroke: var(--colorLabel);
 		stroke-width: 2.5px;
 		border-radius: 50%;
+		box-shadow: var(--boxShadowRimDrop);
+		background-color: var(--colorBgHeaderField);
 	}
 
 	&.canProxy {
@@ -685,7 +708,7 @@ main {
 
 	.checkboxBody {
 		svg {
-			width: 16px;
+			width: 15px;
 		}
 	}
 }
@@ -736,6 +759,7 @@ main {
 		}
 
 		> code {
+			line-height: 1.3;
 			white-space: pre;
 			tab-size: 2;
 			color: var(--colorLabel);

@@ -1,5 +1,5 @@
 import { htmlTemplate, MockatonLogo, socialMetadata } from './_htmlTemplate.js'
-import { js, shell, raw, json } from './_syntaxHighlight.js'
+import { js, shell, xml } from './_syntaxHighlight.js'
 
 // language=html
 export default () => htmlTemplate({
@@ -71,10 +71,10 @@ npx mockaton my-mocks-dir/
 
 		<br />
 		<p>
-			Mockaton will serve the files on the given directory. It's a file-system
-			based router, so filenames can have dynamic parameters. Also, filenames
-			can have comments, which are anything within parentheses, this way each route can
-			have different mock file variants.
+			Mockaton will serve the files on the given directory. It's a file-system based router, so
+			filenames can have dynamic parameters. Also, filenames can have comments, which are
+			anything within parentheses, this way each route can have different mock file variants.
+			Similarly, each route can have different response status code variants.
 		</p>
 
 		<table>
@@ -99,7 +99,7 @@ npx mockaton my-mocks-dir/
 			<tr>
 				<td>/api/login</td>
 				<td>api/login(invalid attempt).POST.401.json</td>
-				<td>Anything within parenthesis is a <strong>comment</strong>, they are ignored when routing</td>
+				<td><strong>Anything within parenthesis is a comment</strong>, they are ignored when routing</td>
 			</tr>
 			<tr>
 				<td>/api/login</td>
@@ -117,10 +117,10 @@ npx mockaton my-mocks-dir/
 
 		<h2>Docs</h2>
 		<ul>
-			<li>How to <strong>configure</strong> Mockaton? See <a href="/config">CLI and mockaton.config.js</a> docs.</li>
-			<li>How to <strong>control</strong> Mockaton? Besides the dashboard, there’s a <a href="/api">Programmatic API</a>.</li>
-			<li>How to <strong>add plugins</strong>? You can write <a href="/plugins">Plugins</a> for customizing responses.</li>
-			<li>Using <strong>Vite</strong>? There is a <a href="/vite">Vite Plugin</a>.</li>
+			<li><a href="/config">Configuration: CLI and mockaton.config.js</a></li>
+			<li><a href="/api">Programmatic API</a>, in which
+				you can delay a route, select a different mock file, such as a 500 error, among other options.
+			</li>
 		</ul>
 
 
@@ -131,49 +131,55 @@ npx mockaton my-mocks-dir/
 		</p>
 
 
-		<h2 id="how-to-create-mocks-">How to create mocks?</h2>
-		<p>
-			Write to your mocks directory. Alternatively, there’s an API <a href="/api">PATCH /mockaton/write-mock</a>.
-		</p>
-
 		<h2>Skills</h2>
 		${shell`
 npx skills add ericfortis/mockaton
 `}
 
+		<h2>Installation <a href="/installation">more options ↗</a></h2>
+		${shell`npm install mockaton`}
+
+
+		<h2 id="how-to-create-mocks-">How to create mocks?</h2>
+		<p>
+			Write it to your mocks directory. Alternatively, there’s an API <a href="/api">PATCH /mockaton/write-mock</a>.
+		</p>
+
 		${shell`
 mkdir -p my-mocks-dir/api
-cat > my-mocks-dir/api/user.GET.200.ts << EOF
-interface User {
-  name: string
-}
-
-export default {
-  "name": "John"
-} satisfies User
-EOF
+echo "export default { name: 'John' }" > my-mocks-dir/api/user.GET.200.ts
 `}
 
 
 		<h3 id="example-a-json">Example A: JSON</h3>
+		<p>
+			For JSON responses, use TypeScript (or JS), and <code>export default</code> an Object, Array, or String.
+		</p>
 		<ul>
 			<li><strong>Route:</strong> /api/company/123</li>
-			<li><strong>Filename:</strong> api/company/[id].GET.200.json</li>
-		</ul>
-		${json(`{ "name": "Acme, Inc." }`)}
-
-
-		<h3 id="example-b-typescript-or-javascript">Example B: TypeScript or JavaScript</h3>
-		<p>Exporting an Object, Array, or String is sent as JSON.</p>
-		<ul>
-			<li><strong>Route:</strong> /api/company/abc</li>
 			<li><strong>Filename:</strong> api/company/[id].GET.200.ts</li>
 		</ul>
+		${js(`
+interface Company {
+  name: string
+}
 
-		${js`
 export default {
   name: 'Acme, Inc.'
-}
+} satisfies Company
+`)}
+
+
+		<h3 id="example-b-typescript-or-javascript">Example B: Non-JSON</h3>
+		<ul>
+			<li><strong>Route:</strong> /api/company/123</li>
+			<li><strong>Filename:</strong> api/company/[id].GET.200.xml</li>
+		</ul>
+
+		${xml`
+<company>
+ <name>Acme, Inc.</name>
+</company>
 `}
 
 

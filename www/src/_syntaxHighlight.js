@@ -1,7 +1,7 @@
 import Prism from 'prismjs'
 import loadLanguages from 'prismjs/components/index.js'
 
-loadLanguages(['json', 'shell'])
+loadLanguages(['json', 'shell', 'xml'])
 
 const fnT = Prism.languages.shell['function']
 fnT.pattern = new RegExp(fnT.pattern.source.replace('|npm|', '|npm|npx|'), fnT.pattern.flags)
@@ -21,6 +21,7 @@ function prismFactory(language) {
 }
 
 export const js = prismFactory('javascript')
+export const xml = prismFactory('xml')
 export const json = prismFactory('json')
 export const shell = prismFactory('shell')
 

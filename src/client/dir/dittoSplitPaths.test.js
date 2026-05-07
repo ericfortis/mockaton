@@ -12,17 +12,19 @@ test('dittoSplitPaths', () => {
 		'/api/video/id',
 		'/api/video/stats',
 		'/v2/foo',
-		'/v2/foo/bar'
+		'/v2/foo/bar',
+		'/v2/foo/bar' // paths can be repeated
 	]
 	deepEqual(dittoSplitPaths(input), [
 		['', '/api/user'],
-		['/api/user/', 'avatar'],
-		['/api/user/', 'friends'],
-		['/api/', 'vid'],
-		['/api/', 'video/id'],
-		['/api/video/', 'stats'],
+		['/api/user', '/avatar'],
+		['/api/user', '/friends'],
+		['/api', '/vid'],
+		['/api', '/video/id'],
+		['/api/video', '/stats'],
 		['', '/v2/foo'],
-		['/v2/foo/', 'bar']
+		['/v2/foo', '/bar'],
+		['/v2/foo/bar', ''],
 	])
 })
 

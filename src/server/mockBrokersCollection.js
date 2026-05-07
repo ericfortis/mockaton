@@ -72,7 +72,7 @@ export function unregisterMock(file) {
 function filesInDir(dir) {
 	const files = []
 	forEachBroker(b => {
-		files.push(...(b.mocks.filter(m => m.startsWith(dir + '/'))))
+		files.push(...b.mocks.filter(m => m.startsWith(dir + '/')))
 	})
 	return files
 }
@@ -98,7 +98,9 @@ export function brokerByRoute(method, url) {
 
 	// TODO Verify
 	if (method === 'GET') {
-		const indexUrl = url.endsWith('/') ? url + 'index.html' : url + '/index.html'
+		const indexUrl = url.endsWith('/') 
+			? url + 'index.html' 
+			: url + '/index.html'
 		for (let i = brokers.length - 1; i >= 0; i--)
 			if (brokers[i].urlMaskMatches(indexUrl))
 				return brokers[i]

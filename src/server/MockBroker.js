@@ -10,7 +10,7 @@ import { removeQueryStringAndFragment } from './utils/HttpIncomingMessage.js'
 export class MockBroker {
 	file = '' // selected mock filename
 	mocks = [] // filenames
-	isStatic = false // doesn’t follow filename convention
+	isStatic = false // static means it doesn’t follow filename convention
 	delayed = false
 	proxied = false
 	status = -1

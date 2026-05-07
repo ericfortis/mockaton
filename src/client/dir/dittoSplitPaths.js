@@ -19,7 +19,7 @@ export function dittoSplitPaths(paths) {
 		if (!j) // no common dirs
 			return ['', p]
 
-		const ditto = '/' + curr.slice(0, j).join('/') + '/'
+		const ditto = '/' + curr.slice(0, j).join('/') 
 		return [ditto, p.slice(ditto.length)]
 	})
 }

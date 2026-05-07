@@ -4,8 +4,8 @@
 	--colorBgField: light-dark(#fcfcfc, #2c2c2c);
 	--colorBgFieldHover: light-dark(#fff, #171717);
 
-	--colorBgHeader: light-dark(#f0f0f2, #141414);
-	--colorBgHeaderField: light-dark(#fafafa, #222);
+	--colorBgHeader: light-dark(#ededef, #141414);
+	--colorBgHeaderField: light-dark(#fbfbfb, #222);
 
 	--colorBorder: light-dark(#e0e0e0, #2c2c2c);
 	--colorBorderActive: light-dark(#c8c8c8, #3c3c3c);
@@ -28,7 +28,7 @@
 
 	--shadowRim: light-dark(#fff, #333);
 	--shadowDrop: light-dark(rgba(0, 0, 0, 0.2), #000);
-	--boxShadowRimDrop: inset 0 0 1px 1px var(--shadowRim), 0 1px 2px var(--shadowDrop);
+	--boxShadowRimDrop: inset 0 0 1px 0.5px var(--shadowRim), 0 1px 2px var(--shadowDrop);
 }
 
 html,
@@ -287,7 +287,7 @@ header {
 		}
 
 		span {
-			margin-left: 4px;
+			margin-left: 8px;
 		}
 		input {
 			border-bottom-left-radius: 0;

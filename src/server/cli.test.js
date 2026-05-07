@@ -42,6 +42,6 @@ describe('CLI', () => {
 		equal(status, 0)
 	})
 
-	// Mockaton.test.js tests the remaining cli branch
+	// Mockaton.test.js tests the remaining cli branches
 })
 

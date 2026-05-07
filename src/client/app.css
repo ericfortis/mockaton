@@ -231,6 +231,7 @@ header {
 		transition: color 200ms ease-out;
 	}
 
+	&:has(input:focus-visible),
 	&:hover {
 		span {
 			color: var(--colorText);
@@ -253,6 +254,23 @@ header {
 
 		&:hover {
 			background-color: var(--colorBgFieldHover);
+		}
+	}
+
+	&.GlobalDelay,
+	&.GlobalDelayJitter {
+		input {
+			cursor: col-resize;
+			
+			&&::selection {
+				background-color: transparent;
+			}
+
+			&::-webkit-outer-spin-button,
+			&::-webkit-inner-spin-button {
+				-webkit-appearance: none;
+				margin: 0;
+			}
 		}
 	}
 

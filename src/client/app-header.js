@@ -31,27 +31,15 @@ function GlobalDelayField() {
 	function onChange() {
 		store.setGlobalDelay(this.valueAsNumber)
 	}
-	function onWheel(event) {
-		if (event.deltaY > 0)
-			this.stepUp()
-		else
-			this.stepDown()
-		clearTimeout(onWheel.timer)
-		onWheel.timer = setTimeout(onChange.bind(this), 300)
-	}
-	return (
-		r('label', { className: CSS.GlobalDelay },
-			r('span', null, t`Delay (ms)`),
-			r('input', {
-				type: 'number',
-				min: 0,
-				max: 120_000,
-				step: 100,
-				autocomplete: 'none',
-				value: store.delay,
-				onWheel: [onWheel, { passive: true }],
-				onChange
-			})))
+	return SlideableNumberField({
+		className: CSS.GlobalDelay,
+		label: t`Delay (ms)`,
+		min: 0,
+		max: 120_000,
+		step: 100,
+		value: store.delay,
+		onChange
+	})
 }
 
 
@@ -62,28 +50,17 @@ function GlobalDelayJitterField() {
 		this.value = Math.min(300, this.valueAsNumber)
 		store.setGlobalDelayJitter(this.valueAsNumber / 100)
 	}
-	function onWheel(event) {
-		if (event.deltaY > 0)
-			this.stepUp()
-		else
-			this.stepDown()
-		clearTimeout(onWheel.timer)
-		onWheel.timer = setTimeout(onChange.bind(this), 300)
-	}
-	return (
-		r('label', { className: CSS.GlobalDelayJitter },
-			r('span', null, t`Max Jitter %`),
-			r('input', {
-				type: 'number',
-				autocomplete: 'none',
-				min: 0,
-				max: 300,
-				step: 10,
-				value: (store.delayJitter * 100).toFixed(0),
-				onWheel: [onWheel, { passive: true }],
-				onChange
-			})))
+	return SlideableNumberField({
+		className: CSS.GlobalDelayJitter,
+		label: t`Max Jitter %`,
+		min: 0,
+		max: 300,
+		step: 10,
+		value: (store.delayJitter * 100).toFixed(0),
+		onChange
+	})
 }
+
 
 
 function CookieSelector() {
@@ -161,3 +138,46 @@ function HelpLink() {
 			className: CSS.HelpLink
 		}, HelpIcon()))
 }
+
+
+function SlideableNumberField({ className, label, onChange, min, max, step, value }) {
+	function onPointerDown(event) {
+		const input = event.target
+		let lastX = event.clientX
+		input.setPointerCapture(event.pointerId)
+
+		function onPointerMove(ev) {
+			const diff = ev.clientX - lastX
+			if (Math.abs(diff) > 10) {
+				const v = input.value
+				if (diff > 0)
+					input.stepUp()
+				else
+					input.stepDown()
+				if (v !== input.value)
+					input.dispatchEvent(new Event('change'))
+				lastX = ev.clientX
+			}
+		}
+		function onPointerUp(ev) {
+			window.removeEventListener('pointermove', onPointerMove)
+			input.releasePointerCapture(ev.pointerId)
+		}
+		window.addEventListener('pointermove', onPointerMove)
+		window.addEventListener('pointerup', onPointerUp, { once: true })
+	}
+	return (
+		r('label', { className },
+			r('span', null, label),
+			r('input', {
+				type: 'number',
+				autocomplete: 'none',
+				min,
+				max,
+				step,
+				value,
+				onChange,
+				onPointerDown
+			})))
+}
+

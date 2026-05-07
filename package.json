@@ -16,7 +16,8 @@
 		"src",
 		"index.js",
 		"index.d.ts",
-		"vite-plugin",
+		"vite-plugin/index.js",
+		"vite-plugin/index.d.ts",
 		"skills/mockaton/SKILL.md",
 		"www/src/assets/openapi.json"
 	],

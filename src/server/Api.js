@@ -80,8 +80,8 @@ function serveDashboard(_, response) {
 }
 
 function serveDashboardAsset(f) {
-	return (_, response) => {
-		response.file(join(CLIENT_ASSETS, f))
+	return async (_, response) => {
+		await response.file(join(CLIENT_ASSETS, f))
 	}
 }
 

@@ -218,7 +218,7 @@ h1, h2, h3, h4, h5, h6 { /* For the JS highlight on click fragment */
 	left: -5px;
 	padding: 5px 0 5px 5px;
 	border-radius: 16px;
-	font-family: Futura, system-ui, sans-serif;
+	font-family: "Avenir Next", "Franklin Gothic", system-ui, sans-serif;
 	font-weight: bold;
 	text-wrap: balance;
 	color: var(--fgHigh);

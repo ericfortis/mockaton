@@ -59,7 +59,8 @@ body {
 }
 
 label,
-button {
+button, 
+select {
 	user-select: none;
 }
 
@@ -260,8 +261,6 @@ header {
 	&.GlobalDelay,
 	&.GlobalDelayJitter {
 		input {
-			cursor: col-resize;
-			
 			&&::selection {
 				background-color: transparent;
 			}

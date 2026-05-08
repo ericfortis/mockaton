@@ -31,7 +31,7 @@ function GlobalDelayField() {
 	function onChange() {
 		store.setGlobalDelay(this.valueAsNumber)
 	}
-	return SlideableNumberField({
+	return SlidableNumberField({
 		className: CSS.GlobalDelay,
 		label: t`Delay (ms)`,
 		min: 0,
@@ -50,7 +50,7 @@ function GlobalDelayJitterField() {
 		this.value = Math.min(300, this.valueAsNumber)
 		store.setGlobalDelayJitter(this.valueAsNumber / 100)
 	}
-	return SlideableNumberField({
+	return SlidableNumberField({
 		className: CSS.GlobalDelayJitter,
 		label: t`Max Jitter %`,
 		min: 0,
@@ -140,38 +140,44 @@ function HelpLink() {
 }
 
 
-function SlideableNumberField({ className, label, onChange, min, max, step, value }) {
+function SlidableNumberField({ className, label, onChange, min, max, step, value }) {
 	function onPointerDown(event) {
-		const input = event.target
 		let lastX = event.clientX
+		const input = event.target
 		input.setPointerCapture(event.pointerId)
+		window.addEventListener('pointerup', onPointerUp, { once: true })
+		window.addEventListener('pointermove', onPointerMove)
+
+		function onPointerUp(ev) {
+			input.releasePointerCapture(ev.pointerId)
+			window.removeEventListener('pointermove', onPointerMove)
+		}
 
 		function onPointerMove(ev) {
 			const diff = ev.clientX - lastX
-			if (Math.abs(diff) > 10) {
-				const v = input.value
-				if (diff > 0)
-					input.stepUp()
-				else
-					input.stepDown()
-				if (v !== input.value)
-					input.dispatchEvent(new Event('change'))
-				lastX = ev.clientX
-			}
+			if (Math.abs(diff) < 10)
+				return
+
+			lastX = ev.clientX
+			const v = input.value
+
+			if (diff > 0)
+				input.stepUp()
+			else
+				input.stepDown()
+
+			if (v !== input.value)
+				input.dispatchEvent(new Event('change'))
 		}
-		function onPointerUp(ev) {
-			window.removeEventListener('pointermove', onPointerMove)
-			input.releasePointerCapture(ev.pointerId)
-		}
-		window.addEventListener('pointermove', onPointerMove)
-		window.addEventListener('pointerup', onPointerUp, { once: true })
 	}
+
 	return (
 		r('label', { className },
 			r('span', null, label),
 			r('input', {
 				type: 'number',
 				autocomplete: 'none',
+				style: { cursor: 'col-resize' },
 				min,
 				max,
 				step,

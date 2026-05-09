@@ -140,10 +140,16 @@ function HelpLink() {
 }
 
 
-function SlidableNumberField({ className, label, onChange, min, max, step, value }) {
+function SlidableNumberField({ name, className, label, onChange, min, max, step, value }) {
+	function clamp(val) {
+		return Math.min(Math.max(val, min), max)
+	}
+
 	function onPointerDown(event) {
 		let lastX = event.clientX
-		const input = event.target
+		const input = /** @type {HTMLInputElement} */ event.target
+		const initialVal = input.value
+
 		input.setPointerCapture(event.pointerId)
 		window.addEventListener('pointerup', onPointerUp, { once: true })
 		window.addEventListener('pointermove', onPointerMove)
@@ -151,23 +157,21 @@ function SlidableNumberField({ className, label, onChange, min, max, step, value
 		function onPointerUp(ev) {
 			input.releasePointerCapture(ev.pointerId)
 			window.removeEventListener('pointermove', onPointerMove)
+			if (input.value !== initialVal)
+				input.dispatchEvent(new Event('change'))
 		}
 
 		function onPointerMove(ev) {
 			const diff = ev.clientX - lastX
-			if (Math.abs(diff) < 10)
-				return
+			if (Math.abs(diff) > 10) {
+				lastX = ev.clientX
 
-			lastX = ev.clientX
-			const v = input.value
+				let s = step
+				if (ev.shiftKey) s *= 2
+				else if (ev.altKey) s /= 2
 
-			if (diff > 0)
-				input.stepUp()
-			else
-				input.stepDown()
-
-			if (v !== input.value)
-				input.dispatchEvent(new Event('change'))
+				input.valueAsNumber = clamp(input.valueAsNumber + Math.sign(diff) * s)
+			}
 		}
 	}
 

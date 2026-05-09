@@ -34,7 +34,7 @@ export async function rm(path) {
 export async function resolveIn(baseDir, file) {
 	try {
 		const parent = await realpath(baseDir)
-		const child = resolve(join(parent, file))
+		const child = resolve(join(parent, file)) // realpath not needed because we don't write symlinks
 		return child.startsWith(join(parent, sep))
 			? child
 			: null

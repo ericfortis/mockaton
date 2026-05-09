@@ -10,8 +10,9 @@ import { describe, test, before, beforeEach, after } from 'node:test'
 import { unlink, mkdir, readFile, rename, readdir, writeFile, rm } from 'node:fs/promises'
 
 import { mimeFor } from './utils/mime.js'
+import { API } from '../client/ApiConstants.js'
+import { Commander } from '../client/ApiCommander.js'
 import { parseFilename } from '../client/Filename.js'
-import { API, Commander } from '../../index.js'
 
 import CONFIG from './Mockaton.test.config.js'
 import { config } from './config.js'

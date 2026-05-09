@@ -63,6 +63,12 @@ const patchReqs = new Map([
 
 export async function handleApiRequest(req, response) {
 	const url = removeQueryStringAndFragment(req.url)
+
+	if ((req.method === 'GET' || req.method === 'HEAD') && url === API.health) {
+		response.ok()
+		return
+	}
+
 	const handler = (
 		req.method === 'GET' && getReqs.get(url) ||
 		req.method === 'PATCH' && patchReqs.get(url))

@@ -60,4 +60,6 @@ export class Commander {
 	getSyncVersion = () => fetch(this.addr + API.syncVersion)
 
 	getOpenAPI = () => fetch(this.addr + API.openAPI)
+
+	health = () => fetch(this.addr + API.health)
 }

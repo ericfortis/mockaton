@@ -525,6 +525,18 @@
 					}
 				}
 			}
+		},
+		"/mockaton/health": {
+			"get": {
+				"summary": "Health check",
+				"description": "Returns 200 OK if the server is running. Accepts both GET and HEAD.",
+				"x-js-client-example": "await mockaton.health()",
+				"responses": {
+					"200": {
+						"description": "OK"
+					}
+				}
+			}
 		}
 	},
 	"components": {

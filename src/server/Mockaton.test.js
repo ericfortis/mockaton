@@ -161,6 +161,19 @@ describe('Filename Convention', () => {
 })
 
 
+describe('Health Check', () => {
+	test('HEAD', async () => {
+		const r = await request(API.health, { method: 'HEAD' })
+		equal(r.status, 200)
+	})
+
+	test('GET', async () => {
+		const r = await request(API.health)
+		equal(r.status, 200)
+	})
+})
+
+
 describe('CORS', () => {
 	describe('Set CORS allowed', () => {
 		test('422 for non boolean', async () => {

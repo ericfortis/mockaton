@@ -11,6 +11,7 @@ export default (url) => htmlTemplate({
 		<h1 id="changelog">Changelog</h1>
 		<br />
 
+		<p>13.11.0 added <code>/mockaton/health</code> endpoint</p>
 		<p>13.10.0 dashboard: slideable number field</p>
 		<div class="RegionImg" data-max-width="520">
 			<video src="/assets/media/13.10.0-slideable-number-field.mp4" autoplay loop controls>

@@ -28,6 +28,7 @@ export const API = {
 	throws: MOUNT + '/throws',
 	syncVersion: MOUNT + '/sync-version',
 	watchHotReload: MOUNT + '/watch-hot-reload',
+	health: MOUNT + '/health',
 
 	openAPI: MOUNT + '/openapi'
 }

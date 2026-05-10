@@ -56,7 +56,7 @@ function GlobalDelayJitterField() {
 		min: 0,
 		max: 300,
 		step: 10,
-		value: (store.delayJitter * 100).toFixed(0),
+		value: parseInt((store.delayJitter * 100).toFixed(0), 10),
 		onChange
 	})
 }
@@ -145,6 +145,12 @@ function SlidableNumberField({ name, className, label, onChange, min, max, step,
 		return Math.min(Math.max(val, min), max)
 	}
 
+	function cursorFor(val) {
+		if (val === max) return 'w-resize'
+		if (val === min) return 'e-resize'
+		return 'col-resize'
+	}
+
 	function onPointerDown(event) {
 		let lastX = event.clientX
 		const input = /** @type {HTMLInputElement} */ event.target
@@ -171,6 +177,7 @@ function SlidableNumberField({ name, className, label, onChange, min, max, step,
 				else if (ev.altKey) s /= 2
 
 				input.valueAsNumber = clamp(input.valueAsNumber + Math.sign(diff) * s)
+				input.style.cursor = cursorFor(input.valueAsNumber)
 			}
 		}
 	}
@@ -181,7 +188,7 @@ function SlidableNumberField({ name, className, label, onChange, min, max, step,
 			r('input', {
 				type: 'number',
 				autocomplete: 'none',
-				style: { cursor: 'col-resize' },
+				style: { cursor: cursorFor(value) },
 				min,
 				max,
 				step,

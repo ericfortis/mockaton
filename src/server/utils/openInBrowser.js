@@ -11,12 +11,12 @@ export const openInBrowser = (async () => {
 })()
 
 function _openInBrowser(address) {
-	let command
+	let command = ''
 	let args = [address]
 
 	switch (process.platform) {
 		case 'darwin':
-			command = 'open'
+			command = '/usr/bin/open'
 			break
 
 		case 'win32':

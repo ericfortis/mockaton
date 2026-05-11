@@ -8,7 +8,7 @@ import { rm } from 'node:fs/promises'
 
 import { ServerResponse } from './HttpServerResponse.js'
 
-describe('ServerResponse', () => {
+describe('ServerResponse', { concurrency: true }, () => {
 	const FILE = '0123456789'
 
 	let tmpDir, tmpFile, server, addr

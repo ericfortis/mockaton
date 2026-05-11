@@ -5,6 +5,11 @@
   Resizing the browser afterward fixes the iframe scrolling.
 - Collapsing // https://news.ycombinator.com/item?id=47813454
 
+# TODO
+- win compat
+  - watchers
+  - tests
+
 # Ideas
 
 There’s an implicit question mark on each one.

@@ -11,22 +11,27 @@ export const openInBrowser = (async () => {
 })()
 
 function _openInBrowser(address) {
-	let opener
+	let command
+	let args = [address]
+
 	switch (process.platform) {
 		case 'darwin':
-			opener = 'open'
+			command = 'open'
 			break
+
 		case 'win32':
-			opener = 'start'
+			command = 'cmd'
+			args = ['/c', 'start', '', address]
 			break
+
 		default:
-			opener = ['xdg-open', 'gnome-open', 'kde-open'].find(hasCommand)
+			command = ['xdg-open', 'gnome-open', 'kde-open'].find(function hasCommand(cmd) {
+				const { status } = spawnSync('command', ['-v', cmd], { stdio: 'ignore' })
+				return status === 0
+			})
 	}
-	if (opener)
-		spawnSync(opener, [address])
+
+	if (command)
+		spawnSync(command, args)
 }
 
-function hasCommand(cmd) {
-	const { status } = spawnSync('command', ['-v', cmd], { stdio: 'ignore' })
-	return status === 0
-}

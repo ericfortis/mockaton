@@ -436,6 +436,9 @@ main {
 }
 
 .BulkSelector {
+	span {
+		color: var(--colorLabel);
+	}
 	select {
 		width: 110px;
 		padding: 6px 8px;
@@ -663,7 +666,7 @@ main {
 
 .Toggler {
 	display: flex;
-	margin-top: 3px;
+	margin-top: 2px;
 
 	input {
 		/* For click drag target */
@@ -701,7 +704,7 @@ main {
 	.checkboxBody {
 		display: flex;
 		width: 22px;
-		height: 22px;
+		height: 21px;
 		align-items: center;
 		justify-content: center;
 		fill: none;

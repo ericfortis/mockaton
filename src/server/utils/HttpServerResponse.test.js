@@ -10,13 +10,11 @@ import { ServerResponse } from './HttpServerResponse.js'
 
 describe('ServerResponse', { concurrency: true }, () => {
 	const FILE = '0123456789'
+	const tmpDir = mkdtempSync(join(tmpdir(), 'response-'))
+	writeFileSync(join(tmpDir, 'test.txt'), FILE)
 
-	let tmpDir, tmpFile, server, addr
+	let server, addr
 	before(async () => {
-		tmpDir = mkdtempSync(join(tmpdir(), 'response-'))
-		tmpFile = join(tmpDir, 'test.txt')
-		writeFileSync(tmpFile, FILE)
-
 		server = createServer({ ServerResponse }, (req, response) => {
 			const file = join(tmpDir, req.url)
 			if (req.headers.range)
@@ -26,14 +24,14 @@ describe('ServerResponse', { concurrency: true }, () => {
 		})
 
 		await new Promise(resolve => server.listen(0, () => {
-			addr = `http://127.0.0.1:${(server.address().port)}`
+			addr = `http://127.0.0.1:${server.address().port}`
 			resolve()
 		}))
 	})
 
 	after(async () => {
 		server?.close()
-		await rm(tmpDir, { recursive: true, force: true })
+		await rm(tmpDir)
 	})
 
 

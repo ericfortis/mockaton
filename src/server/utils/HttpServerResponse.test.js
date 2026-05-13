@@ -4,7 +4,7 @@ import { createServer } from 'node:http'
 import { tmpdir } from 'node:os'
 import { equal } from 'node:assert/strict'
 import { join } from 'node:path'
-import { rm } from 'node:fs/promises'
+import { rmdir } from 'node:fs/promises'
 
 import { ServerResponse } from './HttpServerResponse.js'
 
@@ -31,7 +31,7 @@ describe('ServerResponse', { concurrency: true }, () => {
 
 	after(async () => {
 		server?.close()
-		await rm(tmpDir)
+		await rmdir(tmpDir, { recursive: true, force: true })
 	})
 
 

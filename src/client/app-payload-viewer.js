@@ -16,7 +16,7 @@ export function PayloadViewer() {
 	return (
 		r('div', { className: CSS.PayloadViewer },
 
-			r('div', { className: CSS.SubToolbar },
+			r('div', { className: CSS.PayloadSubToolbar },
 				r('h2', { ref: titleRef },
 					!store.hasChosenLink && t`Preview`)),
 

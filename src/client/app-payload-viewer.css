@@ -1,3 +1,14 @@
+.PayloadSubToolbar {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	padding-right: 14px;
+	padding-left: 16px;
+	border-bottom: 1px solid var(--colorBorder);
+	background: var(--colorBgHeader);
+}
+
+
 .PayloadViewer {
 	display: grid;
 	height: 100%;
@@ -30,19 +41,6 @@
 		}
 	}
 }
-
-/*  TODO Duplicate */
-.SubToolbar {
-	display: flex;
-	align-items: center;
-	justify-content: space-between;
-	padding-right: 14px;
-	padding-left: 16px;
-	border-bottom: 1px solid var(--colorBorder);
-	background: var(--colorBgHeader);
-}
-
-
 
 .syntaxPunc {
 	color: var(--colorLabel);

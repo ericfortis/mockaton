@@ -13,6 +13,7 @@ export const store = {
 	onError(err) {},
 	render() {},
 	renderRow(method, urlMask) {},
+	mounted: false,
 	skipNextRender: false,
 
 	brokersByMethod: /** @type ClientBrokersByMethod */ {},

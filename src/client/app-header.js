@@ -1,15 +1,17 @@
 import { createElement as r, t } from './utils/dom.js'
 import { Logo, HelpIcon } from './graphics.js'
 import { store } from './app-store.js'
-
-import CSS from './app.css' with { type: 'css' }
 import { extractClassNames } from './utils/css.js'
+
+import CSS from './app-header.css' with { type: 'css' }
+CSS.__url = 'app-header.css'
+document.adoptedStyleSheets.push(CSS)
 Object.assign(CSS, extractClassNames(CSS))
 
 
 export function Header() {
 	return (
-		r('header', null,
+		r('header', { className: CSS.Header },
 			r('a', {
 					className: CSS.Logo,
 					href: 'https://mockaton.com',

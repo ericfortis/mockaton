@@ -1,0 +1,231 @@
+.Header {
+	display: flex;
+	flex: 0 0 100%;
+	padding: 16px;
+	background: var(--colorBgHeader);
+
+	.Logo {
+		align-self: end;
+		margin-right: 18px;
+		margin-bottom: 2px;
+		transition: opacity 240ms ease-in-out;
+
+		svg {
+			width: 122px;
+			pointer-events: none;
+			fill: var(--colorText);
+		}
+	}
+
+	@media (max-width: 570px) {
+		.Logo {
+			display: none;
+		}
+	}
+
+	&:has(.FallbackBackend) {
+		@media (max-width: 740px) {
+			.Logo {
+				display: none;
+			}
+		}
+	}
+
+	> div {
+		display: flex;
+		width: 100%;
+		flex-wrap: wrap;
+		align-items: flex-end;
+		gap: 16px 12px;
+
+		&:has(.FallbackBackend) {
+			@media (max-width: 600px) {
+				.HelpLink {
+					margin-left: unset;
+				}
+			}
+		}
+	}
+
+	.GlobalDelayWrap {
+		display: flex;
+	}
+
+
+	.ResetButton {
+		padding: 6px 12px;
+		border: 1px solid var(--colorRed);
+		margin-right: 8px;
+		margin-left: 4px;
+		background: transparent;
+		border-radius: 50px;
+		color: var(--colorRed);
+		box-shadow: var(--boxShadowRimDrop);
+
+		@media (prefers-color-scheme: dark) {
+			color: var(--colorText);
+		}
+
+		&:hover {
+			background: var(--colorRed);
+			color: white;
+		}
+	}
+
+	.HelpLink {
+		width: 24px;
+		height: 24px;
+		flex-shrink: 0;
+		align-self: end;
+		margin-bottom: 3px;
+		margin-left: auto;
+		box-shadow: var(--boxShadowRimDrop);
+		opacity: 0.8;
+		border-radius: 50%;
+		fill: var(--colorBgHeader);
+		background: var(--colorLabel);
+
+		&:hover {
+			background: var(--colorAccent);
+			opacity: 1;
+		}
+
+		svg {
+			transform: scale(.7);
+		}
+	}
+}
+
+.GlobalDelay,
+.GlobalDelayJitter,
+.CookieSelector,
+.FallbackBackend {
+	width: 116px;
+
+	span {
+		display: flex;
+		align-items: center;
+		margin-left: 8px;
+		white-space: nowrap;
+		color: var(--colorLabel);
+		font-size: 11px;
+		gap: 4px;
+		transition: color 200ms ease-out;
+	}
+
+	&:has(input:focus-visible),
+	&:hover {
+		span {
+			color: var(--colorText);
+		}
+	}
+
+	input[type=url],
+	input[type=number],
+	select {
+		width: 100%;
+		height: 28px;
+		padding: 4px 8px;
+		margin-top: 2px;
+		color: var(--colorText);
+		font-size: 11px;
+		background-color: var(--colorBgHeaderField);
+		border-radius: var(--radius);
+		box-shadow: var(--boxShadowRimDrop);
+		transition: background-color ease-in-out 120ms;
+
+		&:hover {
+			background-color: var(--colorBgFieldHover);
+		}
+	}
+
+	&.GlobalDelay,
+	&.GlobalDelayJitter {
+		input {
+			&&::selection {
+				background-color: transparent;
+			}
+
+			&::-webkit-outer-spin-button,
+			&::-webkit-inner-spin-button {
+				-webkit-appearance: none;
+				margin: 0;
+			}
+		}
+	}
+
+	&.GlobalDelay {
+		position: relative;
+		width: 76px;
+
+		input {
+			padding-right: 6px;
+			border-bottom-right-radius: 0;
+			border-top-right-radius: 0;
+		}
+
+		svg {
+			width: 12px;
+			height: 12px;
+			border: 1px solid var(--colorLabel);
+			stroke-width: 3px;
+			border-radius: 50%;
+		}
+
+		&:focus-within {
+			z-index: 100;
+		}
+	}
+
+	&.GlobalDelayJitter {
+		width: 80px;
+
+		&:focus-within {
+			z-index: 100;
+		}
+
+		span {
+			margin-left: 8px;
+		}
+		input {
+			border-bottom-left-radius: 0;
+			border-top-left-radius: 0;
+		}
+	}
+
+	&.CookieSelector {
+		width: 100px;
+	}
+
+	&.FallbackBackend {
+		position: relative;
+		width: 160px;
+
+		.SaveProxiedCheckbox {
+			position: absolute;
+			top: 0;
+			right: 0;
+			display: flex;
+			width: auto;
+			min-width: unset;
+			align-items: center;
+			gap: 4px;
+
+			input + .checkboxBody {
+				margin: 0;
+				margin-right: 4px;
+			}
+			input:enabled + .checkboxBody {
+				cursor: pointer;
+			}
+
+			input:disabled {
+				cursor: not-allowed;
+			}
+			input:disabled + .checkboxBody {
+				opacity: 0.8;
+				cursor: not-allowed;
+			}
+		}
+	}
+}

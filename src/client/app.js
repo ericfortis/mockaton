@@ -4,13 +4,13 @@ import { store } from './app-store.js'
 import { API } from './ApiConstants.js'
 import { Header } from './app-header.js'
 import { PayloadViewer, previewMock } from './app-payload-viewer.js'
+import { extractClassNames, classNames } from './utils/css.js'
 import { TimerIcon, CloudIcon, ChevronDownIcon } from './graphics.js'
 
 import CSS from './app.css' with { type: 'css' }
-import { extractClassNames, classNames } from './utils/css.js'
+CSS.__url = 'app.css'
 document.adoptedStyleSheets.push(CSS)
 Object.assign(CSS, extractClassNames(CSS))
-
 
 store.onError = onError
 store.render = render

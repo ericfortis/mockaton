@@ -12,7 +12,7 @@ const devClientWatcher = new class extends EventEmitter {
 // Although `client/IndexHtml.js` is watched, it returns a stale version.
 // i.e., it would need to be a dynamic import + cache busting.
 export function watchDevSPA(dir) {
-	watch(dir, (_, file) => {
+	watch(dir, { recursive: true }, (_, file) => {
 		devClientWatcher.emit(file)
 	})
 }

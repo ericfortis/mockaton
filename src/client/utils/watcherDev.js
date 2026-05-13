@@ -41,6 +41,9 @@ function init() {
 
 	async function hotReloadCSS(file) {
 		const mod = await import(`${document.baseURI}${file}?${Date.now()}`, { with: { type: 'css' } })
-		document.adoptedStyleSheets = [mod.default]
+		mod.default.__url = file
+		for (let i = 0; i < document.adoptedStyleSheets.length; i++)
+			if (document.adoptedStyleSheets[i].__url === file)
+				document.adoptedStyleSheets[i] = mod.default
 	}
 }

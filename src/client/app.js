@@ -3,10 +3,9 @@ import { createElement as r, t, restoreFocus, Fragment } from './utils/dom.js'
 import { store } from './app-store.js'
 import { API } from './ApiConstants.js'
 import { Header } from './app-header.js'
-import { MockList, initKeyboardNavigation, renderRow } from './app-mock-list.js'
+import { extractClassNames } from './utils/css.js'
 import { PayloadViewer, previewMock } from './app-payload-viewer.js'
-import { extractClassNames, classNames } from './utils/css.js'
-import { TimerIcon, CloudIcon, ChevronDownIcon } from './graphics.js'
+import { MockList, initKeyboardNavigation, renderRow } from './app-mock-list.js'
 
 import CSS from './app.css' with { type: 'css' }
 CSS.__url = 'app.css'
@@ -33,7 +32,7 @@ function App() {
 		r('main', null,
 			LeftSide(),
 			r('div', { className: CSS.rightSide },
-				Resizer(LeftSide.ref),
+				Resizer(),
 				PayloadViewer())))
 }
 
@@ -50,14 +49,14 @@ LeftSide.ref = { width: undefined }
 LeftSide.$ = selector => LeftSide.ref.elem.querySelector(selector)
 
 
-function Resizer(ref) {
+function Resizer() {
 	let raf = 0
 	let initialX = 0
 	let initialWidth = 0
 
 	function onPointerDown(event) {
 		initialX = event.clientX
-		initialWidth = ref.elem.clientWidth
+		initialWidth = LeftSide.ref.elem.clientWidth
 		addEventListener('pointerup', onUp, { once: true })
 		addEventListener('pointermove', onMove)
 		Object.assign(document.body.style, {
@@ -70,8 +69,8 @@ function Resizer(ref) {
 	function onMove(event) {
 		const MIN_LEFT_WIDTH = 350
 		raf = raf || requestAnimationFrame(() => {
-			ref.width = Math.max(initialWidth - (initialX - event.clientX), MIN_LEFT_WIDTH) + 'px'
-			ref.elem.style.width = ref.width
+			LeftSide.ref.width = Math.max(initialWidth - (initialX - event.clientX), MIN_LEFT_WIDTH) + 'px'
+			LeftSide.ref.elem.style.width = LeftSide.ref.width
 			raf = 0
 		})
 	}

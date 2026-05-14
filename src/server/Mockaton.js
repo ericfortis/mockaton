@@ -41,7 +41,7 @@ export function Mockaton(options) {
 		server.on('error', reject)
 		server.listen(config.port, config.host, () => {
 			const url = `http://${server.address().address}:${server.address().port}`
-			const dashboardUrl = url + API.dashboard
+			const dashboardUrl = url + API.root
 			logger.info('Listening', url)
 			logger.info('Dashboard', dashboardUrl)
 			config.onReady(dashboardUrl)

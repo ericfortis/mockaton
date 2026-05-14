@@ -225,17 +225,17 @@ describe('CORS', () => {
 
 describe('Dashboard', () => {
 	test('renders', async () => {
-		const r = await request(API.dashboard)
+		const r = await request(API.root)
 		match(await r.text(), new RegExp('<!DOCTYPE html>'))
 	})
 
 	test('query string is accepted', async () => {
-		const r = await request(API.dashboard + '?foo=bar')
+		const r = await request(API.root + '?foo=bar')
 		match(await r.text(), new RegExp('<!DOCTYPE html>'))
 	})
 
 	test('serves assets', async () => {
-		const r = await request(API.dashboard + '/app.css')
+		const r = await request(API.root + '/app.css')
 		match(await r.text(), new RegExp(':root {'))
 	})
 })

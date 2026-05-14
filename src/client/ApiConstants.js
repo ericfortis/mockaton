@@ -3,7 +3,7 @@
 const MOUNT = '/mockaton'
 
 export const API = {
-	dashboard: MOUNT,
+	root: MOUNT,
 
 	reset: MOUNT + '/reset',
 	select: MOUNT + '/select',

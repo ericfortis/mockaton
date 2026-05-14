@@ -3,8 +3,8 @@
  * selecting a specific mock-file for a particular route.
  */
 
-import { join } from 'node:path'
-import { write, rm, isFile, resolveIn, listFilesRecursively } from './utils/fs.js'
+import { join, relative } from 'node:path'
+import { write, rm, isFile, resolveIn } from './utils/fs.js'
 
 import openapi from '../../www/src/assets/openapi.json' with { type: 'json' }
 import pkgJSON from '../../package.json' with { type: 'json' }
@@ -30,13 +30,7 @@ const headReqs = new Map([
 const getReqs = new Map([
 	...headReqs.entries(),
 
-	[API.dashboard, serveDashboard],
-
-	...listFilesRecursively(CLIENT_ASSETS).map(f => [
-		API.dashboard + '/' + f,
-		serveDashboardAsset(f)
-	]),
-
+	[API.root, serveDashboard],
 	[API.state, getState],
 	[API.syncVersion, sseClientSyncVersion],
 
@@ -68,6 +62,9 @@ const patchReqs = new Map([
 ])
 
 export async function handleApiRequest(req, response) {
+	if (!req.url.startsWith(API.root))
+		return false
+
 	const url = removeQueryStringAndFragment(req.url)
 
 	const handler = (
@@ -76,6 +73,12 @@ export async function handleApiRequest(req, response) {
 		req.method === 'PATCH' && patchReqs.get(url))
 	if (handler) {
 		await handler(req, response)
+		return true
+	}
+
+	if (req.method === 'GET') { // serve static dashboard assets dir
+		const f = await resolveIn(CLIENT_ASSETS, relative(API.root, url))
+		await response.file(f)
 		return true
 	}
 }
@@ -87,11 +90,6 @@ function serveDashboard(_, response) {
 	response.html(IndexHtml(config.hotReload, pkgJSON.version), CSP)
 }
 
-function serveDashboardAsset(f) {
-	return async (_, response) => {
-		await response.file(join(CLIENT_ASSETS, f))
-	}
-}
 
 function getState(_, response) {
 	response.json({

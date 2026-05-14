@@ -3,14 +3,12 @@ import { createElement as r, t, restoreFocus, Fragment } from './utils/dom.js'
 import { store } from './app-store.js'
 import { API } from './ApiConstants.js'
 import { Header } from './app-header.js'
-import { extractClassNames } from './utils/css.js'
+import { adoptSheet } from './utils/css.js'
 import { PayloadViewer, previewMock } from './app-payload-viewer.js'
 import { MockList, initKeyboardNavigation, renderRow } from './app-mock-list.js'
 
 import CSS from './app.css' with { type: 'css' }
-CSS.__url = 'app.css'
-document.adoptedStyleSheets.push(CSS)
-Object.assign(CSS, extractClassNames(CSS))
+adoptSheet(CSS, './app.css')
 
 store.onError = onError
 store.render = render
@@ -27,13 +25,14 @@ function render() {
 }
 
 function App() {
-	return Fragment(
-		Header(),
-		r('main', null,
-			LeftSide(),
-			r('div', { className: CSS.rightSide },
-				Resizer(),
-				PayloadViewer())))
+	return (
+		Fragment(
+			Header(),
+			r('main', null,
+				LeftSide(),
+				r('div', { className: CSS.rightSide },
+					Resizer(),
+					PayloadViewer()))))
 }
 
 function LeftSide() {

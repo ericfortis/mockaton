@@ -3,6 +3,13 @@ export function classNames(...args) {
 }
 
 
+export function adoptSheet(sheet, url) {
+	sheet.__url = url.replace(/^\.\//, '')
+	document.adoptedStyleSheets.push(sheet)
+	Object.assign(sheet, extractClassNames(sheet))
+}
+
+
 export function extractClassNames({ cssRules }) {
 	// Class names must begin with _ or a letter, then it can have numbers and hyphens
 	// TODO think about tag.className selectors

@@ -2,13 +2,11 @@ import { createElement as r, t, Fragment } from './utils/dom.js'
 
 import { store } from './app-store.js'
 import { previewMock } from './app-payload-viewer.js'
-import { extractClassNames, classNames } from './utils/css.js'
+import { classNames, adoptSheet } from './utils/css.js'
 import { TimerIcon, CloudIcon, ChevronDownIcon } from './graphics.js'
 
 import CSS from './app-mock-list.css' with { type: 'css' }
-CSS.__url = 'app-mock-list.css'
-document.adoptedStyleSheets.push(CSS)
-Object.assign(CSS, extractClassNames(CSS))
+adoptSheet(CSS, './app-mock-list.css')
 
 
 export function MockList() {

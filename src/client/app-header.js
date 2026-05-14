@@ -1,12 +1,10 @@
 import { createElement as r, t } from './utils/dom.js'
 import { Logo, HelpIcon } from './graphics.js'
+import { adoptSheet } from './utils/css.js'
 import { store } from './app-store.js'
-import { extractClassNames } from './utils/css.js'
 
 import CSS from './app-header.css' with { type: 'css' }
-CSS.__url = 'app-header.css'
-document.adoptedStyleSheets.push(CSS)
-Object.assign(CSS, extractClassNames(CSS))
+adoptSheet(CSS, './app-header.css')
 
 
 export function Header() {

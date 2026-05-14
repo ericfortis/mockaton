@@ -1,12 +1,10 @@
 import { createElement as r, t } from './utils/dom.js'
 import { parseFilename } from './Filename.js'
 import { store } from './app-store.js'
-import { extractClassNames } from './utils/css.js'
+import { adoptSheet } from './utils/css.js'
 
 import CSS from './app-payload-viewer.css' with { type: 'css' }
-CSS.__url = 'app-payload-viewer.css'
-document.adoptedStyleSheets.push(CSS)
-Object.assign(CSS, extractClassNames(CSS))
+adoptSheet(CSS, './app-payload-viewer.css')
 
 
 const titleRef = {}

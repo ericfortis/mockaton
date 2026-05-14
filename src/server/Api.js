@@ -23,7 +23,13 @@ import { removeQueryStringAndFragment } from './utils/HttpIncomingMessage.js'
 
 export const CLIENT_ASSETS = join(import.meta.dirname, '../client')
 
+const headReqs = new Map([
+	[API.health, (_, response) => response.ok()]
+])
+
 const getReqs = new Map([
+	...headReqs.entries(),
+
 	[API.dashboard, serveDashboard],
 
 	...listFilesRecursively(CLIENT_ASSETS).map(f => [
@@ -64,13 +70,9 @@ const patchReqs = new Map([
 export async function handleApiRequest(req, response) {
 	const url = removeQueryStringAndFragment(req.url)
 
-	if ((req.method === 'GET' || req.method === 'HEAD') && url === API.health) {
-		response.ok()
-		return
-	}
-
 	const handler = (
 		req.method === 'GET' && getReqs.get(url) ||
+		req.method === 'HEAD' && headReqs.get(url) ||
 		req.method === 'PATCH' && patchReqs.get(url))
 	if (handler) {
 		await handler(req, response)

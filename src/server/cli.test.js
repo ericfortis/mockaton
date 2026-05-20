@@ -36,7 +36,7 @@ describe('CLI', () => {
 
 	test('-h outputs usage message', () => {
 		const { stdout, status } = cli('-h')
-		equal(stdout.split('\n')[0], 'Usage: mockaton [mocks-dir] [options]')
+		equal(stdout.split('\n')[1], '  mockaton [options] [mocks-dir]')
 		equal(status, 0)
 	})
 

@@ -4,15 +4,41 @@ import { pathToFileURL } from 'node:url'
 import { resolve, join } from 'node:path'
 import { parseArgs } from 'node:util'
 
-import { isFile } from './utils/fs.js'
+import { isFile, isDirectory } from './utils/fs.js'
 import { Mockaton } from '../../index.js'
+import { config } from './config.js'
 import pkgJSON from '../../package.json' with { type: 'json' }
 
 
-process.on('unhandledRejection', error => { throw error })
-
 const DEFAULT_CONFIG_FILE = 'mockaton.config.js'
 const SKILLS_PATH = join(import.meta.dirname, '../../skills/mockaton/SKILL.md')
+
+const HELP = `
+SYNOPSIS
+  mockaton [options] [mocks-dir]
+
+OPTIONS
+  -c, --config <file>  (default: ./${DEFAULT_CONFIG_FILE})
+  
+  -H, --host <host>    (default: 127.0.0.1)
+  -p, --port <port>    (default: 0) which means auto-assigned
+  
+  -q, --quiet          Show errors only
+  --no-open            Don't open dashboard in a browser
+  --no-read-only       Allow writing and deleting mocks via API
+  
+  --skills             Show AI agent SKILL.md file path
+  -h, --help
+  -v, --version
+
+NOTES
+  * mockaton.config.js supports more options.
+  * CLI options override their ${DEFAULT_CONFIG_FILE} counterparts.
+  * https://mockaton.com/config
+`.trim()
+
+
+process.on('unhandledRejection', error => { throw error })
 
 let args, positionals
 try {
@@ -44,38 +70,12 @@ catch (error) {
 process.on('SIGUSR2', () => process.exit(0)) // For clean exit when collecting code-coverage
 
 
-if (args.version)
-	console.log(pkgJSON.version)
-
-else if (args.skills)
-	console.log(SKILLS_PATH)
-
-else if (args.help)
-	console.log(`
-Usage: mockaton [mocks-dir] [options]
-
-Options:
-  -c, --config <file>  (default: ./${DEFAULT_CONFIG_FILE})
-  
-  -H, --host <host>    (default: 127.0.0.1)
-  -p, --port <port>    (default: 0) which means auto-assigned
-  
-  -q, --quiet          Show errors only
-  --no-open            Don't open dashboard in a browser
-  --no-read-only       Allow writing and deleting mocks via API
-  
-  --skills             Show AI agent SKILL.md file path
-  -h, --help
-  -v, --version
-
-Notes:
-  * mockaton.config.js supports more options, see: https://mockaton.com/config
-  * CLI options override their ${DEFAULT_CONFIG_FILE}} counterparts
-`.trim())
-
+if (args.version) console.log(pkgJSON.version)
+else if (args.help) console.log(HELP)
+else if (args.skills) console.log(SKILLS_PATH)
 else if (args.config && !isFile(args.config)) {
 	console.error(`Invalid config file: ${args.config}`)
-	process.exitCode = 1
+	process.exit(1)
 }
 else {
 	const userConf = resolve(args.config ?? DEFAULT_CONFIG_FILE)
@@ -87,6 +87,10 @@ else {
 	if (args.port) opts.port = Number.isNaN(Number(args.port)) ? args.port : Number(args.port)
 
 	if (positionals[0]) opts.mocksDir = positionals[0]
+	else if (!opts.mocksDir && !isDirectory(config.mocksDir)) {
+		console.log(HELP)
+		process.exit(0)
+	}
 
 	if (args.quiet) opts.logLevel = 'quiet'
 	if (args['no-open']) opts.onReady = () => {}

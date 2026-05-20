@@ -3,9 +3,16 @@ name: Mockaton
 description: Generates and serves mock HTTP APIs. Use when creating, editing, or reasoning about mock endpoints.
 user-invocable: false
 ---
+# Installation ([more options  ↗](https://mockaton.com/installation))
+Mockaton has no dependencies.
+
+```sh
+npm install -g mockaton
+```
+
 ## Basic Usage
 ```sh
-npx mockaton --port 2020 my-mocks-dir/
+mockaton --port 2020 my-mocks-dir/
 ```
 
 Mockaton will serve the files on the given directory. It's a file-system based router, so
@@ -30,10 +37,6 @@ Similarly, each route can have different response status code variants.
 
 
 
-## Installation ([more options  ↗](https://mockaton.com/installation))
-```sh
-npm install mockaton
-```
 
 ## How to create mocks?
 Write it to your mocks directory. `.ts` files are served as JSON by default.

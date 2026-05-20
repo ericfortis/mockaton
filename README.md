@@ -7,8 +7,8 @@
 
 ## [Docs ↗](https://mockaton.com) | [Changelog ↗](https://mockaton.com/changelog) | [Skills](skills/mockaton/SKILL.md)
 
-Mockaton is an HTTP mock server for simulating APIs, designed
-for testing difficult to reproduce backend states with minimal setup.
+Mockaton is an HTTP mock server for simulating APIs. With it, you can 
+test API errors, edge cases, and difficult to reproduce states in general.
 
 <picture>
   <source media="(prefers-color-scheme: light)" srcset="https://raw.githubusercontent.com/ericfortis/mockaton/refs/heads/main/pixaton-tests/tests/macos/pic-for-readme.vp762x762.light.gold.png">
@@ -30,13 +30,20 @@ Test it:
 ```sh
 curl localhost:2020/api/user
 ```
-Dashboard: [localhost:2020/mockaton](http://localhost:2020/mockaton)
 
 <!-- SKILLS_IGNORE_END -->
 
+
+# Installation ([more options  ↗](https://mockaton.com/installation))
+Mockaton has no dependencies.
+
+```sh
+npm install -g mockaton
+```
+
 ## Basic Usage
 ```sh
-npx mockaton --port 2020 my-mocks-dir/
+mockaton --port 2020 my-mocks-dir/
 ```
 
 Mockaton will serve the files on the given directory. It's a file-system based router, so
@@ -71,10 +78,6 @@ npx skills add ericfortis/mockaton
 ```
 <!-- SKILLS_IGNORE_END -->
 
-## Installation ([more options  ↗](https://mockaton.com/installation))
-```sh
-npm install mockaton
-```
 
 ## How to create mocks?
 Write it to your mocks directory. `.ts` files are served as JSON by default.

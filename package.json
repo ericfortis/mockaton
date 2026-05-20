@@ -2,7 +2,7 @@
 	"name": "mockaton",
 	"description": "HTTP Mock Server",
 	"type": "module",
-	"version": "13.11.1",
+	"version": "13.11.2",
 	"exports": {
 		".": {
 			"import": "./index.js",

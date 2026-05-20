@@ -12,8 +12,8 @@ export default () => htmlTemplate({
 		<br />
 
 		<p>
-			Mockaton is an HTTP mock server for simulating APIs, designed
-			for testing difficult to reproduce backend states with minimal setup.
+			Mockaton is an HTTP mock server for simulating APIs. With it, you can
+			test API errors, edge cases, and difficult to reproduce states in general.
 		</p>
 
 		<h2>Dashboard</h2>
@@ -62,11 +62,15 @@ curl localhost:2020/api/user
 `}
 		<p>Dashboard: <a href="http://localhost:2020/mockaton">localhost:2020/mockaton</a></p>
 
+		<h2>Installation <a href="/installation">more options ↗</a></h2>
+		<p>Mockaton has no dependencies.</p>
+		${shell`npm install -g mockaton`}
+
 
 		<h2 id="basic-usage">Basic Usage</h2>
 
 		${shell`
-npx mockaton my-mocks-dir/
+mockaton my-mocks-dir/
 `}
 
 		<br />
@@ -135,9 +139,6 @@ npx mockaton my-mocks-dir/
 		${shell`
 npx skills add ericfortis/mockaton
 `}
-
-		<h2>Installation <a href="/installation">more options ↗</a></h2>
-		${shell`npm install mockaton`}
 
 
 		<h2 id="how-to-create-mocks-">How to create mocks?</h2>

@@ -9,8 +9,8 @@ import { equal, deepEqual, match } from 'node:assert/strict'
 import { describe, test, before, beforeEach, after } from 'node:test'
 import { unlink, mkdir, readFile, rename, readdir, writeFile, rm } from 'node:fs/promises'
 
-import { mimeFor } from './utils/mime.js'
 import { API } from '../client/ApiConstants.js'
+import { mimeFor } from './utils/mime.js'
 import { Commander } from '../client/ApiCommander.js'
 import { parseFilename } from '../client/Filename.js'
 
@@ -19,6 +19,16 @@ import { config } from './config.js'
 
 
 const mocksDir = mkdtempSync(join(tmpdir(), 'mocks'))
+
+const rmFromMocksDir = f => unlink(join(mocksDir, f))
+const readFromMocksDir = f => readFile(join(mocksDir, f), 'utf8')
+const writeInMocksDir = (f, data) => writeFile(join(mocksDir, f), data)
+const renameInMocksDir = (src, target) => rename(join(mocksDir, src), join(mocksDir, target))
+
+const listFromMocksDir = d => readdir(join(mocksDir, d))
+const rmDirFromMocks = d => rm(join(mocksDir, d), { recursive: true })
+const makeDirInMocks = dir => mkdir(join(mocksDir, dir), { recursive: true })
+
 
 const stdout = []
 const stderr = []
@@ -47,17 +57,6 @@ const serverAddr = await new Promise((resolve, reject) => {
 })
 
 after(() => proc.kill('SIGUSR2'))
-
-
-const rmFromMocksDir = f => unlink(join(mocksDir, f))
-const readFromMocksDir = f => readFile(join(mocksDir, f), 'utf8')
-const writeInMocksDir = (f, data) => writeFile(join(mocksDir, f), data)
-const renameInMocksDir = (src, target) => rename(join(mocksDir, src), join(mocksDir, target))
-
-const listFromMocksDir = d => readdir(join(mocksDir, d))
-const rmDirFromMocks = d => rm(join(mocksDir, d), { recursive: true })
-const makeDirInMocks = dir => mkdir(join(mocksDir, dir), { recursive: true })
-
 
 const api = new Commander(serverAddr)
 

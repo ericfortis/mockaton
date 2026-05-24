@@ -303,6 +303,7 @@ describe('Delay', () => {
 			const r = await api.setGlobalDelayJitter(0.1)
 			equal(r.status, 200)
 			equal((await fetchState()).delayJitter, 0.1)
+			await api.setGlobalDelayJitter(0)
 		})
 	})
 
@@ -1220,24 +1221,37 @@ describe('Registering Mocks', () => {
  * This is for listening to real-time updates. It responds when a new mock is added, deleted, or renamed. */
 async function resolveOnNextSyncVersion(currSyncVer = undefined) {
 	let skipFirst = currSyncVer === undefined
-	const response = await api.getSyncVersion()
-	const stream = response.body.pipeThrough(new TextDecoderStream())
+	const reader = (await api.getSyncVersion())
+		.body.pipeThrough(new TextDecoderStream())
+		.getReader()
 	let buffer = ''
 
-	for await (const chunk of stream) {
-		buffer += chunk
-		const parts = buffer.split('\n\n')
-		buffer = parts.pop() || ''
+	try {
+		while (true) {
+			try {
+				const { done, value } = await reader.read()
+				if (done) break
+				buffer += value
+			}
+			catch {
+				break
+			}
+			const parts = buffer.split('\n\n')
+			buffer = parts.pop() || ''
 
-		for (const event of parts)
-			for (const line of event.split(/\r?\n/))
-				if (line.startsWith('data:')) {
-					const v = Number(line.slice(5).trim())
-					if (skipFirst || v === currSyncVer)
-						skipFirst = false
-					else
-						return v
-				}
+			for (const event of parts)
+				for (const line of event.split(/\r?\n/))
+					if (line.startsWith('data:')) {
+						const v = Number(line.slice(5).trim())
+						if (skipFirst || v === currSyncVer)
+							skipFirst = false
+						else
+							return v
+					}
+		}
+	}
+	finally {
+		reader.cancel().catch(() => {})
 	}
 }
 

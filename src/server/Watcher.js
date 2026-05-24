@@ -59,6 +59,9 @@ export function watchMocksDir() {
 			// ignore file edits
 		}
 	})
+	mocksWatcher?.on('error', () => {
+		// on linux, subdir deletion can trigger inotify IN_IGNORED
+	})
 }
 
 export function stopMocksDirWatcher() {
@@ -75,12 +78,13 @@ export function sseClientSyncVersion(req, response) {
 	})
 	response.flushHeaders()
 
-	function sendVersion() {
-		response.write(`data: ${uiSyncVersion.version}\n\n`)
-	}
 
 	sendVersion()
 	uiSyncVersion.subscribe(sendVersion)
+
+	function sendVersion() {
+		response.write(`data: ${uiSyncVersion.version}\n\n`)
+	}
 
 	const keepAlive = setInterval(() => {
 		response.write(': ping\n\n')
@@ -88,6 +92,7 @@ export function sseClientSyncVersion(req, response) {
 
 	req.on('close', cleanup)
 	req.on('error', cleanup)
+	response.on('error', cleanup)
 	function cleanup() {
 		clearInterval(keepAlive)
 		uiSyncVersion.unsubscribe(sendVersion)

@@ -19,15 +19,15 @@ SYNOPSIS
 
 OPTIONS
   -c, --config <file>  (default: ./${DEFAULT_CONFIG_FILE})
-  
-  -H, --host <host>    (default: 127.0.0.1)
-  -p, --port <port>    (default: 0) which means auto-assigned
-  
-  -q, --quiet          Show errors only
-  --no-open            Don't open dashboard in a browser
-  --no-read-only       Allow writing and deleting mocks via API
-  
-  --skills             Show AI agent SKILL.md file path
+ 
+  -H, --host <host>  (default: 127.0.0.1)
+  -p, --port <port>  (default: 0) which means auto-assigned
+ 
+  -q, --quiet        Show errors only
+  --no-open          Don't open dashboard in a browser
+  --no-read-only     Allow writing and deleting mocks via API
+ 
+  --skills           Show AI agent SKILL.md file path
   -h, --help
   -v, --version
 

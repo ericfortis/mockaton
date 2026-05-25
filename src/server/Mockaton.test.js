@@ -1,3 +1,4 @@
+import fs from 'node:fs/promises'
 import { join } from 'node:path'
 import { spawn } from 'node:child_process'
 import { tmpdir } from 'node:os'
@@ -7,33 +8,32 @@ import { mkdtempSync } from 'node:fs'
 import { randomUUID } from 'node:crypto'
 import { equal, deepEqual, match } from 'node:assert/strict'
 import { describe, test, before, beforeEach, after } from 'node:test'
-import { unlink, mkdir, readFile, rename, readdir, writeFile, rm } from 'node:fs/promises'
-
-import { API } from '../client/ApiConstants.js'
-import { mimeFor } from './utils/mime.js'
-import { Commander } from '../client/ApiCommander.js'
-import { parseFilename } from '../client/Filename.js'
 
 import CONFIG from './Mockaton.test.config.js'
 import { config } from './config.js'
+import { mimeFor } from './utils/mime.js'
+import { API } from '../client/ApiConstants.js'
+import { Commander } from '../client/ApiCommander.js'
+import { parseFilename } from '../client/Filename.js'
 
 
-const mocksDir = mkdtempSync(join(tmpdir(), 'mocks'))
+const mocksDir = new class {
+	value = mkdtempSync(join(tmpdir(), 'mocks'))
 
-const rmFromMocksDir = f => unlink(join(mocksDir, f))
-const readFromMocksDir = f => readFile(join(mocksDir, f), 'utf8')
-const writeInMocksDir = (f, data) => writeFile(join(mocksDir, f), data)
-const renameInMocksDir = (src, target) => rename(join(mocksDir, src), join(mocksDir, target))
+	rm = f => fs.unlink(join(this.value, f))
+	read = f => fs.readFile(join(this.value, f), 'utf8')
+	write = (f, data) => fs.writeFile(join(this.value, f), data)
+	rename = (src, target) => fs.rename(join(this.value, src), join(this.value, target))
 
-const listFromMocksDir = d => readdir(join(mocksDir, d))
-const rmDirFromMocks = d => rm(join(mocksDir, d), { recursive: true })
-const makeDirInMocks = dir => mkdir(join(mocksDir, dir), { recursive: true })
-
+	list = d => fs.readdir(join(this.value, d))
+	rmdir = d => fs.rm(join(this.value, d), { recursive: true })
+	mkdir = d => fs.mkdir(join(this.value, d), { recursive: true })
+}
 
 const stdout = []
 const stderr = []
 const proc = spawn(join(import.meta.dirname, 'cli.js'), [
-	mocksDir,
+	mocksDir.value,
 	'--config', join(import.meta.dirname, 'Mockaton.test.config.js'),
 	'--no-open'
 ])
@@ -389,14 +389,14 @@ describe('Proxy Fallback', () => {
 			deepEqual(await r2.json(), BODY_PAYLOAD)
 			deepEqual(await r1.json(), BODY_PAYLOAD)
 
-			const savedMocks = await listFromMocksDir('non-existing-mock')
+			const savedMocks = await mocksDir.list('non-existing-mock')
 			equal(savedMocks.length, 2)
 
-			equal(await readFromMocksDir('non-existing-mock/[id].POST.423.json'), expectedBody)
+			equal(await mocksDir.read('non-existing-mock/[id].POST.423.json'), expectedBody)
 			for (const m of savedMocks) {
 				const f = join('non-existing-mock', m)
-				equal(await readFromMocksDir(f), expectedBody)
-				await rmFromMocksDir(f)
+				equal(await mocksDir.read(f), expectedBody)
+				await mocksDir.rm(f)
 			}
 		})
 	})
@@ -920,7 +920,7 @@ describe('Dynamic Params', () => {
 	const fx2 = new Fixture('dynamic-params/[id]/suffix/[id].GET.200.txt')
 	const fx3 = new Fixture('dynamic-params/exact-route.GET.200.txt')
 	before(async () => {
-		await makeDirInMocks('dynamic-params/[id]/suffix/[id]')
+		await mocksDir.mkdir('dynamic-params/[id]/suffix/[id]')
 		await fx0.write()
 		await fx1.write()
 		await fx2.write()
@@ -956,7 +956,7 @@ describe('Dynamic Params', () => {
 
 test('Dynamic Params on partial segments', async () => {
 	const fx = new Fixture('dynamic-params-partial-[id]/foo.GET.200.txt')
-	await makeDirInMocks('dynamic-params-partial-[id]')
+	await mocksDir.mkdir('dynamic-params-partial-[id]')
 	await fx.write()
 	const r = await request('/dynamic-params-partial-999/foo')
 	equal(await r.text(), fx.body)
@@ -968,7 +968,7 @@ describe('Query String', () => {
 	const fx0 = new Fixture('query-string?foo=[foo]&bar=[bar].GET.200.json')
 	const fx1 = new Fixture('query-string/[id]?limit=[limit].GET.200.json')
 	before(async () => {
-		await makeDirInMocks('query-string')
+		await mocksDir.mkdir('query-string')
 		await fx0.write()
 		await fx1.write()
 		await api.reset()
@@ -1127,10 +1127,10 @@ describe('Registering Mocks', () => {
 	test('when watcher is off, newly added mocks do not get registered', async () => {
 		await api.setWatchMocks(false)
 		const fx = new FixtureExternal('non-auto-registered-file.GET.200.json')
-		await writeInMocksDir(fx.file, fx.body)
+		await mocksDir.write(fx.file, fx.body)
 		await sleep(100)
 		equal(await fx.fetchBroker(), undefined)
-		await rmFromMocksDir(fx.file)
+		await mocksDir.rm(fx.file)
 	})
 
 	test('register', async () => {
@@ -1176,27 +1176,27 @@ describe('Registering Mocks', () => {
 		const fx0 = new FixtureExternal('reg0/runtime0.GET.200.txt')
 		let version
 		before(async () => {
-			await makeDirInMocks('reg0')
-			await writeInMocksDir(fx0.file, fx0.body)
+			await mocksDir.mkdir('reg0')
+			await mocksDir.write(fx0.file, fx0.body)
 			version = await resolveOnNextSyncVersion(-1)
 		})
 
 		const fx = new FixtureExternal('runtime1.GET.200.txt')
 		test('responds when a file is added', async () => {
 			const prom = resolveOnNextSyncVersion(version)
-			await writeInMocksDir(fx.file, fx.body)
+			await mocksDir.write(fx.file, fx.body)
 			equal(await prom, version + 1)
 		})
 
 		test('responds when a file is deleted', async () => {
 			const prom = resolveOnNextSyncVersion(version + 1)
-			await rmFromMocksDir(fx.file)
+			await mocksDir.rm(fx.file)
 			equal(await prom, version + 2)
 		})
 
 		test('responds when dir is renamed', async () => {
 			const prom = resolveOnNextSyncVersion(version + 2)
-			await renameInMocksDir('reg0', 'reg1')
+			await mocksDir.rename('reg0', 'reg1')
 			equal(await prom, version + 3)
 
 			const s = await fetchState()
@@ -1209,7 +1209,7 @@ describe('Registering Mocks', () => {
 		await fx.writeExternally()
 		config.watcherDebounceMs = 100 // Because on macOS rmdir triggers a few events
 		const nextVerPromise = resolveOnNextSyncVersion()
-		await rmDirFromMocks('api/bulk-delete')
+		await mocksDir.rmdir('api/bulk-delete')
 		await nextVerPromise
 		equal(await fx.fetchBroker(), undefined)
 		await sleep(50) // Only for Docker, not sure why we need to delay the server teardown 

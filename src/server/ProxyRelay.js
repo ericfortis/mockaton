@@ -4,11 +4,12 @@ import { randomUUID } from 'node:crypto'
 import { extFor } from './utils/mime.js'
 import { write, isFile, resolveIn } from './utils/fs.js'
 import { BodyReaderError } from './utils/HttpIncomingMessage.js'
-
-import { config } from './config.js'
 import { logger } from './utils/logger.js'
+
 import { makeMockFilename } from '../client/Filename.js'
 import { EXT_EMPTY, EXT_UNKNOWN_MIME } from '../client/ApiConstants.js'
+
+import { config } from './config.js'
 
 
 export async function proxy(req, response, delay) {

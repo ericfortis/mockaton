@@ -38,6 +38,10 @@ export const uiSyncVersion = new class extends EventEmitter {
 	}
 }
 
+export function emitChange() {
+	uiSyncVersion.increment()
+}
+
 
 export function watchMocksDir() {
 	const dir = config.mocksDir

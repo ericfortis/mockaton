@@ -4,13 +4,13 @@
  */
 
 import { join, relative } from 'node:path'
+
 import { write, rm, isFile, resolveIn } from './utils/fs.js'
-
-import openapi from '../../www/src/assets/openapi.json' with { type: 'json' }
-import pkgJSON from '../../package.json' with { type: 'json' }
-
+import { removeQueryStringAndFragment } from './utils/HttpIncomingMessage.js'
 import { sseClientHotReload } from './utils/WatcherDevClient.js'
-import { stopMocksDirWatcher, sseClientSyncVersion, uiSyncVersion, watchMocksDir } from './Watcher.js'
+
+import pkgJSON from '../../package.json' with { type: 'json' }
+import openapi from '../../www/src/assets/openapi.json' with { type: 'json' }
 
 import { API } from '../client/ApiConstants.js'
 import { IndexHtml, CSP } from '../client/IndexHtml.js'
@@ -18,7 +18,7 @@ import { IndexHtml, CSP } from '../client/IndexHtml.js'
 import { cookie } from './cookie.js'
 import { config, ConfigValidator } from './config.js'
 import * as mockBrokersCollection from './mockBrokersCollection.js'
-import { removeQueryStringAndFragment } from './utils/HttpIncomingMessage.js'
+import * as Watcher  from './Watcher.js'
 
 
 export const CLIENT_ASSETS = join(import.meta.dirname, '../client')
@@ -32,7 +32,7 @@ const getReqs = new Map([
 
 	[API.root, serveDashboard],
 	[API.state, getState],
-	[API.syncVersion, sseClientSyncVersion],
+	[API.syncVersion, Watcher.sseClientSyncVersion],
 
 	[API.watchHotReload, onDevWatch],
 	[API.openAPI, (_, response) => response.json(openapi)],
@@ -121,7 +121,7 @@ function reset(_, response) {
 	mockBrokersCollection.init()
 	cookie.init(config.cookies)
 	response.ok()
-	uiSyncVersion.increment()
+	Watcher.emitChange()
 }
 
 
@@ -133,7 +133,7 @@ async function setCorsAllowed(req, response) {
 	else {
 		config.corsAllowed = corsAllowed
 		response.ok()
-		uiSyncVersion.increment()
+		Watcher.emitChange()
 	}
 }
 
@@ -146,7 +146,7 @@ async function setGlobalDelay(req, response) {
 	else {
 		config.delay = delay
 		response.ok()
-		uiSyncVersion.increment()
+		Watcher.emitChange()
 	}
 }
 
@@ -158,7 +158,7 @@ async function setGlobalDelayJitter(req, response) {
 	else {
 		config.delayJitter = jitter
 		response.ok()
-		uiSyncVersion.increment()
+		Watcher.emitChange()
 	}
 }
 
@@ -170,7 +170,7 @@ async function selectCookie(req, response) {
 		response.unprocessable(error?.message || error)
 	else {
 		response.json(cookie.list())
-		uiSyncVersion.increment()
+		Watcher.emitChange()
 	}
 }
 
@@ -183,7 +183,7 @@ async function setProxyFallback(req, response) {
 	else {
 		config.proxyFallback = fallback
 		response.ok()
-		uiSyncVersion.increment()
+		Watcher.emitChange()
 	}
 }
 
@@ -195,7 +195,7 @@ async function setCollectProxied(req, response) {
 	else {
 		config.collectProxied = collectProxied
 		response.ok()
-		uiSyncVersion.increment()
+		Watcher.emitChange()
 	}
 }
 
@@ -205,7 +205,7 @@ async function bulkUpdateBrokersByCommentTag(req, response) {
 	const comment = await req.json()
 	mockBrokersCollection.setMocksMatchingComment(comment)
 	response.ok()
-	uiSyncVersion.increment()
+	Watcher.emitChange()
 }
 
 
@@ -217,7 +217,7 @@ async function selectMock(req, response) {
 	else {
 		broker.selectFile(file)
 		response.json(broker)
-		uiSyncVersion.increment()
+		Watcher.emitChange()
 	}
 }
 
@@ -230,7 +230,7 @@ async function toggleRouteStatus(req, response) {
 	else {
 		broker.toggleStatus(status)
 		response.json(broker)
-		uiSyncVersion.increment()
+		Watcher.emitChange()
 	}
 }
 
@@ -245,7 +245,7 @@ async function setRouteIsDelayed(req, response) {
 	else {
 		broker.setDelayed(delayed)
 		response.json(broker)
-		uiSyncVersion.increment()
+		Watcher.emitChange()
 	}
 }
 
@@ -262,7 +262,7 @@ async function setRouteIsProxied(req, response) {
 	else {
 		broker.setProxied(proxied)
 		response.json(broker)
-		uiSyncVersion.increment()
+		Watcher.emitChange()
 	}
 }
 
@@ -283,7 +283,7 @@ async function writeMock(req, response) {
 
 	if (!config.watcherEnabled) {
 		mockBrokersCollection.registerMock(file, true)
-		uiSyncVersion.increment()
+		Watcher.emitChange()
 	}
 	response.ok()
 }
@@ -306,7 +306,7 @@ async function deleteMock(req, response) {
 
 	if (!config.watcherEnabled) {
 		mockBrokersCollection.unregisterMock(file)
-		uiSyncVersion.increment()
+		Watcher.emitChange()
 	}
 	response.ok()
 }
@@ -319,9 +319,9 @@ async function setWatchMocks(req, response) {
 		response.unprocessable(`Expected boolean for "watchMocks"`)
 	else {
 		if (enabled)
-			watchMocksDir()
+			Watcher.watchMocksDir()
 		else
-			stopMocksDirWatcher()
+			Watcher.stopMocksDirWatcher()
 		response.ok()
 	}
 }

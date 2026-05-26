@@ -1,5 +1,5 @@
 import { relative } from 'node:path'
-import { config } from './storeConfig.js'
+import { config } from './stores/config.js'
 import { decode, removeQueryStringAndFragment } from './utils/HttpIncomingMessage.js'
 import { parseFilename, removeTrailingSlash } from '../client/Filename.js'
 

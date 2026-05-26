@@ -4,7 +4,7 @@ import { pathToFileURL } from 'node:url'
 import { resolve, join } from 'node:path'
 import { parseArgs } from 'node:util'
 
-import { config } from './storeConfig.js'
+import { config } from './stores/config.js'
 import { isFile, isDirectory } from './utils/fs.js'
 import { Mockaton } from '../../index.js'
 import pkgJSON from '../../package.json' with { type: 'json' }

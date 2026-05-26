@@ -2,9 +2,9 @@ import { join } from 'node:path'
 import { watch } from 'node:fs'
 import { EventEmitter } from 'node:events'
 
-import { config } from './storeConfig.js'
-import { isFile, isDirectory } from './utils/fs.js'
-import * as mockBrokerCollection from './storeMockBrokersCollection.js'
+import { config } from './config.js'
+import * as brokers from './brokers.js'
+import { isFile, isDirectory } from '../utils/fs.js'
 
 
 let mocksWatcher = null
@@ -50,14 +50,14 @@ export function watchMocksDir() {
 			return
 
 		if (isDirectory(join(dir, file))) {
-			mockBrokerCollection.init()
+			brokers.init()
 			uiSyncVersion.increment()
 		}
 		else if (!isFile(join(dir, file))) { // file deleted
-			mockBrokerCollection.unregisterMock(file)
+			brokers.unregisterMock(file)
 			uiSyncVersion.increment()
 		}
-		else if (mockBrokerCollection.registerMock(file, Boolean('isFromWatcher')))
+		else if (brokers.registerMock(file, Boolean('isFromWatcher')))
 			uiSyncVersion.increment()
 		else {
 			// ignore file edits

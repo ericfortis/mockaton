@@ -15,10 +15,10 @@ import openapi from '../../www/src/assets/openapi.json' with { type: 'json' }
 import { API } from '../client/ApiConstants.js'
 import { IndexHtml, CSP } from '../client/IndexHtml.js'
 
-import { cookie } from './storeCookie.js'
-import { config, ConfigValidator } from './storeConfig.js'
-import * as mockBrokersCollection from './storeMockBrokersCollection.js'
-import * as Watcher  from './Watcher.js'
+import { cookie } from './stores/cookies.js'
+import { config, ConfigValidator } from './stores/config.js'
+import * as brokers from './stores/brokers.js'
+import * as Watcher  from './stores/Watcher.js'
 
 
 export const CLIENT_ASSETS = join(import.meta.dirname, '../client')
@@ -94,9 +94,9 @@ function serveDashboard(_, response) {
 function getState(_, response) {
 	response.json({
 		cookies: cookie.list(),
-		comments: mockBrokersCollection.extractAllComments(),
+		comments: brokers.extractAllComments(),
 
-		brokersByMethod: mockBrokersCollection.all(),
+		brokersByMethod: brokers.all(),
 
 		delay: config.delay,
 		delayJitter: config.delayJitter,
@@ -118,7 +118,7 @@ function onDevWatch(req, response) {
 /** # PATCH */
 
 function reset(_, response) {
-	mockBrokersCollection.init()
+	brokers.init()
 	cookie.init(config.cookies)
 	response.ok()
 	Watcher.emitChange()
@@ -203,7 +203,7 @@ async function setCollectProxied(req, response) {
 
 async function bulkUpdateBrokersByCommentTag(req, response) {
 	const comment = await req.json()
-	mockBrokersCollection.setMocksMatchingComment(comment)
+	brokers.setMocksMatchingComment(comment)
 	response.ok()
 	Watcher.emitChange()
 }
@@ -211,7 +211,7 @@ async function bulkUpdateBrokersByCommentTag(req, response) {
 
 async function selectMock(req, response) {
 	const file = await req.json()
-	const broker = mockBrokersCollection.brokerByFilename(file)
+	const broker = brokers.brokerByFilename(file)
 	if (!broker || !broker.hasMock(file))
 		response.unprocessable(`Missing Mock: ${file}`)
 	else {
@@ -224,7 +224,7 @@ async function selectMock(req, response) {
 
 async function toggleRouteStatus(req, response) {
 	const [method, urlMask, status] = await req.json()
-	const broker = mockBrokersCollection.brokerByRoute(method, urlMask)
+	const broker = brokers.brokerByRoute(method, urlMask)
 	if (!broker)
 		response.unprocessable(`Route does not exist: ${method} ${urlMask}`)
 	else {
@@ -237,7 +237,7 @@ async function toggleRouteStatus(req, response) {
 
 async function setRouteIsDelayed(req, response) {
 	const [method, urlMask, delayed] = await req.json()
-	const broker = mockBrokersCollection.brokerByRoute(method, urlMask)
+	const broker = brokers.brokerByRoute(method, urlMask)
 	if (!broker)
 		response.unprocessable(`Route does not exist: ${method} ${urlMask}`)
 	else if (typeof delayed !== 'boolean')
@@ -252,7 +252,7 @@ async function setRouteIsDelayed(req, response) {
 
 async function setRouteIsProxied(req, response) {
 	const [method, urlMask, proxied] = await req.json()
-	const broker = mockBrokersCollection.brokerByRoute(method, urlMask)
+	const broker = brokers.brokerByRoute(method, urlMask)
 	if (!broker)
 		response.unprocessable(`Route does not exist: ${method} ${urlMask}`)
 	else if (typeof proxied !== 'boolean')
@@ -282,7 +282,7 @@ async function writeMock(req, response) {
 	await write(path, content)
 
 	if (!config.watcherEnabled) {
-		mockBrokersCollection.registerMock(file, true)
+		brokers.registerMock(file, true)
 		Watcher.emitChange()
 	}
 	response.ok()
@@ -305,7 +305,7 @@ async function deleteMock(req, response) {
 	await rm(path)
 
 	if (!config.watcherEnabled) {
-		mockBrokersCollection.unregisterMock(file)
+		brokers.unregisterMock(file)
 		Watcher.emitChange()
 	}
 	response.ok()

@@ -10,7 +10,7 @@ import { equal, deepEqual, match } from 'node:assert/strict'
 import { describe, test, before, beforeEach, after } from 'node:test'
 
 import CONFIG from './Mockaton.test.config.js'
-import { config } from './storeConfig.js'
+import { config } from './stores/config.js'
 import { mimeFor } from './utils/mime.js'
 import { API } from '../client/ApiConstants.js'
 import { Commander } from '../client/ApiCommander.js'

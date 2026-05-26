@@ -2,13 +2,13 @@ import { resolve } from 'node:path'
 import { lstatSync } from 'node:fs'
 import { METHODS } from 'node:http'
 
-import { logger } from './utils/logger.js'
-import { registerMimes } from './utils/mime.js'
-import { openInBrowser } from './utils/openInBrowser.js'
-import { is, validate, isInt, isFloat, isOneOf, optionalURL } from './utils/validate.js'
-import { validateCorsAllowedMethods, validateCorsAllowedOrigins } from './utils/http-cors.js'
+import { logger } from '../utils/logger.js'
+import { registerMimes } from '../utils/mime.js'
+import { openInBrowser } from '../utils/openInBrowser.js'
+import { is, validate, isInt, isFloat, isOneOf, optionalURL } from '../utils/validate.js'
+import { validateCorsAllowedMethods, validateCorsAllowedOrigins } from '../utils/http-cors.js'
 
-import { jsToJsonPlugin } from './MockDispatcherPlugins.js'
+import { jsToJsonPlugin } from '../MockDispatcherPlugins.js'
 
 /** @type {{
  * 	[K in keyof Config]-?: [

@@ -321,7 +321,7 @@ async function setWatchMocks(req, response) {
 		if (enabled)
 			Watcher.watchMocksDir()
 		else
-			Watcher.stopMocksDirWatcher()
+			Watcher.unwatchMocksDir()
 		response.ok()
 	}
 }

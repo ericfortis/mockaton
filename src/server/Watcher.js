@@ -68,7 +68,7 @@ export function watchMocksDir() {
 	})
 }
 
-export function stopMocksDirWatcher() {
+export function unwatchMocksDir() {
 	mocksWatcher?.close()
 	mocksWatcher = null
 }

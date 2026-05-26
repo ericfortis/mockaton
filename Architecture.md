@@ -57,8 +57,11 @@ There are two plugins by default. One runs for `.js` or `.ts` files
 and adds the corresponding `Content-Type` header. 
 
 
-
-
+## Server Store
+Currently, the server-side state is in-memory across these files:
+- config.js
+- cookie.js
+- mockBrockersCollection.js
 
 
 

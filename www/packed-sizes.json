@@ -26,13 +26,13 @@
 	},
 	"/index.html": {
 		"hash": "HkrlAB6lU4WvGprPN0jxw3j4er0",
-		"delta": 50,
+		"delta": 0,
 		"size": 31363
 	},
 	"/installation.html": {
-		"hash": "wF2ePhhjOwcXwbolIKVtPBKlwr8",
-		"delta": 0,
-		"size": 22654
+		"hash": "3c8mi-PyDdFH1Y6-g3aCNMntt9w",
+		"delta": 119,
+		"size": 22773
 	},
 	"/plugins.html": {
 		"hash": "LLF5L7U-YOTS4cF-UGr8-mYu93M",

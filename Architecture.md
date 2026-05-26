@@ -27,7 +27,7 @@ mock has been added, deleted, or renamed. Also, when config changes.
 
 
 ## Entry Point
-`npx mockaton --port 4040 my-mocks-dir`
+`mockaton --port 4040 my-mocks-dir`
 
 The NPM binary points to [cli.js](src/server/cli.js), which instantiates
 the server. End users are allowed to do that too as follows:

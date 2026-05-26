@@ -11,12 +11,14 @@ export default (url) => htmlTemplate({
 		</p>
 
 		<h2>Option 1: CLI</h2>
+		${shell`npm install -g mockaton`}
+		
 		<p>Create a sample mock in the default directory (<code>./mockaton-mocks</code>)</p>
 		${shell`
 mkdir -p         my-mocks/api
 echo "[1,2,3]" > my-mocks/api/foo.GET.200.json
 `}
-		${shell`npx mockaton --port 4040 my-mocks`}
+		${shell`mockaton --port 4040 my-mocks`}
 
 		<p>Test it:</p>
 		${shell`curl localhost:4040/api/foo`}

@@ -13,7 +13,7 @@ import { API } from '../client/ApiConstants.js'
 
 import { CLIENT_ASSETS, handleApiRequest } from './Api.js'
 import { cookie } from './stores/cookies.js'
-import { config, setup } from './stores/config.js'
+import { config, initConfig } from './stores/config.js'
 import * as brokers from './stores/brokers.js'
 import { dispatchMock } from './MockDispatcher.js'
 import { watchMocksDir } from './stores/Watcher.js'
@@ -21,7 +21,7 @@ import { watchMocksDir } from './stores/Watcher.js'
 
 export function Mockaton(options) {
 	return new Promise((resolve, reject) => {
-		setup(options)
+		initConfig(options)
 		cookie.init(config.cookies)
 		brokers.init()
 

@@ -116,7 +116,7 @@
 		"/mockaton/reset": {
 			"patch": {
 				"summary": "Re-initialize Mockaton",
-				"description": "The selected mocks, cookies, and delays go back to their defaults, but `proxyFallback`, `collectProxied`, and `corsAllowed` are not affected.",
+				"description": "Initializes the brokers collections and config options",
 				"x-js-client-example": "await mockaton.reset()",
 				"responses": {
 					"200": {

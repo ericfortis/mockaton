@@ -16,7 +16,7 @@ import { API } from '../client/ApiConstants.js'
 import { IndexHtml, CSP } from '../client/IndexHtml.js'
 
 import { cookie } from './stores/cookies.js'
-import { config, ConfigValidator } from './stores/config.js'
+import { config, ConfigValidator, reinitConfig } from './stores/config.js'
 import * as brokers from './stores/brokers.js'
 import * as Watcher  from './stores/Watcher.js'
 
@@ -118,6 +118,7 @@ function onDevWatch(req, response) {
 /** # PATCH */
 
 function reset(_, response) {
+	reinitConfig()
 	brokers.init()
 	cookie.init(config.cookies)
 	response.ok()

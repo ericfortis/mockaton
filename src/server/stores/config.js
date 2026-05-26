@@ -47,15 +47,12 @@ const schema = {
 	corsCredentials: [true, is(Boolean)],
 	corsMaxAge: [0, is(Number)],
 
-	plugins: [
-		[
-			[/\.(js|ts)$/, jsToJsonPlugin]
-		], is(Array)],
-
-	onReady: [await openInBrowser, is(Function)],
-
 	hotReload: [false, is(Boolean)],
-	bypassImportCache: [true, is(Boolean)]
+	bypassImportCache: [true, is(Boolean)],
+
+	// Non-serializable
+	plugins: [[[/\.(js|ts)$/, jsToJsonPlugin]], is(Array)],
+	onReady: [await openInBrowser, is(Function)],
 }
 
 
@@ -73,15 +70,23 @@ export const config = Object.seal(defaults)
 export const ConfigValidator = Object.freeze(validators)
 
 
+let originalOpts = {}
+
 /** @param {Partial<Config>} opts */
-export function setup(opts) {
+export function initConfig(opts) {
 	if (opts.mocksDir)
 		opts.mocksDir = resolve(opts.mocksDir)
 
 	Object.assign(config, opts)
+	originalOpts = deepCloneExcluding(config, 'plugins', 'onReady')
+
 	validate(config, ConfigValidator)
 	logger.setLevel(config.logLevel)
 	registerMimes(config.extraMimes)
+}
+
+export function reinitConfig() {
+	initConfig(originalOpts)
 }
 
 export const isFileAllowed = f => !config.ignore.test(f)
@@ -89,3 +94,12 @@ export const isFileAllowed = f => !config.ignore.test(f)
 export const calcDelay = () => config.delayJitter
 	? config.delay * (1 + Math.random() * config.delayJitter)
 	: config.delay
+
+
+function deepCloneExcluding(obj, ...exclude) {
+	const res = {}
+	for (const [k, v] of Object.entries(obj))
+		if (!exclude.includes(k))
+			res[k] = structuredClone(v)
+	return res
+}

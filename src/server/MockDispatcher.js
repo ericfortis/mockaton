@@ -1,10 +1,10 @@
 import { join } from 'node:path'
 
 import { proxy } from './ProxyRelay.js'
-import { cookie } from './cookie.js'
+import { cookie } from './storeCookie.js'
 import { echoFilePlugin } from './MockDispatcherPlugins.js'
-import { brokerByRoute } from './mockBrokersCollection.js'
-import { config, calcDelay } from './config.js'
+import { brokerByRoute } from './storeMockBrokersCollection.js'
+import { config, calcDelay } from './storeConfig.js'
 
 import { logger } from './utils/logger.js'
 import { parseFilename } from '../client/Filename.js'

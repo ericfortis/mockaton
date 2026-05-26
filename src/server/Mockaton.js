@@ -12,9 +12,9 @@ import { watchDevSPA } from './utils/WatcherDevClient.js'
 import { API } from '../client/ApiConstants.js'
 
 import { CLIENT_ASSETS, handleApiRequest } from './Api.js'
-import { cookie } from './cookie.js'
-import { config, setup } from './config.js'
-import * as mockBrokerCollection from './mockBrokersCollection.js'
+import { cookie } from './storeCookie.js'
+import { config, setup } from './storeConfig.js'
+import * as mockBrokerCollection from './storeMockBrokersCollection.js'
 import { dispatchMock } from './MockDispatcher.js'
 import { watchMocksDir } from './Watcher.js'
 

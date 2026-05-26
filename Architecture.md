@@ -55,14 +55,3 @@ Otherwise, it applies the matching plugin and ends the response.
 There are two plugins by default. One runs for `.js` or `.ts` files
 (`jsToJsonPlugin`). The other one simply reads from the file-system
 and adds the corresponding `Content-Type` header. 
-
-
-## Server Store
-Currently, the server-side state is in-memory across these files:
-- config.js
-- cookie.js
-- mockBrockersCollection.js
-
-
-
-

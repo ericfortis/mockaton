@@ -2,9 +2,9 @@ import { join } from 'node:path'
 import { watch } from 'node:fs'
 import { EventEmitter } from 'node:events'
 
-import { config } from './config.js'
+import { config } from './storeConfig.js'
 import { isFile, isDirectory } from './utils/fs.js'
-import * as mockBrokerCollection from './mockBrokersCollection.js'
+import * as mockBrokerCollection from './storeMockBrokersCollection.js'
 
 
 let mocksWatcher = null

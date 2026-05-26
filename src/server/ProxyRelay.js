@@ -9,7 +9,7 @@ import { logger } from './utils/logger.js'
 import { makeMockFilename } from '../client/Filename.js'
 import { EXT_EMPTY, EXT_UNKNOWN_MIME } from '../client/ApiConstants.js'
 
-import { config } from './config.js'
+import { config } from './storeConfig.js'
 
 
 export async function proxy(req, response, delay) {

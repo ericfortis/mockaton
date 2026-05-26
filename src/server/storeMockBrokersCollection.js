@@ -1,7 +1,7 @@
 import { basename } from 'node:path'
 
 import { MockBroker } from './MockBroker.js'
-import { config, isFileAllowed } from './config.js'
+import { config, isFileAllowed } from './storeConfig.js'
 import { listFilesRecursively } from './utils/fs.js'
 import { parseFilename } from '../client/Filename.js'
 

@@ -15,9 +15,9 @@ import openapi from '../../www/src/assets/openapi.json' with { type: 'json' }
 import { API } from '../client/ApiConstants.js'
 import { IndexHtml, CSP } from '../client/IndexHtml.js'
 
-import { cookie } from './cookie.js'
-import { config, ConfigValidator } from './config.js'
-import * as mockBrokersCollection from './mockBrokersCollection.js'
+import { cookie } from './storeCookie.js'
+import { config, ConfigValidator } from './storeConfig.js'
+import * as mockBrokersCollection from './storeMockBrokersCollection.js'
 import * as Watcher  from './Watcher.js'
 
 

@@ -18,7 +18,7 @@ import { IndexHtml, CSP } from '../client/IndexHtml.js'
 import { cookie } from './stores/cookies.js'
 import { config, ConfigValidator, reinitConfig } from './stores/config.js'
 import * as brokers from './stores/brokers.js'
-import * as Watcher  from './stores/Watcher.js'
+import * as Watcher from './stores/Watcher.js'
 
 
 export const CLIENT_ASSETS = join(import.meta.dirname, '../client')
@@ -269,19 +269,21 @@ async function setRouteIsProxied(req, response) {
 
 
 async function writeMock(req, response) {
-	if (config.readOnly)
-		return response.forbidden('Forbidden: Mockaton is in read-only mode. See config.readOnly, or --no-read-only (CLI)')
-
+	if (config.readOnly) {
+		response.forbidden('Forbidden: Mockaton is in read-only mode. See config.readOnly')
+		return
+	}
 	const [file, content] = await req.json()
-	if (typeof file !== 'string')
-		return response.unprocessable('Invalid or missing filename. Expected: JSON [filename, content]')
-
+	if (typeof file !== 'string') {
+		response.unprocessable('Invalid or missing filename. Expected: JSON [filename, content]')
+		return
+	}
 	const path = await resolveIn(config.mocksDir, file)
-	if (!path)
-		return response.forbidden('Filename path resolves outside config.mocksDir')
-
+	if (!path) {
+		response.forbidden('Filename path resolves outside config.mocksDir')
+		return
+	}
 	await write(path, content)
-
 	if (!config.watcherEnabled) {
 		brokers.registerMock(file, true)
 		Watcher.emitChange()
@@ -291,19 +293,19 @@ async function writeMock(req, response) {
 
 
 async function deleteMock(req, response) {
-	if (config.readOnly)
-		return response.forbidden('Forbidden: Mockaton is in read-only mode. See config.readOnly, or --no-read-only (CLI)')
-
+	if (config.readOnly) {
+		response.forbidden('Forbidden: Mockaton is in read-only mode. See config.readOnly')
+		return
+	}
 	const file = await req.json()
 	const path = await resolveIn(config.mocksDir, file)
 
 	if (!path)
-		return response.forbidden('Filename path resolves outside config.mocksDir')
-
-	if (!isFile(path))
-		return response.unprocessable(`Missing Mock: ${file}`)
-
-	await rm(path)
+		response.forbidden('Filename path resolves outside config.mocksDir')
+	else if (!isFile(path))
+		response.unprocessable(`Missing Mock: ${file}`)
+	else
+		await rm(path)
 
 	if (!config.watcherEnabled) {
 		brokers.unregisterMock(file)

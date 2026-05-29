@@ -16,9 +16,9 @@ mockaton --port 2020 my-mocks-dir/
 ```
 
 Mockaton will serve the files on the given directory. It's a file-system based router, so
-filenames can have dynamic parameters. Also, filenames can have comments, which are
-anything within parentheses, this way each route can have different mock file variants.
-Similarly, each route can have different response status code variants.
+filenames can have dynamic parameters in square brackets. Also, filenames can have
+comments, which are anything within parentheses, this way each route can have different
+mock file variants. Similarly, each route can have different response status code variants.
 
 
 | Route | Filename | Description |

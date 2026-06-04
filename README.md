@@ -54,17 +54,16 @@ mock file variants. Similarly, each route can have different response status cod
 
 | Route | Filename | Description |
 | -----| -----| ---|
-| /api/company/123 | api/company/[id].GET.200.ts | `[id]` is a dynamic parameter. `.ts`, and `.js` are sent as JSON by default |
-| /media/avatar.png | media/avatar.png | Statics assets don't need the above extension |
-| /api/login | api/login(invalid attempt).POST.401.ts | **Anything within parenthesis is a comment**, they are ignored when routing |
-| /api/login | api/login(default).GET.200.ts | `(default)` is a special comment; otherwise, the first mock variant in alphabetical order wins  |
-| /api/login | api/login(locked out user).POST.423.json | `.json` is allowed too |
+| /api/company/123 | api/company/[id].GET.200.ts | `[id]` is a dynamic parameter. `.ts`, and `.js` are sent as JSON by default. |
+| /media/avatar.png | media/avatar.png | Statics assets don't need the above extension. |
+| /api/login | api/login(invalid attempt).POST.401.ts | Anything within parenthesis is a comment. They are ignored when routing. |
+| /api/login | api/login(default).GET.200.ts | `(default)` is a special comment; otherwise, the first mock variant in alphabetical order wins.  |
+| /api/login | api/login(locked out user).POST.423.json | `.json` is allowed too. |
 
 
 ## Docs
-- [Configuration: CLI and mockaton.config.js](https://mockaton.com/config).
-- [Programmatic API](https://mockaton.com/api), in which
-  you can delay a route, select a different mock file, such as a 500 error, among other options.
+- [Configuration](https://mockaton.com/config) : CLI and mockaton.config.js
+- [Programmatic API](https://mockaton.com/api), in which you can delay a route, select a different mock file, such as a 500 error, among other options
 
 <!-- SKILLS_IGNORE_BEGIN -->
 ## How to scrape your backend APIs?

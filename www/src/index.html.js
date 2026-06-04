@@ -94,27 +94,27 @@ mockaton my-mocks-dir/
 			<tr>
 				<td>/api/company/123</td>
 				<td>api/company/[id].GET.200.json</td>
-				<td><code>[id]</code> is a dynamic parameter</td>
+				<td><code>[id]</code> is a dynamic parameter.</td>
 			</tr>
 			<tr>
 				<td>/media/avatar.png</td>
 				<td>media/avatar.png</td>
-				<td>Statics assets don’t need the above extension</td>
+				<td>Statics assets don’t need the above extension.</td>
 			</tr>
 			<tr>
 				<td>/api/login</td>
 				<td>api/login(invalid attempt).POST.401.json</td>
-				<td><strong>Anything within parenthesis is a comment</strong>, they are ignored when routing</td>
+				<td>Anything within parenthesis is a comment. They are ignored when routing.</td>
 			</tr>
 			<tr>
 				<td>/api/login</td>
 				<td>api/login(default).GET.200.json</td>
-				<td><code>(default)</code> is a special comment; otherwise, the first mock variant in alphabetical order wins</td>
+				<td><code>(default)</code> is a special comment; otherwise, the first mock variant in alphabetical order wins.</td>
 			</tr>
 			<tr>
 				<td>/api/login</td>
 				<td>api/login(locked out user).POST.423.ts</td>
-				<td>TypeScript or JavaScript mocks are sent as JSON by default</td>
+				<td>TypeScript or JavaScript mocks are sent as JSON by default.</td>
 			</tr>
 			</tbody>
 		</table>

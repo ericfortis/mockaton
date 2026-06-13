@@ -1,4 +1,4 @@
-import { resolve } from 'node:path'
+import { resolve, basename } from 'node:path'
 import { lstatSync } from 'node:fs'
 import { METHODS } from 'node:http'
 
@@ -89,7 +89,7 @@ export function reinitConfig() {
 	initConfig(originalOpts)
 }
 
-export const isFileAllowed = f => !config.ignore.test(f)
+export const isFileAllowed = f => !config.ignore.test(basename(f))
 
 export const calcDelay = () => config.delayJitter
 	? config.delay * (1 + Math.random() * config.delayJitter)

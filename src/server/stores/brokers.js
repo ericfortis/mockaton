@@ -1,5 +1,3 @@
-import { basename } from 'node:path'
-
 import { config, isFileAllowed } from './config.js'
 import { MockBroker } from '../MockBroker.js'
 import { listFilesRecursively } from '../utils/fs.js'
@@ -35,8 +33,7 @@ export function init() {
 
 /** @returns {boolean} registered */
 export function registerMock(file, isFromWatcher = false) {
-	if (brokerByFilename(file)?.hasMock(file) ||
-		!isFileAllowed(basename(file)))
+	if (brokerByFilename(file)?.hasMock(file) || !isFileAllowed(file))
 		return false
 
 	const { method, urlMask } = parseFilename(file)

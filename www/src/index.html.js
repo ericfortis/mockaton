@@ -122,9 +122,8 @@ mockaton my-mocks-dir/
 
 		<h2>Docs</h2>
 		<ul>
-			<li><a href="/config">Configuration: CLI and mockaton.config.js</a></li>
-			<li><a href="/api">Programmatic API</a>, in which
-				you can delay a route, select a different mock file, such as a 500 error, among other options.
+			<li><a href="/config">Configuration:</a> CLI and mockaton.config.js</li>
+			<li><a href="/api">API:</a> Programatically, you can delay a route, select a different mock file, etc.
 			</li>
 		</ul>
 

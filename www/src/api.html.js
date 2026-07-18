@@ -17,12 +17,10 @@ export default (url) => htmlTemplate({
 			Control API
 		</h1>
 
-		<br />
+		<h2><a href="/assets/openapi.json">OpenAPI Spec ↗</a></h2>
 		<p>
-			Optionally, download the <a href="/assets/openapi.json">OpenAPI Spec ↗</a>
-			or import it:
+			If you want to import the spec:
 		</p>
-
 		${js(`
 import spec from 'mockaton/openapi.json' with { type: 'json' }
 console.log(spec)

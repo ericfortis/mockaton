@@ -4,7 +4,7 @@ import { API } from './ApiConstants.js'
 /**
  * Client for controlling Mockaton via its HTTP API
  * @see https://mockaton.com/api
- * @example const api = new Commander('http://localhost:2020')
+ * @example const mockaton = new Commander('http://localhost:2020')
  */
 export class Commander {
 	/** @param {string} mockatonServerAddr */

@@ -111,12 +111,11 @@ class UrlMatcher {
 	#buildUrlRegex(file) {
 		let { urlMask } = parseFilename(file)
 		urlMask = removeQueryStringAndFragment(urlMask)
-		urlMask = this.#escapeRegex(urlMask)
+		urlMask = RegExp.escape(urlMask)
 		urlMask = this.#disregardVariables(urlMask)
 		return new RegExp('^' + urlMask + '/*$')
 	}
 
-	#escapeRegex = str => str.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')
 	#disregardVariables = str => str.replace(/\\\[.*?\\]/g, '[^/]+')
 
 	// Appending a '/' so URLs ending with variables don't match

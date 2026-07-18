@@ -1,67 +1,67 @@
 {
 	"/api.html": {
-		"hash": "to7CNKxh4A8BWqqvZ3Tae5mdkEQ",
-		"delta": 0,
-		"size": 42825
+		"hash": "xXZ3wVh7bt2bbdgAJZJlbU4GbVk",
+		"delta": 456,
+		"size": 43281
 	},
 	"/changelog.html": {
-		"hash": "UbESoFN7_Ync0-Ibnh2UyxEquLg",
-		"delta": 0,
-		"size": 30344
+		"hash": "xbwa69J8U8xTHtC6ob36NF0wHTE",
+		"delta": 349,
+		"size": 30693
 	},
 	"/config.html": {
-		"hash": "JrDDzKXzDOvUsnJewnulie0WUQ4",
-		"delta": 0,
-		"size": 37806
+		"hash": "YbfUp6x21iDa1zkLfVmt3SuvJcU",
+		"delta": 349,
+		"size": 38155
 	},
 	"/convention.html": {
-		"hash": "uz2ohDNVRfckqY82DHevyCdGaUQ",
-		"delta": 0,
-		"size": 21155
+		"hash": "l-m8bMzvnkF6-U9j0RpU0Gs9NWM",
+		"delta": 349,
+		"size": 21504
 	},
 	"/function-mocks.html": {
-		"hash": "k9hA9sAJxGHqRDtoeKXPtj5dvTA",
-		"delta": 0,
-		"size": 28938
+		"hash": "BT7PKB8jzA1usk2KPGFPbzulNMc",
+		"delta": 349,
+		"size": 29287
 	},
 	"/index.html": {
-		"hash": "1a2upbITNkDcKBVq9D1S5wIMNWk",
-		"delta": -12,
-		"size": 31359
+		"hash": "iTXpkA4UIq_7g7cKKOn-b3sg0Lw",
+		"delta": 349,
+		"size": 31708
 	},
 	"/installation.html": {
-		"hash": "o15RwYDXs0fxhaL-85Q3Gr3cZvQ",
-		"delta": 0,
-		"size": 22773
+		"hash": "o5CTU-1SS9KfSvWfuzY4nWgOjPE",
+		"delta": 349,
+		"size": 23122
 	},
 	"/plugins.html": {
-		"hash": "9GbTgZevbbgLI5LfgRMO9L4ZVZY",
-		"delta": 0,
-		"size": 24266
+		"hash": "ftSzG9PleCs-iWkpN4xuwuEMiCA",
+		"delta": 349,
+		"size": 24615
 	},
 	"/privacy-and-security.html": {
-		"hash": "695eae7PcKmwfcZcApsN7EnfM3A",
-		"delta": 0,
-		"size": 18874
+		"hash": "xT1M5C_RxBx-uHXcsmP1arFzRoM",
+		"delta": 349,
+		"size": 19223
 	},
 	"/related-tech.html": {
-		"hash": "s68fWUT3y0uuXfRFmqF-cBhsDiA",
-		"delta": 0,
-		"size": 20013
+		"hash": "m5D7-Le34mq_4nDM9qbup11ZlL8",
+		"delta": 349,
+		"size": 20362
 	},
 	"/scraping.html": {
-		"hash": "E4NCamO8WA8dYnj4CkeQ4W1jbQs",
-		"delta": 0,
-		"size": 19580
+		"hash": "F4zkVK8UokBcDQbpcCBoIqS--Mw",
+		"delta": 349,
+		"size": 19929
 	},
 	"/use-cases.html": {
-		"hash": "KbYTm5BnCA27QSzhmQhI2rCDGgk",
-		"delta": 0,
-		"size": 20940
+		"hash": "sWzV2zbuwoyDlCWp9NHnOv6qbuw",
+		"delta": 349,
+		"size": 21289
 	},
 	"/vite.html": {
-		"hash": "3tUX8oCPLSz5LH9A-0Pi_6m453E",
-		"delta": 0,
-		"size": 20186
+		"hash": "4NmTE_kBUAWNwCBl6PAx3D-eLPM",
+		"delta": 349,
+		"size": 20535
 	}
 }

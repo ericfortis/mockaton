@@ -32,8 +32,7 @@ mock file variants. Similarly, each route can have different response status cod
 
 ## Docs
 - [Configuration](https://mockaton.com/config) : CLI and mockaton.config.js
-- [Programmatic API](https://mockaton.com/api), in which
-  you can delay a route, select a different mock file, such as a 500 error, among other options
+- [Programmatic API](https://mockaton.com/api), in which you can delay a route, select a different mock file, such as a 500 error, among other options
 
 
 

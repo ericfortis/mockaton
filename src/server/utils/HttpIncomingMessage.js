@@ -16,6 +16,8 @@ export class BodyReaderError extends Error {
 }
 
 export class IncomingMessage extends http.IncomingMessage {
+	static BodyReaderError = BodyReaderError
+
 	json() {
 		return this.body(JSON.parse)
 	}
@@ -29,18 +31,18 @@ export class IncomingMessage extends http.IncomingMessage {
 		for await (const chunk of this) {
 			lengthSoFar += chunk.length
 			if (lengthSoFar > MAX_BODY_SIZE)
-				throw new BodyReaderError(`Body too large. Max is ${MAX_BODY_SIZE} bytes`)
+				throw new IncomingMessage.BodyReaderError(`Body too large. Max is ${MAX_BODY_SIZE} bytes`)
 			chunks.push(chunk)
 		}
 
 		if (lengthSoFar !== expectedLength)
-			throw new BodyReaderError('Length mismatch')
+			throw new IncomingMessage.BodyReaderError('Length mismatch')
 
 		try {
 			return parser(Buffer.concat(chunks).toString())
 		}
 		catch (_) {
-			throw new BodyReaderError('Could not parse')
+			throw new IncomingMessage.BodyReaderError('Could not parse')
 		}
 	}
 }

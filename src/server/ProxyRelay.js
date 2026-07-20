@@ -3,7 +3,7 @@ import { randomUUID } from 'node:crypto'
 
 import { extFor } from './utils/mime.js'
 import { write, isFile, resolveIn } from './utils/fs.js'
-import { BodyReaderError } from './utils/HttpIncomingMessage.js'
+import { IncomingMessage } from './utils/HttpIncomingMessage.js'
 import { logger } from './utils/logger.js'
 
 import { makeMockFilename } from '../client/Filename.js'
@@ -24,7 +24,7 @@ export async function proxy(req, response, delay) {
 		})
 	}
 	catch (error) { // TESTME
-		if (error instanceof BodyReaderError)
+		if (error instanceof IncomingMessage.BodyReaderError)
 			response.unprocessable(error.name)
 		else {
 			response.badGateway()

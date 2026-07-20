@@ -6,7 +6,7 @@ import pkgJSON from '../../package.json' with { type: 'json' }
 import { logger } from './utils/logger.js'
 import { ServerResponse } from './utils/HttpServerResponse.js'
 import { setCorsHeaders, isPreflight } from './utils/http-cors.js'
-import { IncomingMessage, BodyReaderError, hasControlChars } from './utils/HttpIncomingMessage.js'
+import { IncomingMessage, hasControlChars } from './utils/HttpIncomingMessage.js'
 import { watchDevSPA } from './utils/WatcherDevClient.js'
 
 import { API } from '../client/ApiConstants.js'
@@ -83,7 +83,7 @@ async function onRequest(req, response) {
 		}
 	}
 	catch (error) {
-		if (error instanceof BodyReaderError)
+		if (error instanceof IncomingMessage.BodyReaderError)
 			response.unprocessable(`${error.name}: ${error.message}`)
 		else {
 			logger.error(500, req.url, error?.message || error, error?.stack || '')

@@ -6,7 +6,7 @@ import pkgJSON from '../../package.json' with { type: 'json' }
 import { logger } from './utils/logger.js'
 import { ServerResponse } from './utils/HttpServerResponse.js'
 import { setCorsHeaders, isPreflight } from './utils/http-cors.js'
-import { IncomingMessage, hasControlChars } from './utils/HttpIncomingMessage.js'
+import { IncomingMessage } from './utils/HttpIncomingMessage.js'
 import { watchDevSPA } from './utils/WatcherDevClient.js'
 
 import { API } from '../client/ApiConstants.js'
@@ -60,13 +60,11 @@ async function onRequest(req, response) {
 			logger.verbose('APP', response)
 	})
 
-	const url = req.url || ''
-
-	if (url.length > 2048) {
+	if (req.url?.length > 2048) {
 		response.uriTooLong()
 		return
 	}
-	if (hasControlChars(url)) {
+	if (req.urlHasControlChars()) {
 		response.badRequest()
 		return
 	}

@@ -15,10 +15,11 @@ npm install -g mockaton
 mockaton --port 2020 my-mocks-dir/
 ```
 
-Mockaton will serve the files on the given directory. It's a file-system based router, so
-filenames can have dynamic parameters in square brackets. Also, filenames can have
-comments, which are anything within parentheses, this way each route can have different
-mock file variants. Similarly, each route can have different response status code variants.
+Mockaton will serve the files on the given directory. It's a file-system based router in which 
+filenames can have dynamic parameters and comments. For paraments use square brackets `[]`,
+and for comments use parentheses `()`. Comments are handy because this way each route 
+can have different mock file variants. Similarly, each route can have different response status 
+code variants.
 
 
 | Route | Filename | Description |

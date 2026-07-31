@@ -53,6 +53,15 @@ Mockaton has no dependencies.
 npm install -g mockaton
 ```
 
+<!-- SKILLS_IGNORE_BEGIN -->
+## Skills
+```sh
+npx skills add ericfortis/mockaton
+```
+<!-- SKILLS_IGNORE_END -->
+
+
+
 ## Basic Usage
 ```sh
 mockaton --port 2020 my-mocks-dir/
@@ -73,21 +82,10 @@ code variants.
 | /api/login | api/login(default).GET.200.ts | `(default)` is a special comment; otherwise, the first mock variant in alphabetical order wins.  |
 | /api/login | api/login(locked out user).POST.423.json | `.json` is allowed too. |
 
-
-## Docs
-- [Configuration](https://mockaton.com/config): CLI and mockaton.config.js
-- [API](https://mockaton.com/api): Programatically, you can delay a route, select a different mock file, etc.
-
 <!-- SKILLS_IGNORE_BEGIN -->
 ## How to scrape your backend APIs?
 Mockaton has a [Browser Extension](https://mockaton.com/scraping) that lets
 you download in bulk all your API responses following Mockaton's filename convention.
-
-
-## Skills
-```sh
-npx skills add ericfortis/mockaton
-```
 <!-- SKILLS_IGNORE_END -->
 
 
@@ -147,3 +145,8 @@ export default async function (req: IncomingMessage, response: OutgoingMessage) 
   })
 }
 ```
+
+## Docs
+- [Configuration](https://mockaton.com/config): CLI and mockaton.config.js
+- [API](https://mockaton.com/api): Programatically, you can delay a route, select a different mock file, etc.
+

@@ -10,6 +10,10 @@ Mockaton has no dependencies.
 npm install -g mockaton
 ```
 
+
+
+
+
 ## Basic Usage
 ```sh
 mockaton --port 2020 my-mocks-dir/
@@ -29,11 +33,6 @@ code variants.
 | /api/login | api/login(invalid attempt).POST.401.ts | Anything within parenthesis is a comment. They are ignored when routing. |
 | /api/login | api/login(default).GET.200.ts | `(default)` is a special comment; otherwise, the first mock variant in alphabetical order wins.  |
 | /api/login | api/login(locked out user).POST.423.json | `.json` is allowed too. |
-
-
-## Docs
-- [Configuration](https://mockaton.com/config): CLI and mockaton.config.js
-- [API](https://mockaton.com/api): Programatically, you can delay a route, select a different mock file, etc.
 
 
 
@@ -94,3 +93,7 @@ export default async function (req: IncomingMessage, response: OutgoingMessage) 
   })
 }
 ```
+
+## Docs
+- [Configuration](https://mockaton.com/config): CLI and mockaton.config.js
+- [API](https://mockaton.com/api): Programatically, you can delay a route, select a different mock file, etc.

@@ -18,7 +18,6 @@ export default (url) => htmlTemplate({
 		<h2>Develop ahead of backend</h2>
 		<p>
 			Sometimes frontend developement could be blocked by waiting for backend APIs to be ready.
-			So having a real HTTP server helps to write frontends ahead of time.
 			See <a href="https://github.com/ericfortis/mockaton/blob/main/demo-app-vite/src/ColorModel.js">ColorModel.js</a>
 			for an example of how you can decouple your frontend code from the API contract,
 			so API changes become a matter of updating only one place.

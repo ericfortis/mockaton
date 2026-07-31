@@ -9,13 +9,22 @@ export default () => htmlTemplate({
 	`,
 	body: `
 		<h1>${MockatonLogo()}</h1>
+		<p>No API state should be too difficult to test.</p>
 		<br />
 
 		<p>
-			Mockaton is an HTTP mock server for simulating difficult to reproduce API states,
-			either manually in the UI dashboard, or via a control API. For example, in the dashboard
-			you can click the clock button 🕓 to delay a response, so you can test spinners. Similarly,
-			there's a 500 button which triggers an error on that endpoint.
+			Mockaton is an HTTP mock server. It lets you simulate API states
+			that are normally ignored. For example, click the 500 button to
+			trigger an error on an endpoint. Then unclick it to test your
+			retry logic. Similarly, click the clock button 🕓 to delay a
+			response so you can test spinners &mdash; you‘ve seen them in
+			production at the top left, or restarting their animation
+			midway.
+		</p>
+
+		<p>
+			Besides the dashboard UI, there’s <a href="/api">an API</a>
+			from controling your mocks when setting up tests.
 		</p>
 
 		<h2>Dashboard</h2>
@@ -69,10 +78,15 @@ curl localhost:2020/api/user
 		${shell`npm install -g mockaton`}
 
 
+		<h2>Skills</h2>
+		${shell`
+npx skills add ericfortis/mockaton
+`}
+
 		<h2 id="basic-usage">Basic Usage</h2>
 
 		${shell`
-mockaton my-mocks-dir/
+mockaton my-mocks-dir
 `}
 
 		<br />
@@ -122,25 +136,11 @@ mockaton my-mocks-dir/
 		</table>
 
 
-		<h2>Docs</h2>
-		<ul>
-			<li><a href="/config">Configuration:</a> CLI and mockaton.config.js</li>
-			<li><a href="/api">API:</a> Programatically, you can delay a route, select a different mock file, etc.
-			</li>
-		</ul>
-
-
 		<h2>How to scrape your backend APIs?</h2>
 		<p>
 			Mockaton has a <a href="/scraping">Browser Extension</a> that lets
 			you download in bulk all your API responses following Mockaton’s filename convention.
 		</p>
-
-
-		<h2>Skills</h2>
-		${shell`
-npx skills add ericfortis/mockaton
-`}
 
 
 		<h2 id="how-to-create-mocks-">How to create mocks?</h2>

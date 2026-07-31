@@ -1,16 +1,26 @@
 <!-- SKILLS_IGNORE_BEGIN -->
-<img src="logo.svg" alt="Mockaton Logo" width="180" style="margin-top: 30px"/>
 
 ![NPM Version](https://img.shields.io/npm/v/mockaton)
 [![Test](https://github.com/ericfortis/mockaton/actions/workflows/test.yml/badge.svg)](https://github.com/ericfortis/mockaton/actions/workflows/test.yml)
 [![codecov](https://codecov.io/github/ericfortis/mockaton/graph/badge.svg?token=90NYLMMG1J)](https://codecov.io/github/ericfortis/mockaton)
 
+<img src="logo.svg" alt="Mockaton Logo" width="180" style="margin-top: 30px"/>
+
+No API state should be too difficult to test.
+
 ## [Docs ↗](https://mockaton.com) | [Changelog ↗](https://mockaton.com/changelog) | [Skills](skills/mockaton/SKILL.md)
 
-Mockaton is an HTTP mock server for simulating difficult to reproduce API states,
-either manually in the UI dashboard, or via a control API. For example, in the dashboard
-you can click the clock button 🕓 to delay a response, so you can test spinners. Similarly,
-there's a 500 button which triggers an error on that endpoint.
+
+Mockaton is an HTTP mock server. It lets you simulate API states
+that are normally ignored. For example, click the 500 button to
+trigger an error on an endpoint. Then unclick it to test your
+retry logic. Similarly, click the clock button 🕓 to delay a
+response so you can test spinners &mdash; you‘ve seen them in
+production at the top left, or restarting their animation
+midway.
+
+Besides the dashboard UI, there’s <a href="/api">an API</a>
+from controling your mocks when setting up tests.
 
 <picture>
   <source media="(prefers-color-scheme: light)" srcset="https://raw.githubusercontent.com/ericfortis/mockaton/refs/heads/main/pixaton-tests/tests/macos/pic-for-readme.vp762x762.light.gold.png">

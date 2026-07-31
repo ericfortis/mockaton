@@ -11,15 +11,16 @@ No API state should be too difficult to test.
 ## [Docs ↗](https://mockaton.com) | [Changelog ↗](https://mockaton.com/changelog) | [Skills](skills/mockaton/SKILL.md)
 
 
-Mockaton is an HTTP mock server. It lets you simulate API states
-that are normally ignored. For example, click the 500 button to
-trigger an error on an endpoint. Then unclick it to test your
-retry logic. Similarly, click the clock button 🕓 to delay a
-response so you can test spinners &mdash; you‘ve seen them in
-production at the top left, or restarting their animation
-midway.
+Simulate API states that are normally ignored. For example,
+click the 500 button to trigger an error on an endpoint. Then
+unclick it to test your retry logic. Similarly, click the clock
+button 🕓 to delay a response so you can test spinners &mdash;
+you‘ve seen them in production at the top left, or restarting
+their animation midway. 
 
-Besides the dashboard UI, there’s <a href="/api">an API</a>
+
+## Dashboard
+Besides the dashboard UI, there’s [an API](https://mockaton.com/api)
 from controling your mocks when setting up tests.
 
 <picture>

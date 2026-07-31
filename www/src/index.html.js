@@ -13,21 +13,19 @@ export default () => htmlTemplate({
 		<br />
 
 		<p>
-			Mockaton is an HTTP mock server. It lets you simulate API states
-			that are normally ignored. For example, click the 500 button to
-			trigger an error on an endpoint. Then unclick it to test your
-			retry logic. Similarly, click the clock button 🕓 to delay a
-			response so you can test spinners &mdash; you‘ve seen them in
-			production at the top left, or restarting their animation
-			midway.
+			Simulate API states that are normally ignored. For example,
+			click the 500 button to trigger an error on an endpoint. Then
+			unclick it to test your retry logic. Similarly, click the clock
+			button 🕓 to delay a response so you can test spinners &mdash;
+			you‘ve seen them in production at the top left, or restarting
+			their animation midway. 
 		</p>
 
+		<h2>Dashboard</h2>
 		<p>
 			Besides the dashboard UI, there’s <a href="/api">an API</a>
 			from controling your mocks when setting up tests.
 		</p>
-
-		<h2>Dashboard</h2>
 		<div class="RegionImg" data-max-width="761">
 			<picture>
 				<source media="(prefers-color-scheme: light)" srcset="/assets/media/pic-for-readme.vp762x762.light.gold.avif">

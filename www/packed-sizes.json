@@ -25,9 +25,9 @@
 		"size": 29287
 	},
 	"/index.html": {
-		"hash": "wxMFBtNwZYtAvNo6pcO9c7oowhc",
-		"delta": 0,
-		"size": 31935
+		"hash": "weOWIeaXUB-kxzPKSoPu0ofsaXA",
+		"delta": -44,
+		"size": 31891
 	},
 	"/installation.html": {
 		"hash": "o5CTU-1SS9KfSvWfuzY4nWgOjPE",
@@ -56,7 +56,7 @@
 	},
 	"/use-cases.html": {
 		"hash": "7O-5qGViBzT-3JmxZt9c7KgjSVE",
-		"delta": -69,
+		"delta": 0,
 		"size": 21485
 	},
 	"/vite.html": {

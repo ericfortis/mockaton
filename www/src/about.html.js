@@ -17,11 +17,11 @@ export default (url) => htmlTemplate({
 import { createServer } from 'node:http'
 		
 const getApis = {
-  'api/user': './user.json',
-  'api/company': './company.json',
+  '/api/user': './user.json',
+  '/api/company': './company.json',
 }		
 
-const server = createServer((req, response) => {
+createServer((req, response) => {
   swich (req.method) {
 		case 'GET': {
 			const file = getApis[req.url]
@@ -30,8 +30,7 @@ const server = createServer((req, response) => {
 			break;
 		}
   }
-})
-server.listen(2020)
+}).listen(2020)
 `)}
 		
 		<p>

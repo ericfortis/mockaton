@@ -21,7 +21,7 @@ their animation midway.
 
 ## Dashboard
 Besides the dashboard UI, there’s [an API](https://mockaton.com/api)
-from controling your mocks when setting up tests.
+you can use to set up tests.
 
 <picture>
   <source media="(prefers-color-scheme: light)" srcset="https://raw.githubusercontent.com/ericfortis/mockaton/refs/heads/main/pixaton-tests/tests/macos/pic-for-readme.vp762x762.light.gold.png">
@@ -48,11 +48,10 @@ curl localhost:2020/api/user
 
 
 # Installation ([more options  ↗](https://mockaton.com/installation))
-Mockaton has no dependencies.
-
 ```sh
 npm install -g mockaton
 ```
+<i>Mockaton is a Node.js app with no dependencies.</i>
 
 <!-- SKILLS_IGNORE_BEGIN -->
 ## Skills
@@ -65,7 +64,7 @@ npx skills add ericfortis/mockaton
 
 ## Basic Usage
 ```sh
-mockaton --port 2020 my-mocks-dir/
+mockaton --port 2020 my-mocks-dir
 ```
 
 Mockaton will serve the files on the given directory. It's a file-system based router in which 

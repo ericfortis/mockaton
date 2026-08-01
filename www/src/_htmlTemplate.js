@@ -10,9 +10,9 @@ const pages = [
 	['/function-mocks', 'Function Mocks'],
 	['/api', 'API'],
 	['/plugins', 'Plugins'],
-	['/privacy-and-security', 'Privacy and Security'],
 	['/changelog', 'Changelog'],
-	['/related-tech', 'Related Tech']
+	['/related-tech', 'Related Tech'],
+	['/about', 'About']
 ]
 
 export function socialMetadata(title, description, route = '') {

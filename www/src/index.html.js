@@ -24,7 +24,7 @@ export default () => htmlTemplate({
 		<h2>Dashboard</h2>
 		<p>
 			Besides the dashboard UI, there’s <a href="/api">an API</a>
-			from controling your mocks when setting up tests.
+			you can use to set up tests.
 		</p>
 		<div class="RegionImg" data-max-width="761">
 			<picture>
@@ -72,8 +72,8 @@ curl localhost:2020/api/user
 		<p>Dashboard: <a href="http://localhost:2020/mockaton">localhost:2020/mockaton</a></p>
 
 		<h2>Installation <a href="/installation">more options ↗</a></h2>
-		<p>Mockaton has no dependencies.</p>
 		${shell`npm install -g mockaton`}
+		<p><i>Mockaton is a Node.js app with no dependencies.</i></p>
 
 
 		<h2>Skills</h2>
@@ -84,7 +84,7 @@ npx skills add ericfortis/mockaton
 		<h2 id="basic-usage">Basic Usage</h2>
 
 		${shell`
-mockaton my-mocks-dir
+mockaton --port 2020  my-mocks-dir
 `}
 
 		<br />

@@ -4,11 +4,10 @@ description: Generates and serves mock HTTP APIs. Use when creating, editing, or
 user-invocable: false
 ---
 # Installation ([more options  ↗](https://mockaton.com/installation))
-Mockaton has no dependencies.
-
 ```sh
 npm install -g mockaton
 ```
+<i>Mockaton is a Node.js app with no dependencies.</i>
 
 
 
@@ -16,7 +15,7 @@ npm install -g mockaton
 
 ## Basic Usage
 ```sh
-mockaton --port 2020 my-mocks-dir/
+mockaton --port 2020 my-mocks-dir
 ```
 
 Mockaton will serve the files on the given directory. It's a file-system based router in which 

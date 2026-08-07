@@ -8,7 +8,7 @@ import { PayloadViewer, previewMock } from './PayloadViewer.js'
 import { MockList, initKeyboardNavigation, renderRow } from './MockList.js'
 
 import CSS from './App.css' with { type: 'css' }
-adoptSheet(CSS, './app.css')
+adoptSheet(CSS, './App.css')
 
 store.onError = onError
 store.render = render

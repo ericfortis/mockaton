@@ -6,7 +6,7 @@ import { classNames, adoptSheet } from './utils/css.js'
 import { TimerIcon, CloudIcon, ChevronDownIcon } from './icons.js'
 
 import CSS from './MockList.css' with { type: 'css' }
-adoptSheet(CSS, './app-mock-list.css')
+adoptSheet(CSS, './MockList.css')
 
 
 export function MockList() {

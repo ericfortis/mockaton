@@ -4,7 +4,7 @@ import { store } from './store.js'
 import { adoptSheet } from './utils/css.js'
 
 import CSS from './PayloadViewer.css' with { type: 'css' }
-adoptSheet(CSS, './app-payload-viewer.css')
+adoptSheet(CSS, './PayloadViewer.css')
 
 
 const titleRef = {}

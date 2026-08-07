@@ -4,7 +4,7 @@ import { adoptSheet } from './utils/css.js'
 import { store } from './store.js'
 
 import CSS from './Header.css' with { type: 'css' }
-adoptSheet(CSS, './app-header.css')
+adoptSheet(CSS, './Header.css')
 
 
 export function Header() {

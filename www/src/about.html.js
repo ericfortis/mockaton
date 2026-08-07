@@ -26,7 +26,7 @@ createServer((req, response) => {
 		case 'GET': {
 			const file = getApis[req.url]
 			if (file)
-				response.end(readFileSync(file)
+				response.end(readFileSync(file))
 			break;
 		}
   }

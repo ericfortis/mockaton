@@ -1,13 +1,13 @@
 import { createElement as r, t, restoreFocus, Fragment } from './utils/dom.js'
 
-import { store } from './app-store.js'
+import { store } from './store.js'
 import { API } from './ApiConstants.js'
-import { Header } from './app-header.js'
+import { Header } from './Header.js'
 import { adoptSheet } from './utils/css.js'
-import { PayloadViewer, previewMock } from './app-payload-viewer.js'
-import { MockList, initKeyboardNavigation, renderRow } from './app-mock-list.js'
+import { PayloadViewer, previewMock } from './PayloadViewer.js'
+import { MockList, initKeyboardNavigation, renderRow } from './MockList.js'
 
-import CSS from './app.css' with { type: 'css' }
+import CSS from './App.css' with { type: 'css' }
 adoptSheet(CSS, './app.css')
 
 store.onError = onError

@@ -1,9 +1,9 @@
 import { createElement as r, t } from './utils/dom.js'
-import { Logo, HelpIcon } from './graphics.js'
+import { Logo, HelpIcon } from './icons.js'
 import { adoptSheet } from './utils/css.js'
-import { store } from './app-store.js'
+import { store } from './store.js'
 
-import CSS from './app-header.css' with { type: 'css' }
+import CSS from './Header.css' with { type: 'css' }
 adoptSheet(CSS, './app-header.css')
 
 

@@ -1,7 +1,7 @@
 import { test } from 'node:test'
 import { deepEqual } from 'node:assert/strict'
 
-import { BrokerRowModel, t } from './app-store.js'
+import { BrokerRowModel, t } from './store.js'
 
 
 test('BrokerRowModel', () => {

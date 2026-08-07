@@ -1,9 +1,9 @@
 import { createElement as r, t } from './utils/dom.js'
 import { parseFilename } from './Filename.js'
-import { store } from './app-store.js'
+import { store } from './store.js'
 import { adoptSheet } from './utils/css.js'
 
-import CSS from './app-payload-viewer.css' with { type: 'css' }
+import CSS from './PayloadViewer.css' with { type: 'css' }
 adoptSheet(CSS, './app-payload-viewer.css')
 
 

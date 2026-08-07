@@ -1,11 +1,11 @@
 import { createElement as r, t, Fragment } from './utils/dom.js'
 
-import { store } from './app-store.js'
-import { previewMock } from './app-payload-viewer.js'
+import { store } from './store.js'
+import { previewMock } from './PayloadViewer.js'
 import { classNames, adoptSheet } from './utils/css.js'
-import { TimerIcon, CloudIcon, ChevronDownIcon } from './graphics.js'
+import { TimerIcon, CloudIcon, ChevronDownIcon } from './icons.js'
 
-import CSS from './app-mock-list.css' with { type: 'css' }
+import CSS from './MockList.css' with { type: 'css' }
 adoptSheet(CSS, './app-mock-list.css')
 
 

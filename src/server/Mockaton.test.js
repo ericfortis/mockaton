@@ -234,7 +234,7 @@ describe('Dashboard', () => {
 	})
 
 	test('serves assets', async () => {
-		const r = await request(API.root + '/app.css')
+		const r = await request(API.root + '/App.css')
 		match(await r.text(), new RegExp(':root {'))
 	})
 })

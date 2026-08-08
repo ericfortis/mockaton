@@ -76,9 +76,8 @@ function TableContent() {
 
 	if (store.groupByMethod)
 		return Object.keys(store.brokersByMethod).map(method => Fragment(
-			r('div', {
-				className: classNames(CSS.TableHeading, store.canProxy && CSS.canProxy)
-			}, method),
+			r('div', { className: classNames(CSS.TableHeading, store.canProxy && CSS.canProxy) },
+				method),
 			FolderGroups(store.folderGroupsByMethod(method))))
 
 	return FolderGroups(store.folderGroupsByMethod('*'))

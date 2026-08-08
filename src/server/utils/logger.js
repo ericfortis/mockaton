@@ -1,3 +1,4 @@
+import { styleText } from 'node:util'
 import { decode, reControlAndDelChars } from './HttpIncomingMessage.js'
 
 
@@ -39,7 +40,12 @@ export const logger = new class {
 	#msg(...msg) {
 		if (!msg.at(-1))
 			msg.pop()
-		return [new Date().toISOString(), ...msg.map(this.#sanitize)].join('::')
+		const parts = msg.map(this.#sanitize)
+		parts[1] = styleText(['bold', 'green'], parts[1])
+		return [
+			styleText('yellow', new Date().toISOString()),
+			...parts
+		].join(styleText('dim', '::'))
 	}
 
 	#sanitize(url) {

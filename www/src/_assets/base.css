@@ -16,19 +16,18 @@
 
 	color-scheme: light dark;
 
-	--bgHeader: light-dark(#272727, #000);
+	--bgHeader: light-dark(#272727, #0c0c0c);
 	--bg: light-dark(#fdfdfd, #111);
 	--fgHigh: light-dark(#000, #fff);
 	--fg: light-dark(#000, #dbdbdb);
 	--fg2: light-dark(#444, #ccc);
-	--bgFaint: light-dark(#f8f8f8, #282828);
+	--bgFaint: light-dark(#f3f3f3, #222);
 	--faintBorder: light-dark(#e6e6e6, #333);
 	--colorLinkUnderline: light-dark(rgba(127, 127, 172, 0.2), rgba(127, 127, 172, .3));
 
 	--videoTrackHoverBG: #6b93fd;
-	--accentFaint: #e1ebff;
 	--accentLight: #6b93fd;
-	--accent: light-dark(#2962ff, #3269ff);
+	--accent: light-dark(#2962ff, #3b70ff);
 	--nullLink: light-dark(#e61779, #b968d8);
 
 	--colorAccentLighter: #6b93fd;
@@ -128,11 +127,9 @@ pre {
 	padding: 18px;
 	margin-top: 8px;
 	font-family: monospace;
-	border-radius: 16px;
 	background: var(--bgFaint);
 	font-size: 14px;
 	overflow-x: auto;
-	box-shadow: var(--boxShadow2);
 }
 @media (min-width: 800px) {
 	pre {

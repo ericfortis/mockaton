@@ -23,7 +23,6 @@ form {
 }
 
 .Apis {
-
 	details {
 		margin: 0;
 		margin-bottom: 8px;
@@ -42,7 +41,7 @@ form {
 			}
 
 			&:hover {
-				border-color: var(--accentFaint);
+				background: linear-gradient(90deg, transparent, var(--bgFaint));
 			}
 
 			.Method {
@@ -64,7 +63,7 @@ form {
 			}
 			.Summary {
 				display: block;
-				margin-top: 8px;
+				margin-top: 2px;
 			}
 		}
 

@@ -36,7 +36,7 @@ const proc = spawn(join(import.meta.dirname, 'cli.js'), [
 	mocksDir.value,
 	'--config', join(import.meta.dirname, 'Mockaton.test.config.js'),
 	'--no-open'
-])
+], { env: { ...process.env, FORCE_COLOR: 0, NO_COLOR: 1 } })
 
 const DEBUG = false
 proc.stdout.on('data', data => {

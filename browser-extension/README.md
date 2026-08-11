@@ -18,10 +18,6 @@ without wiring them up.
 
 ![Mockaton Download](browser-extension-overview.png)
 
-<br/>
-
-They get saved to disk like this:
-<img src="README-saved-to-disk.png" />
 
 
 ## Caveats

@@ -142,7 +142,7 @@
 	&.GlobalDelay,
 	&.GlobalDelayJitter {
 		input {
-			&&::selection {
+			&::selection {
 				background-color: transparent;
 			}
 

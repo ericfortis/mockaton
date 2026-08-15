@@ -11,13 +11,12 @@ const METHODS = [ // @KeepSync node:http.METHODS
 
 const reComments = /\([^()]*\)/g // Anything within parentheses
 
-export function extractComments(file) {
-	return Array.from(file.matchAll(reComments), ([c]) => c)
-}
+export const extractComments = file =>
+	Array.from(file.matchAll(reComments), ([c]) => c)
 
-export function includesComment(file, search) {
-	return extractComments(file).some(c => c.includes(search))
-}
+export const includesComment = (file, search) =>
+	extractComments(file).some(c => c.includes(search))
+
 
 export function parseFilename(file) {
 	const tokens = file.replace(reComments, '').split('.')
@@ -62,6 +61,6 @@ export function makeMockFilename(url, method, status, ext, comment = '') {
 }
 
 function replaceIds(filename) {
-	return filename.replaceAll(replaceIds.reUuidV4, '[id]')
+	const reUuidV4 = /([0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12})/gi
+	return filename.replaceAll(reUuidV4, '[id]')
 }
-replaceIds.reUuidV4 = /([0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12})/gi

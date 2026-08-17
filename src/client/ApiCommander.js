@@ -36,7 +36,7 @@ export class Commander {
 	setRouteIsProxied = (method, urlMask, proxied) => this.#patch(API.proxied, [method, urlMask, proxied])
 
 
-	/** @returns {JsonPromise<State.cookies>} */
+	/** @returns {JsonPromise<State['cookies']>} */
 	selectCookie = label => this.#patch(API.cookies, label)
 
 	setGlobalDelay = delay => this.#patch(API.globalDelay, delay)

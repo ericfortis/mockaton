@@ -46,7 +46,7 @@ export declare interface Config {
 	onReady?: (address: string) => void
 
 	hotReload?: boolean // For UI dev purposes only
-	bypassImportCache?: boolean 
+	bypassImportCache?: boolean
 }
 
 
@@ -66,39 +66,40 @@ export declare function parseJSON(request: IncomingMessage): Promise<any>
 export declare function parseSegments(reqUrl: string, filename: string): Record<string, string>
 export declare function parseQueryParams(reqUrl: string): URLSearchParams
 
-export declare type JsonPromise<T> = Promise<Response & { json(): Promise<T> }>
+declare global {
+	type JsonPromise<T> = Promise<Response & { json(): Promise<T> }>
 
+	type ClientMockBroker = {
+		mocks: string[]
+		file: string
+		status: number
+		isStatic: boolean
+		autoStatus: number
+		delayed: boolean
+		proxied: boolean
+	}
+	type ClientBrokersByMethod = {
+		[method: string]: {
+			[urlMask: string]: ClientMockBroker
+		}
+	}
 
-// API
+	interface State {
+		brokersByMethod: ClientBrokersByMethod
 
-export declare type ClientMockBroker = {
-	mocks: string[]
-	file: string
-	status: number
-	isStatic: boolean
-	autoStatus: number
-	delayed: boolean
-	proxied: boolean
-}
-export declare type ClientBrokersByMethod = {
-	[method: string]: {
-		[urlMask: string]: ClientMockBroker
+		cookies: [label: string, selected: boolean][]
+		comments: string[]
+
+		delay: number
+		delayJitter: number
+
+		collectProxied: boolean
+		proxyFallback: string
+
+		readOnly: boolean
+
+		corsAllowed?: boolean
 	}
 }
 
-export declare interface State {
-	brokersByMethod: ClientBrokersByMethod
-
-	cookies: [label: string, selected: boolean][]
-	comments: string[]
-
-	delay: number
-	delayJitter: number
-
-	collectProxied: boolean
-	proxyFallback: string
-
-	readOnly: boolean
-
-	corsAllowed?: boolean
-}
+export type { JsonPromise, ClientMockBroker, ClientBrokersByMethod, State }

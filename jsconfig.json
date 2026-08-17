@@ -1,0 +1,11 @@
+{
+	"compilerOptions": {
+		"allowJs": true,
+		"checkJs": false,
+		"strict": false
+	},
+	"include": [
+		"**/*.js",
+		"index.d.ts"
+	]
+}

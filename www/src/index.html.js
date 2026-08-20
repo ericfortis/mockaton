@@ -118,12 +118,12 @@ mockaton --port 2020  my-mocks-dir
 			<tr>
 				<td>/api/login</td>
 				<td>api/login(invalid attempt).POST.401.json</td>
-				<td>Anything within parenthesis is a comment. They are ignored when routing.</td>
+				<td>Anything within parenthesis is a comment. They are ignored when routing. You can add many comments, <code>foo(c0)(c1).png</code></td>
 			</tr>
 			<tr>
 				<td>/api/login</td>
 				<td>api/login(default).GET.200.json</td>
-				<td><code>(default)</code> is a special comment; otherwise, the first mock variant in alphabetical order wins.</td>
+				<td><code>(default)</code> is a special comment. Otherwise, the first mock variant in alphabetical order wins.</td>
 			</tr>
 			<tr>
 				<td>/api/login</td>
@@ -136,25 +136,29 @@ mockaton --port 2020  my-mocks-dir
 
 		<h2>How to scrape your backend APIs?</h2>
 		<p>
-			Mockaton has a <a href="/scraping">Browser Extension</a> that lets
+			There’s a sister <a href="/scraping">Browser Extension</a> that lets
 			you download in bulk all your API responses following Mockaton’s filename convention.
 		</p>
 
 
 		<h2 id="how-to-create-mocks-">How to create mocks?</h2>
 		<p>
-			Write it to your mocks directory. Alternatively, there’s an API <a href="/api">PATCH /mockaton/write-mock</a>.
+			Write it to your mocks directory. 
+			TypeScript files are sent as JSON by default.
 		</p>
 
 		${shell`
 mkdir -p my-mocks-dir/api
 echo "export default { name: 'John' }" > my-mocks-dir/api/user.GET.200.ts
 `}
+		<p>
+			Alternatively, there’s a <a href="/api">write-mock API</a>.
+		</p>
 
 
 		<h3 id="example-a-json">Example A: JSON</h3>
 		<p>
-			For JSON responses, use TypeScript (or JS), and <code>export default</code> an Object, Array, or String.
+			For JSON responses, you can use TypeScript (or JS), and <code>export default</code> an Object, Array, or String.
 		</p>
 		<ul>
 			<li><strong>Route:</strong> /api/company/123</li>

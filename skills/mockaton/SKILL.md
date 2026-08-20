@@ -29,22 +29,23 @@ code variants.
 | -----| -----| ---|
 | /api/company/123 | api/company/[id].GET.200.ts | `[id]` is a dynamic parameter. `.ts`, and `.js` are sent as JSON by default. |
 | /media/avatar.png | media/avatar.png | Statics assets don't need the above extension. |
-| /api/login | api/login(invalid attempt).POST.401.ts | Anything within parenthesis is a comment. They are ignored when routing. |
-| /api/login | api/login(default).GET.200.ts | `(default)` is a special comment; otherwise, the first mock variant in alphabetical order wins.  |
+| /api/login | api/login(invalid attempt).POST.401.ts | Anything within parenthesis is a comment. They are ignored when routing. You can add many comments, `foo(c0)(c1).png` |
+| /api/login | api/login(default).GET.200.ts | `(default)` is a special comment. Otherwise, the first mock variant in alphabetical order wins.  |
 | /api/login | api/login(locked out user).POST.423.json | `.json` is allowed too. |
 
 
 
 
 ## How to create mocks?
-Write it to your mocks directory. `.ts` files are served as JSON by default.
+Write it to your mocks directory. TypeScript files are sent as JSON by default.
 ```sh
 mkdir -p my-mocks-dir/api
 echo "export default { name: 'John' }" > my-mocks-dir/api/user.GET.200.ts
 ```
+Alternatively, there’s a [write-mock API](https://mockaton.com/api).
 
 ### Example A: JSON
-For JSON responses, use TypeScript (or JS), and `export default` an Object, Array, or 
+For JSON responses, you can use TypeScript (or JS) and `export default` an Object, Array, or 
 String.
 
 - **Route:** /api/company/123

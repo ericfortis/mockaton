@@ -9,22 +9,22 @@ export default () => htmlTemplate({
 	`,
 	body: `
 		<h1>${MockatonLogo()}</h1>
-		<p>No API state should be too difficult to test.</p>
+		<p><i>No API state should be too difficult to test</i></p>
 		<br />
 
 		<p>
-			Simulate API states that are normally ignored. For example,
-			click the 500 button to trigger an error on an endpoint. Then
-			unclick it to test your retry logic. Similarly, click the clock
-			button 🕓 to delay a response so you can test spinners &mdash;
-			you‘ve seen them in production at the top left, or restarting
-			their animation midway. 
+			Simulate API states that are normally ignored. For example, quickly trigger an error on
+			an endpoint by clicking the 500 button. Then, unclick it to test your retry logic.
+			Similarly, pick a mock variant from the dropdown, say to respond with a 423 (locked account).
+			As another example, click the clock button 🕓 to delay a response so you can test
+			spinners &mdash; you’ve seen them in production at the top left, or restart
+			their animation midway.
 		</p>
 
 		<h2>Dashboard</h2>
 		<p>
-			Besides the dashboard UI, there’s <a href="/api">an API</a>
-			you can use to set up tests.
+			Besides the dashboard UI, there’s a <a href="/api">programmatic API</a>, 
+			which is handy for setting up tests.
 		</p>
 		<div class="RegionImg" data-max-width="761">
 			<picture>

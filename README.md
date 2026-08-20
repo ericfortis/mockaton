@@ -6,22 +6,22 @@
 
 <img src="logo.svg" alt="Mockaton Logo" width="180" style="margin-top: 30px"/>
 
-No API state should be too difficult to test.
+*No API state should be too difficult to test*
 
 ## [Docs ↗](https://mockaton.com) | [Changelog ↗](https://mockaton.com/changelog) | [Skills](skills/mockaton/SKILL.md)
 
 
-Simulate API states that are normally ignored. For example,
-click the 500 button to trigger an error on an endpoint. Then
-unclick it to test your retry logic. Similarly, click the clock
-button 🕓 to delay a response so you can test spinners &mdash;
-you‘ve seen them in production at the top left, or restarting
+Simulate API states that are normally ignored. For example, quickly trigger an error on 
+an endpoint by clicking the 500 button. Then, unclick it to test your retry logic.
+Similarly, pick a mock variant from the dropdown, say to respond with a 423 (locked account).
+As another example, click the clock button 🕓 to delay a response so you can test 
+spinners &mdash; you’ve seen them in production at the top left, or restart
 their animation midway. 
 
 
 ## Dashboard
-Besides the dashboard UI, there’s [an API](https://mockaton.com/api)
-you can use to set up tests.
+Besides the dashboard UI, there’s a [programmatic API](https://mockaton.com/api), 
+which is handy for setting up tests.
 
 <picture>
   <source media="(prefers-color-scheme: light)" srcset="https://raw.githubusercontent.com/ericfortis/mockaton/refs/heads/main/pixaton-tests/tests/macos/pic-for-readme.vp762x762.light.gold.png">

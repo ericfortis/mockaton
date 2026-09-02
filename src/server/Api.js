@@ -300,12 +300,17 @@ async function deleteMock(req, response) {
 	const file = await req.json()
 	const path = await resolveIn(config.mocksDir, file)
 
-	if (!path)
+	if (!path) {
 		response.forbidden('Filename path resolves outside config.mocksDir')
-	else if (!isFile(path))
+		return
+	}
+
+	if (!isFile(path)) {
 		response.unprocessable(`Missing Mock: ${file}`)
-	else
-		await rm(path)
+		return
+	}
+
+	await rm(path)
 
 	if (!config.watcherEnabled) {
 		brokers.unregisterMock(file)

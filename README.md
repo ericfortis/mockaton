@@ -8,26 +8,31 @@
 
 *No API state should be too difficult to test*
 
-## [Docs ↗](https://mockaton.com) | [Changelog ↗](https://mockaton.com/changelog) | [Skills](skills/mockaton/SKILL.md)
+### [Docs](https://mockaton.com) | [Changelog](https://mockaton.com/changelog) | [Skills](skills/mockaton/SKILL.md) | [Use Cases](https://mockaton.com/use-cases)
 
+## Overview
 
-Simulate API states that are normally ignored. For example, quickly trigger an error on 
-an endpoint by clicking the 500 button. Then, unclick it to test your retry logic.
+Mockaton is a local HTTP mock server. With it, you can test API states 
+that are difficult to reproduce from an actual backend.
+
+For example, to quickly trigger an error on an endpoint, click the 500 button. 
+Then, unclick it to test your retry logic.
+
 Similarly, pick a mock variant from the dropdown, say to respond with a 423 (locked account).
-As another example, click the clock button 🕓 to delay a response so you can test 
-spinners &mdash; you’ve seen them in production at the top left, or restart
-their animation midway. 
+
+Or click the clock button 🕓 to delay a response so you can test spinners.
 
 
 ## Dashboard
-Besides the dashboard UI, there’s a [programmatic API](https://mockaton.com/api), 
-which is handy for setting up tests.
 
 <picture>
   <source media="(prefers-color-scheme: light)" srcset="https://raw.githubusercontent.com/ericfortis/mockaton/refs/heads/main/pixaton-tests/tests/macos/pic-for-readme.vp762x762.light.gold.png">
   <source media="(prefers-color-scheme: dark)" srcset="https://raw.githubusercontent.com/ericfortis/mockaton/refs/heads/main/pixaton-tests/tests/macos/pic-for-readme.vp762x762.dark.gold.png">
   <img alt="Mockaton Dashboard" src="https://raw.githubusercontent.com/ericfortis/mockaton/refs/heads/main/pixaton-tests/tests/macos/pic-for-readme.vp762x762.dark.gold.png">
 </picture>
+
+Besides the dashboard, there’s a [programmatic API](https://mockaton.com/api),
+which is handy for setting up tests.
 
 
 ## Demo (Docker)

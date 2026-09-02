@@ -31,6 +31,11 @@ export default (url) => htmlTemplate({
 			By the same token, you can change API states without risking 
 			your frontend state.
 		</p>
+		
+		<h3>It’s a local server</h3>
+		<p>
+			It’s more reliable and time-consistent than cloud offerings.
+		</p>
 
 		<h3>Privacy and security</h3>
 		<ul>

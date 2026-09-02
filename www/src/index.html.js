@@ -13,19 +13,20 @@ export default () => htmlTemplate({
 		<br />
 
 		<p>
-			Simulate API states that are normally ignored. For example, quickly trigger an error on
-			an endpoint by clicking the 500 button. Then, unclick it to test your retry logic.
+			Mockaton is a local HTTP mock server. With it, you can test API states
+			that are difficult to reproduce from an actual backend.
+		</p>
+
+		<p>
+			For example, to quickly trigger an error on an endpoint, click the 500 button.
+			Then, unclick it to test your retry logic.
+		</p>
+
+		<p>
 			Similarly, pick a mock variant from the dropdown, say to respond with a 423 (locked account).
-			As another example, click the clock button 🕓 to delay a response so you can test
-			spinners &mdash; you’ve seen them in production at the top left, or restart
-			their animation midway.
 		</p>
 
 		<h2>Dashboard</h2>
-		<p>
-			Besides the dashboard UI, there’s a <a href="/api">programmatic API</a>, 
-			which is handy for setting up tests.
-		</p>
 		<div class="RegionImg" data-max-width="761">
 			<picture>
 				<source media="(prefers-color-scheme: light)" srcset="/assets/media/pic-for-readme.vp762x762.light.gold.avif">
@@ -33,6 +34,10 @@ export default () => htmlTemplate({
 				<img alt="Mockaton Dashboard" src="/assets/media/pic-for-readme.vp762x762.light.gold.avif">
 			</picture>
 		</div>
+		<p>
+			Besides the dashboard UI, there’s a <a href="/api">programmatic API</a>,
+			which is handy for setting up tests.
+		</p>
 
 		<!--		<h3>Features</h3>-->
 		<!--		<ul>-->
@@ -143,7 +148,7 @@ mockaton --port 2020  my-mocks-dir
 
 		<h2 id="how-to-create-mocks-">How to create mocks?</h2>
 		<p>
-			Write it to your mocks directory. 
+			Write it to your mocks directory.
 			TypeScript files are sent as JSON by default.
 		</p>
 

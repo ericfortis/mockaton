@@ -1218,10 +1218,7 @@ describe('Registering Mocks', () => {
 })
 
 
-/** Uses the native `EventSource` to listen for real-time sync-version updates.
- * It resolves when a new version is pushed that differs from `currSyncVer`;
- * when `currSyncVer` is omitted, the first push after the initial connection is
- * used. */
+/** Resolves when a new mock is added, deleted, or renamed. */
 function resolveOnNextSyncVersion(currSyncVer = undefined) {
 	let skipFirst = currSyncVer === undefined
 	return new Promise((resolve, reject) => {

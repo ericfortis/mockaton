@@ -23,14 +23,14 @@ mock has been added, deleted, or renamed. Also, when config changes.
 - Utilities are unit-tested.
 - Mockaton server is integration tested. e.g., you could write Mockaton in another
  language and run our test suite against it.
-- UI is pixel-diff tested with `pixaton`, which is a sister project of Puppeteer utilities.
+- UI is pixel-diff tested with `pixaton`, which is a sister project.
 
 
 ## Entry Point
 `mockaton --port 4040 my-mocks-dir`
 
 The NPM binary points to [cli.js](src/server/cli.js), which instantiates
-the server. End users are allowed to do that too as follows:
+the server. End users can also create an entry point as follows:
 
 ```shell
 import { Mockaton } from 'mockaton'
@@ -52,6 +52,6 @@ to [MockDispatcher.js](src/server/MockDispatcher.js).
 Otherwise, it applies the matching plugin and ends the response.
 
 ### Plugins
-There are two plugins by default. One runs for `.js` or `.ts` files
+There are two plugins by default. One runs for `.js` and `.ts` files
 (`jsToJsonPlugin`). The other one simply reads from the file-system
 and adds the corresponding `Content-Type` header. 

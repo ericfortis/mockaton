@@ -3,9 +3,9 @@ import { resolve as _resolve } from 'node:path'
 const mockatonSrcRoot = `file://${_resolve(import.meta.dirname, '..')}`
 
 // We register this hook at runtime so it doesn’t interfere with non-dynamic imports. 
-// Cache bust by appending timestamp query param
-export async function resolve(specifier, context, nextResolve) {
-	const result = await nextResolve(specifier, context)
+// It cache-busts by appending timestamp query param
+export function resolveBypassImportCache(specifier, context, nextResolve) {
+	const result = nextResolve(specifier, context)
 	if (result.url?.startsWith('file://') && !result.url.startsWith(mockatonSrcRoot)) {
 		const url = new URL(result.url)
 		url.searchParams.set('t', performance.now())

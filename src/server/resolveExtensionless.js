@@ -3,9 +3,9 @@ import { join, dirname } from 'node:path'
 import { fileURLToPath, pathToFileURL } from 'node:url'
 
 
-export async function resolve(specifier, context, nextResolve) {
+export function resolveExtensionless(specifier, context, nextResolve) {
 	try {
-		return await nextResolve(specifier, context)
+		return nextResolve(specifier, context)
 	}
 	catch (error) {
 		// Attempt to resolve imports as .ts and .js
@@ -13,7 +13,7 @@ export async function resolve(specifier, context, nextResolve) {
 			const absPath = join(dirname(fileURLToPath(context.parentURL)), specifier)
 			for (const candidate of ['.ts', '.js'].map(ext => absPath + ext))
 				if (existsSync(candidate))
-					return resolve(pathToFileURL(candidate).href, context, nextResolve)
+					return resolveExtensionless(pathToFileURL(candidate).href, context, nextResolve)
 		}
 		throw error
 	}

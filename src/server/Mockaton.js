@@ -1,4 +1,4 @@
-import { register } from 'node:module'
+import { registerHooks } from 'node:module'
 import { createServer } from 'node:http'
 
 import pkgJSON from '../../package.json' with { type: 'json' }
@@ -18,6 +18,9 @@ import { cookie } from './stores/cookies.js'
 import { config, initConfig } from './stores/config.js'
 import { watchMocksDir } from './stores/Watcher.js'
 
+import { resolveExtensionless } from './resolveExtensionless.js'
+import { resolveBypassImportCache } from './resolveBypassImportCache.js'
+
 
 export function Mockaton(options) {
 	return new Promise((resolve, reject) => {
@@ -25,10 +28,10 @@ export function Mockaton(options) {
 		cookie.init(config.cookies)
 		brokers.init()
 
-		register('./ResolverResolveExtensionless.js', import.meta.url)
+		registerHooks({ resolve: resolveExtensionless })
 
 		if (config.bypassImportCache)
-			register('./ResolverBypassImportCache.js', import.meta.url)
+			registerHooks({ resolve: resolveBypassImportCache })
 
 		if (config.watcherEnabled)
 			watchMocksDir()

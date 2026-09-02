@@ -36,17 +36,17 @@ start-docker:
 		node --watch-path=src/server src/server/cli.js --host 0.0.0.0 --port 2020
 
 test:
-	@node --test 'src/**/*.test.js'
+	@node --test --experimental-eventsource 'src/**/*.test.js'
 
 test-docker:
 	@docker run --rm --interactive --tty \
 		--volume $(PWD):/app \
 		--workdir /app \
-		node:24-alpine \
-		node --test 'src/**/*.test.js'
+		node:26-alpine \
+		node --test --experimental-eventsource 'src/**/*.test.js'
 
 coverage:
-	@node --test --experimental-test-coverage \
+	@node --test --experimental-eventsource --experimental-test-coverage \
 		--test-reporter=spec --test-reporter-destination=stdout \
 		--test-reporter=lcov --test-reporter-destination=lcov.info \
 		'src/server/**/*.test.js'

@@ -1178,6 +1178,7 @@ describe('Registering Mocks', () => {
 		before(async () => {
 			await mocksDir.mkdir('reg0')
 			await mocksDir.write(fx0.file, fx0.body)
+			await sleep(config.watcherDebounceMs + 50)
 			version = await resolveOnNextSyncVersion(-1)
 		})
 
@@ -1217,41 +1218,28 @@ describe('Registering Mocks', () => {
 })
 
 
-/** In Node, there's no EventSource, so we work around it like this.
- * This is for listening to real-time updates. It responds when a new mock is added, deleted, or renamed. */
-async function resolveOnNextSyncVersion(currSyncVer = undefined) {
+/** Uses the native `EventSource` to listen for real-time sync-version updates.
+ * It resolves when a new version is pushed that differs from `currSyncVer`;
+ * when `currSyncVer` is omitted, the first push after the initial connection is
+ * used. */
+function resolveOnNextSyncVersion(currSyncVer = undefined) {
 	let skipFirst = currSyncVer === undefined
-	const reader = (await api.getSyncVersion())
-		.body.pipeThrough(new TextDecoderStream())
-		.getReader()
-	let buffer = ''
-
-	try {
-		while (true) {
-			try {
-				const { done, value } = await reader.read()
-				if (done) break
-				buffer += value
+	return new Promise((resolve, reject) => {
+		const es = new EventSource(api.addr + API.syncVersion)
+		es.onmessage = event => {
+			const v = Number(event.data)
+			if (skipFirst || v === currSyncVer)
+				skipFirst = false
+			else {
+				es.close()
+				resolve(v)
 			}
-			catch {
-				break
-			}
-			const parts = buffer.split('\n\n')
-			buffer = parts.pop() || ''
-
-			for (const event of parts)
-				for (const line of event.split(/\r?\n/))
-					if (line.startsWith('data:')) {
-						const v = Number(line.slice(5).trim())
-						if (skipFirst || v === currSyncVer)
-							skipFirst = false
-						else
-							return v
-					}
 		}
-	}
-	finally {
-		reader.cancel().catch(() => {})
-	}
+		es.onerror = () => {
+			if (es.readyState === EventSource.CLOSED) {
+				es.close()
+				reject(new Error('sync-version stream closed'))
+			}
+		}
+	})
 }
-

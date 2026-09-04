@@ -8,7 +8,7 @@ export default (url) => htmlTemplate({
 		${socialMetadata('Changelog', '', url)}
 	`,
 	body: `
-		<h1 id="changelog">Changelog</h1>
+		<h1>Changelog</h1>
 		<br />
 
 		<p>13.11.0 added <code>/mockaton/health</code> endpoint</p>

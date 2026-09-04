@@ -1,67 +1,67 @@
 {
 	"/about.html": {
-		"hash": "ySFl0klmhgxj8VBfWeM_qEOpRzk",
+		"hash": "ZziP4rHjN1Y_r0A5c_zv6evdvuw",
 		"delta": 0,
-		"size": 22111
+		"size": 22140
 	},
 	"/api.html": {
-		"hash": "z-DcAKRh8ePCakR-1q-OcMt2vos",
+		"hash": "8SeUgin7803oGB0FC5MFCKx6JMA",
 		"delta": 0,
-		"size": 43251
+		"size": 43353
 	},
 	"/changelog.html": {
-		"hash": "Rg1ZvD9daUeO9M6tX2M2uk5vddY",
+		"hash": "S1JlipAcK6V3zviDKo-TwlsOm1Y",
 		"delta": 0,
-		"size": 30639
+		"size": 30668
 	},
 	"/config.html": {
-		"hash": "qpUJR0ALtG00ynFm7BpuqG2ly4s",
+		"hash": "ClOj55obYbphyzJSVveyqIGu5FE",
 		"delta": 0,
-		"size": 38101
+		"size": 38748
 	},
 	"/convention.html": {
-		"hash": "jHE4dml9UZdw7CBPpNSndH5lQjo",
+		"hash": "5uHOIMLb8AovA90jlvX57-kzbt4",
 		"delta": 0,
-		"size": 21450
+		"size": 21479
 	},
 	"/function-mocks.html": {
-		"hash": "6BpGc7xsyWmp7Q78WxmbvfxynrY",
+		"hash": "sWEq8Jih5OMNSVb1VafXtPOZBic",
 		"delta": 0,
-		"size": 29233
+		"size": 29445
 	},
 	"/index.html": {
-		"hash": "dR3T4-f6J8p32A9Y8M0pABmAHig",
+		"hash": "6ToDFA2DwcFtgsf3_aOc0GHEIqo",
 		"delta": 0,
-		"size": 32081
+		"size": 32232
 	},
 	"/installation.html": {
-		"hash": "N89kHQA8OIXxc7t0nju0hRoiN5I",
+		"hash": "VPfVnqpbmj_VP9SJWcb3Sv0IgQ4",
 		"delta": 0,
-		"size": 23068
+		"size": 23219
 	},
 	"/plugins.html": {
-		"hash": "RQMbks8OKg_dEuFVBxG6jXGdykA",
+		"hash": "bSozMZjLZF7bZzlh6XQ641aClQ4",
 		"delta": 0,
-		"size": 24561
+		"size": 24605
 	},
 	"/related-tech.html": {
-		"hash": "ktiaGM8yhM2FlaPU2Q8UgtOuRKA",
-		"delta": 0,
-		"size": 22231
+		"hash": "YvV28A4K43JcLScrOdB_t8G7s60",
+		"delta": 14,
+		"size": 22445
 	},
 	"/scraping.html": {
-		"hash": "DWj_65e5T93wTQafLYsqKiAgp9k",
+		"hash": "bqcwZhnIGqb_5mpSNZ6Fi-g7nIM",
 		"delta": 0,
-		"size": 19875
+		"size": 19904
 	},
 	"/use-cases.html": {
-		"hash": "BjvlC8kXx5HNXhrX1YHRyJ25Nq4",
+		"hash": "F9M9h4L59ty1fpal7Tf2L5kEEUo",
 		"delta": 0,
-		"size": 21431
+		"size": 21770
 	},
 	"/vite.html": {
-		"hash": "ng3WzIUm6n56ZhlFB6q7vq0tSoc",
+		"hash": "jqaE3ZIX3W_zIJbOSAo79QIb0-g",
 		"delta": 0,
-		"size": 20481
+		"size": 20555
 	}
 }

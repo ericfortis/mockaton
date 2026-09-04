@@ -304,6 +304,9 @@ footer {
 	text-align: right;
 }
 
+[id] {
+	scroll-margin-top: 100px
+}
 
 img[alt] {
 	background: #333;
@@ -439,3 +442,4 @@ video {
 .noWrap {
 	white-space: nowrap;
 }
+

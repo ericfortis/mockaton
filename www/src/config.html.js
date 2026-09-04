@@ -11,7 +11,7 @@ export default (url) => htmlTemplate({
 	body: `
 		<h1>Config</h1>
 
-		<h2 id="cli-options">CLI Options</h2>
+		<h2>CLI Options</h2>
 		<p>The CLI options override their counterparts in <code>mockaton.config.js</code></p>
 
 		${shell`
@@ -34,9 +34,7 @@ mockaton [mocks-dir] [options]
 		`}
 
 
-		<h2 id="mockaton-config-js-optional-">
-			mockaton.config.js (Optional)
-		</h2>
+		<h2>mockaton.config.js (Optional)</h2>
 		<p>
 			Mockaton looks for a file <code>mockaton.config.js</code>
 			in its current working directory. Here’s an overview of the defaults:
@@ -200,7 +198,7 @@ export default defineConfig({
 		</p>
 
 
-		<h3 id="-formatcollectedjson-boolean-">
+		<h3>
 			<code>formatCollectedJSON<span class="syntax_type">?: boolean</span></code>
 		</h3>
 		<p>
@@ -208,7 +206,7 @@ export default defineConfig({
 			the formatting output of <code>JSON.stringify(data, null, ’ ’)</code>
 		</p>
 
-		<h3 id="-cookies-label-string-string-">
+		<h3>
 			<code>cookies<span class="syntax_type">?: { [label: string]: string }</span></code>
 		</h3>
 
@@ -242,7 +240,7 @@ config.cookies = {
 			and signature. So it’s useful only if you care about its payload.
 		</p>
 
-		<h3 id="-extraheaders-string-">
+		<h3>
 			<code>extraHeaders<span class="syntax_type">?: string[]</span></code>
 		</h3>
 		<p>
@@ -258,7 +256,7 @@ config.extraHeaders = [
 `}
 
 
-		<h3 id="-extramimes-fileext-string-string-">
+		<h3>
 			<code>extraMimes<span class="syntax_type">?: { [fileExt: string]: string }</span></code>
 		</h3>
 
@@ -274,14 +272,14 @@ config.extraMimes = {
 		>utils/mime.js</a>, so you can override them.
 		</p>
 
-		<h3 id="-plugins-filenametester-regexp-plugin-plugin-">
+		<h3>
 			<code>plugins<span class="syntax_type">?: [filenameTester: RegExp, plugin: Plugin][]</span></code>
 		</h3>
 
 		<a href="/plugins">See Plugins Page</a>
 
 
-		<h3 id="-corsallowed-">
+		<h3>
 			<code>corsAllowed<span class="syntax_type">?: boolean</span></code>
 		</h3>
 		<p>
@@ -299,7 +297,7 @@ config.corsExposedHeaders = [] // headers you need to access in client-side JS
 `}
 
 
-		<h3 id="-onready-">
+		<h3>
 			<code>onReady<span class="syntax_type">?: (dashboardUrl: string) =&gt; void</span></code>
 		</h3>
 
@@ -318,7 +316,7 @@ config.onReady = () => {}
 
 		<br />
 
-		<h3 id="-loglevel-quiet-normal-verbose-">
+		<h3>
 			<code>logLevel<span class="syntax_type">?: 'quiet' | 'normal' | 'verbose'</span></code>
 		</h3>
 		<p>Defaults to <code>'normal'</code></p>

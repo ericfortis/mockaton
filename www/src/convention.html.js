@@ -14,9 +14,7 @@ export default (url) => htmlTemplate({
 			or <code>GET 206</code> (partial content, e.g., for videos).
 		</p>
 
-		<h2 id="extension">
-			Extension <span class="normalWeight">(three dots)</span>
-		</h2>
+		<h2>Extension <span class="normalWeight">(three dots)</span></h2>
 		<p>
 			The last three dots are reserved for the:
 			<span class="noWrap">1) HTTP Method</span>,
@@ -35,9 +33,7 @@ export default (url) => htmlTemplate({
 		</details>
 
 
-		<h2 id="dynamic-segments">
-			Dynamic Segments
-		</h2>
+		<h2>Dynamic Segments</h2>
 		<p>
 			Anything within square brackets are always matched.
 		</p>
@@ -47,9 +43,7 @@ export default (url) => htmlTemplate({
 		</p>
 		<pre><code>api/company/<strong>[id]</strong>/user/<strong>[uid]</strong>.GET.200.json</code></pre>
 
-		<h2 id="comments">
-			Comments
-		</h2>
+		<h2>Comments</h2>
 		<p>
 			Comments are anything within parentheses, including them. They
 			are ignored for routing purposes, so they have no effect on the
@@ -62,9 +56,7 @@ api/foo.GET.200.json
 
 		<p>A filename can have many comments.</p>
 
-		<h3 id="default-mock-for-a-route">
-			Default Mock for a Route
-		</h3>
+		<h3>Default Mock for a Route</h3>
 		<p>
 			You can add the comment: <code>(default)</code>.
 			Otherwise, the first file in <strong>alphabetical order</strong> wins.
@@ -74,9 +66,7 @@ api/foo.GET.200.json
 api/user<strong>(default)</strong>.GET.200.json
 </pre>
 
-		<h2 id="query-string-params">
-			Query String Params
-		</h2>
+		<h2>Query String Params</h2>
 		<p>
 			The query string is ignored for routing purposes.
 			It’s only used for documenting the URL contract.
@@ -92,9 +82,7 @@ api/video<strong>?limit=[limit]</strong>.GET.200.json
 		</p>
 
 
-		<h2 id="index-like-routes">
-			Index-like Routes
-		</h2>
+		<h2>Index-like Routes</h2>
 		<p>
 			If you have <span class="NullLink">api/foo</span> and
 			<span class="NullLink">api/foo/bar</span>, you have two options:

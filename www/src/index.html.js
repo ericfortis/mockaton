@@ -57,7 +57,7 @@ export default () => htmlTemplate({
 		<!--		</ul>-->
 
 
-		<h2 id="demo-docker-">Demo (Docker)</h2>
+		<h2>Demo (Docker)</h2>
 		<p>
 			This will spin up Mockaton with the
 			<a href="https://github.com/ericfortis/mockaton/tree/main/mockaton-mocks" target="_blank">sample directory</a>
@@ -86,7 +86,7 @@ curl localhost:2020/api/user
 npx skills add ericfortis/mockaton
 `}
 
-		<h2 id="basic-usage">Basic Usage</h2>
+		<h2>Basic Usage</h2>
 
 		${shell`
 mockaton --port 2020  my-mocks-dir
@@ -146,7 +146,7 @@ mockaton --port 2020  my-mocks-dir
 		</p>
 
 
-		<h2 id="how-to-create-mocks-">How to create mocks?</h2>
+		<h2>How to create mocks?</h2>
 		<p>
 			Write it to your mocks directory.
 			TypeScript files are sent as JSON by default.
@@ -161,7 +161,7 @@ echo "export default { name: 'John' }" > my-mocks-dir/api/user.GET.200.ts
 		</p>
 
 
-		<h3 id="example-a-json">Example A: JSON</h3>
+		<h3>Example A: JSON</h3>
 		<p>
 			For JSON responses, you can use TypeScript (or JS), and <code>export default</code> an Object, Array, or String.
 		</p>
@@ -180,7 +180,7 @@ export default {
 `)}
 
 
-		<h3 id="example-b-typescript-or-javascript">Example B: Non-JSON</h3>
+		<h3>Example B: Non-JSON</h3>
 		<ul>
 			<li><strong>Route:</strong> /api/company/123</li>
 			<li><strong>Filename:</strong> api/company/[id].GET.200.xml</li>
@@ -193,7 +193,7 @@ export default {
 `}
 
 
-		<h3 id="example-c-function-mocks-https-mockaton-com-function-mocks-">
+		<h3>
 			Example C: <a href="/function-mocks">Function Mocks</a>
 		</h3>
 		<p>

@@ -31,9 +31,7 @@ export default (req, response) => {
 			<code>async</code> functions are supported.
 		</p>
 
-		<h2 id="custom-http-handlers">
-			Custom HTTP Handlers
-		</h2>
+		<h2>Custom HTTP Handlers</h2>
 		<p>
 			For example, you can intercept requests to write to a database. Or act based on
 			some query string value, etc. In summary, you get Node’s <code>request</code>,

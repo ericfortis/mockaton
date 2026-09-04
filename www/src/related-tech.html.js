@@ -60,11 +60,9 @@ export default (url) => htmlTemplate({
 
 
 		<hr />
-		<h2 id="proxy-like">
-			Alternatives
-		</h2>
+		<h2>Alternatives</h2>
 
-		<h3 id="proxy-like">Proxy-like</h3>
+		<h3>Proxy-like</h3>
 		<p>
 			These are similar to Mockaton in the sense that you can modify the
 			mock response without losing or risking your frontend code state. For
@@ -88,7 +86,7 @@ export default (url) => htmlTemplate({
 		</ul>
 
 
-		<h3 id="server-side">Server side</h3>
+		<h3>Server side</h3>
 		<ul>
 			<li><a href="https://github.com/wiremock/wiremock">Wire Mock</a></li>
 			<li><a href="https://www.telerik.com/fiddler">Fiddler</a></li>
@@ -99,9 +97,7 @@ export default (url) => htmlTemplate({
 		</ul>
 
 
-		<h3 id="client-side">
-			Client side <span class="normalWeight">(Service Worker)</span>
-		</h3>
+		<h3>Client side <span class="normalWeight">(Service Worker)</span></h3>
 		<p>
 			Mockaton has a sister testing library <a href="http://github.com/ericfortis/pixaton">Pixaton</a>
 			for testing UI regression by taking screenshots and pixel diffing them. Give it a try

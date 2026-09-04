@@ -6,7 +6,7 @@ export default (url) => htmlTemplate({
 	body: `
 		<h1>Scraping Mocks from your Backend</h1>
 
-		<h2 id="option-1-browser-extension">
+		<h2>
 			Option 1: <a href="https://chromewebstore.google.com/detail/mockaton-downloader/babjpljmacbefcmlomjedmgmkecnmlaa">Chrome Extension ↗</a>
 		</h2>
 		<p>
@@ -22,9 +22,7 @@ export default (url) => htmlTemplate({
 			Source Code ↗
 		</a>
 
-		<h2 id="option-2-fallback-to-your-backend">
-			Option 2: Fallback to your Backend
-		</h2>
+		<h2>Option 2: Fallback to your Backend</h2>
 
 		<p>
 			This option could be a bit elaborate if your backend uses third-party authentication,

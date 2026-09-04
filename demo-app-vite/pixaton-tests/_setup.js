@@ -15,7 +15,6 @@ const mockatonServer = await Mockaton({
 	logLevel: 'quiet',
 	hotReload: false,
 	watcherEnabled: false,
-	bypassImportCache: false,
 	onReady() {}
 })
 const mockatonAddr = `http://${mockatonServer.address().address}:${mockatonServer.address().port}`

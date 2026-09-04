@@ -48,7 +48,6 @@ const schema = {
 	corsMaxAge: [0, is(Number)],
 
 	hotReload: [false, is(Boolean)],
-	bypassImportCache: [true, is(Boolean)],
 
 	// Non-serializable
 	plugins: [[[/\.(js|ts)$/, jsToJsonPlugin]], is(Array)],

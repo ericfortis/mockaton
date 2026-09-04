@@ -8,6 +8,8 @@ import { ServerResponse } from './utils/HttpServerResponse.js'
 import { setCorsHeaders, isPreflight } from './utils/http-cors.js'
 import { IncomingMessage } from './utils/HttpIncomingMessage.js'
 import { watchDevSPA } from './utils/WatcherDevClient.js'
+import { resolveExtensionless } from './utils/resolveExtensionless.js'
+import { bypassImportCache } from './utils/resolveBypassImportCache.js'
 
 import { API } from '../client/ApiConstants.js'
 import { dispatchMock } from './MockDispatcher.js'
@@ -18,9 +20,6 @@ import { cookie } from './stores/cookies.js'
 import { config, initConfig } from './stores/config.js'
 import { watchMocksDir } from './stores/Watcher.js'
 
-import { resolveExtensionless } from './resolveExtensionless.js'
-import { resolveBypassImportCache } from './resolveBypassImportCache.js'
-
 
 export function Mockaton(options) {
 	return new Promise((resolve, reject) => {
@@ -29,9 +28,7 @@ export function Mockaton(options) {
 		brokers.init()
 
 		registerHooks({ resolve: resolveExtensionless })
-
-		if (config.bypassImportCache)
-			registerHooks({ resolve: resolveBypassImportCache })
+		registerHooks({ resolve: bypassImportCache(config.mocksDir) })
 
 		if (config.watcherEnabled)
 			watchMocksDir()

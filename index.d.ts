@@ -46,7 +46,6 @@ export declare interface Config {
 	onReady?: (address: string) => void
 
 	hotReload?: boolean // For UI dev purposes only
-	bypassImportCache?: boolean
 }
 
 

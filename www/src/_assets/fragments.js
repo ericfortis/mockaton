@@ -1,17 +1,17 @@
 ;(function () {
 	document.querySelectorAll('h2:not([id]), h3:not([id])')
-		.forEach(insertHeadingLink)
+		.forEach(prependAnchor)
 
-	function insertHeadingLink(h) {
+	function prependAnchor(hElem) {
 		const a = document.createElement('a')
-		a.id = '-' + buildId(h.innerText)
+		a.id = idFor(hElem.innerText)
 		a.href = '#' + a.id
-		a.addEventListener('click', highlightParent)
-		h.prepend(a)
+		a.onclick = highlightParent
+		hElem.prepend(a)
 	}
 
-	function buildId(content = '') {
-		return content.normalize('NFD')
+	function idFor(content) {
+		return '-' + content.normalize('NFD')
 			.replace(/[\u0300-\u036f]/g, '')
 			.toLowerCase()
 			.replace(/[^a-z0-9]+/g, ' ')
@@ -21,24 +21,24 @@
 	}
 
 	const cHighlight = 'highlight'
-	let elPendingHighlightOff = null
+	let highlightedElem = null
 	let highlightTimer = null
 
 	if (location.hash)
 		highlightParent.call(document.querySelector(location.hash))
 
-	function highlightParent(linkEl) {
+	function highlightParent() {
 		const el = this?.parentNode
 		if (!el) return
-		if (elPendingHighlightOff) {
-			elPendingHighlightOff.classList.remove(cHighlight)
+		if (highlightedElem) {
+			highlightedElem.classList.remove(cHighlight)
 			clearTimeout(highlightTimer)
 		}
 		el.classList.add(cHighlight)
-		elPendingHighlightOff = el
+		highlightedElem = el
 		highlightTimer = setTimeout(() => {
-			el.classList.remove(cHighlight)
-			elPendingHighlightOff = null
+			highlightedElem.classList.remove(cHighlight)
+			highlightedElem = null
 		}, 1800)
 	}
 }())

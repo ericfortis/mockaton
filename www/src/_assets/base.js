@@ -10,14 +10,12 @@
 // TODO use copy btn instead
 ;(function doubleClickToSelectAllPre() {
 	for (const pre of document.querySelectorAll('pre'))
-		pre.addEventListener('dblclick', function () {
-			selectAllContents(pre)
-		}, false)
+		pre.addEventListener('dblclick', selectAllContents, false)
 
-	function selectAllContents(node) {
+	function selectAllContents() {
 		try {
 			const range = document.createRange()
-			range.selectNodeContents(node)
+			range.selectNodeContents(this)
 			const selection = window.getSelection()
 			selection.removeAllRanges()
 			selection.addRange(range)

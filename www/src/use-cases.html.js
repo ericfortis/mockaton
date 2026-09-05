@@ -97,6 +97,5 @@ make run-standalone-demo
 			Say you need to work with sensitive documents you are not
 			allowed to see, such as PII (Personally Identifiable Information).
 		</p>
-
 	`
 })

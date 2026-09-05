@@ -52,9 +52,8 @@ export default defineConfig({
 		<p>In your <code>package.json</code>:</p>
 		${json`
 "scripts": {
-  "mockaton": "mockaton --port 4040 my-mocks"
-}
-`}
+	"mockaton": "mockaton --port 4040 my-mocks"
+}`}
 
 
 		<h2>Option 4: Programmatic Launch</h2>

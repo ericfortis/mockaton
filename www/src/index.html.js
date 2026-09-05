@@ -1,5 +1,5 @@
 import { htmlTemplate, MockatonLogo, socialMetadata } from './_htmlTemplate.js'
-import { js, shell, xml } from './_syntaxHighlight.js'
+import { js, shell, xml, ts } from './_syntaxHighlight.js'
 
 // language=html
 export default () => htmlTemplate({
@@ -170,7 +170,7 @@ echo "export default { name: 'John' }" > my-mocks-dir/api/user.GET.200.ts
 			<li><strong>Route:</strong> /api/company/123</li>
 			<li><strong>Filename:</strong> api/company/[id].GET.200.ts</li>
 		</ul>
-		${js(`
+		${ts`
 interface Company {
   name: string
 }
@@ -178,7 +178,7 @@ interface Company {
 export default {
   name: 'Acme, Inc.'
 } satisfies Company
-`)}
+`}
 
 
 		<h3>Example B: Non-JSON</h3>

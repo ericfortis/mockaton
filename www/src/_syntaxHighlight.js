@@ -20,6 +20,7 @@ function prismFactory(language) {
 	}
 }
 
+export const ts = prismFactory('javascript')
 export const js = prismFactory('javascript')
 export const xml = prismFactory('xml')
 export const json = prismFactory('json')

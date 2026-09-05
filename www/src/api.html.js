@@ -21,10 +21,10 @@ export default (url) => htmlTemplate({
 		<p>
 			If you want to import the spec:
 		</p>
-		${js(`
+		${js`
 import spec from 'mockaton/openapi.json' with { type: 'json' }
 console.log(spec)
-`)}
+`}
 
 		<h2>How to use the API?</h2>
 		<form>
@@ -34,10 +34,10 @@ console.log(spec)
 			</label>
 		</form>
 
-		${js(`
+		${js`
 import { Commander } from 'mockaton'
 const mockaton = new Commander('${SERVER}')
-`).replace(SERVER, `<span class="ServerAddr">${SERVER}</span>`)}
+`.replace(SERVER, `<span class="ServerAddr">${SERVER}</span>`)}
 
 		<section class="Apis">${AllApis()}</section>
 		<script src="api.js" type="module"></script>

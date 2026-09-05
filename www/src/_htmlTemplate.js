@@ -43,6 +43,7 @@ export const htmlTemplate = ({ head = '', body }) => `
 		<meta name="viewport" content="width=device-width, initial-scale=1">
 		<meta name="description" content="HTTP Mock Server">
 		<link rel="stylesheet" href="/_assets/base.css" />
+		<link rel="stylesheet" href="/_assets/fragment.css" />
 		<link rel="stylesheet" href="/_assets/header.css" />
 		<link rel="stylesheet" href="/_assets/nav.css" />
 		<link rel="stylesheet" href="/_assets/syntax.css" />

@@ -1,6 +1,14 @@
-;(function insertHeadingIds() {
-	for (const h of document.querySelectorAll('h2:not([id]), h3:not([id])'))
-		h.id = '-' + buildId(h.innerText)
+;(function () {
+	document.querySelectorAll('h2:not([id]), h3:not([id])')
+		.forEach(insertHeadingLink)
+
+	function insertHeadingLink(h) {
+		const a = document.createElement('a')
+		a.id = '-' + buildId(h.innerText)
+		a.href = '#' + a.id
+		a.addEventListener('click', () => highlightSectionTitle(a.getAttribute('href')))
+		h.prepend(a)
+	}
 
 	function buildId(content = '') {
 		return content.normalize('NFD')
@@ -10,5 +18,29 @@
 			.replace(/\s+/g, ' ')
 			.trim()
 			.replace(/ /g, '-')
+	}
+
+	const cHighlight = 'highlight'
+	let elPendingHighlightOff = null
+	let highlightTimer = null
+
+	if (location.hash)
+		highlightSectionTitle(location.hash)
+
+	function highlightSectionTitle(fragmentName) {
+		try {
+			const el = document.querySelector(fragmentName).parentNode
+			if (elPendingHighlightOff) {
+				elPendingHighlightOff.classList.remove(cHighlight)
+				clearTimeout(highlightTimer)
+			}
+			el.classList.add(cHighlight)
+			elPendingHighlightOff = el
+			highlightTimer = setTimeout(function () {
+				el.classList.remove(cHighlight)
+				elPendingHighlightOff = null
+			}, 1800)
+		}
+		catch {}
 	}
 }())

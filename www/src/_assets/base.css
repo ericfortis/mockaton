@@ -34,6 +34,7 @@
 	--colorAccent: #2962ff;
 	--colorAccentDarker: #2356e3;
 	--colorHighlight: light-dark(#ffdd00, #ffcc00);
+	--colorFragHighlight: light-dark(#ffdd00, #536e00)
 }
 
 @media (max-width: 800px) {
@@ -304,9 +305,6 @@ footer {
 	text-align: right;
 }
 
-[id] {
-	scroll-margin-top: 100px
-}
 
 img[alt] {
 	background: #333;

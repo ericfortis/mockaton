@@ -6,7 +6,7 @@
 		const a = document.createElement('a')
 		a.id = '-' + buildId(h.innerText)
 		a.href = '#' + a.id
-		a.addEventListener('click', () => highlightSectionTitle(a.getAttribute('href')))
+		a.addEventListener('click', highlightSectionTitle)
 		h.prepend(a)
 	}
 
@@ -25,10 +25,10 @@
 	let highlightTimer = null
 
 	if (location.hash)
-		highlightSectionTitle(location.hash)
+		highlightSectionTitle.call(document.querySelector(location.hash))
 
-	function highlightSectionTitle(fragmentName) {
-		const el = document.querySelector(fragmentName)?.parentNode
+	function highlightSectionTitle(linkEl) {
+		const el = this?.parentNode
 		if (!el) return
 		if (elPendingHighlightOff) {
 			elPendingHighlightOff.classList.remove(cHighlight)

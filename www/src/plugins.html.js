@@ -15,49 +15,48 @@ export default (url) => htmlTemplate({
 		<p>Note: don’t call <code>response.end()</code> on any plugin.</p>
 
 		${ts`
-			type Plugin = (
-				filePath: string,
-				request: IncomingMessage,
-				response: OutgoingMessage
-			) => Promise<{
-				mime: string,
-				body: string | Uint8Array
-			}>
+type Plugin = (
+	filePath: string,
+	request: IncomingMessage,
+	response: OutgoingMessage
+) => Promise<{
+	mime: string,
+	body: string | Uint8Array
+}>
 		`}
 
 
 		<h2>Examples</h2>
 
 		${js`
-			import { parse } from 'yaml' // npm install yaml
-			import { readFileSync } from 'node:js'
-			import { jsToJsonPlugin } from 'mockaton'
+import { parse } from 'yaml' // npm install yaml
+import { readFileSync } from 'node:js'
+import { jsToJsonPlugin } from 'mockaton'
 
-			config.plugins = [
-				// Although \`jsToJsonPlugin\` is set by default, you need to include it if you need it.
-				// IOW, your plugins array overwrites the default list. This way you can remove it.
-				[/\\.(js|ts)$/, jsToJsonPlugin],
+config.plugins = [
+	// Although \`jsToJsonPlugin\` is set by default, you need to include it if you need it.
+	// IOW, your plugins array overwrites the default list. This way you can remove it.
+	[/\\.(js|ts)$/, jsToJsonPlugin],
 
-				[/\\.yml$/, yamlToJsonPlugin],
+	[/\\.yml$/, yamlToJsonPlugin],
 
-				// e.g. GET /api/foo would be capitalized
-				[/foo\\.GET\\.200\\.txt$/, capitalizePlugin]
-			]
+	// e.g. GET /api/foo would be capitalized
+	[/foo\\.GET\\.200\\.txt$/, capitalizePlugin]
+]
 
 
-			function yamlToJsonPlugin(filePath) {
-				return {
-					mime: 'application/json',
-					body: JSON.stringify(parse(readFileSync(filePath, 'utf8')))
-				}
-			}
+function yamlToJsonPlugin(filePath) {
+	return {
+		mime: 'application/json',
+		body: JSON.stringify(parse(readFileSync(filePath, 'utf8')))
+	}
+}
 
-			function capitalizePlugin(filePath) {
-				return {
-					mime: 'application/text',
-					body: readFileSync(filePath, 'utf8').toUpperCase()
-				}
-			}
-		`}
+function capitalizePlugin(filePath) {
+	return {
+		mime: 'application/text',
+		body: readFileSync(filePath, 'utf8').toUpperCase()
+	}
+}`}
 	`
 })

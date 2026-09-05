@@ -28,19 +28,17 @@
 		highlightSectionTitle(location.hash)
 
 	function highlightSectionTitle(fragmentName) {
-		try {
-			const el = document.querySelector(fragmentName).parentNode
-			if (elPendingHighlightOff) {
-				elPendingHighlightOff.classList.remove(cHighlight)
-				clearTimeout(highlightTimer)
-			}
-			el.classList.add(cHighlight)
-			elPendingHighlightOff = el
-			highlightTimer = setTimeout(function () {
-				el.classList.remove(cHighlight)
-				elPendingHighlightOff = null
-			}, 1800)
+		const el = document.querySelector(fragmentName)?.parentNode
+		if (!el) return
+		if (elPendingHighlightOff) {
+			elPendingHighlightOff.classList.remove(cHighlight)
+			clearTimeout(highlightTimer)
 		}
-		catch {}
+		el.classList.add(cHighlight)
+		elPendingHighlightOff = el
+		highlightTimer = setTimeout(() => {
+			el.classList.remove(cHighlight)
+			elPendingHighlightOff = null
+		}, 1800)
 	}
 }())

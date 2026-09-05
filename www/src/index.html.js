@@ -117,8 +117,9 @@ mockaton --port 2020  my-mocks-dir
 			</tr>
 			<tr>
 				<td>/media/avatar.png</td>
-				<td>media/avatar.png</td>
-				<td>Statics assets don’t need the above extension.</td>
+				<td>media/avatar.png OR media/avatar.png.GET.200.png</td>
+				<td>Statics assets (GET 200) don’t need the extension convention.</td>
+
 			</tr>
 			<tr>
 				<td>/api/login</td>

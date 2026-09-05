@@ -28,7 +28,7 @@ code variants.
 | Route | Filename | Description |
 | -----| -----| ---|
 | /api/company/123 | api/company/[id].GET.200.ts | `[id]` is a dynamic parameter. `.ts`, and `.js` are sent as JSON by default. |
-| /media/avatar.png | media/avatar.png | Statics assets don't need the above extension. |
+| /media/avatar.png | media/avatar.png OR media/avatar.png.GET.200.png | Statics assets (GET 200) don’t need the extension convention. |
 | /api/login | api/login(invalid attempt).POST.401.ts | Anything within parenthesis is a comment. They are ignored when routing. You can add many comments, `foo(c0)(c1).png` |
 | /api/login | api/login(default).GET.200.ts | `(default)` is a special comment. Otherwise, the first mock variant in alphabetical order wins.  |
 | /api/login | api/login(locked out user).POST.423.json | `.json` is allowed too. |

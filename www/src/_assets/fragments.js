@@ -6,7 +6,7 @@
 		const a = document.createElement('a')
 		a.id = '-' + buildId(h.innerText)
 		a.href = '#' + a.id
-		a.addEventListener('click', highlightSectionTitle)
+		a.addEventListener('click', highlightParent)
 		h.prepend(a)
 	}
 
@@ -25,9 +25,9 @@
 	let highlightTimer = null
 
 	if (location.hash)
-		highlightSectionTitle.call(document.querySelector(location.hash))
+		highlightParent.call(document.querySelector(location.hash))
 
-	function highlightSectionTitle(linkEl) {
+	function highlightParent(linkEl) {
 		const el = this?.parentNode
 		if (!el) return
 		if (elPendingHighlightOff) {

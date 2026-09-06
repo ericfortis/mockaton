@@ -27,7 +27,7 @@ export function Mockaton(options) {
 		cookie.init(config.cookies)
 		brokers.init()
 
-		registerHooks({ resolve: resolveExtensionless })
+		registerHooks({ resolve: resolveExtensionless(['.ts', '.js']) })
 		registerHooks({ resolve: bypassImportCache(config.mocksDir) })
 
 		if (config.watcherEnabled)
@@ -40,10 +40,9 @@ export function Mockaton(options) {
 		server.on('error', reject)
 		server.listen(config.port, config.host, () => {
 			const url = `http://${server.address().address}:${server.address().port}`
-			const dashboardUrl = url + API.root
 			logger.info('Listening', url)
-			logger.info('Dashboard', dashboardUrl)
-			config.onReady(dashboardUrl)
+			logger.info('Dashboard', url + API.root)
+			config.onReady(url + API.root)
 			resolve(server)
 		})
 	})

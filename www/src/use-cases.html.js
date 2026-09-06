@@ -14,15 +14,11 @@ export default (url) => htmlTemplate({
 			infrastructure. And sometimes blocked by its instability.
 		</p>
 
-
-		<h2>Develop ahead of backend</h2>
+		<h2>Time travel</h2>
 		<p>
-			Sometimes frontend developement could be blocked by waiting for backend APIs to be ready.
-			See <a href="https://github.com/ericfortis/mockaton/blob/main/demo-app-vite/src/ColorModel.js">ColorModel.js</a>
-			for an example of how you can decouple your frontend code from the API contract,
-			so API changes become a matter of updating only one place.
+			If you commit the mocks to the repo, you won’t need to downgrade
+			backends when checking out long-lived branches or bisecting bugs.
 		</p>
-
 
 		<h2>All permutations</h2>
 		<p>
@@ -36,13 +32,13 @@ export default (url) => htmlTemplate({
 			<img src="/assets/media/demo-app.avif" alt="Mockaton Demo App Screenshot" />
 		</div>
 
-
-		<h2>Time travel</h2>
+		<h2>Develop ahead of backend</h2>
 		<p>
-			If you commit the mocks to the repo, you won’t need to downgrade
-			backends when checking out long-lived branches or bisecting bugs.
+			Sometimes frontend developement could be blocked by waiting for backend APIs to be ready.
+			See <a href="https://github.com/ericfortis/mockaton/blob/main/demo-app-vite/src/ColorModel.js">ColorModel.js</a>
+			for an example of how you can decouple your frontend code from the API contract,
+			so API changes become a matter of updating only one place.
 		</p>
-
 
 		<h2>Standalone demo server</h2>
 		<p>

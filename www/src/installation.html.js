@@ -57,16 +57,16 @@ export default defineConfig({
 
 
 		<h2>Option 4: Programmatic Launch</h2>
-		<p>
-			<code>mockaton.config.json</code> is not read by default in this case,
-			so if you want to use it you’d have to import it.
-		</p>
 		${js`
 import { Mockaton } from 'mockaton'
 import config from './mockaton.config.js' // optional
 
 const server = await Mockaton(config)
 `}
+		<p>
+			<code>mockaton.config.json</code> is not read by default in this case,
+			so if you want to use it you’d have to import it.
+		</p>
 
 
 		<h2>Option 5: Docker</h2>

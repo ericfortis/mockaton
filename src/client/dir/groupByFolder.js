@@ -29,7 +29,7 @@ function dfs(node) {
 	const childBrokers = node.getChildren().flatMap(dfs)
 
 	const brokers = node.brokers.length
-		? [node.brokers[0], ...childBrokers, ...node.brokers.slice(1)]
+		? node.brokers.toSpliced(1, 0, ...childBrokers)
 		: childBrokers
 
 	if (!brokers.length)

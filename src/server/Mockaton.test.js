@@ -1021,8 +1021,9 @@ describe('Write and Delete Mock', () => {
 
 	test('write and delete (with watcher)', async () => {
 		await api.setWatchMocks(true)
-		const file = 'new-mock.GET.200.txt'
+		await sleep(0) // for macOS
 
+		const file = 'new-mock.GET.200.txt'
 		const nextVerPromise = resolveOnNextSyncVersion()
 		const res = await api.writeMock(file, '')
 		equal(res.status, 200)
@@ -1117,9 +1118,6 @@ describe('Registering Mocks', () => {
 		}
 	}
 
-	function sleep(ms) {
-		return new Promise(resolve => setTimeout(resolve, ms))
-	}
 
 	const fxA = new FixtureExternal('register(default).GET.200.json')
 	const fxB = new FixtureExternal('register(alt).GET.200.json')
@@ -1239,4 +1237,8 @@ function resolveOnNextSyncVersion(currSyncVer = undefined) {
 			}
 		}
 	})
+}
+
+function sleep(ms) {
+	return new Promise(resolve => setTimeout(resolve, ms))
 }

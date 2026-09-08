@@ -28,19 +28,19 @@ function trie(brokers) {
 function dfs(node) {
 	const childBrokers = node.getChildren().flatMap(dfs)
 
-	const brokers = node.brokers.length
-		? node.brokers.toSpliced(1, 0, ...childBrokers)
-		: childBrokers
+	if (node.brokers.length) {
+		const [b0, ...rest] = node.brokers
+		b0.children.push(...childBrokers, ...rest)
+		return [b0]
+	}
 
-	if (!brokers.length)
-		return []
-
-	const [b0, ...rest] = brokers
-	if (node.brokers.length || !b0.children.length) {
+	if (childBrokers.length && !childBrokers[0].children.length) {
+		const [b0, ...rest] = childBrokers
 		b0.children.push(...rest)
 		return [b0]
 	}
-	return brokers
+
+	return childBrokers
 }
 
 class TrieNode {

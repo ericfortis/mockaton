@@ -23,12 +23,12 @@ import * as Watcher from './stores/Watcher.js'
 
 export const CLIENT_ASSETS = join(import.meta.dirname, '../client')
 
-const headReqs = new Map([
+const HEAD = new Map([
 	[API.health, (_, response) => response.ok()]
 ])
 
-const getReqs = new Map([
-	...headReqs.entries(),
+const GET = new Map([
+	...HEAD.entries(),
 
 	[API.root, serveDashboard],
 	[API.state, getState],
@@ -39,7 +39,7 @@ const getReqs = new Map([
 	[API.throws, () => { throw new Error('Test500') }]
 ])
 
-const patchReqs = new Map([
+const PATCH = new Map([
 	[API.cors, setCorsAllowed],
 	[API.reset, reset],
 	[API.cookies, selectCookie],
@@ -68,9 +68,9 @@ export async function handleApiRequest(req, response) {
 	const url = removeQueryStringAndFragment(req.url)
 
 	const handler = (
-		req.method === 'GET' && getReqs.get(url) ||
-		req.method === 'HEAD' && headReqs.get(url) ||
-		req.method === 'PATCH' && patchReqs.get(url))
+		req.method === 'GET' && GET.get(url) ||
+		req.method === 'HEAD' && HEAD.get(url) ||
+		req.method === 'PATCH' && PATCH.get(url))
 	if (handler) {
 		await handler(req, response)
 		return true

@@ -14,13 +14,14 @@ COPY public ./public
 COPY index.html ./
 COPY package*.json ./
 COPY vite.config.js ./
+COPY mockaton.config.js ./
 RUN npm run build
 
 
 # Stage 3: Run Mockaton as standalone demo server
 FROM node:24-alpine
 WORKDIR /app
-COPY --from=builder /app/dist ./mockaton-static-mocks
+COPY --from=builder /app/dist ./mockaton-mocks
 COPY mockaton.config.js ./ 
 COPY mockaton-mocks ./mockaton-mocks
 ADD https://registry.npmjs.org/mockaton/latest /tmp/cache-buster

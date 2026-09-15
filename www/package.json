@@ -3,8 +3,8 @@
 	"version": "1.0.0",
 	"type": "module",
 	"dependencies": {
-		"mediasnacks": "0.33.0",
-		"packaton": "0.0.33",
+		"mediasnacks": "0.33.1",
+		"packaton": "0.0.34",
 		"prismjs": "1.30.0"
 	},
 	"devDependencies": {

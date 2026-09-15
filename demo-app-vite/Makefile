@@ -1,4 +1,7 @@
-all: build-standalone-demo run-standalone-demo
+start:
+	npm run start
+
+demo: build-standalone-demo run-standalone-demo
 
 build-standalone-demo:
 	docker build --tag mockaton-demo .

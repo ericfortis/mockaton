@@ -8,6 +8,6 @@
 	},
 	"devDependencies": {
 		"pixaton": "2.2.1",
-		"puppeteer": "24.42.0"
+		"puppeteer": "25.11.0"
 	}
 }

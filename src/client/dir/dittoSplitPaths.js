@@ -4,13 +4,13 @@
  * @param {string[]} paths - sorted
  */
 export function dittoSplitPaths(paths) {
-	const segments = paths.map(p => p.split('/').filter(Boolean))
+	const pathsSplit = paths.map(p => p.split('/').filter(Boolean))
 	return paths.map((p, i) => {
 		if (i === 0)
 			return ['', p]
 
-		const prev = segments[i - 1]
-		const curr = segments[i]
+		const prev = pathsSplit[i - 1]
+		const curr = pathsSplit[i]
 		const min = Math.min(curr.length, prev.length)
 		let j = 0
 		while (j < min && curr[j] === prev[j])

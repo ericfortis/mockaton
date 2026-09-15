@@ -2,40 +2,42 @@ import { htmlTemplate, socialMetadata } from './_htmlTemplate.js'
 
 // language=html
 export default (url) => htmlTemplate({
-	head: socialMetadata('Related Tech', '', url),
+	head: socialMetadata('How Mockaton compares', '', url),
 	body: `
-		<h1>Related Tech</h1>
+		<h1>How Mockaton compares</h1>
 		<br />
-		<p>
-			Before listing alternatives to Mockaton, lets summarize its
-			differentiators besides the dashboard.
-		</p>
 
-		<h2>Why Mockaton is best overall?</h2>
+		<h2>Top differentiators</h2>
 
 		<h3>No vendor lock-in</h3>
 		<p>
 			By design, it doesn't live in your code. There’s no need to
 			write code to integrate it.
 		</p>
+		
 
 		<h3>It’s a real server</h3>
 		<p>
-			It‘s not limited to browsers, and in browsers it doesn‘t have the
-			limitations Service Worker alternatives have. For example, you
-			can test cookies and anticipate CORS problems. Also, you don‘t
-			have to write exclusion rules for requests that aren‘t related
-			to your API.
+			It‘s not limited to browsers.
+			It works for developing native apps, backends, and web clients.
+		</p>
+		
+		<p>
+			In web clients, it doesn‘t have the limitations Service Worker alternatives have. 
+			For example, you can test cookies and anticipate CORS problems. Also, you don‘t
+			have to write exclusion rules for requests that aren‘t related to your API.
 		</p>
 		<p>
 			By the same token, you can change API states without risking 
-			your frontend state.
+			your app state in a hot reload.
 		</p>
+		
 		
 		<h3>It’s a local server</h3>
 		<p>
 			It’s more reliable and time-consistent than cloud offerings.
 		</p>
+		
 
 		<h3>Privacy and security</h3>
 		<ul>
@@ -52,6 +54,7 @@ export default (url) => htmlTemplate({
 			<li>Does not initiate network connections (no logs, no telemetry).</li>
 		</ul>
 
+		
 		<h3>Auditable and easy to modify and maintain</h3>
 		<p>
 			The code is organized and small.

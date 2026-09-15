@@ -3,6 +3,7 @@ import pkgJson from '../../package.json' with { type: 'json' }
 const pages = [
 	['/', 'Overview'],
 	['/use-cases', 'Use Cases'],
+	['/compare', 'Compare'],
 	['/installation', 'Installation'],
 	['/config', 'Config'],
 	['/convention', 'Convention'],
@@ -11,7 +12,6 @@ const pages = [
 	['/api', 'API'],
 	['/plugins', 'Plugins'],
 	['/changelog', 'Changelog'],
-	['/related-tech', 'Related Tech'],
 	['/about', 'About']
 ]
 

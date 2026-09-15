@@ -53,11 +53,8 @@ export default (url) => htmlTemplate({
 		${shell`
 git clone https://github.com/ericfortis/mockaton.git --depth 1
 cd mockaton/demo-app-vite
-make run-standalone-demo
+make demo
 `}
-
-		<p>App: <a href="http://localhost:4040">http://localhost:4040</a></p>
-		<p>Dashboard: <a href="http://localhost:4040/mockaton">http://localhost:4040/mockaton</a></p>
 
 		<br/>
 		<h2>Testing</h2>

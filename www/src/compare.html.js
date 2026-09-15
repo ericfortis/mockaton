@@ -23,7 +23,7 @@ export default (url) => htmlTemplate({
 		</p>
 		
 		<p>
-			In web clients, it doesn‘t have the limitations Service Worker alternatives have. 
+			In web clients it doesn‘t have the limitations Service Worker alternatives have. 
 			For example, you can test cookies and anticipate CORS problems. Also, you don‘t
 			have to write exclusion rules for requests that aren‘t related to your API.
 		</p>

@@ -1,5 +1,5 @@
 import { mockaton } from '../setup.js'
-import { clickLinkByText, testPixels } from '../utils.js'
+import { clickLinkByText, testPixels, sleep } from '../utils.js'
 
 
 testPixels(import.meta.filename, {
@@ -18,6 +18,7 @@ testPixels(import.meta.filename, {
 
 	async setup(page) {
 		await clickLinkByText('/api/user/likes')
+		await sleep(50)
 		await page.evaluate(() => {
 			const el = document.querySelector('.leftSide')
 			if (el) el.style.width = '505px'

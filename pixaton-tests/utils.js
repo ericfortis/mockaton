@@ -25,3 +25,7 @@ export async function clickBySelector(selector) {
 	await page.waitForSelector(selector)
 	await page.locator(selector).click()
 }
+
+export function sleep(ms = 0) {
+	return new Promise(resolve => setTimeout(resolve, ms))
+}

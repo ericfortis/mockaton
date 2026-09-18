@@ -45,21 +45,21 @@ await write(WWW_INDEX_OUTPUT_PATH, indexData)
 function excludeSkillIgnoredRegions(text) {
 	const BEGIN = '<!-- SKILLS_IGNORE_BEGIN -->'
 	const END = '<!-- SKILLS_IGNORE_END -->'
-	let result = ''
+	const result = []
 	let i = 0
 	while (i < text.length) {
 		const start = text.indexOf(BEGIN, i)
 		if (start === -1) {
-			result += text.slice(i)
+			result.push(text.slice(i))
 			break
 		}
-		result += text.slice(i, start)
+		result.push(text.slice(i, start))
 		const end = text.indexOf(END, BEGIN.length + start)
 		if (end === -1)
 			break
 		i = END.length + end
 	}
-	return result.trim()
+	return result.join('').trim()
 }
 
 export async function write(path, body) {

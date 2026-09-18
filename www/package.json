@@ -11,6 +11,6 @@
 		"terser": "5.51.2"
 	},
 	"scripts": {
-		"outdated": "npm outdated --parseable | awk -F: '{ printf \"npm i %-30s ;# %s\\n\", $4, $2 }'"
+		"outdated": "npm outdated -p | awk -F: '{ printf \"npm i %-30s ;# %s\\n\", $4, $2 }'"
 	}
 }

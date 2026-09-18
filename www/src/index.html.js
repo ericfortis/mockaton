@@ -71,9 +71,7 @@ make docker
 `}
 
 		<p>Test it:</p>
-		${shell`
-curl localhost:2020/api/user
-`}
+		${shell`curl localhost:2020/api/user`}
 		<p>Dashboard: <a href="http://localhost:2020/mockaton">localhost:2020/mockaton</a></p>
 
 		<h2>Installation <a href="/installation">more options ↗</a></h2>
@@ -82,15 +80,10 @@ curl localhost:2020/api/user
 
 
 		<h2>Skills</h2>
-		${shell`
-npx skills add ericfortis/mockaton
-`}
+		${shell`npx skills add ericfortis/mockaton`}
 
 		<h2>Basic Usage</h2>
-
-		${shell`
-mockaton --port 2020  my-mocks-dir
-`}
+		${shell`mockaton  --port 2020  my-mocks-dir`}
 
 		<br />
 		<p>
@@ -117,7 +110,7 @@ mockaton --port 2020  my-mocks-dir
 			</tr>
 			<tr>
 				<td>/media/avatar.png</td>
-				<td>media/avatar.png OR media/avatar.png.GET.200.png</td>
+				<td>media/avatar.png</td>
 				<td>Statics assets (GET 200) don’t need the extension convention.</td>
 
 			</tr>

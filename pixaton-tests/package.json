@@ -4,7 +4,7 @@
 	"version": "0.0.1",
 	"scripts": {
 		"test": "node --test --experimental-test-isolation=none --import=./setup.js",
-		"outdated": "npm outdated --parseable | awk -F: '{ printf \"npm i %-30s ;# %s\\n\", $4, $2 }'"
+		"outdated": "npm outdated -p | awk -F: '{ printf \"npm i %-30s ;# %s\\n\", $4, $2 }'"
 	},
 	"devDependencies": {
 		"pixaton": "2.2.1",

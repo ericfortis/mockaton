@@ -112,7 +112,6 @@ make docker
 				<td>/media/avatar.png</td>
 				<td>media/avatar.png</td>
 				<td>Statics assets (GET 200) don’t need the extension convention.</td>
-
 			</tr>
 			<tr>
 				<td>/api/login</td>

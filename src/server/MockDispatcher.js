@@ -29,9 +29,8 @@ export async function dispatchMock(req, response) {
 			return
 		}
 
-		response.on('finish', () => {
-			logger.normal('MOCK', req.url, broker.file)
-		})
+		response.on('finish', () =>
+			logger.normal('MOCK', req.url, broker.file))
 
 		if (cookie.getCurrent())
 			response.setHeader('Set-Cookie', cookie.getCurrent())
@@ -39,9 +38,9 @@ export async function dispatchMock(req, response) {
 		const { isStatic } = parseFilename(broker.file)
 
 		if (isStatic && req.headers.range && !broker.autoStatus) {
-			setTimeout(async () => {
-				await response.partialContent(join(config.mocksDir, broker.file))
-			}, Number(broker.delayed && calcDelay()))
+			setTimeout(
+				() => response.partialContent(join(config.mocksDir, broker.file)),
+				Number(broker.delayed && calcDelay()))
 			return
 		}
 

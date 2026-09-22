@@ -11,7 +11,7 @@ export declare type Plugin = (
 
 export declare interface Config {
 	mocksDir?: string
-	ignore?: RegExp
+	shouldIgnore?: (filepath: string) => boolean
 	watcherEnabled?: boolean
 	watcherDebounceMs?: number
 	readOnly?: boolean
@@ -61,6 +61,7 @@ export declare const echoFilePlugin: Plugin
 
 export declare function jwtCookie(cookieName: string, payload: any, path?: string): string
 
+export declare function shouldIgnore(filepath: string): boolean
 export declare function parseJSON(request: IncomingMessage): Promise<any>
 export declare function parseSegments(reqUrl: string, filename: string): Record<string, string>
 export declare function parseQueryParams(reqUrl: string): URLSearchParams

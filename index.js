@@ -5,6 +5,7 @@ export { Mockaton } from './src/server/Mockaton.js'
 export { jwtCookie } from './src/server/utils/jwt.js'
 export { jsToJsonPlugin, echoFilePlugin } from './src/server/MockDispatcherPlugins.js'
 export { parseJSON, BodyReaderError } from './src/server/utils/HttpIncomingMessage.js'
-export { parseSegments, parseQueryParams, parseSplats } from './src/server/UrlParsers.js'
+export { parseSegments, parseQueryParams } from './src/server/UrlParsers.js'
+export { shouldIgnore } from './src/server/stores/config.js'
 
 export const defineConfig = opts => opts

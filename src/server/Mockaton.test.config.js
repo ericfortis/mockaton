@@ -1,4 +1,4 @@
-import { jwtCookie } from '../../index.js'
+import { jwtCookie, shouldIgnore } from '../../index.js'
 
 export default {
 	cookies: {
@@ -12,5 +12,6 @@ export default {
 	corsExposedHeaders: ['Content-Encoding'],
 	readOnly: false,
 	watcherEnabled: false, // But we enable it at run-time
-	watcherDebounceMs: 0
+	watcherDebounceMs: 0,
+	shouldIgnore: f => shouldIgnore(f) || f.endsWith('.skip.js'),
 }

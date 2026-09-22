@@ -1,4 +1,4 @@
-import { resolve, basename } from 'node:path'
+import { resolve } from 'node:path'
 import { lstatSync } from 'node:fs'
 import { METHODS } from 'node:http'
 
@@ -18,7 +18,7 @@ import { jsToJsonPlugin } from '../MockDispatcherPlugins.js'
  * }} */
 const schema = {
 	mocksDir: [resolve('mockaton-mocks'), p => !lstatSync(p).isDirectory()],
-	ignore: [/(\.DS_Store|~)$/, is(RegExp)],
+	shouldIgnore: [shouldIgnore, is(Function)],
 	readOnly: [true, is(Boolean)],
 	watcherEnabled: [true, is(Boolean)],
 	watcherDebounceMs: [80, isInt(0, 5000)],
@@ -77,7 +77,7 @@ export function initConfig(opts) {
 		opts.mocksDir = resolve(opts.mocksDir)
 
 	Object.assign(config, opts)
-	originalOpts = deepCloneExcluding(config, 'plugins', 'onReady')
+	originalOpts = deepCloneExcluding(config, 'plugins', 'onReady', 'shouldIgnore')
 
 	validate(config, ConfigValidator)
 	logger.setLevel(config.logLevel)
@@ -88,7 +88,15 @@ export function reinitConfig() {
 	initConfig(originalOpts)
 }
 
-export const isFileAllowed = f => !config.ignore.test(basename(f))
+export function shouldIgnore(f) {
+	return (
+		f.startsWith('.git/') ||
+		f.startsWith('.idea/') ||
+		f.startsWith('node_modules/') ||
+		f.endsWith('~') ||
+		f.endsWith('.DS_Store')
+	)
+}
 
 export const calcDelay = () => config.delayJitter
 	? config.delay * (1 + Math.random() * config.delayJitter)

@@ -536,6 +536,14 @@ describe('404', () => {
 		equal(r.status, 404)
 		await fx.delete()
 	})
+
+	test('404s ignored files', async () => {
+		const fx = new Fixture('custom_ignore.GET.200.skip.js')
+		await fx.write()
+		const r = await fx.request()
+		equal(r.status, 404)
+		await fx.delete()
+	})
 })
 
 

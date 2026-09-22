@@ -45,12 +45,13 @@ import {
   defineConfig, 
   jsToJsonPlugin, 
   openInBrowser, 
-  SUPPORTED_METHODS 
+  SUPPORTED_METHODS,
+  shouldIgnore
 } from 'mockaton'
 
 export default defineConfig({
   mocksDir: 'mockaton-mocks',
-  ignore: /(\\.DS_Store|~)$/,
+  shouldIgnore, // (filepath: string) => boolean
   watcherEnabled: true,
   watcherDebounceMs: 80,
 
@@ -99,12 +100,24 @@ export default defineConfig({
 			e.g., for videos).
 		</p>
 
-		<h3><code>ignore<span class="syntax_type">?: RegExp</span></code></h3>
+		<h3><code>shouldIgnore<span class="syntax_type">?: (relativeFilepath: string) => boolean</span></code></h3>
 		<p>
-			Defaults to <code>/(\\.DS_Store|~)$/</code>
+			Defaults to:
+			${js`
+function shouldIgnore(f) {
+  return (
+    f.startsWith('.git/') ||
+    f.startsWith('.idea/') ||
+    f.startsWith('node_modules/') ||
+    f.endsWith('~') ||
+    f.endsWith('.DS_Store')
+  )
+}`}
 		</p>
 		<p>
-			The regex rule is tested against the basename (filename without a directory path).
+			Your function will replace the default. But that function is exported 
+			in the <code>mockaton</code> NPM package, so
+			you can reuse it within your custom function.
 		</p>
 
 

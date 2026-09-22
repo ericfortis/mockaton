@@ -11,6 +11,18 @@ export default (url) => htmlTemplate({
 		<h1>Changelog</h1>
 		<br />
 
+		<p><strong>14.0.0 breaking change.</strong></p>
+		<ul>
+			<li>
+				Removed <code>config.ignore</code> in favor of a function <code>config.shouldIgnore</code>.
+				The new function now also ignores .git/, node_modules/, and .idea/, in addition
+				to the original .DS_Store, and files ending with ~.
+			</li>
+			<li>Removed deprecated <code>parseSplats</code> utility</li>
+		</ul>
+		<hr />
+
+		<p>13.12.0 colorized logs</p>
 		<p>13.11.0 added <code>/mockaton/health</code> endpoint</p>
 		<p>13.10.0 dashboard: slideable number field</p>
 		<div class="RegionImg" data-max-width="520">

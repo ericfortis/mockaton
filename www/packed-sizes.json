@@ -11,7 +11,7 @@
 	},
 	"/changelog.html": {
 		"hash": "xwyidkKUnqhJ0GXZ56sNK2hWDjc",
-		"delta": 176,
+		"delta": 0,
 		"size": 32663
 	},
 	"/compare.html": {
@@ -20,9 +20,9 @@
 		"size": 23442
 	},
 	"/config.html": {
-		"hash": "WMe51wSeCDKRtg54fK28tVkl5gg",
+		"hash": "iZ3CzJiQeVxTTn8kHOh3bA0Wvio",
 		"delta": 0,
-		"size": 40735
+		"size": 42109
 	},
 	"/convention.html": {
 		"hash": "lWa2BUt8YFbjEOn7CLae1ZRsdIo",
@@ -40,9 +40,9 @@
 		"size": 33196
 	},
 	"/installation.html": {
-		"hash": "5BRarRagfLWunp1ZHbf1cdd-e8k",
-		"delta": 0,
-		"size": 24351
+		"hash": "NllJ-lpc5TzsMCM7tRy0o3SL_DA",
+		"delta": 37,
+		"size": 24388
 	},
 	"/plugins.html": {
 		"hash": "I7HVMZ7I0td_GPsloSSp4hUa6cs",

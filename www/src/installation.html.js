@@ -71,7 +71,13 @@ const server = await Mockaton(config)
 
 		<h2>Option 5: Docker</h2>
 		<p>
-			This will spin up Mockaton with the sample directories
+			<a href="https://github.com/ericfortis/mockaton/blob/main/Dockerfile">Dockerfile</a>,
+			<a href="https://github.com/ericfortis/mockaton/blob/main/Makefile">Makefile</a>
+		</p>
+		
+		<p>
+			Here’s an example using those files.
+			It will spin up Mockaton with the sample directories
 			included in the repository mounted on the container.
 		</p>
 
@@ -80,10 +86,5 @@ git clone https://github.com/ericfortis/mockaton.git --depth 1
 cd mockaton
 make docker
 `}
-
-		<p>
-			<a href="https://github.com/ericfortis/mockaton/blob/main/Dockerfile">Dockerfile</a>,
-			<a href="https://github.com/ericfortis/mockaton/blob/main/Makefile">Makefile</a>
-		</p>
 	`
 })

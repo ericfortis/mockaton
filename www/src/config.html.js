@@ -115,9 +115,18 @@ function shouldIgnore(f) {
 }`}
 		</p>
 		<p>
-			Your function will replace the default. But that function is exported 
-			in the <code>mockaton</code> NPM package, so
-			you can reuse it within your custom function.
+			Your function will replace the default. But the default function is exported 
+			so you can reuse it within your custom function. For example, in <code>mockaton.config.js</code>:
+			${js`
+import { shouldIgnore, defineConfig } from 'mockaton'			
+
+export default defineConfig({
+  // …other options
+  shouldIgnore(f) {
+    return f.endsWith('.skip') || shouldIgnore(f)
+  }
+})
+`}
 		</p>
 
 

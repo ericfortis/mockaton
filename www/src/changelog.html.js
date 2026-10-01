@@ -11,14 +11,19 @@ export default (url) => htmlTemplate({
 		<h1>Changelog</h1>
 		<br />
 
-		<p><strong>14.0.0 breaking change.</strong></p>
+		<p><strong>14.0.0 breaking changes</strong></p>
 		<ul>
 			<li>
-				Removed <code>config.ignore</code> in favor of a function <code>config.shouldIgnore</code>.
-				The new function now also ignores .git/, node_modules/, and .idea/, in addition
-				to the original .DS_Store, and files ending with ~.
+				Removed <code>config.ignore</code> in favor of a function
+				<a href="/config#-shouldignore-relativefilepath-string-boolean">
+					<code>config.shouldIgnore</code></a>
+				The original regex only ignored <i>.DS_Store</i> and files ending with <i>~</i>.
+				The new function ignores those two plus <i>.git/</i>, <i>node_modules/</i>, and <i>.idea/</i>
 			</li>
-			<li>Removed deprecated <code>parseSplats</code> utility</li>
+			<li>Removed deprecated <code>parseSplats</code> utility. Replace it with
+				<a href="/function-mocks#-example-c-parse-segments"><code>parseSegments</code></a>,
+				it's the same function, but the original name was incorrect and misleading.
+			</li>
 		</ul>
 		<hr />
 
@@ -40,7 +45,7 @@ export default (url) => htmlTemplate({
 		</div>
 		<p>13.2.0 add remaining realtime notifications.</p>
 		<p>13.1.0 new apis: <code>writeMock</code>, <code>deleteMock</code></p>
-		<p><strong>13.0.0 breaking change.</strong></p>
+		<p><strong>13.0.0 breaking change</strong></p>
 		<ul>
 			<li><code>config.staticMocks</code> has been removed in favor of allowing mocks without the filename convention within <code>config.mocksDir</code>.
 				To migrate, move the content of your old <code>staticDir</code> into your <code>mocksDir</code>.
@@ -74,7 +79,7 @@ export default (url) => htmlTemplate({
 
 		<p>12.2.0 dashboard: settings menu to doc link</p>
 		<p>12.1.0 dashboard: layout redesign</p>
-		<p><strong>12.0.0 breaking change.</strong> The Dashboard is no longer supported in Safari.
+		<p><strong>12.0.0 breaking change</strong> The Dashboard is no longer supported in Safari.
 			It’s supported in Chrome and Firefox 147+.
 		</p>
 

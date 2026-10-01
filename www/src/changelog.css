@@ -12,3 +12,10 @@
 hr {
 	margin: 60px 0;
 }
+
+
+a > code {
+	text-decoration: underline;
+	text-decoration-color: var(--colorAccent);
+}
+

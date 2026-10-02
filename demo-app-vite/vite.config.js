@@ -4,15 +4,10 @@ import mockatonPlugin from 'mockaton/vite'
 import mockatonConfig from './mockaton.config.js'
 
 
-const MOCKATON_PORT = 4040
-
 export default defineConfig({
 	plugins: [
 		react(),
-		mockatonPlugin({
-			...mockatonConfig,
-			port: MOCKATON_PORT,
-		})
+		mockatonPlugin(mockatonConfig)
 	],
 
 	server: {
@@ -21,7 +16,7 @@ export default defineConfig({
 		host: true,
 		proxy: {
 			'/api': {
-				target: `http://localhost:${MOCKATON_PORT}`,
+				target: `http://localhost:${mockatonConfig.port}`,
 				changeOrigin: true
 			}
 		}

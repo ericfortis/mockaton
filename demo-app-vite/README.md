@@ -6,33 +6,10 @@ This a minimal React + Vite + Mockaton app you can play with.
 
 
 ## Dev Setup
-### Install Dependencies
-```
+```sh
 cd demo-app-vite
 npm install
-```
-
-
-### Start Mockaton and Vite
-On another terminal:
-```sh
-npm run start  
-```
-
-
-
-### vite.config.js
-
-For proxying Mockaton we pass its address as an environment variable:
-
-```js 
-server: {
-  proxy: {
-    '/api': {
-      target: process.env.BACKEND,
-      changeOrigin: true
-    }
-}
+npm start ;# Starts Mockaton and Vite
 ```
 
 ---

@@ -1,67 +1,67 @@
 {
 	"/about.html": {
-		"hash": "OFC5ep44_56SouZz1kxqGjaPYrg",
+		"hash": "0n5tMEyQBnI_lMPuhvlBiNyxO9s",
 		"delta": 0,
-		"size": 23353
+		"size": 23293
 	},
 	"/api.html": {
-		"hash": "WA0zUQLtal-vufiIzCLprhu7MVk",
+		"hash": "uRE7cJuMPwMP823_Bi2SPbcG9ec",
 		"delta": 0,
-		"size": 44583
+		"size": 44523
 	},
 	"/changelog.html": {
-		"hash": "xwyidkKUnqhJ0GXZ56sNK2hWDjc",
+		"hash": "2BVozHwtGt1PUi5D3Ymb16u2gGY",
 		"delta": 0,
-		"size": 32663
+		"size": 32603
 	},
 	"/compare.html": {
-		"hash": "thXTagDU3sYXE-Gykcq-7QPwLBE",
+		"hash": "rEYkpbHWJwnVHt3FZQ8v9SDfBiM",
 		"delta": 0,
-		"size": 23442
+		"size": 23382
 	},
 	"/config.html": {
-		"hash": "iZ3CzJiQeVxTTn8kHOh3bA0Wvio",
+		"hash": "rs6Rdjw0eYOpE51dy2vK795dljg",
 		"delta": 0,
-		"size": 42109
+		"size": 42049
 	},
 	"/convention.html": {
-		"hash": "lWa2BUt8YFbjEOn7CLae1ZRsdIo",
+		"hash": "DYq9uubBc-2uGL5c12Cz1RKSi5s",
 		"delta": 0,
-		"size": 22508
+		"size": 22448
 	},
 	"/function-mocks.html": {
-		"hash": "1A_Sl2Pm_vANRzWNJGlZHYAJ1kI",
+		"hash": "GMG5QwJUQ1_U-ZJbp1Nnc6WM9Bs",
 		"delta": 0,
-		"size": 30489
+		"size": 30429
 	},
 	"/index.html": {
-		"hash": "48Sv2uGDo2OnwnlK2oRWonpxkC0",
+		"hash": "MWZcHnGN6MEZgIE5QVbby7ek-MU",
 		"delta": 0,
-		"size": 33196
+		"size": 33136
 	},
 	"/installation.html": {
-		"hash": "NllJ-lpc5TzsMCM7tRy0o3SL_DA",
-		"delta": 37,
-		"size": 24388
+		"hash": "cKjUcdWyvDREJBdWmdykwn5KqIo",
+		"delta": 0,
+		"size": 24328
 	},
 	"/plugins.html": {
-		"hash": "I7HVMZ7I0td_GPsloSSp4hUa6cs",
+		"hash": "AUKfnzR02xS4au6JBdAe7Bw5bHs",
 		"delta": 0,
-		"size": 25822
+		"size": 25762
 	},
 	"/scraping.html": {
-		"hash": "yauk9t0t2n1xi9kjPrsBW1rgeVk",
+		"hash": "Axk4d_BgKwmiuaNk9v3wjxDmFqE",
 		"delta": 0,
-		"size": 21086
+		"size": 21026
 	},
 	"/use-cases.html": {
-		"hash": "qOTBOGJ8ENoWVfMeIM7ZdJh0MEY",
+		"hash": "IdejJN0ef9RMS6v2f0Mx1nR07gU",
 		"delta": 0,
-		"size": 22536
+		"size": 22476
 	},
 	"/vite.html": {
-		"hash": "lJpvdBDUL-rdudUdKwd-AlwpY18",
+		"hash": "z8qiixmYtdgswrcSokiTaj52EWU",
 		"delta": 0,
-		"size": 21765
+		"size": 21705
 	}
 }

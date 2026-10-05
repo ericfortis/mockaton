@@ -3,12 +3,9 @@
 	"version": "1.0.0",
 	"type": "module",
 	"dependencies": {
-		"mediasnacks": "0.33.1",
-		"packaton": "0.0.34",
+		"mediasnacks": "0.34.0",
+		"packaton": "0.0.36",
 		"prismjs": "1.30.0"
-	},
-	"devDependencies": {
-		"terser": "5.51.2"
 	},
 	"scripts": {
 		"outdated": "npm outdated -p | awk -F: '{ printf \"npm i %-30s ;# %s\\n\", $4, $2 }'"

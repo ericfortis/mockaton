@@ -10,11 +10,11 @@ import { removeQueryStringAndFragment } from './utils/HttpIncomingMessage.js'
 export class MockBroker {
 	file = '' // selected mock filename
 	mocks = [] // filenames
-	isStatic = false // static means it doesn’t follow filename convention
+	isStatic = false // static asset (doesn't need filename convention)
 	delayed = false
 	proxied = false
 	status = -1
-	autoStatus = 0
+	autoStatus = 0 // For sending 404 or 500 without needing a mock file
 
 	constructor(file) {
 		this.urlMaskMatches = new UrlMatcher(file).urlMaskMatches
@@ -22,7 +22,7 @@ export class MockBroker {
 	}
 
 	register(file) {
-		if (this.autoStatus && this.#isStatus(file, this.autoStatus))
+		if (this.autoStatus && this.#statusIs(file, this.autoStatus))
 			this.selectFile(file)
 		this.mocks.push(file)
 		this.#sortMocks()
@@ -36,7 +36,7 @@ export class MockBroker {
 		return brokerIsEmpty
 	}
 
-	#isStatus = (file, status) => parseFilename(file).status === status
+	#statusIs = (file, status) => parseFilename(file).status === status
 
 	#sortMocks() {
 		this.mocks.sort()

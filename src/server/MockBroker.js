@@ -13,8 +13,8 @@ export class MockBroker {
 	isStatic = false // static asset (doesn't need filename convention)
 	delayed = false
 	proxied = false
-	status = -1
-	autoStatus = 0 // For sending 404 or 500 without needing a mock file
+	status = -1 // response status code parsed from mock file
+	autoStatus = 0 // for sending 404 or 500 without needing a mock file
 
 	constructor(file) {
 		this.urlMaskMatches = new UrlMatcher(file).urlMaskMatches

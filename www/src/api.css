@@ -26,6 +26,20 @@ form {
 	details {
 		margin: 0;
 		margin-bottom: 8px;
+		interpolate-size: allow-keywords;
+
+		&::details-content {
+			display: flow-root;
+			overflow-y: clip;
+			block-size: 0;
+			content-visibility: hidden;
+			transition: block-size 180ms ease-out, content-visibility 180ms allow-discrete;
+		}
+
+		&[open]::details-content {
+			block-size: auto;
+			content-visibility: visible;
+		}
 
 		summary {
 			padding: 8px 0;

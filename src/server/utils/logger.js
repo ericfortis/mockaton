@@ -29,7 +29,7 @@ export const logger = new class {
 				error))
 	}
 
-	warn(...msg) {
+	warn(...msg) { // TODO should be red (not green)
 		console.warn(this.#msg('WARN', ...msg))
 	}
 

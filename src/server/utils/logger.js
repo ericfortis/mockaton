@@ -29,7 +29,7 @@ export const logger = new class {
 				error))
 	}
 
-	warn(...msg) { // TODO should be red (not green)
+	warn(...msg) {
 		console.warn(this.#msg('WARN', ...msg))
 	}
 
@@ -41,7 +41,7 @@ export const logger = new class {
 		if (!msg.at(-1))
 			msg.pop()
 		const parts = msg.map(this.#sanitize)
-		parts[1] = styleText(['bold', 'green'], parts[1])
+		parts[1] = styleText(['bold', msg[0] === 'WARN' ? 'red' : 'green'], parts[1])
 		return [
 			styleText('yellow', new Date().toISOString()),
 			...parts

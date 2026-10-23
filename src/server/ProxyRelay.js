@@ -44,7 +44,7 @@ export async function proxy(req, response, delay) {
 
 	if (config.collectProxied) {
 		if (config.readOnly) {
-			logger.warn('Write denied: config.readOnly is true')
+			logger.warn('Write denied. config.readOnly is true')
 			return
 		}
 		const mime = proxyRes.headers.get('content-type')

@@ -60,8 +60,13 @@ function PayloadViewerProgressBar() {
 }
 
 
-export async function previewMock() {
+export async function previewMock(forced) {
 	const { method, urlMask } = store.chosenLink
+	const broker = store.brokerFor(method, urlMask)
+	if (!forced && store.prevPayload.method === method && store.prevPayload.urlMask === urlMask) {
+		await updatePayloadViewer(broker.proxied, broker.file, store.prevPayload.response.clone())
+		return
+	}
 
 	previewMock.controller?.abort()
 	previewMock.controller = new AbortController
@@ -77,9 +82,9 @@ export async function previewMock() {
 			signal: previewMock.controller.signal
 		})
 		clearTimeout(spinnerTimer)
-		const broker = store.brokerFor(method, urlMask)
+		store.prevPayload = { method, urlMask, response }
 		if (broker?.proxied || broker?.file)
-			await updatePayloadViewer(broker.proxied, broker.file, response)
+			await updatePayloadViewer(broker.proxied, broker.file, response.clone())
 	}
 	catch (error) {
 		clearTimeout(spinnerTimer)

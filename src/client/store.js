@@ -43,6 +43,7 @@ export const store = {
 			store.collapsedFolders.delete(folder)
 	},
 
+	prevPayload: { method: '', urlMask: '', response: {} },
 	chosenLink: { method: '', urlMask: '' },
 	setChosenLink(method, urlMask) {
 		store.chosenLink = { method, urlMask }

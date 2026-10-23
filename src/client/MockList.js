@@ -182,7 +182,7 @@ export function renderRow(method, urlMask) {
 	const row = store.brokerAsRow(method, urlMask)
 	const tr = Table.$(`.${CSS.TableRow}[key="${row.key}"]`)
 	mergeTableRow(tr, Row(row))
-	previewMock()
+	previewMock(Boolean('force'))
 
 	function unChooseOld() {
 		return Table.$(`a.${CSS.chosen}`)

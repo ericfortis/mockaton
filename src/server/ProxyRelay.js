@@ -11,8 +11,6 @@ import { EXT_EMPTY, EXT_UNKNOWN_MIME } from '../client/ApiConstants.js'
 
 import { config } from './stores/config.js'
 
-// FIXME when proxing and saving and watching mocks, the dashboard refreshes, and when doing so, it re-requests, so we get infinite loop of saving
-
 
 export async function proxy(req, response, delay) {
 	const hasReqBody = !(req.method === 'GET' || req.method === 'HEAD')
@@ -42,7 +40,7 @@ export async function proxy(req, response, delay) {
 		'set-cookie': proxyRes.headers.getSetCookie(), // parses multiple into an array
 		'cache-control': 'no-cache'
 	})
-	setTimeout(() => response.end(proxyResBody), delay) // TESTME
+	setTimeout(() => response.end(proxyResBody), delay)
 
 	if (config.collectProxied) {
 		if (config.readOnly) {

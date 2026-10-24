@@ -32,7 +32,6 @@ export const store = {
 	get groupByMethod() { return store._groupByMethod.value },
 	toggleGroupByMethod() {
 		store._groupByMethod.toggle()
-		store.render()
 	},
 
 	collapsedFolders: new LocalStorageSet('collapsedFolders'),

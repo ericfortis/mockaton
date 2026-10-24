@@ -24,7 +24,10 @@ function GroupByMethod() {
 			r('input', {
 				type: 'checkbox',
 				checked: store.groupByMethod,
-				onChange: store.toggleGroupByMethod
+				onChange() {
+					store.toggleGroupByMethod()
+					Table.render()
+				}
 			}),
 			r('span', { className: CSS.checkboxBody }, t`Group by Method`)))
 }
@@ -66,7 +69,9 @@ function Table() {
 Table.ref = { width: undefined }
 Table.$ = selector => Table.ref.elem.querySelector(selector)
 Table.$$ = selector => Table.ref.elem.querySelectorAll(selector)
-
+Table.render = () => {
+	Table.ref.elem.replaceChildren(...TableContent())
+}
 
 
 

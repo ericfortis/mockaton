@@ -209,26 +209,20 @@
 	}
 }
 
-.Table {
-	.trailAnim {
+.trailAnim {
+	position: absolute;
+	z-index: -1;
+	position-anchor: --chosen;
+	inset: anchor(inside);
+	transition: inset 260ms cubic-bezier(.2, 1, .5, 1);
+
+	&::before {
 		position: absolute;
-		z-index: -1;
-		position-anchor: --chosen;
-		inset: anchor(inside);
-		opacity: 0;
-
-		&::before {
-			content: '';
-			position: absolute;
-			border-radius: var(--radius);
-			inset: 0;
-			background: var(--colorAccent);
-		}
-	}
-
-	&:has(.chosen) .trailAnim {
-		opacity: 1;
-		transition: inset 240ms cubic-bezier(.2, 1, .5, 1);
+		content: '';
+		border-radius: var(--radius);
+		inset: 0;
+		background: var(--colorAccent);
+		opacity: .5;
 	}
 }
 

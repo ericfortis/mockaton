@@ -11,6 +11,7 @@ export default (url) => htmlTemplate({
 		<h1>Changelog</h1>
 		<br />
 
+		<p>14.2.0 a11y improvements</p>
 		<p>14.1.0 handle proxying binary responses</p>
 		<p><strong>14.0.0 breaking changes</strong></p>
 		<ul>

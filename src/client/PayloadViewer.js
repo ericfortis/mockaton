@@ -105,7 +105,7 @@ async function updatePayloadViewer(proxied, file, response) {
 	}
 
 	async function bodyAsText() {
-		return (await response.text()) || t`/* Empty Response Body */`
+		return await response.text() || t`/* Empty Response Body */`
 	}
 
 	const mime = response.headers.get('content-type') || ''

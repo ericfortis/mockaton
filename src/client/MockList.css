@@ -39,12 +39,14 @@
 }
 
 .Table {
+	display: block;
 	height: 100%;
 	padding: 16px 16px 64px 15px;
 	user-select: none;
 	overflow-y: auto;
 
 	.TableHeading {
+		display: block;
 		padding-bottom: 4px;
 		padding-left: 1px;
 		border-top: 24px solid transparent;

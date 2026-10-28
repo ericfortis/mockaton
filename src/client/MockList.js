@@ -60,7 +60,7 @@ function BulkSelector() {
 
 function Table() {
 	return (
-		r('div', {
+		r('table', {
 				ref: Table.ref,
 				className: CSS.Table
 			},
@@ -89,7 +89,7 @@ function TableContent() {
 
 	if (store.groupByMethod)
 		return Object.keys(store.brokersByMethod).map(method => Fragment(
-			r('div', { className: classNames(CSS.TableHeading, store.canProxy && CSS.canProxy) },
+			r('th', { className: classNames(CSS.TableHeading, store.canProxy && CSS.canProxy) },
 				method),
 			FolderGroups(store.folderGroupsByMethod(method))))
 
@@ -138,7 +138,7 @@ function FolderGroup(broker) {
 function Row(row) {
 	const { method, urlMask } = row
 	return (
-		r('div', {
+		r('tr', {
 				key: row.key,
 				className: classNames(CSS.TableRow, store.mounted && row.isNew && CSS.animIn)
 			},

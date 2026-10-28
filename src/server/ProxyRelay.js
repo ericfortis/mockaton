@@ -40,19 +40,19 @@ export async function proxy(req, response, delay) {
 		'set-cookie': proxyRes.headers.getSetCookie(), // parses multiple into an array
 		'cache-control': 'no-cache'
 	})
-	setTimeout(() => response.end(proxyResBody), delay)
 
-	if (config.collectProxied) {
-		if (config.readOnly) {
+	if (config.collectProxied)
+		if (config.readOnly)
 			logger.warn('Write denied. config.readOnly is true')
-			return
+		else {
+			const mime = proxyRes.headers.get('content-type')
+			const ext = mime
+				? extFor(mime) || EXT_UNKNOWN_MIME
+				: EXT_EMPTY
+			await saveMockToDisk(req.url, req.method, proxyRes.status, ext, proxyResBody)
 		}
-		const mime = proxyRes.headers.get('content-type')
-		const ext = mime
-			? extFor(mime) || EXT_UNKNOWN_MIME
-			: EXT_EMPTY
-		await saveMockToDisk(req.url, req.method, proxyRes.status, ext, proxyResBody)
-	}
+
+	setTimeout(() => response.end(proxyResBody), delay)
 }
 
 function excludeHopByHop(headers) {

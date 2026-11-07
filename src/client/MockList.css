@@ -201,32 +201,10 @@
 	&.chosen {
 		color: white;
 		background: var(--colorAccent);
-		anchor-name: --chosen;
 	}
 	.dittoDir {
 		opacity: 0.8;
 		filter: saturate(0.1);
-	}
-}
-
-.trailAnim {
-	@media (prefers-reduced-motion: reduce) {
-		display: none;
-	}
-
-	position: absolute;
-	z-index: -1;
-	position-anchor: --chosen;
-	inset: anchor(inside);
-	transition: inset 260ms cubic-bezier(.2, 1, .5, 1);
-
-	&::before {
-		position: absolute;
-		content: '';
-		border-radius: var(--radius);
-		inset: 0;
-		background: var(--colorAccent);
-		opacity: .5;
 	}
 }
 

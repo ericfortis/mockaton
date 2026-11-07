@@ -64,23 +64,15 @@ function Table() {
 				ref: Table.ref,
 				className: CSS.Table
 			},
-			TableContent(),
-			TrailAnim()))
+			TableContent()))
 }
 Table.ref = { width: undefined }
 Table.$ = selector => Table.ref.elem.querySelector(selector)
 Table.$$ = selector => Table.ref.elem.querySelectorAll(selector)
 Table.render = () => {
-	Table.ref.elem.replaceChildren(...TableContent(), TrailAnim())
+	Table.ref.elem.replaceChildren(...TableContent())
 }
 
-function TrailAnim() {
-	return (
-		r('div', {
-			className: CSS.trailAnim,
-			'aria-hidden': true
-		}))
-}
 
 
 function TableContent() {

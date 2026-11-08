@@ -9,6 +9,8 @@ test('groupByFolder', () => {
 	const input = [
 		PartialBrokerRowModel('GET', '/api/user'),
 		PartialBrokerRowModel('GET', '/api/user/avatar'),
+		PartialBrokerRowModel('GET', '/api/user/profile?foo=bar'),
+		PartialBrokerRowModel('GET', '/api/user/profile/home'),
 		PartialBrokerRowModel('GET', '/api/video/[id]'),
 		PartialBrokerRowModel('GET', '/index.html'),
 		PartialBrokerRowModel('GET', '/media/file-a'),
@@ -24,6 +26,8 @@ test('groupByFolder', () => {
 		PartialBrokerRowModel('GET', '/api/user',
 			PartialBrokerRowModel('GET', '/api/user/avatar',
 				PartialBrokerRowModel('POST', '/api/user/avatar/foo')),
+			PartialBrokerRowModel('GET', '/api/user/profile?foo=bar',
+				PartialBrokerRowModel('GET', '/api/user/profile/home')),
 			PartialBrokerRowModel('POST', '/api/user'),
 			PartialBrokerRowModel('PATCH', '/api/user')),
 		PartialBrokerRowModel('GET', '/api/video/[id]'),

@@ -93,7 +93,6 @@ export function brokerByRoute(method, url) {
 		if (brokers[i].urlMaskMatches(url))
 			return brokers[i]
 
-	// TODO Verify
 	if (method === 'GET') {
 		const indexUrl = url.endsWith('/') 
 			? url + 'index.html' 

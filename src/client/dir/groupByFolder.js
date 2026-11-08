@@ -7,10 +7,11 @@ export function groupByFolder(brokers) {
 }
 
 function trie(brokers) {
+	const reQueryString = /\?.*$/s
 	const root = new TrieNode()
 	for (const b of brokers) {
 		let node = root
-		for (const seg of b.urlMask.split('/')) { // TODO it should ignore query string
+		for (const seg of b.urlMask.replace(reQueryString, '').split('/')) {
 			if (node.hasChild(seg))
 				node = node.getChild(seg)
 			else {

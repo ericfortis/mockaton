@@ -6,9 +6,10 @@ import { promisify } from 'node:util'
 import { createServer } from 'node:http'
 import { mkdtempSync } from 'node:fs'
 import { randomUUID } from 'node:crypto'
-import { equal, deepEqual, match } from 'node:assert/strict'
+import { equal, deepEqual, match, rejects } from 'node:assert/strict'
 import { describe, test, before, beforeEach, after } from 'node:test'
 
+import { Mockaton } from '../../index.js'
 import CONFIG from './Mockaton.test.config.js'
 import { config } from './stores/config.js'
 import { mimeFor } from './utils/mime.js'
@@ -1220,6 +1221,49 @@ describe('Registering Mocks', () => {
 		await nextVerPromise
 		equal(await fx.fetchBroker(), undefined)
 		await sleep(50) // Only for Docker, not sure why we need to delay the server teardown 
+	})
+})
+
+
+describe('Read-only mode', () => {
+	let server
+	let readOnlyApi
+
+	before(async () => {
+		server = await Mockaton({
+			...CONFIG,
+			mocksDir: mocksDir.value,
+			readOnly: true,
+			watcherEnabled: false,
+			onReady() {}
+		})
+		readOnlyApi = new Commander(`http://${server.address().address}:${server.address().port}`)
+	})
+
+	after(() => new Promise(resolve => {
+		server.closeAllConnections()
+		server.close(resolve)
+	}))
+
+	test('state reports readOnly', async () =>
+		equal((await (await readOnlyApi.getState()).json()).readOnly, true))
+
+	test('write is forbidden', async () => {
+		const file = 'read-only-write.GET.200.txt'
+		const r = await readOnlyApi.writeMock(file, 'body')
+		equal(r.status, 403)
+		equal(await r.text(), 'Forbidden: Mockaton is in read-only mode. See config.readOnly')
+		await rejects(mocksDir.read(file), /ENOENT/)
+	})
+
+	test('delete is forbidden', async () => {
+		const file = 'read-only-delete.GET.200.txt'
+		await mocksDir.write(file, 'body')
+		const r = await readOnlyApi.deleteMock(file)
+		equal(r.status, 403)
+		equal(await r.text(), 'Forbidden: Mockaton is in read-only mode. See config.readOnly')
+		equal(await mocksDir.read(file), 'body')
+		await mocksDir.rm(file)
 	})
 })
 

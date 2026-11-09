@@ -1018,6 +1018,19 @@ test('head for get. returns the headers without body only for GETs requested as 
 
 
 describe('Write and Delete Mock', () => {
+	test('422 when filename is not a string', async () => {
+		const r = await api.writeMock(999, '')
+		equal(r.status, 422)
+		equal(await r.text(), 'Invalid or missing filename. Expected: JSON [filename, content]')
+	})
+
+	test('422 when deleting a non-existing mock', async () => {
+		const file = 'non-existing.GET.200.txt'
+		const r = await api.deleteMock(file)
+		equal(r.status, 422)
+		equal(await r.text(), `Missing Mock: ${file}`)
+	})
+
 	test('rejects filenames resolving outside mocksDir', async () => {
 		const r = await api.writeMock('../outside.txt', '')
 		equal(r.status, 403)

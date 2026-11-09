@@ -304,7 +304,6 @@ async function deleteMock(req, response) {
 		response.forbidden('Filename path resolves outside config.mocksDir')
 		return
 	}
-
 	if (!isFile(path)) {
 		response.unprocessable(`Missing Mock: ${file}`)
 		return

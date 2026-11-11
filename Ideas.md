@@ -1,7 +1,7 @@
 # Bugs
 - Preview mock. Don't preview when indirectly toggling off a status code, or proxy checkbox when using Alt+Click
   - payload in store? So it stays when re-rendering?
-- In Chrome (not FF), rendering iframe HTML as payload and resizing the left-panel prevents the iframe from scrolling.
+- In Chrome (not FF), rendering iframe HTML as payload and resizing the left-panel prevents the iframe from scrolling until refocused.
   Resizing the browser afterward fixes the iframe scrolling.
 - Collapsing // https://news.ycombinator.com/item?id=47813454
 
@@ -43,17 +43,10 @@ There’s an implicit question mark on each one.
 ## Storybook
 - Plugin
 
-## Ignored Regex
-- `config.ignore` accepts an Array of regexes too
-- applies to filename or full path
-
 ## Bulk Select UI
 - Instead of the current dropdown, a panel with buttons (e.g., in the header)
 - (Default) ‘’ to api sets all defaults
 - maybe an input for partial match
-
-## AI.md
-- some ai-friendly doc
 
 ## Chaos
 - Malform response
@@ -159,10 +152,6 @@ Copy the Set-Cookie response header, or Cookie Header from the Network tab,.
 
 
 # Rejected Ideas
-
-## Allow extensionless in `mocksDir`
-- Currently, we have to add .GET.200.json,
-- Consolidated mocks already support that ^
 
 ## .headers
 `.headers` extendions add them to the response

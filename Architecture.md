@@ -21,7 +21,7 @@ mock has been added, deleted, or renamed. Also, when config changes.
 
 ## Tests
 - Utilities are unit-tested.
-- Mockaton server is integration tested. e.g., you could write Mockaton in another
+- Mockaton server is integration tested for the most part. e.g., you could rewrite it in another
  language and run our test suite against it.
 - UI is pixel-diff tested with `pixaton`, which is a sister project.
 

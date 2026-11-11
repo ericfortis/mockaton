@@ -8,7 +8,7 @@ adoptSheet(CSS, './PayloadViewer.css')
 
 
 const titleRef = {}
-const codeRef = {}
+const contentRef = {}
 
 export function PayloadViewer() {
 	return (
@@ -18,9 +18,14 @@ export function PayloadViewer() {
 				r('h2', { ref: titleRef },
 					!store.hasChosenLink && t`Preview`)),
 
-			r('pre', null,
-				r('code', { ref: codeRef },
-					!store.hasChosenLink && t`Click a link to preview it`))))
+			r('div', {
+					ref: contentRef,
+					className: CSS.PayloadContent,
+				},
+				!store.hasChosenLink && (
+					r('pre', null,
+						r('code', null,
+							t`Click a link to preview it`))))))
 }
 
 
@@ -73,7 +78,7 @@ export async function previewMock(forced) {
 
 	const spinnerTimer = setTimeout(() => {
 		titleRef.elem.replaceChildren(t`Fetching…`)
-		codeRef.elem.replaceChildren(PayloadViewerProgressBar())
+		contentRef.elem.replaceChildren(PayloadViewerProgressBar())
 	}, SPINNER_DELAY)
 
 	try {
@@ -89,7 +94,7 @@ export async function previewMock(forced) {
 	catch (error) {
 		clearTimeout(spinnerTimer)
 		store.onError(error)
-		codeRef.elem.replaceChildren()
+		contentRef.elem.replaceChildren()
 	}
 }
 
@@ -100,7 +105,7 @@ async function updatePayloadViewer(proxied, file, response) {
 		: PayloadViewerTitle(file, response.statusText))
 
 	if (!response.ok || response.status === 204) {
-		codeRef.elem.textContent = await bodyAsText()
+		renderMono(await bodyAsText())
 		return
 	}
 
@@ -108,43 +113,47 @@ async function updatePayloadViewer(proxied, file, response) {
 		return await response.text() || t`/* Empty Response Body */`
 	}
 
+	function renderMono(text) {
+		contentRef.elem.replaceChildren(r('pre', null, r('code', null, text)))
+	}
+
 	const mime = response.headers.get('content-type') || ''
 
 	if (mime.startsWith('image/'))
-		codeRef.elem.replaceChildren(r('img', {
+		contentRef.elem.replaceChildren(r('img', {
 			src: URL.createObjectURL(await response.blob())
 		}))
 
 	else if (mime.startsWith('video/'))
-		codeRef.elem.replaceChildren(r('video', {
+		contentRef.elem.replaceChildren(r('video', {
 			src: store.chosenLink.urlMask,
 			controls: true,
 			autoPlay: true
 		}))
 
 	else if (mime.startsWith('audio/'))
-		codeRef.elem.replaceChildren(r('audio', {
+		contentRef.elem.replaceChildren(r('audio', {
 			src: store.chosenLink.urlMask,
 			controls: true,
 			autoPlay: true
 		}))
 
 	else if (['text/html', 'application/pdf'].includes(mime))
-		codeRef.elem.replaceChildren(r('iframe', {
+		contentRef.elem.replaceChildren(r('iframe', {
 			src: store.chosenLink.urlMask // using a blob is would need to allow inline styles etc in CSP
 		}))
 
 	else if (mime === 'application/json')
-		codeRef.elem.replaceChildren(SyntaxJSON(await bodyAsText()))
+		renderMono(SyntaxJSON(await bodyAsText()))
 
 	else if (['text/xml', 'application/xml'].includes(mime))
-		codeRef.elem.replaceChildren(SyntaxXML(await bodyAsText()))
+		renderMono(SyntaxXML(await bodyAsText()))
 
 	else if (mime.startsWith('text/') || mime === 'application/yaml')
-		codeRef.elem.textContent = await bodyAsText()
+		renderMono(await bodyAsText())
 
 	else
-		codeRef.elem.replaceChildren(r('a', {
+		contentRef.elem.replaceChildren(r('a', {
 			href: URL.createObjectURL(await response.blob()),
 			download: store.chosenLink.urlMask
 		}, t`Download`))

@@ -1,12 +1,12 @@
 # Stage 1: Deps
-FROM node:24-alpine AS deps
+FROM node:26-alpine AS deps
 WORKDIR /app
 COPY package*.json ./
 RUN npm ci
 
 
 # Stage 2: Build SPA
-FROM node:24-alpine AS builder
+FROM node:26-alpine AS builder
 WORKDIR /app
 COPY --from=deps /app/node_modules ./node_modules
 COPY src ./src
@@ -19,7 +19,7 @@ RUN npm run build
 
 
 # Stage 3: Run Mockaton as standalone demo server
-FROM node:24-alpine
+FROM node:26-alpine
 WORKDIR /app
 COPY --from=builder /app/dist ./mockaton-mocks
 COPY mockaton.config.js ./ 

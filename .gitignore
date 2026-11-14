@@ -1,7 +1,5 @@
 .env
-**/.idea/*
-!**/.idea/webResources.xml
-!**/.idea/jsLibraryMappings.xml
+.idea/
 .junie
 .run
 lcov.info

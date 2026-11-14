@@ -1,4 +1,4 @@
-FROM node:24-alpine
+FROM node:26-alpine
 WORKDIR /app
 
 RUN npm install --no-save mockaton@14

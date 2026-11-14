@@ -32,7 +32,7 @@ start-docker:
 		--volume $(PWD):/app \
 		--workdir /app \
 		--publish 0.0.0.0:2020:2020 \
-		node:24-alpine \
+		node:26-alpine \
 		node --watch-path=src/server src/server/cli.js --host 0.0.0.0 --port 2020
 
 test:

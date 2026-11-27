@@ -3,6 +3,7 @@
 ![NPM Version](https://img.shields.io/npm/v/mockaton)
 [![Test](https://github.com/ericfortis/mockaton/actions/workflows/test.yml/badge.svg)](https://github.com/ericfortis/mockaton/actions/workflows/test.yml)
 [![codecov](https://codecov.io/github/ericfortis/mockaton/graph/badge.svg?token=90NYLMMG1J)](https://codecov.io/github/ericfortis/mockaton)
+[![Ask DeepWiki](https://deepwiki.com/badge.svg)](https://deepwiki.com/ericfortis/mockaton)
 
 <img src="logo.svg" alt="Mockaton Logo" width="180" style="margin-top: 30px"/>
 

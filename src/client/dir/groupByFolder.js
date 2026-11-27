@@ -1,13 +1,14 @@
 /**
- * @param {Partial<BrokerRowModel>[]} brokers
- * @returns {Partial<BrokerRowModel>[]}
+ * @template T extends { method: string, urlMask: string, children: T[] }
+ * @param {T[]} brokers
+ * @returns {T[]}
  */
 export function groupByFolder(brokers) {
 	return dfs(trie(brokers))
 }
 
 function trie(brokers) {
-	const reQueryString = /\?.*$/s
+	const reQueryString = /\?.*$/
 	const root = new TrieNode()
 	for (const b of brokers) {
 		let node = root
